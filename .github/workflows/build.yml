@@ -1,4 +1,4 @@
-name: Build Desktop Apps
+name: Build mischiefpingu Desktop Apps
 
 on:
   push:
@@ -21,7 +21,7 @@ permissions:
 jobs:
   build-linux:
     name: Build Linux
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
@@ -30,6 +30,7 @@ jobs:
       - name: Install Linux dependencies
         run: |
           sudo apt-get update
+
           sudo apt-get install -y \
             clang \
             cmake \
@@ -40,6 +41,7 @@ jobs:
             liblzma-dev \
             libstdc++-12-dev \
             libayatana-appindicator3-dev \
+            libunwind-dev \
             libgstreamer1.0-dev \
             libgstreamer-plugins-base1.0-dev \
             gstreamer1.0-plugins-base \
@@ -59,16 +61,18 @@ jobs:
       - name: Flutter doctor
         run: flutter doctor -v
 
-      - name: Get dependencies
+      - name: Get Flutter dependencies
         run: flutter pub get
 
-      - name: Build Linux
+      - name: Build Linux release
         run: flutter build linux --release
 
       - name: Package Linux bundle
         run: |
           cd build/linux/x64/release
           zip -r ../../../../mischiefpingu-linux-x64.zip bundle
+          cd ../../../..
+          ls -lh mischiefpingu-linux-x64.zip
 
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
@@ -98,10 +102,10 @@ jobs:
       - name: Flutter doctor
         run: flutter doctor -v
 
-      - name: Get dependencies
+      - name: Get Flutter dependencies
         run: flutter pub get
 
-      - name: Build Windows
+      - name: Build Windows release
         run: flutter build windows --release
 
       - name: Package Windows bundle
@@ -111,6 +115,8 @@ jobs:
             -Path "build/windows/x64/runner/Release/*" `
             -DestinationPath "mischiefpingu-windows-x64.zip" `
             -Force
+
+          Get-Item "mischiefpingu-windows-x64.zip"
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
