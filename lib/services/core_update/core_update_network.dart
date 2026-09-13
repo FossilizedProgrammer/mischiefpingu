@@ -1,0 +1,71 @@
+// lib/services/core_update/core_update_network.dart
+library;
+
+import 'network/core_update_http.dart';
+import 'network/core_update_arch.dart';
+import 'network/core_update_downloader.dart';
+import 'core_update_process_utils.dart'; // اضافه شد
+
+/// ═══════════════════════════════════════════════════════════════
+///  Facade — API عمومی CoreUpdateNetwork حفظ می‌شود،
+///  پیاده‌سازی به زیرسرویس‌های تخصصی delegate شده است.
+/// ═══════════════════════════════════════════════════════════════
+class CoreUpdateNetwork {
+  final void Function(String)? log;
+
+  late final CoreUpdateHttp _http = CoreUpdateHttp(log: log);
+  late final CoreUpdateDownloader _downloader =
+      CoreUpdateDownloader(log: log);
+  late final CoreUpdateProcessUtils _processUtils = // اضافه شد
+      CoreUpdateProcessUtils(log: log);
+
+  CoreUpdateNetwork({this.log});
+
+  // ─── delegate to HTTP layer ───
+  Future<void> ensureCurl() => _http.ensureCurl();
+  void logRoute(String? proxy) => _http.logRoute(proxy);
+  Future<Map<String, dynamic>> getJson(String url, String? proxy) =>
+      _http.getJson(url, proxy);
+  Future<String> getText(
+    String url,
+    String? proxy, {
+    String accept = '*/*',
+    String userAgent = 'mischiefpingu-CoreUpdater/1.0',
+  }) =>
+      _http.getText(url, proxy, accept: accept, userAgent: userAgent);
+  Future<({int status, int length})?> headRequest(
+    String url,
+    String? proxy, {
+    int timeoutSec = 15,
+  }) =>
+      _http.headRequest(url, proxy, timeoutSec: timeoutSec);
+
+  // ─── delegate to arch layer ───
+  Future<String> detectArch() => CoreUpdateArch.detect();
+
+  // ─── delegate to downloader ───
+  Future<void> download(
+    String url,
+    String dest, {
+    String? proxy,
+    void Function(int percent)? onProgress,
+    bool Function()? onCancelCheck,
+    int base = 5,
+    int span = 70,
+    int? totalHint,
+  }) =>
+      _downloader.download(
+        url,
+        dest,
+        proxy: proxy,
+        onProgress: onProgress,
+        onCancelCheck: onCancelCheck,
+        base: base,
+        span: span,
+        totalHint: totalHint,
+      );
+
+  // ─── delegate to process utils ───
+  Future<void> extractArchive(String archive, String destDir) =>
+      _processUtils.extractArchive(archive, destDir);
+}
