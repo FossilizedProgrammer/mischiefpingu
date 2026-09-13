@@ -1,3 +1,35 @@
+name: Build mischiefpingu Desktop Apps
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+  pull_request:
+    branches:
+      - main
+      - master
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-24.04
+
+    env:
+      PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Install Linux dependencies
         run: |
           sudo apt-get update
@@ -19,18 +51,92 @@
             gstreamer1.0-plugins-good \
             gstreamer1.0-plugins-bad
 
-          echo "Installed GStreamer pkg-config files:"
-          dpkg -L libgstreamer1.0-dev | grep '\.pc$' || true
-          dpkg -L libgstreamer-plugins-base1.0-dev | grep '\.pc$' || true
+      - name: Verify GStreamer
+        run: |
+          echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
 
-          echo "pkg-config search paths:"
           pkg-config --variable pc_path pkg-config
 
-          echo "GStreamer version:"
+          test -f /usr/lib/x86_64-linux-gnu/pkgconfig/gstreamer-1.0.pc
+
+          pkg-config --exists gstreamer-1.0
           pkg-config --modversion gstreamer-1.0
-
-          echo "GStreamer compile flags:"
           pkg-config --cflags gstreamer-1.0
-
-          echo "GStreamer linker flags:"
           pkg-config --libs gstreamer-1.0
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.1'
+          cache: true
+
+      - name: Enable Linux desktop
+        run: flutter config --enable-linux-desktop
+
+      - name: Flutter doctor
+        run: flutter doctor -v
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Build Linux release
+        run: flutter build linux --release
+
+      - name: Package Linux bundle
+        run: |
+          cd build/linux/x64/release
+          zip -r ../../../../mischiefpingu-linux-x64.zip bundle
+          cd ../../../..
+          ls -lh mischiefpingu-linux-x64.zip
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mischiefpingu-linux-x64
+          path: mischiefpingu-linux-x64.zip
+          if-no-files-found: error
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-2022
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.1'
+          cache: true
+
+      - name: Enable Windows desktop
+        run: flutter config --enable-windows-desktop
+
+      - name: Flutter doctor
+        run: flutter doctor -v
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Build Windows release
+        run: flutter build windows --release
+
+      - name: Package Windows bundle
+        shell: pwsh
+        run: |
+          Compress-Archive `
+            -Path "build/windows/x64/runner/Release/*" `
+            -DestinationPath "mischiefpingu-windows-x64.zip" `
+            -Force
+
+          Get-Item "mischiefpingu-windows-x64.zip"
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mischiefpingu-windows-x64
+          path: mischiefpingu-windows-x64.zip
+          if-no-files-found: error
