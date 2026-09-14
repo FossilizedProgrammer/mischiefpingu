@@ -6,7 +6,7 @@ on:
       - main
       - master
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v*.*.*'
 
   pull_request:
     branches:
@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build-linux:
@@ -140,3 +140,36 @@ jobs:
           name: mischiefpingu-windows-x64
           path: mischiefpingu-windows-x64.zip
           if-no-files-found: error
+
+  create-release:
+    name: Create GitHub Release
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - build-linux
+      - build-windows
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: mischiefpingu-*
+          path: release-files
+          merge-multiple: true
+
+      - name: Verify release files
+        run: |
+          ls -lah release-files
+          test -f release-files/mischiefpingu-linux-x64.zip
+          test -f release-files/mischiefpingu-windows-x64.zip
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            release-files/mischiefpingu-linux-x64.zip \
+            release-files/mischiefpingu-windows-x64.zip \
+            --title "mischiefpingu ${{ github.ref_name }}" \
+            --generate-notes
+
