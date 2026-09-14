@@ -26,6 +26,10 @@ class CoreUpdateProxyResolver {
           return p.processService.isTorConnected
               ? '127.0.0.1:${p.settings.torSocksPort}'
               : null;
+        case 'sstp':
+          return p.processService.isSstpConnected
+              ? '127.0.0.1:${p.settings.sstpSocksPort}'
+              : null;
         default:
           return null;
       }
@@ -41,7 +45,7 @@ class CoreUpdateProxyResolver {
       }
       return v;
     }
-    for (final m in ['psiphon', 'aether', 'tor']) {
+    for (final m in ['psiphon', 'aether', 'tor', 'sstp']) {
       final v = pick(m);
       if (v != null) return v;
     }
@@ -56,4 +60,5 @@ const coreUpdateProxyItems = [
   DropdownMenuItem(value: 'psiphon', child: Text('Psiphon')),
   DropdownMenuItem(value: 'aether', child: Text('Aether')),
   DropdownMenuItem(value: 'tor', child: Text('Tor')),
+  DropdownMenuItem(value: 'sstp', child: Text('SSTP')),
 ];
