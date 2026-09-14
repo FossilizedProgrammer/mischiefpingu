@@ -1,0 +1,85 @@
+// lib/screens/widgets/core_update/core_update_content.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  CoreUpdateContent — بدنهٔ UI برای CoreUpdateTile
+//  (تفکیک شده از core_update_tile.dart)
+// ═══════════════════════════════════════════════════════════════
+library;
+
+import 'package:flutter/material.dart';
+
+import 'core_update_controller.dart';
+import 'core_update_section.dart';
+import 'core_update_proxy_resolver.dart';
+
+class CoreUpdateContent extends StatelessWidget {
+  final CoreUpdateController controller;
+  final String proxyMode;
+  final ValueChanged<String> onProxyModeChanged;
+
+  const CoreUpdateContent({
+    super.key,
+    required this.controller,
+    required this.proxyMode,
+    required this.onProxyModeChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownButtonFormField<String>(
+          initialValue: proxyMode,
+          decoration: const InputDecoration(
+            labelText: 'Download via',
+            isDense: true,
+          ),
+          items: coreUpdateProxyItems,
+          onChanged: (v) => onProxyModeChanged(v ?? 'auto'),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Checks and downloads ride the selected proxy when direct access is filtered.',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 16),
+        ..._buildSections(),
+      ],
+    );
+  }
+
+  List<Widget> _buildSections() {
+    final widgets = <Widget>[];
+    for (var i = 0; i < CoreUpdateController.specs.length; i++) {
+      final spec = CoreUpdateController.specs[i];
+      final state = controller.stateOf(spec.kind);
+
+      widgets.add(CoreUpdateSection(
+        name: spec.displayName,
+        installed: state.installed,
+        latest: state.latest,
+        busy: state.checking || state.updating,
+        checking: state.checking,
+        updating: state.updating,
+        progress: state.progress,
+        onCheck: () => controller.check(spec.kind),
+        onUpdate: () => controller.update(spec.kind),
+        updateLabel:
+            state.missing ? spec.updateLabelWhenMissing : null,
+        note: spec.note,
+        downloadUrl: state.downloadUrl,
+        checkMessage: state.checkMessage,
+      ));
+
+      if (i < CoreUpdateController.specs.length - 1) {
+        widgets.add(const Divider(height: 24));
+      }
+    }
+    return widgets;
+  }
+}

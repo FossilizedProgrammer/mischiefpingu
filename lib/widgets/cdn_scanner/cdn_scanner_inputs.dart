@@ -33,16 +33,26 @@ class CdnScannerInputs extends StatelessWidget {
           runSpacing: 8,
           children: CdnPresets.all.map((preset) {
             final selected = scan.selectedPresetId == preset.id;
+            final isCustom = preset.id == 'custom';
+
+            // ✅ برای Custom از یک avatar متنی استفاده می‌کنیم
+            // تا مشکل فونت Material Icons پیش نیاید.
+            final Widget? avatar = isCustom
+                ? _CustomAvatar(
+                    selected: selected,
+                    theme: theme,
+                  )
+                : null;
+
             return FilterChip(
               label: Text(preset.name),
               selected: selected,
+              avatar: avatar,
               onSelected: scan.isRunning
                   ? null
                   : (v) {
                       if (v) {
                         scan.applyPreset(preset.id);
-                        inputCtrl.text = scan.customInput;
-                        sniCtrl.text = scan.snis.join('\n');
                       }
                     },
             );
@@ -103,6 +113,47 @@ class CdnScannerInputs extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+/// ═══════════════════════════════════════════════════════════════
+///  آواتار متنی برای chip «Custom» — به‌جای Icon تا مستقل از
+///  فونت Material Icons باشد.
+/// ═══════════════════════════════════════════════════════════════
+class _CustomAvatar extends StatelessWidget {
+  final bool selected;
+  final ThemeData theme;
+
+  const _CustomAvatar({
+    required this.selected,
+    required this.theme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // در حالت انتخاب‌شده، رنگ chip معمولاً روشن می‌شود → از onSurface
+    // استفاده می‌کنیم. در حالت غیرانتخاب، از primary.
+    final color = selected
+        ? theme.colorScheme.onSecondaryContainer
+        : theme.colorScheme.primary;
+
+    return Container(
+      width: 18,
+      height: 18,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        '★', // یک کاراکتر یونیکد که در همهٔ فونت‌ها هست
+        style: TextStyle(
+          fontSize: 12,
+          height: 1,
+          color: color,
+        ),
+      ),
     );
   }
 }

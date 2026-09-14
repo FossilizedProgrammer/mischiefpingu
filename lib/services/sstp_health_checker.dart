@@ -3,16 +3,9 @@ library;
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
-import 'sstp/tls_client_hello_builder.dart';
+import 'sstp/sstp_tls_probe.dart';
 
-enum SstpHealth {
-  unknown,
-  checking,
-  alive,
-  tcpOnly,
-  dead,
-}
+enum SstpHealth { unknown, checking, alive, tcpOnly, dead }
 
 class SstpHealthResult {
   final SstpHealth status;
@@ -34,7 +27,6 @@ class SstpHealthResult {
 
 class SstpHealthChecker {
   static const Duration tcpTimeout = Duration(seconds: 5);
-  static const Duration firstByteTimeout = Duration(seconds: 4);
 
   Future<SstpHealthResult> check(String ip, int port) async {
     final sw = Stopwatch()..start();
@@ -61,85 +53,11 @@ class SstpHealthChecker {
 
     final tcpLatency = sw.elapsedMilliseconds;
 
-    // ─── ارسال TLS ClientHello ───
+    // ─── TLS probe ───
     try {
-      sock.add(TlsClientHelloBuilder.build());
-      await sock.flush();
-    } catch (e) {
+      final outcome = await SstpTlsProbe.sendClientHello(sock);
       sw.stop();
-      try {
-        sock.destroy();
-      } catch (_) {}
-      return SstpHealthResult(
-        status: SstpHealth.dead,
-        latencyMs: tcpLatency,
-        message: 'failed to send TLS hello: ${_short(e)}',
-      );
-    }
-
-    // ─── منتظر پاسخ ───
-    final completer = Completer<_ProbeOutcome>();
-    StreamSubscription<Uint8List>? sub;
-    Timer? timer;
-
-    void finish(_ProbeOutcome outcome) {
-      if (completer.isCompleted) return;
-      completer.complete(outcome);
-    }
-
-    try {
-      sub = sock.listen(
-        (data) {
-          if (data.isNotEmpty) {
-            finish(_ProbeOutcome.gotData(data.length));
-          }
-        },
-        onError: (Object e) => finish(_ProbeOutcome.error(e)),
-        onDone: () => finish(_ProbeOutcome.closed()),
-        cancelOnError: true,
-      );
-
-      timer = Timer(firstByteTimeout, () {
-        finish(_ProbeOutcome.stillOpen());
-      });
-
-      final outcome = await completer.future;
-      sw.stop();
-
-      switch (outcome.kind) {
-        case _ProbeKind.gotData:
-          return SstpHealthResult(
-            status: SstpHealth.alive,
-            latencyMs: tcpLatency,
-            message: 'alive (TLS responded with ${outcome.dataLength}B)',
-          );
-        case _ProbeKind.stillOpen:
-          return SstpHealthResult(
-            status: SstpHealth.tcpOnly,
-            latencyMs: tcpLatency,
-            message: 'TCP open, no TLS response',
-          );
-        case _ProbeKind.closed:
-          return SstpHealthResult(
-            status: SstpHealth.tcpOnly,
-            latencyMs: tcpLatency,
-            message: 'TCP open, closed without TLS response',
-          );
-        case _ProbeKind.error:
-          final errStr = outcome.error?.toString() ?? '';
-          if (errStr.contains('reset') || errStr.contains('Connection')) {
-            return SstpHealthResult(
-              status: SstpHealth.alive,
-              latencyMs: tcpLatency,
-              message: 'alive (connection reset - server active)',
-            );
-          }
-          return SstpHealthResult(
-            status: SstpHealth.dead,
-            latencyMs: tcpLatency,
-            message: _short(outcome.error ?? 'unknown error'),
-          );
-      }
+      return _interpret(outcome, tcpLatency);
     } catch (e) {
       sw.stop();
       return SstpHealthResult(
@@ -148,13 +66,46 @@ class SstpHealthChecker {
         message: _short(e),
       );
     } finally {
-      timer?.cancel();
-      try {
-        await sub?.cancel();
-      } catch (_) {}
       try {
         sock.destroy();
       } catch (_) {}
+    }
+  }
+
+  SstpHealthResult _interpret(SstpProbeOutcome outcome, int tcpLatency) {
+    switch (outcome.kind) {
+      case SstpProbeKind.gotData:
+        return SstpHealthResult(
+          status: SstpHealth.alive,
+          latencyMs: tcpLatency,
+          message: 'alive (TLS responded with ${outcome.dataLength}B)',
+        );
+      case SstpProbeKind.stillOpen:
+        return SstpHealthResult(
+          status: SstpHealth.tcpOnly,
+          latencyMs: tcpLatency,
+          message: 'TCP open, no TLS response',
+        );
+      case SstpProbeKind.closed:
+        return SstpHealthResult(
+          status: SstpHealth.tcpOnly,
+          latencyMs: tcpLatency,
+          message: 'TCP open, closed without TLS response',
+        );
+      case SstpProbeKind.error:
+        final errStr = outcome.error?.toString() ?? '';
+        if (errStr.contains('reset') || errStr.contains('Connection')) {
+          return SstpHealthResult(
+            status: SstpHealth.alive,
+            latencyMs: tcpLatency,
+            message: 'alive (connection reset - server active)',
+          );
+        }
+        return SstpHealthResult(
+          status: SstpHealth.dead,
+          latencyMs: tcpLatency,
+          message: _short(outcome.error ?? 'unknown error'),
+        );
     }
   }
 
@@ -162,22 +113,4 @@ class SstpHealthChecker {
     final s = e.toString();
     return s.length > 80 ? '${s.substring(0, 80)}…' : s;
   }
-}
-
-enum _ProbeKind { gotData, stillOpen, closed, error }
-
-class _ProbeOutcome {
-  final _ProbeKind kind;
-  final int dataLength;
-  final Object? error;
-
-  const _ProbeOutcome._(this.kind, {this.dataLength = 0, this.error});
-
-  factory _ProbeOutcome.gotData(int length) =>
-      _ProbeOutcome._(_ProbeKind.gotData, dataLength: length);
-  factory _ProbeOutcome.stillOpen() =>
-      const _ProbeOutcome._(_ProbeKind.stillOpen);
-  factory _ProbeOutcome.closed() => const _ProbeOutcome._(_ProbeKind.closed);
-  factory _ProbeOutcome.error(Object e) =>
-      _ProbeOutcome._(_ProbeKind.error, error: e);
 }

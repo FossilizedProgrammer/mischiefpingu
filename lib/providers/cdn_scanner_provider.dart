@@ -1,10 +1,16 @@
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../cdn_ip_checker.dart';
 import '../services/ip_range_parser.dart';
 import '../cdn_presets.dart';
 
 class CdnScannerProvider extends ChangeNotifier {
   final _checker = CdnIpChecker();
+
+  static const String _prefsCustomIps = 'cdnScannerCustomIps';
+  static const String _prefsCustomSnis = 'cdnScannerCustomSnis';
+  static const String _prefsSelectedPreset = 'cdnScannerSelectedPreset';
+
   String customInput = '';
   List<String> snis = [];
   int concurrency = 12;
@@ -16,6 +22,9 @@ class CdnScannerProvider extends ChangeNotifier {
   final List<CdnCheckResult> good = [];
   bool _cancel = false;
 
+  /// وقتی true بشه یعنی load از SharedPreferences کامل شده.
+  bool isLoaded = false;
+
   final List<String> defaultSnis = [
     ...CdnPresets.akamaiSnis,
     'microsoft.com',
@@ -25,19 +34,139 @@ class CdnScannerProvider extends ChangeNotifier {
 
   String? selectedPresetId;
 
-  void applyPreset(String presetId) {
-    final preset = CdnPresets.byId(presetId);
-    if (preset == null) return;
-    selectedPresetId = presetId;
-    snis = List.from(preset.snis);
-    customInput = preset.ranges.join('\n');
-    notifyListeners();
-  }
+  // ─── Custom IPs (ذخیره‌شده در SharedPreferences) ───
+  List<String> _customIps = [];
+  List<String> get customIps => List.unmodifiable(_customIps);
 
   CdnScannerProvider() {
     snis = List.from(defaultSnis);
+    _loadFromPrefs();
   }
 
+  // ═══════════════════════════════════════════
+  //  Persistence
+  // ═══════════════════════════════════════════
+  Future<void> _loadFromPrefs() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _customIps = prefs.getStringList(_prefsCustomIps) ?? [];
+      final savedSnis = prefs.getStringList(_prefsCustomSnis);
+      final savedPreset = prefs.getString(_prefsSelectedPreset);
+
+      if (savedPreset != null) {
+        selectedPresetId = savedPreset;
+        if (savedPreset == 'custom') {
+          // ✅ مهم: customInput رو از _customIps پر کن
+          customInput = _customIps.join('\n');
+          if (savedSnis != null && savedSnis.isNotEmpty) {
+            snis = List.from(savedSnis);
+          } else {
+            snis = List.from(CdnPresets.akamaiSnis);
+          }
+        } else {
+          final preset = CdnPresets.byId(savedPreset);
+          if (preset != null) {
+            snis = List.from(preset.snis);
+            customInput = preset.ranges.join('\n');
+          } else {
+            applyPreset('akamai');
+          }
+        }
+      } else {
+        applyPreset('akamai');
+      }
+    } catch (_) {
+    } finally {
+      isLoaded = true;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _persistCustomIps() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList(_prefsCustomIps, _customIps);
+    } catch (_) {}
+  }
+
+  Future<void> _persistSelectedPreset() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (selectedPresetId != null) {
+        await prefs.setString(_prefsSelectedPreset, selectedPresetId!);
+      }
+      if (selectedPresetId == 'custom') {
+        await prefs.setStringList(_prefsCustomSnis, snis);
+      }
+    } catch (_) {}
+  }
+
+  // ═══════════════════════════════════════════
+  //  Preset management
+  // ═══════════════════════════════════════════
+  void applyPreset(String presetId) {
+    final preset = CdnPresets.byId(presetId);
+    if (preset == null) return;
+
+    selectedPresetId = presetId;
+
+    if (presetId == 'custom') {
+      customInput = _customIps.join('\n');
+      if (snis.isEmpty) {
+        snis = List.from(CdnPresets.akamaiSnis);
+      }
+    } else {
+      snis = List.from(preset.snis);
+      customInput = preset.ranges.join('\n');
+    }
+
+    _persistSelectedPreset();
+    notifyListeners();
+  }
+
+  Future<void> saveCustomIps(List<String> ips) async {
+    _customIps = ips
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+    await _persistCustomIps();
+    if (selectedPresetId == 'custom') {
+      customInput = _customIps.join('\n');
+    }
+    notifyListeners();
+  }
+
+  Future<void> addCustomIps(List<String> ips) async {
+    final merged = <String>{..._customIps, ...ips};
+    _customIps = merged.toList();
+    await _persistCustomIps();
+    if (selectedPresetId == 'custom') {
+      customInput = _customIps.join('\n');
+    }
+    notifyListeners();
+  }
+
+  Future<void> removeCustomIp(String ip) async {
+    _customIps.remove(ip);
+    await _persistCustomIps();
+    if (selectedPresetId == 'custom') {
+      customInput = _customIps.join('\n');
+    }
+    notifyListeners();
+  }
+
+  Future<void> clearCustomIps() async {
+    _customIps.clear();
+    await _persistCustomIps();
+    if (selectedPresetId == 'custom') {
+      customInput = '';
+    }
+    notifyListeners();
+  }
+
+  // ═══════════════════════════════════════════
+  //  Scan
+  // ═══════════════════════════════════════════
   Future<void> start() async {
     if (isRunning) return;
 
@@ -45,7 +174,8 @@ class CdnScannerProvider extends ChangeNotifier {
     final ips = parsed.ips;
 
     if (ips.isEmpty) {
-      status = 'No valid IPs found';
+      status = 'No valid IPs found (check IPs / CIDR / Ranges)';
+      isRunning = false;
       notifyListeners();
       return;
     }

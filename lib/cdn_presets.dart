@@ -77,7 +77,6 @@ class CdnPresets {
   static const List<String> googleRanges = CdnPresetRanges.google;
   static const List<String> amazonRanges = CdnPresetRanges.amazon;
   static const List<String> azureRanges = CdnPresetRanges.azure;
-  static const List<String> iranIspRanges = CdnPresetRanges.iranIsp;
 
   static final List<CdnPreset> all = [
     CdnPreset(
@@ -117,10 +116,10 @@ class CdnPresets {
       ranges: azureRanges,
     ),
     CdnPreset(
-      id: 'iran-isp',
-      name: 'Iran ISP (MCI / Irancell / Rightel / Shatel)',
+      id: 'custom',
+      name: 'Custom (my IPs)',
       snis: akamaiSnis,
-      ranges: iranIspRanges,
+      ranges: const [], // از SharedPreferences خونده می‌شه
     ),
   ];
 

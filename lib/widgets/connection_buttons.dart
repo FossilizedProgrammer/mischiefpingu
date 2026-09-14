@@ -2,88 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import 'connection/connection_button_builder.dart';
+import 'connection/connection_state_resolver.dart';
 import 'connection/circle_connect_button.dart';
 
 class ConnectionButtons extends StatelessWidget {
   const ConnectionButtons({super.key});
 
-  static bool _aetherHealthy(String status) {
-    final s = status.toLowerCase();
-    if (s.contains('unverified')) return false;
-    if (s.contains('healthy')) return true;
-    if (s.contains('upstream') && s.contains('running')) return true;
-    return false;
-  }
-
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
-    final ps = provider.processService;
     final theme = Theme.of(context);
     final builder =
         ConnectionButtonBuilder(primaryColor: theme.colorScheme.primary);
+    final resolver = ConnectionStateResolver(provider);
 
-    // ═══════════════════════════════════════════
-    //  Aether
-    // ═══════════════════════════════════════════
-    final aetherBusy = provider.isAutoTesting;
-    final aetherHealthy = ps.isAetherRunning &&
-        !aetherBusy &&
-        _aetherHealthy(provider.aetherStatus);
-    final aetherRunningForButton = ps.isAetherRunning || aetherBusy;
-    final aetherData = builder.forAether(
-      isRunning: aetherRunningForButton,
-      isConnected: aetherHealthy,
-      isBusy: aetherBusy,
-      progress: null,
-    );
-
-    // ═══════════════════════════════════════════
-    //  Psiphon
-    // ═══════════════════════════════════════════
-    final psiphonOn = ps.isPsiphonConnected;
-    final psiphonBusy = provider.isPsiphonBusy && !ps.isPsiphonRunning;
-    final psiphonRunningForButton =
-        ps.isPsiphonRunning || (provider.isPsiphonBusy && !psiphonOn);
-    final psiphonData = builder.forPsiphon(
-      isRunning: psiphonRunningForButton,
-      isConnected: psiphonOn,
-      isBusy: psiphonBusy,
-    );
-
-    // ═══════════════════════════════════════════
-    //  Tor — با progress در bootstrap
-    // ═══════════════════════════════════════════
-    final torOn = ps.isTorConnected;
-    final torBootstrapping = ps.isTorRunning && !torOn;
-    final torStarting = provider.isTorBusy && !ps.isTorRunning;
-
-    final torBusy = torBootstrapping || torStarting;
-    final torRunningForButton = ps.isTorRunning || torStarting;
-
-    final int torProgress = ps.torBootstrapProgress;
-    final bool showTorProgress =
-        torBusy && !torOn && torProgress > 0 && torProgress < 100;
-
-    final torData = builder.forTor(
-      isRunning: torRunningForButton,
-      isConnected: torOn,
-      isBusy: torBusy,
-      progress: showTorProgress ? torProgress : null,
-    );
-
-    // ═══════════════════════════════════════════
-    //  SSTP
-    // ═══════════════════════════════════════════
-    final sstpOn = ps.isSstpConnected;
-    final sstpBusy = provider.isSstpBusy && !ps.isSstpRunning;
-    final sstpRunningForButton =
-        ps.isSstpRunning || (provider.isSstpBusy && !sstpOn);
-    final sstpData = builder.forSstp(
-      isRunning: sstpRunningForButton,
-      isConnected: sstpOn,
-      isBusy: sstpBusy,
-    );
+    final aetherData = resolver.resolveAether(builder);
+    final psiphonData = resolver.resolvePsiphon(builder);
+    final torData = resolver.resolveTor(builder);
+    final sstpData = resolver.resolveSstp(builder);
 
     final onSurface = theme.colorScheme.onSurface;
 

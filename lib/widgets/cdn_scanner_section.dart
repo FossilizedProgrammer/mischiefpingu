@@ -4,6 +4,7 @@ import '../providers/cdn_scanner_provider.dart';
 import 'settings_tile_base.dart';
 import 'cdn_scanner/cdn_scanner_inputs.dart';
 import 'cdn_scanner/cdn_scanner_results.dart';
+import 'cdn_scanner/cdn_custom_ips_manager.dart';
 
 class CdnScannerSection extends StatefulWidget {
   const CdnScannerSection({super.key});
@@ -15,15 +16,8 @@ class CdnScannerSection extends StatefulWidget {
 class _CdnScannerSectionState extends State<CdnScannerSection> {
   final _inputCtrl = TextEditingController();
   final _sniCtrl = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    final p = context.read<CdnScannerProvider>();
-    p.applyPreset('akamai');
-    _sniCtrl.text = p.snis.join('\n');
-    _inputCtrl.text = p.customInput;
-  }
+  bool _controllersSynced = false;
+  String? _lastSyncedPreset;
 
   @override
   void dispose() {
@@ -32,10 +26,37 @@ class _CdnScannerSectionState extends State<CdnScannerSection> {
     super.dispose();
   }
 
+  /// controllerها رو با state فعلی provider sync می‌کنه
+  /// (فقط وقتی preset عوض بشه یا اولین بار load بشه).
+  void _syncControllers(CdnScannerProvider scan) {
+    if (!scan.isLoaded) return;
+
+    final presetChanged = _lastSyncedPreset != scan.selectedPresetId;
+    final firstTime = !_controllersSynced;
+
+    if (firstTime || presetChanged) {
+      _lastSyncedPreset = scan.selectedPresetId;
+      _controllersSynced = true;
+
+      // در post-frame اجرا کن تا با rebuild تداخل نکنه
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (scan.selectedPresetId == 'custom') {
+          _inputCtrl.text = scan.customIps.join('\n');
+        } else {
+          _inputCtrl.text = scan.customInput;
+        }
+        _sniCtrl.text = scan.snis.join('\n');
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final scan = context.watch<CdnScannerProvider>();
     final theme = Theme.of(context);
+
+    _syncControllers(scan);
 
     return SettingsTile(
       title: 'CDN IP Scanner',
@@ -102,6 +123,12 @@ class _CdnScannerSectionState extends State<CdnScannerSection> {
               ),
             ),
           ],
+        ),
+        const SizedBox(height: 8),
+        CdnCustomIpsManager(
+          scan: scan,
+          inputCtrl: _inputCtrl,
+          theme: theme,
         ),
         CdnScannerResults(scan: scan, theme: theme),
       ],

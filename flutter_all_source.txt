@@ -281,7 +281,6 @@ class CdnPresets {
   static const List<String> googleRanges = CdnPresetRanges.google;
   static const List<String> amazonRanges = CdnPresetRanges.amazon;
   static const List<String> azureRanges = CdnPresetRanges.azure;
-  static const List<String> iranIspRanges = CdnPresetRanges.iranIsp;
 
   static final List<CdnPreset> all = [
     CdnPreset(
@@ -321,10 +320,10 @@ class CdnPresets {
       ranges: azureRanges,
     ),
     CdnPreset(
-      id: 'iran-isp',
-      name: 'Iran ISP (MCI / Irancell / Rightel / Shatel)',
+      id: 'custom',
+      name: 'Custom (my IPs)',
       snis: akamaiSnis,
-      ranges: iranIspRanges,
+      ranges: const [], // از SharedPreferences خونده می‌شه
     ),
   ];
 
@@ -468,31 +467,6 @@ class CdnPresetRanges {
     '104.208.0.0/24',
     '137.116.0.0/24',
     '168.61.0.0/24',
-  ];
-
-  static const List<String> iranIsp = [
-    '184.24.77.42',
-    '184.24.77.32',
-    '185.200.232.49',
-    '23.48.23.151',
-    '104.112.146.82',
-    '184.24.77.7',
-    '2.22.250.149',
-    '23.58.193.140',
-    '184.24.77.5',
-    '185.200.232.50',
-    '23.43.237.239',
-    '92.16.53.11',
-    '184.24.77.21',
-    '185.200.232.42',
-    '23.48.23.186',
-    '72.246.28.3',
-    '92.122.0.1',
-    '184.24.77.11',
-    '185.200.232.41',
-    '23.48.23.133',
-    '2.19.126.81',
-    '104.64.0.5',
   ];
 }
 
@@ -2664,12 +2638,18 @@ lib/providers/cdn_scanner_provider.dart
 ******************************************************
 
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../cdn_ip_checker.dart';
 import '../services/ip_range_parser.dart';
 import '../cdn_presets.dart';
 
 class CdnScannerProvider extends ChangeNotifier {
   final _checker = CdnIpChecker();
+
+  static const String _prefsCustomIps = 'cdnScannerCustomIps';
+  static const String _prefsCustomSnis = 'cdnScannerCustomSnis';
+  static const String _prefsSelectedPreset = 'cdnScannerSelectedPreset';
+
   String customInput = '';
   List<String> snis = [];
   int concurrency = 12;
@@ -2681,6 +2661,9 @@ class CdnScannerProvider extends ChangeNotifier {
   final List<CdnCheckResult> good = [];
   bool _cancel = false;
 
+  /// وقتی true بشه یعنی load از SharedPreferences کامل شده.
+  bool isLoaded = false;
+
   final List<String> defaultSnis = [
     ...CdnPresets.akamaiSnis,
     'microsoft.com',
@@ -2690,19 +2673,139 @@ class CdnScannerProvider extends ChangeNotifier {
 
   String? selectedPresetId;
 
-  void applyPreset(String presetId) {
-    final preset = CdnPresets.byId(presetId);
-    if (preset == null) return;
-    selectedPresetId = presetId;
-    snis = List.from(preset.snis);
-    customInput = preset.ranges.join('\n');
-    notifyListeners();
-  }
+  // ─── Custom IPs (ذخیره‌شده در SharedPreferences) ───
+  List<String> _customIps = [];
+  List<String> get customIps => List.unmodifiable(_customIps);
 
   CdnScannerProvider() {
     snis = List.from(defaultSnis);
+    _loadFromPrefs();
   }
 
+  // ═══════════════════════════════════════════
+  //  Persistence
+  // ═══════════════════════════════════════════
+  Future<void> _loadFromPrefs() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _customIps = prefs.getStringList(_prefsCustomIps) ?? [];
+      final savedSnis = prefs.getStringList(_prefsCustomSnis);
+      final savedPreset = prefs.getString(_prefsSelectedPreset);
+
+      if (savedPreset != null) {
+        selectedPresetId = savedPreset;
+        if (savedPreset == 'custom') {
+          // ✅ مهم: customInput رو از _customIps پر کن
+          customInput = _customIps.join('\n');
+          if (savedSnis != null && savedSnis.isNotEmpty) {
+            snis = List.from(savedSnis);
+          } else {
+            snis = List.from(CdnPresets.akamaiSnis);
+          }
+        } else {
+          final preset = CdnPresets.byId(savedPreset);
+          if (preset != null) {
+            snis = List.from(preset.snis);
+            customInput = preset.ranges.join('\n');
+          } else {
+            applyPreset('akamai');
+          }
+        }
+      } else {
+        applyPreset('akamai');
+      }
+    } catch (_) {
+    } finally {
+      isLoaded = true;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _persistCustomIps() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList(_prefsCustomIps, _customIps);
+    } catch (_) {}
+  }
+
+  Future<void> _persistSelectedPreset() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (selectedPresetId != null) {
+        await prefs.setString(_prefsSelectedPreset, selectedPresetId!);
+      }
+      if (selectedPresetId == 'custom') {
+        await prefs.setStringList(_prefsCustomSnis, snis);
+      }
+    } catch (_) {}
+  }
+
+  // ═══════════════════════════════════════════
+  //  Preset management
+  // ═══════════════════════════════════════════
+  void applyPreset(String presetId) {
+    final preset = CdnPresets.byId(presetId);
+    if (preset == null) return;
+
+    selectedPresetId = presetId;
+
+    if (presetId == 'custom') {
+      customInput = _customIps.join('\n');
+      if (snis.isEmpty) {
+        snis = List.from(CdnPresets.akamaiSnis);
+      }
+    } else {
+      snis = List.from(preset.snis);
+      customInput = preset.ranges.join('\n');
+    }
+
+    _persistSelectedPreset();
+    notifyListeners();
+  }
+
+  Future<void> saveCustomIps(List<String> ips) async {
+    _customIps = ips
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+    await _persistCustomIps();
+    if (selectedPresetId == 'custom') {
+      customInput = _customIps.join('\n');
+    }
+    notifyListeners();
+  }
+
+  Future<void> addCustomIps(List<String> ips) async {
+    final merged = <String>{..._customIps, ...ips};
+    _customIps = merged.toList();
+    await _persistCustomIps();
+    if (selectedPresetId == 'custom') {
+      customInput = _customIps.join('\n');
+    }
+    notifyListeners();
+  }
+
+  Future<void> removeCustomIp(String ip) async {
+    _customIps.remove(ip);
+    await _persistCustomIps();
+    if (selectedPresetId == 'custom') {
+      customInput = _customIps.join('\n');
+    }
+    notifyListeners();
+  }
+
+  Future<void> clearCustomIps() async {
+    _customIps.clear();
+    await _persistCustomIps();
+    if (selectedPresetId == 'custom') {
+      customInput = '';
+    }
+    notifyListeners();
+  }
+
+  // ═══════════════════════════════════════════
+  //  Scan
+  // ═══════════════════════════════════════════
   Future<void> start() async {
     if (isRunning) return;
 
@@ -2710,7 +2813,8 @@ class CdnScannerProvider extends ChangeNotifier {
     final ips = parsed.ips;
 
     if (ips.isEmpty) {
-      status = 'No valid IPs found';
+      status = 'No valid IPs found (check IPs / CIDR / Ranges)';
+      isRunning = false;
       notifyListeners();
       return;
     }
@@ -3479,6 +3583,312 @@ class AetherSettingsTile extends StatelessWidget {
 
 
 ******************************************************
+lib/screens/widgets/core_update/core_update_content.dart
+******************************************************
+
+// lib/screens/widgets/core_update/core_update_content.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  CoreUpdateContent — بدنهٔ UI برای CoreUpdateTile
+//  (تفکیک شده از core_update_tile.dart)
+// ═══════════════════════════════════════════════════════════════
+library;
+
+import 'package:flutter/material.dart';
+
+import 'core_update_controller.dart';
+import 'core_update_section.dart';
+import 'core_update_proxy_resolver.dart';
+
+class CoreUpdateContent extends StatelessWidget {
+  final CoreUpdateController controller;
+  final String proxyMode;
+  final ValueChanged<String> onProxyModeChanged;
+
+  const CoreUpdateContent({
+    super.key,
+    required this.controller,
+    required this.proxyMode,
+    required this.onProxyModeChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownButtonFormField<String>(
+          initialValue: proxyMode,
+          decoration: const InputDecoration(
+            labelText: 'Download via',
+            isDense: true,
+          ),
+          items: coreUpdateProxyItems,
+          onChanged: (v) => onProxyModeChanged(v ?? 'auto'),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Checks and downloads ride the selected proxy when direct access is filtered.',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 16),
+        ..._buildSections(),
+      ],
+    );
+  }
+
+  List<Widget> _buildSections() {
+    final widgets = <Widget>[];
+    for (var i = 0; i < CoreUpdateController.specs.length; i++) {
+      final spec = CoreUpdateController.specs[i];
+      final state = controller.stateOf(spec.kind);
+
+      widgets.add(CoreUpdateSection(
+        name: spec.displayName,
+        installed: state.installed,
+        latest: state.latest,
+        busy: state.checking || state.updating,
+        checking: state.checking,
+        updating: state.updating,
+        progress: state.progress,
+        onCheck: () => controller.check(spec.kind),
+        onUpdate: () => controller.update(spec.kind),
+        updateLabel:
+            state.missing ? spec.updateLabelWhenMissing : null,
+        note: spec.note,
+        downloadUrl: state.downloadUrl,
+        checkMessage: state.checkMessage,
+      ));
+
+      if (i < CoreUpdateController.specs.length - 1) {
+        widgets.add(const Divider(height: 24));
+      }
+    }
+    return widgets;
+  }
+}
+
+
+******************************************************
+lib/screens/widgets/core_update/core_update_controller.dart
+******************************************************
+
+// lib/screens/widgets/core_update/core_update_controller.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  CoreUpdateController — مدیریت state و منطق ۵ core updater
+//  (تفکیک شده از core_update_tile.dart)
+// ═══════════════════════════════════════════════════════════════
+library;
+
+import 'package:flutter/foundation.dart';
+
+import '../../../providers/app_provider.dart';
+import '../../../services/core_update_service.dart';
+import 'core_update_state.dart';
+
+/// شناسه‌های coreهای پشتیبانی‌شده.
+enum CoreKind { aether, tor, psiphon, sunandlion, sstp }
+
+/// یک ردیف config برای core update.
+class CoreUpdateSpec {
+  final CoreKind kind;
+  final String displayName;
+  final String? note;
+  final String? updateLabelWhenMissing;
+
+  const CoreUpdateSpec({
+    required this.kind,
+    required this.displayName,
+    this.note,
+    this.updateLabelWhenMissing,
+  });
+}
+
+/// کنترلر مشترک برای همهٔ coreها.
+class CoreUpdateController extends ChangeNotifier {
+  final CoreUpdateService Function() serviceFactory;
+  final String Function() proxyResolver;
+  final AppProvider Function() providerResolver;
+
+  late final Map<CoreKind, CoreUpdateEntryState> _states;
+
+  CoreUpdateController({
+    required this.serviceFactory,
+    required this.proxyResolver,
+    required this.providerResolver,
+  }) {
+    _states = {
+      for (final kind in CoreKind.values)
+        kind: CoreUpdateEntryState(
+          coreId: _coreIdFor(kind),
+          serviceFactory: serviceFactory,
+          proxyResolver: proxyResolver,
+        )..addListener(notifyListeners),
+    };
+  }
+
+  CoreUpdateEntryState stateOf(CoreKind kind) => _states[kind]!;
+
+  @override
+  void dispose() {
+    for (final s in _states.values) {
+      s.removeListener(notifyListeners);
+      s.dispose();
+    }
+    super.dispose();
+  }
+
+  // ═══════════════════════════════════════════
+  //  Refresh all installed versions
+  // ═══════════════════════════════════════════
+  Future<void> refreshAll() async {
+    final provider = providerResolver();
+    final rev = provider.settings.psiphonBuildRev;
+    for (final entry in _states.entries) {
+      if (entry.key == CoreKind.psiphon) {
+        await entry.value.refreshInstalled(psiphonRev: rev);
+      } else {
+        await entry.value.refreshInstalled();
+      }
+    }
+  }
+
+  // ═══════════════════════════════════════════
+  //  Check
+  // ═══════════════════════════════════════════
+  Future<void> check(CoreKind kind) async {
+    final state = _states[kind]!;
+    final svc = serviceFactory();
+    final provider = providerResolver();
+
+    await state.check(
+      runCheck: (proxy) {
+        switch (kind) {
+          case CoreKind.psiphon:
+            return svc.checkForUpdate(
+              'psiphon',
+              proxy: proxy,
+              psiphonRev: provider.settings.psiphonBuildRev,
+              psiphonBinSha: provider.settings.psiphonBinarySha,
+            );
+          default:
+            return svc.checkForUpdate(_coreIdFor(kind), proxy: proxy);
+        }
+      },
+    );
+  }
+
+  // ═══════════════════════════════════════════
+  //  Update
+  // ═══════════════════════════════════════════
+  Future<void> update(CoreKind kind) async {
+    final state = _states[kind]!;
+    final svc = serviceFactory();
+    final provider = providerResolver();
+
+    await state.update(
+      runUpdate: (proxy, onProgress) {
+        switch (kind) {
+          case CoreKind.psiphon:
+            return svc.updateCore(
+              'psiphon',
+              proxy: proxy,
+              psiphonRev: provider.settings.psiphonBuildRev,
+              psiphonBinSha: provider.settings.psiphonBinarySha,
+              onProgress: onProgress,
+            );
+          default:
+            return svc.updateCore(
+              _coreIdFor(kind),
+              proxy: proxy,
+              onProgress: onProgress,
+            );
+        }
+      },
+      afterUpdate: () async {
+        if (kind == CoreKind.psiphon) {
+          await _postUpdatePsiphon(svc, provider);
+        } else {
+          await state.refreshInstalled();
+        }
+      },
+    );
+  }
+
+  Future<void> _postUpdatePsiphon(
+      CoreUpdateService svc, AppProvider provider) async {
+    try {
+      final info = await svc.checkForUpdate(
+        'psiphon',
+        proxy: proxyResolver(),
+        psiphonRev: provider.settings.psiphonBuildRev,
+        psiphonBinSha: provider.settings.psiphonBinarySha,
+      );
+      if (info.latestCommit.isNotEmpty) {
+        provider.settings.psiphonBinarySha = info.latestCommit;
+        await provider.saveSettings();
+      }
+    } catch (_) {}
+    await _states[CoreKind.psiphon]!
+        .refreshInstalled(psiphonRev: provider.settings.psiphonBuildRev);
+  }
+
+  // ═══════════════════════════════════════════
+  //  Helper
+  // ═══════════════════════════════════════════
+  static String _coreIdFor(CoreKind kind) {
+    switch (kind) {
+      case CoreKind.aether:
+        return 'aether';
+      case CoreKind.tor:
+        return 'tor';
+      case CoreKind.psiphon:
+        return 'psiphon';
+      case CoreKind.sunandlion:
+        return 'sunandlion';
+      case CoreKind.sstp:
+        return 'sstp';
+    }
+  }
+
+  /// specهای ثابت برای نمایش در UI.
+  static const List<CoreUpdateSpec> specs = [
+    CoreUpdateSpec(
+      kind: CoreKind.aether,
+      displayName: 'Aether',
+    ),
+    CoreUpdateSpec(
+      kind: CoreKind.tor,
+      displayName: 'Tor',
+    ),
+    CoreUpdateSpec(
+      kind: CoreKind.psiphon,
+      displayName: 'Psiphon (official)',
+      note: 'Official binary from Psiphon-Labs.',
+      updateLabelWhenMissing: 'Download',
+    ),
+    CoreUpdateSpec(
+      kind: CoreKind.sunandlion,
+      displayName: 'SunAndLion Psiphon Core',
+      note: 'Unofficial Psiphon fork by ssmirr — required for fronting mode.',
+      updateLabelWhenMissing: 'Download',
+    ),
+    CoreUpdateSpec(
+      kind: CoreKind.sstp,
+      displayName: 'SSTP Proxy',
+      note: 'SSTP client from FossilizedProgrammer/sstp-proxy.',
+      updateLabelWhenMissing: 'Download',
+    ),
+  ];
+}
+
+
+******************************************************
 lib/screens/widgets/core_update/core_update_proxy_resolver.dart
 ******************************************************
 
@@ -3861,12 +4271,13 @@ lib/screens/widgets/core_update_tile.dart
 // lib/screens/widgets/core_update_tile.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../providers/app_provider.dart';
 import '../../services/core_update_service.dart';
 import '../../widgets/settings_tile_base.dart';
-import 'core_update/core_update_section.dart';
+import 'core_update/core_update_content.dart';
+import 'core_update/core_update_controller.dart';
 import 'core_update/core_update_proxy_resolver.dart';
-import 'core_update/core_update_state.dart';
 
 class CoreUpdateTile extends StatefulWidget {
   const CoreUpdateTile({super.key});
@@ -3877,189 +4288,35 @@ class CoreUpdateTile extends StatefulWidget {
 
 class _CoreUpdateTileState extends State<CoreUpdateTile> {
   String _proxyMode = 'auto';
-
-  late final CoreUpdateEntryState _aetherState;
-  late final CoreUpdateEntryState _torState;
-  late final CoreUpdateEntryState _psiState;
-  late final CoreUpdateEntryState _sunLionState;
-  late final CoreUpdateEntryState _sstpState;
-
-  CoreUpdateService get _svc {
-    final provider = context.read<AppProvider>();
-    return CoreUpdateService(log: provider.processService.addLog);
-  }
-
-  String? _resolveProxy() =>
-      CoreUpdateProxyResolver(_proxyMode).resolve(context);
+  CoreUpdateController? _controller;
 
   @override
   void initState() {
     super.initState();
-    _aetherState = CoreUpdateEntryState(
-      coreId: 'Aether',
-      serviceFactory: () => _svc,
-      proxyResolver: () => _resolveProxy() ?? '',
-    )..addListener(_onStateChanged);
-    _torState = CoreUpdateEntryState(
-      coreId: 'Tor',
-      serviceFactory: () => _svc,
-      proxyResolver: () => _resolveProxy() ?? '',
-    )..addListener(_onStateChanged);
-    _psiState = CoreUpdateEntryState(
-      coreId: 'Psiphon',
-      serviceFactory: () => _svc,
-      proxyResolver: () => _resolveProxy() ?? '',
-    )..addListener(_onStateChanged);
-    _sunLionState = CoreUpdateEntryState(
-      coreId: 'SunAndLion',
-      serviceFactory: () => _svc,
-      proxyResolver: () => _resolveProxy() ?? '',
-    )..addListener(_onStateChanged);
-    _sstpState = CoreUpdateEntryState(
-      coreId: 'SSTP',
-      serviceFactory: () => _svc,
-      proxyResolver: () => _resolveProxy() ?? '',
-    )..addListener(_onStateChanged);
-
-    Future.microtask(_refreshAll);
+    _controller = CoreUpdateController(
+      serviceFactory: () {
+        final provider = context.read<AppProvider>();
+        return CoreUpdateService(log: provider.processService.addLog);
+      },
+      proxyResolver: () =>
+          CoreUpdateProxyResolver(_proxyMode).resolve(context) ?? '',
+      providerResolver: () => context.read<AppProvider>(),
+    );
+    _controller!.addListener(_onControllerChanged);
+    Future.microtask(() => _controller?.refreshAll());
   }
 
-  void _onStateChanged() => setState(() {});
+  void _onControllerChanged() {
+    if (mounted) setState(() {});
+  }
 
   @override
   void dispose() {
-    _aetherState.dispose();
-    _torState.dispose();
-    _psiState.dispose();
-    _sunLionState.dispose();
-    _sstpState.dispose();
+    _controller?.removeListener(_onControllerChanged);
+    _controller?.dispose();
     super.dispose();
   }
 
-  Future<void> _refreshAll() async {
-    final provider = context.read<AppProvider>();
-    await _aetherState.refreshInstalled();
-    await _torState.refreshInstalled();
-    await _psiState.refreshInstalled(
-      psiphonRev: provider.settings.psiphonBuildRev,
-    );
-    await _sunLionState.refreshInstalled();
-    await _sstpState.refreshInstalled();
-  }
-
-  // ═══════════════════════════════════════════
-  //  Aether
-  // ═══════════════════════════════════════════
-  Future<void> _checkAether() => _aetherState.check(
-        runCheck: (proxy) => _svc.checkForUpdate('aether', proxy: proxy),
-      );
-
-  Future<void> _updateAether() => _aetherState.update(
-        runUpdate: (proxy, onProgress) => _svc.updateCore(
-          'aether',
-          proxy: proxy,
-          onProgress: onProgress,
-        ),
-        afterUpdate: _aetherState.refreshInstalled,
-      );
-
-  // ═══════════════════════════════════════════
-  //  Tor
-  // ═══════════════════════════════════════════
-  Future<void> _checkTor() => _torState.check(
-        runCheck: (proxy) => _svc.checkForUpdate('tor', proxy: proxy),
-      );
-
-  Future<void> _updateTor() => _torState.update(
-        runUpdate: (proxy, onProgress) => _svc.updateCore(
-          'tor',
-          proxy: proxy,
-          onProgress: onProgress,
-        ),
-        afterUpdate: _torState.refreshInstalled,
-      );
-
-  // ═══════════════════════════════════════════
-  //  Psiphon (official)
-  // ═══════════════════════════════════════════
-  Future<void> _checkPsi() async {
-    final provider = context.read<AppProvider>();
-    await _psiState.check(
-      runCheck: (proxy) => _svc.checkForUpdate(
-        'psiphon',
-        proxy: proxy,
-        psiphonRev: provider.settings.psiphonBuildRev,
-        psiphonBinSha: provider.settings.psiphonBinarySha,
-      ),
-    );
-  }
-
-  Future<void> _updatePsi() async {
-    final provider = context.read<AppProvider>();
-    await _psiState.update(
-      runUpdate: (proxy, onProgress) => _svc.updateCore(
-        'psiphon',
-        proxy: proxy,
-        psiphonRev: provider.settings.psiphonBuildRev,
-        psiphonBinSha: provider.settings.psiphonBinarySha,
-        onProgress: onProgress,
-      ),
-      afterUpdate: () async {
-        try {
-          final info = await _svc.checkForUpdate(
-            'psiphon',
-            proxy: _resolveProxy(),
-            psiphonRev: provider.settings.psiphonBuildRev,
-            psiphonBinSha: provider.settings.psiphonBinarySha,
-          );
-          if (info.latestCommit.isNotEmpty) {
-            provider.settings.psiphonBinarySha = info.latestCommit;
-            await provider.saveSettings();
-          }
-        } catch (_) {}
-        await _psiState.refreshInstalled(
-          psiphonRev: provider.settings.psiphonBuildRev,
-        );
-      },
-    );
-  }
-
-  // ═══════════════════════════════════════════
-  //  SunAndLion
-  // ═══════════════════════════════════════════
-  Future<void> _checkSunLion() => _sunLionState.check(
-        runCheck: (proxy) =>
-            _svc.checkForUpdate('sunandlion', proxy: proxy),
-      );
-
-  Future<void> _updateSunLion() => _sunLionState.update(
-        runUpdate: (proxy, onProgress) => _svc.updateCore(
-          'sunandlion',
-          proxy: proxy,
-          onProgress: onProgress,
-        ),
-        afterUpdate: _sunLionState.refreshInstalled,
-      );
-
-  // ═══════════════════════════════════════════
-  //  SSTP Proxy
-  // ═══════════════════════════════════════════
-  Future<void> _checkSstp() => _sstpState.check(
-        runCheck: (proxy) => _svc.checkForUpdate('sstp', proxy: proxy),
-      );
-
-  Future<void> _updateSstp() => _sstpState.update(
-        runUpdate: (proxy, onProgress) => _svc.updateCore(
-          'sstp',
-          proxy: proxy,
-          onProgress: onProgress,
-        ),
-        afterUpdate: _sstpState.refreshInstalled,
-      );
-
-  // ═══════════════════════════════════════════
-  //  UI
-  // ═══════════════════════════════════════════
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -4069,96 +4326,12 @@ class _CoreUpdateTileState extends State<CoreUpdateTile> {
       iconBackgroundColor: theme.colorScheme.primary,
       initiallyExpanded: false,
       children: [
-        SettingsDropdown<String>(
-          labelText: 'Download via',
-          value: _proxyMode,
-          items: coreUpdateProxyItems,
-          onChanged: (v) => setState(() => _proxyMode = v ?? 'auto'),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'Checks and downloads ride the selected proxy when direct access is filtered.',
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
+        if (_controller != null)
+          CoreUpdateContent(
+            controller: _controller!,
+            proxyMode: _proxyMode,
+            onProxyModeChanged: (v) => setState(() => _proxyMode = v),
           ),
-        ),
-        const SizedBox(height: 16),
-        CoreUpdateSection(
-          name: 'Aether',
-          installed: _aetherState.installed,
-          latest: _aetherState.latest,
-          busy: _aetherState.checking || _aetherState.updating,
-          checking: _aetherState.checking,
-          updating: _aetherState.updating,
-          progress: _aetherState.progress,
-          onCheck: _checkAether,
-          onUpdate: _updateAether,
-          downloadUrl: _aetherState.downloadUrl,
-          checkMessage: _aetherState.checkMessage,
-        ),
-        const Divider(height: 24),
-        CoreUpdateSection(
-          name: 'Tor',
-          installed: _torState.installed,
-          latest: _torState.latest,
-          busy: _torState.checking || _torState.updating,
-          checking: _torState.checking,
-          updating: _torState.updating,
-          progress: _torState.progress,
-          onCheck: _checkTor,
-          onUpdate: _updateTor,
-          downloadUrl: _torState.downloadUrl,
-          checkMessage: _torState.checkMessage,
-        ),
-        const Divider(height: 24),
-        CoreUpdateSection(
-          name: 'Psiphon (official)',
-          installed: _psiState.installed,
-          latest: _psiState.latest,
-          busy: _psiState.checking || _psiState.updating,
-          checking: _psiState.checking,
-          updating: _psiState.updating,
-          progress: _psiState.progress,
-          onCheck: _checkPsi,
-          onUpdate: _updatePsi,
-          updateLabel: _psiState.missing ? 'Download' : null,
-          note: 'Official binary from Psiphon-Labs.',
-          downloadUrl: _psiState.downloadUrl,
-          checkMessage: _psiState.checkMessage,
-        ),
-        const Divider(height: 24),
-        CoreUpdateSection(
-          name: 'SunAndLion Psiphon Core',
-          installed: _sunLionState.installed,
-          latest: _sunLionState.latest,
-          busy: _sunLionState.checking || _sunLionState.updating,
-          checking: _sunLionState.checking,
-          updating: _sunLionState.updating,
-          progress: _sunLionState.progress,
-          onCheck: _checkSunLion,
-          onUpdate: _updateSunLion,
-          updateLabel: _sunLionState.missing ? 'Download' : null,
-          note: 'Unofficial Psiphon fork by ssmirr — '
-              'required for fronting mode.',
-          downloadUrl: _sunLionState.downloadUrl,
-          checkMessage: _sunLionState.checkMessage,
-        ),
-        const Divider(height: 24),
-        CoreUpdateSection(
-          name: 'SSTP Proxy',
-          installed: _sstpState.installed,
-          latest: _sstpState.latest,
-          busy: _sstpState.checking || _sstpState.updating,
-          checking: _sstpState.checking,
-          updating: _sstpState.updating,
-          progress: _sstpState.progress,
-          onCheck: _checkSstp,
-          onUpdate: _updateSstp,
-          updateLabel: _sstpState.missing ? 'Download' : null,
-          note: 'SSTP client from FossilizedProgrammer/sstp-proxy.',
-          downloadUrl: _sstpState.downloadUrl,
-          checkMessage: _sstpState.checkMessage,
-        ),
       ],
     );
   }
@@ -4329,11 +4502,11 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('MischiefPingu',
+              const Text('Mischief Pingu',
                   style: TextStyle(fontWeight: FontWeight.w800)),
               const SizedBox(height: 8),
               Text(
-                'Unofficial Psiphon + Aether + Tor + SSTP client',
+                'Unofficial Psiphon client ,Aether client, Tor client, SSTP client',
                 style: theme.textTheme.bodySmall?.copyWith(
                     fontSize: 11,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -6061,14 +6234,9 @@ import 'sstp/sstp_fronting_section.dart';
 import 'sstp/sstp_ports_section.dart';
 import 'sstp/sstp_switches_section.dart';
 
-class SstpSettingsTile extends StatefulWidget {
+class SstpSettingsTile extends StatelessWidget {
   const SstpSettingsTile({super.key});
 
-  @override
-  State<SstpSettingsTile> createState() => _SstpSettingsTileState();
-}
-
-class _SstpSettingsTileState extends State<SstpSettingsTile> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
@@ -6175,6 +6343,40 @@ class _SstpSettingsTileState extends State<SstpSettingsTile> {
       ],
     );
   }
+}
+
+
+******************************************************
+lib/screens/widgets/sstp/sstp_callbacks.dart
+******************************************************
+
+// lib/screens/widgets/sstp/sstp_callbacks.dart
+import '../../models/settings_model.dart';
+
+class SstpCallbacks {
+  final AppSettings settings;
+  final VoidCallback save;
+  final VoidCallback touch;
+
+  const SstpCallbacks({
+    required this.settings,
+    required this.save,
+    required this.touch,
+  });
+
+  void onServerChanged(String v) {
+    settings.sstpServer = v.trim();
+    save();
+  }
+
+  void onPortChanged(String v) {
+    final p = int.tryParse(v.trim());
+    if (p != null && p > 0 && p < 65536) {
+      settings.sstpPort = p;
+      save();
+    }
+  }
+  // ...
 }
 
 
@@ -7177,15 +7379,361 @@ class TorSettingsTile extends StatelessWidget {
 
 
 ******************************************************
-lib/screens/widgets/tor/tor_transport_tile.dart
+lib/screens/widgets/tor/tor_bridges_section.dart
 ******************************************************
 
+// lib/screens/widgets/tor/tor_bridges_section.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/app_provider.dart';
 import '../../../services/tor_bridges.dart';
 
-class TorTransportTile extends StatefulWidget {
+class TorBridgesSection extends StatefulWidget {
+  final ThemeData theme;
+  final String torTransport;
+  final String torBridges;
+  final ValueChanged<String> onBridgesChanged;
+  final ValueChanged<String?> onTransportChanged;
+
+  const TorBridgesSection({
+    super.key,
+    required this.theme,
+    required this.torTransport,
+    required this.torBridges,
+    required this.onBridgesChanged,
+    required this.onTransportChanged,
+  });
+
+  @override
+  State<TorBridgesSection> createState() => _TorBridgesSectionState();
+}
+
+class _TorBridgesSectionState extends State<TorBridgesSection> {
+  late final TextEditingController _bridgesController;
+
+  @override
+  void initState() {
+    super.initState();
+    _bridgesController = TextEditingController(text: widget.torBridges);
+  }
+
+  @override
+  void dispose() {
+    _bridgesController.dispose();
+    super.dispose();
+  }
+
+  void _applyPreset(String bridges) {
+    widget.onTransportChanged('bridge');
+    widget.onBridgesChanged(bridges);
+    setState(() {
+      _bridgesController.text = bridges;
+    });
+    context.read<AppProvider>().touch();
+  }
+
+  void _clearBridges() {
+    widget.onBridgesChanged('');
+    setState(() {
+      _bridgesController.clear();
+    });
+    context.read<AppProvider>().touch();
+  }
+
+  String get _hintText {
+    switch (widget.torTransport) {
+      case 'aether':
+        return 'Empty = plain Tor-over-Aether. Filled = bridges dial through Aether (TOR_PT_PROXY).';
+      case 'psiphon':
+        return 'Empty = plain Tor-over-Psiphon. Filled = bridges dial through Psiphon (TOR_PT_PROXY).';
+      case 'sstp':
+        return 'Empty = plain Tor-over-SSTP. Filled = bridges dial through SSTP (TOR_PT_PROXY).';
+      default:
+        return 'Paste obfs4 / snowflake / meek / webtunnel / conjure lines. Empty = direct Tor.';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = widget.theme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 12),
+        Text(
+          'Bridge presets (optional)',
+          style: theme.textTheme.labelMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            OutlinedButton(
+              onPressed: () => _applyPreset(TorBridges.meekCdn77),
+              child: const Text('Meek'),
+            ),
+            OutlinedButton(
+              onPressed: () => _applyPreset(TorBridges.snowflakeCdn77),
+              child: const Text('Snowflake'),
+            ),
+            OutlinedButton(
+              onPressed: () => _applyPreset(TorBridges.obfs4Iat.join('\n')),
+              child: const Text('obfs4 (anti-timing)'),
+            ),
+            OutlinedButton(
+              onPressed: () =>
+                  _applyPreset(TorBridges.obfs4Public.join('\n')),
+              child: const Text('obfs4 (public)'),
+            ),
+            TextButton(
+              onPressed: _clearBridges,
+              child: const Text('Clear'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: _bridgesController,
+          maxLines: 5,
+          decoration: const InputDecoration(
+            labelText:
+                'Bridges (one per line, custom supported — incl. webtunnel)',
+            hintText: 'obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0',
+            alignLabelWithHint: true,
+          ),
+          onChanged: (v) {
+            final provider = context.read<AppProvider>();
+            provider.settings.torBridges = v;
+            provider.saveSettings();
+            widget.onBridgesChanged(v);
+          },
+        ),
+        const SizedBox(height: 4),
+        Text(
+          _hintText,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
+******************************************************
+lib/screens/widgets/tor/tor_exit_country_section.dart
+******************************************************
+
+// lib/screens/widgets/tor/tor_exit_country_section.dart
+import 'package:flutter/material.dart';
+
+class TorExitCountrySection extends StatelessWidget {
+  final String torExitCountry;
+  final ValueChanged<String?> onExitCountryChanged;
+  final List<String> torExitCountries;
+
+  const TorExitCountrySection({
+    super.key,
+    required this.torExitCountry,
+    required this.onExitCountryChanged,
+    required this.torExitCountries,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField<String>(
+      key: ValueKey(
+          'tor-exit:${torExitCountry.isEmpty ? '' : torExitCountry.toUpperCase()}'),
+      initialValue:
+          torExitCountry.isEmpty ? '' : torExitCountry.toUpperCase(),
+      decoration: const InputDecoration(
+        labelText: 'Exit country',
+        isDense: true,
+      ),
+      items: torExitCountries
+          .map((c) => DropdownMenuItem(
+                value: c,
+                child: Text(c.isEmpty ? 'Any (random)' : c),
+              ))
+          .toList(),
+      onChanged: onExitCountryChanged,
+    );
+  }
+}
+
+
+******************************************************
+lib/screens/widgets/tor/tor_ports_section.dart
+******************************************************
+
+// lib/screens/widgets/tor/tor_ports_section.dart
+import 'package:flutter/material.dart';
+
+class TorPortsSection extends StatelessWidget {
+  final int torSocksPort;
+  final ValueChanged<String> onSocksPortChanged;
+  final int torHttpPort;
+  final ValueChanged<String> onHttpPortChanged;
+
+  const TorPortsSection({
+    super.key,
+    required this.torSocksPort,
+    required this.onSocksPortChanged,
+    required this.torHttpPort,
+    required this.onHttpPortChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: TextFormField(
+            initialValue: torSocksPort.toString(),
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'SOCKS port',
+              isDense: true,
+            ),
+            onChanged: onSocksPortChanged,
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: TextFormField(
+            initialValue: torHttpPort.toString(),
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'HTTP port',
+              isDense: true,
+            ),
+            onChanged: onHttpPortChanged,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
+******************************************************
+lib/screens/widgets/tor/tor_switches_section.dart
+******************************************************
+
+// lib/screens/widgets/tor/tor_switches_section.dart
+import 'package:flutter/material.dart';
+
+class TorSwitchesSection extends StatelessWidget {
+  final bool torShareLan;
+  final ValueChanged<bool> onShareLanChanged;
+  final bool autoReconnectTor;
+  final ValueChanged<bool> onAutoReconnectChanged;
+
+  const TorSwitchesSection({
+    super.key,
+    required this.torShareLan,
+    required this.onShareLanChanged,
+    required this.autoReconnectTor,
+    required this.onAutoReconnectChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          dense: true,
+          title: const Text('Share on LAN (bind 0.0.0.0)'),
+          value: torShareLan,
+          onChanged: onShareLanChanged,
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          dense: true,
+          title: const Text('Auto-reconnect Tor'),
+          value: autoReconnectTor,
+          onChanged: onAutoReconnectChanged,
+        ),
+      ],
+    );
+  }
+}
+
+
+******************************************************
+lib/screens/widgets/tor/tor_transport_selector.dart
+******************************************************
+
+// lib/screens/widgets/tor/tor_transport_selector.dart
+import 'package:flutter/material.dart';
+
+class TorTransportSelector extends StatelessWidget {
+  final String transportLabel;
+  final String torTransport;
+  final ValueChanged<String?> onTransportChanged;
+
+  const TorTransportSelector({
+    super.key,
+    required this.transportLabel,
+    required this.torTransport,
+    required this.onTransportChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField<String>(
+      key: ValueKey('tor-transport:$torTransport'),
+      initialValue: torTransport,
+      decoration: InputDecoration(
+        labelText: transportLabel,
+        isDense: true,
+      ),
+      items: const [
+        DropdownMenuItem(
+          value: 'direct',
+          child: Text('Direct (no bridge, no upstream) — default'),
+        ),
+        DropdownMenuItem(
+          value: 'bridge',
+          child: Text('Bridge (obfs4 / snowflake / custom)'),
+        ),
+        DropdownMenuItem(
+          value: 'aether',
+          child: Text('Via Aether (Tor-over-Aether)'),
+        ),
+        DropdownMenuItem(
+          value: 'psiphon',
+          child: Text('Via Psiphon (Tor-over-Psiphon)'),
+        ),
+        DropdownMenuItem(
+          value: 'sstp',
+          child: Text('Via SSTP (Tor-over-SSTP)'),
+        ),
+      ],
+      onChanged: onTransportChanged,
+    );
+  }
+}
+
+
+******************************************************
+lib/screens/widgets/tor/tor_transport_tile.dart
+******************************************************
+
+// lib/screens/widgets/tor/tor_transport_tile.dart
+import 'package:flutter/material.dart';
+import 'tor_transport_selector.dart';
+import 'tor_ports_section.dart';
+import 'tor_bridges_section.dart';
+import 'tor_switches_section.dart';
+
+class TorTransportTile extends StatelessWidget {
   final ThemeData theme;
   final String transportLabel;
   final String torTransport;
@@ -7226,219 +7774,43 @@ class TorTransportTile extends StatefulWidget {
   });
 
   @override
-  State<TorTransportTile> createState() => _TorTransportTileState();
-}
-
-class _TorTransportTileState extends State<TorTransportTile> {
-  late final TextEditingController _bridgesController;
-
-  @override
-  void initState() {
-    super.initState();
-    _bridgesController = TextEditingController(text: widget.torBridges);
-  }
-
-  @override
-  void dispose() {
-    _bridgesController.dispose();
-    super.dispose();
-  }
-
-  void _applyPreset(String bridges) {
-    widget.onTransportChanged('bridge');
-    widget.onBridgesChanged(bridges);
-    setState(() {
-      _bridgesController.text = bridges;
-    });
-    context.read<AppProvider>().touch();
-  }
-
-  void _clearBridges() {
-    widget.onBridgesChanged('');
-    setState(() {
-      _bridgesController.clear();
-    });
-    context.read<AppProvider>().touch();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final theme = widget.theme;
-    final torTransport = widget.torTransport;
-    final onTransportChanged = widget.onTransportChanged;
-    final torExitCountry = widget.torExitCountry;
-    final onExitCountryChanged = widget.onExitCountryChanged;
-    final torSocksPort = widget.torSocksPort;
-    final onSocksPortChanged = widget.onSocksPortChanged;
-    final torHttpPort = widget.torHttpPort;
-    final onHttpPortChanged = widget.onHttpPortChanged;
-    final torExitCountries = widget.torExitCountries;
-    final torShareLan = widget.torShareLan;
-    final onShareLanChanged = widget.onShareLanChanged;
-    final autoReconnectTor = widget.autoReconnectTor;
-    final onAutoReconnectChanged = widget.onAutoReconnectChanged;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DropdownButtonFormField<String>(
-          key: ValueKey('tor-transport:$torTransport'),
-          initialValue: torTransport,
-          decoration: const InputDecoration(
-            labelText: 'Tor connection',
-            isDense: true,
-          ),
-          items: const [
-            DropdownMenuItem(
-              value: 'direct',
-              child: Text('Direct (no bridge, no upstream) — default'),
-            ),
-            DropdownMenuItem(
-              value: 'bridge',
-              child: Text('Bridge (obfs4 / snowflake / custom)'),
-            ),
-            DropdownMenuItem(
-              value: 'aether',
-              child: Text('Via Aether (Tor-over-Aether)'),
-            ),
-            DropdownMenuItem(
-              value: 'psiphon',
-              child: Text('Via Psiphon (Tor-over-Psiphon)'),
-            ),
-            DropdownMenuItem(
-              value: 'sstp',
-              child: Text('Via SSTP (Tor-over-SSTP)'),
-            ),
-          ],
-          onChanged: onTransportChanged,
+        TorTransportSelector(
+          transportLabel: transportLabel,
+          torTransport: torTransport,
+          onTransportChanged: onTransportChanged,
         ),
         const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: TextFormField(
-                initialValue: torSocksPort.toString(),
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'SOCKS port',
-                  isDense: true,
-                ),
-                onChanged: onSocksPortChanged,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: TextFormField(
-                initialValue: torHttpPort.toString(),
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'HTTP port',
-                  isDense: true,
-                ),
-                onChanged: onHttpPortChanged,
-              ),
-            ),
-          ],
+        TorPortsSection(
+          torSocksPort: torSocksPort,
+          onSocksPortChanged: onSocksPortChanged,
+          torHttpPort: torHttpPort,
+          onHttpPortChanged: onHttpPortChanged,
         ),
         const SizedBox(height: 16),
-        DropdownButtonFormField<String>(
-          key: ValueKey(
-              'tor-exit:${torExitCountry.isEmpty ? '' : torExitCountry.toUpperCase()}'),
-          initialValue:
-              torExitCountry.isEmpty ? '' : torExitCountry.toUpperCase(),
-          decoration: const InputDecoration(
-            labelText: 'Exit country',
-            isDense: true,
-          ),
-          items: torExitCountries
-              .map((c) => DropdownMenuItem(
-                    value: c,
-                    child: Text(c.isEmpty ? 'Any (random)' : c),
-                  ))
-              .toList(),
-          onChanged: onExitCountryChanged,
+        TorExitCountrySection(
+          torExitCountry: torExitCountry,
+          onExitCountryChanged: onExitCountryChanged,
+          torExitCountries: torExitCountries,
         ),
         const SizedBox(height: 16),
-        SwitchListTile(
-          contentPadding: EdgeInsets.zero,
-          dense: true,
-          title: const Text('Share on LAN (bind 0.0.0.0)'),
-          value: torShareLan,
-          onChanged: onShareLanChanged,
-        ),
-        SwitchListTile(
-          contentPadding: EdgeInsets.zero,
-          dense: true,
-          title: const Text('Auto-reconnect Tor'),
-          value: autoReconnectTor,
-          onChanged: onAutoReconnectChanged,
+        TorSwitchesSection(
+          torShareLan: torShareLan,
+          onShareLanChanged: onShareLanChanged,
+          autoReconnectTor: autoReconnectTor,
+          onAutoReconnectChanged: onAutoReconnectChanged,
         ),
         const Divider(height: 28),
         if (torTransport != 'direct') ...[
-          const SizedBox(height: 12),
-          Text(
-            'Bridge presets (optional)',
-            style: theme.textTheme.labelMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              OutlinedButton(
-                onPressed: () => _applyPreset(TorBridges.meekCdn77),
-                child: const Text('Meek'),
-              ),
-              OutlinedButton(
-                onPressed: () => _applyPreset(TorBridges.snowflakeCdn77),
-                child: const Text('Snowflake'),
-              ),
-              OutlinedButton(
-                onPressed: () => _applyPreset(TorBridges.obfs4Iat.join('\n')),
-                child: const Text('obfs4 (anti-timing)'),
-              ),
-              OutlinedButton(
-                onPressed: () =>
-                    _applyPreset(TorBridges.obfs4Public.join('\n')),
-                child: const Text('obfs4 (public)'),
-              ),
-              TextButton(
-                onPressed: _clearBridges,
-                child: const Text('Clear'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          TextFormField(
-            controller: _bridgesController,
-            maxLines: 5,
-            decoration: const InputDecoration(
-              labelText:
-                  'Bridges (one per line, custom supported — incl. webtunnel)',
-              hintText: 'obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0',
-              alignLabelWithHint: true,
-            ),
-            onChanged: (v) {
-              final provider = context.read<AppProvider>();
-              provider.settings.torBridges = v;
-              provider.saveSettings();
-              widget.onBridgesChanged(v);
-            },
-          ),
-          const SizedBox(height: 4),
-          Text(
-            torTransport == 'aether'
-                ? 'Empty = plain Tor-over-Aether. Filled = bridges dial through Aether (TOR_PT_PROXY).'
-                : torTransport == 'psiphon'
-                    ? 'Empty = plain Tor-over-Psiphon. Filled = bridges dial through Psiphon (TOR_PT_PROXY).'
-                    : torTransport == 'sstp'
-                        ? 'Empty = plain Tor-over-SSTP. Filled = bridges dial through SSTP (TOR_PT_PROXY).'
-                        : 'Paste obfs4 / snowflake / meek / webtunnel / conjure lines. Empty = direct Tor.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
+          TorBridgesSection(
+            theme: theme,
+            torTransport: torTransport,
+            torBridges: torBridges,
+            onBridgesChanged: onBridgesChanged,
+            onTransportChanged: onTransportChanged,
           ),
         ] else ...[
           const SizedBox(height: 8),
@@ -7548,6 +7920,188 @@ class AetherConfigParser {
     if (parts.length != 2) return false;
     final portNum = int.tryParse(parts[1]);
     return portNum != null && portNum > 0 && portNum <= 65535;
+  }
+}
+
+
+******************************************************
+lib/services/aether/aether_test_executor.dart
+******************************************************
+
+// lib/services/aether/aether_test_executor.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  AetherTestExecutor — اجرای حلقه اصلی auto-test Aether.
+//  (تفکیک شده از aether_auto_test_service.dart)
+// ═══════════════════════════════════════════════════════════════
+library;
+
+import 'dart:async';
+
+import '../../models/settings_model.dart';
+import '../aether_attempt_runner.dart';
+import '../aether_attempts.dart';
+import '../aether_cache_manager.dart';
+import '../aether_endpoint_store.dart';
+import '../process_service.dart';
+import 'aether_test_helpers.dart';
+
+class AetherTestExecutor {
+  final ProcessService processService;
+  final AppSettings settings;
+  final AetherAttemptPlanner planner;
+  final AetherEndpointStore store;
+  final AetherAttemptRunner runner;
+  final AetherCacheManager cacheManager;
+  final AetherTestHelpers helpers;
+
+  bool _cancelRequested = false;
+  bool _portSwapTried = false;
+
+  AetherTestExecutor({
+    required this.processService,
+    required this.settings,
+    required this.planner,
+    required this.store,
+    required this.runner,
+    required this.cacheManager,
+    required this.helpers,
+  });
+
+  bool get isCancelRequested => _cancelRequested;
+  void requestCancel() => _cancelRequested = true;
+
+  void reset() {
+    _cancelRequested = false;
+    _portSwapTried = false;
+  }
+
+  /// اجرای تست خودکار. true اگر یک attempt موفق شد.
+  Future<bool> run({required bool isAuto}) async {
+    var port = settings.aetherLocalPort;
+
+    // بارگذاری برندهٔ قبلی (فقط برای حالت auto)
+    MapEntry<String, String>? autoWinner;
+    if (isAuto) {
+      autoWinner = await helpers.safe<MapEntry<String, String>?>(
+        store.loadAutoWinner,
+      );
+    }
+
+    final candidates = planner.buildCandidates(autoWinner: autoWinner);
+
+    for (final attempt in candidates) {
+      if (_cancelRequested) break;
+
+      processService.addLog(
+        '↻ Trying ${attempt.label}',
+        source: LogSource.aether,
+      );
+
+      final args = planner.argsFor(
+        protocol: attempt.protocol,
+        masqueOption: attempt.masque,
+        port: port,
+        endpointOverride: attempt.endpoint,
+      );
+
+      final result = await runner.run(
+        attempt: attempt,
+        args: args,
+        port: port,
+      );
+
+      // ─── موفقیت ───
+      if (result.isSuccess) {
+        await store.saveSuccessState(
+          protocol: attempt.protocol,
+          masque: attempt.masque,
+          endpoint: attempt.endpoint,
+        );
+        processService.setAetherProtocolNotification(attempt.protocol);
+        processService.addLog(
+          '★ ${attempt.label} connected successfully',
+          source: LogSource.aether,
+        );
+        return true;
+      }
+
+      // ─── شکست — تصمیم‌گیری ───
+      final shouldContinue = await _handleFailure(
+        result: result,
+        attempt: attempt,
+        port: port,
+        onPortSwapped: (newPort) => port = newPort,
+      );
+      if (!shouldContinue) continue;
+    }
+
+    processService.addLog(
+      '✗ All candidates failed',
+      source: LogSource.aether,
+    );
+    return false;
+  }
+
+  Future<bool> _handleFailure({
+    required AttemptResult result,
+    required EndpointAttempt attempt,
+    required int port,
+    required void Function(int) onPortSwapped,
+  }) async {
+    switch (result.outcome) {
+      case AttemptOutcome.refused:
+        processService.addLog(
+          '→ ${attempt.label} refused, trying next candidate…',
+          source: LogSource.aether,
+        );
+        await processService.stopAether();
+        await Future.delayed(const Duration(milliseconds: 400));
+        return true;
+
+      case AttemptOutcome.tunnelDead:
+        processService.addLog(
+          '→ ${attempt.label} tunnel dead, clearing cache and retrying…',
+          source: LogSource.aether,
+        );
+        await processService.stopAether();
+        await Future.delayed(const Duration(milliseconds: 800));
+        await helpers.safe<void>(
+          () => cacheManager.clearCachedGateway(
+            specificProtocol: attempt.protocol,
+          ),
+        );
+        return true;
+
+      case AttemptOutcome.timeout:
+      case AttemptOutcome.startFailed:
+        final hasListener = await ProcessService.isPortInUse(port);
+        if (!_portSwapTried && !_cancelRequested && !hasListener) {
+          await processService.stopAether();
+          await Future.delayed(const Duration(milliseconds: 800));
+          final np = await helpers.swapPort(
+            currentPort: port,
+            onPortChanged: (newPort) {
+              settings.aetherLocalPort = newPort;
+              _portSwapTried = true;
+            },
+          );
+          if (np != null) {
+            onPortSwapped(np);
+            processService.addLog(
+              '→ Switched to port $np, retrying…',
+              source: LogSource.aether,
+            );
+            return true;
+          }
+        }
+        await processService.stopAether();
+        await Future.delayed(const Duration(milliseconds: 600));
+        return true;
+
+      case AttemptOutcome.success:
+        return false;
+    }
   }
 }
 
@@ -7894,22 +8448,17 @@ lib/services/aether_auto_test_service.dart
 // ═══════════════════════════════════════════════════════════════
 //  AetherAutoTestService — orchestrator اصلی auto-test Aether.
 //
-//  مسئولیت‌ها پس از تفکیک:
-//    • AetherAttemptPlanner       → ساخت لیست کاندیداها + args
-//    • AetherEndpointStore        → ذخیره/خواندن endpoint موفق
-//    • SocksProber                → probe سلامت SOCKS
-//    • AetherAttemptRunner        → اجرای یک attempt
-//    • PortManager                → مدیریت پورت
-//    • AetherCacheManager         → پاک‌سازی کش
-//    • AetherTestHelpers          → helperهای عمومی (safe, swapPort)
-//
-//  این کلاس فقط حلقهٔ اصلی + تصمیم‌گیری را دارد.
+//  مسئولیت‌ها:
+//    • ساخت collaboratorها (planner/store/runner/cache/helpers)
+//    • مدیریت _testFuture و _cancelRequested
+//    • delegate کردن اجرا به AetherTestExecutor
 // ═══════════════════════════════════════════════════════════════
 library;
 
 import 'dart:async';
 
 import '../models/settings_model.dart';
+import 'aether/aether_test_executor.dart';
 import 'aether/aether_test_helpers.dart';
 import 'aether_attempt_runner.dart';
 import 'aether_attempts.dart';
@@ -7922,8 +8471,6 @@ class AetherAutoTestService {
   final ProcessService processService;
   AppSettings settings;
 
-  bool _cancelRequested = false;
-  bool _portSwapTried = false;
   Future<bool>? _testFuture;
 
   // ─── collaborators ───
@@ -7933,6 +8480,7 @@ class AetherAutoTestService {
   late AetherAttemptRunner _runner;
   late AetherCacheManager _cacheManager;
   late AetherTestHelpers _helpers;
+  late AetherTestExecutor _executor;
 
   AetherAutoTestService({
     required this.processService,
@@ -7941,11 +8489,10 @@ class AetherAutoTestService {
     _rebuildCollaborators();
   }
 
-  /// (Re)build همهٔ collaboratorها بر اساس `settings` فعلی.
   void _rebuildCollaborators() {
     _prober = SocksProber(
       processService,
-      isCancelled: () => _cancelRequested,
+      isCancelled: () => _executor.isCancelRequested,
     );
 
     _planner = AetherAttemptPlanner(settings);
@@ -7963,6 +8510,16 @@ class AetherAutoTestService {
     _cacheManager = AetherCacheManager(processService: processService);
 
     _helpers = AetherTestHelpers(processService: processService);
+
+    _executor = AetherTestExecutor(
+      processService: processService,
+      settings: settings,
+      planner: _planner,
+      store: _store,
+      runner: _runner,
+      cacheManager: _cacheManager,
+      helpers: _helpers,
+    );
   }
 
   void updateSettings(AppSettings newSettings) {
@@ -7970,18 +8527,16 @@ class AetherAutoTestService {
     _rebuildCollaborators();
   }
 
-  bool get isCancelRequested => _cancelRequested;
+  bool get isCancelRequested => _executor.isCancelRequested;
 
-  void requestCancel() {
-    _cancelRequested = true;
-  }
+  void requestCancel() => _executor.requestCancel();
 
-  /// نقطهٔ ورود عمومی — idempotent اگر تست در حال اجرا باشد.
+  /// نقطهٔ ورود عمومی — idempotent.
   Future<bool> ensureHealthy({bool showUi = true}) {
     final existing = _testFuture;
     if (existing != null) return existing;
 
-    final future = _runAutoTest(showUi: showUi);
+    final future = _runAutoTest();
     _testFuture = future;
     future.whenComplete(() {
       if (identical(_testFuture, future)) _testFuture = null;
@@ -7989,135 +8544,12 @@ class AetherAutoTestService {
     return future;
   }
 
-  /// خواندن آخرین endpoint موفق (از UI فراخوانی می‌شود).
   Future<String?> getLastSuccessfulEndpoint() =>
       _store.getLastSuccessfulEndpoint();
 
-  // ═══════════════════════════════════════════
-  //  اجرای تست خودکار
-  //
-  //  اولویت‌ها:
-  //    1) Custom Endpoint (اگر کاربر تعیین کرده)
-  //    2) Last Successful Endpoint (اگر quickReconnect فعال است)
-  //    3) Auto Winner (از SharedPreferences)
-  //    4) اسکن عادی بر اساس پروتکل انتخاب‌شده
-  // ═══════════════════════════════════════════
-  Future<bool> _runAutoTest({bool showUi = true}) async {
-    _cancelRequested = false;
-    _portSwapTried = false;
-    var port = settings.aetherLocalPort;
-    final isAuto = settings.aetherProtocol == 'auto';
-
-    // بارگذاری برندهٔ قبلی (فقط برای حالت auto)
-    // ✅ type parameter صریح داده شده تا nullable درست resolve شود
-    MapEntry<String, String>? autoWinner;
-    if (isAuto) {
-      autoWinner = await _helpers.safe<MapEntry<String, String>?>(
-        _store.loadAutoWinner,
-      );
-    }
-
-    final candidates = _planner.buildCandidates(autoWinner: autoWinner);
-
-    for (final attempt in candidates) {
-      if (_cancelRequested) break;
-
-      processService.addLog(
-        '↻ Trying ${attempt.label}',
-        source: LogSource.aether,
-      );
-
-      final args = _planner.argsFor(
-        protocol: attempt.protocol,
-        masqueOption: attempt.masque,
-        port: port,
-        endpointOverride: attempt.endpoint,
-      );
-
-      final result = await _runner.run(
-        attempt: attempt,
-        args: args,
-        port: port,
-      );
-
-      // ─── موفقیت ───
-      if (result.isSuccess) {
-        await _store.saveSuccessState(
-          protocol: attempt.protocol,
-          masque: attempt.masque,
-          endpoint: attempt.endpoint,
-        );
-        processService.setAetherProtocolNotification(attempt.protocol);
-        processService.addLog(
-          '★ ${attempt.label} connected successfully',
-          source: LogSource.aether,
-        );
-        return true;
-      }
-
-      // ─── شکست — تصمیم‌گیری بر اساس نوع ───
-      switch (result.outcome) {
-        case AttemptOutcome.refused:
-          processService.addLog(
-            '→ ${attempt.label} refused, trying next candidate…',
-            source: LogSource.aether,
-          );
-          await processService.stopAether();
-          await Future.delayed(const Duration(milliseconds: 400));
-          continue;
-
-        case AttemptOutcome.tunnelDead:
-          processService.addLog(
-            '→ ${attempt.label} tunnel dead, clearing cache and retrying…',
-            source: LogSource.aether,
-          );
-          await processService.stopAether();
-          await Future.delayed(const Duration(milliseconds: 800));
-          await _helpers.safe<void>(
-            () => _cacheManager.clearCachedGateway(
-              specificProtocol: attempt.protocol,
-            ),
-          );
-          continue;
-
-        case AttemptOutcome.timeout:
-        case AttemptOutcome.startFailed:
-          // یک بار swap پورت امتحان کن
-          final hasListener = await ProcessService.isPortInUse(port);
-          if (!_portSwapTried && !_cancelRequested && !hasListener) {
-            await processService.stopAether();
-            await Future.delayed(const Duration(milliseconds: 800));
-            final np = await _helpers.swapPort(
-              currentPort: port,
-              onPortChanged: (newPort) {
-                settings.aetherLocalPort = newPort;
-                _portSwapTried = true;
-              },
-            );
-            if (np != null) {
-              port = np;
-              processService.addLog(
-                '→ Switched to port $port, retrying…',
-                source: LogSource.aether,
-              );
-              continue;
-            }
-          }
-          await processService.stopAether();
-          await Future.delayed(const Duration(milliseconds: 600));
-          continue;
-
-        case AttemptOutcome.success:
-          // قبلاً handle شده — برای exhaustive switch
-          return true;
-      }
-    }
-
-    processService.addLog(
-      '✗ All candidates failed',
-      source: LogSource.aether,
-    );
-    return false;
+  Future<bool> _runAutoTest() async {
+    _executor.reset();
+    return _executor.run(isAuto: settings.aetherProtocol == 'auto');
   }
 }
 
@@ -9666,248 +10098,63 @@ lib/services/core_update/core_update_sstp.dart
 // lib/services/core_update/core_update_sstp.dart
 library;
 
-import 'dart:io';
 import '../app_data_service.dart';
 import '../core_update_models.dart';
-import '../core_update_utils.dart';
 import 'core_update_network.dart';
 import 'core_update_pending.dart';
 import 'core_update_process_utils.dart';
-import 'shared/archive_extractor.dart';
-import 'shared/asset_picker.dart';
+import 'shared/github_release_updater.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  SSTP Proxy Updater
 ///  مخزن: https://github.com/FossilizedProgrammer/sstp-proxy
+///
+///  این فایل حالا فقط spec را تعریف می‌کند و منطق را به
+///  GithubReleaseUpdater delegate می‌دهد.
 /// ═══════════════════════════════════════════════════════════════
 class SstpProxyUpdater {
-  static const String _owner = 'FossilizedProgrammer';
-  static const String _repo = 'sstp-proxy';
-  static const String _binaryBaseName = 'sstp-proxy';
-
-  final CoreUpdateNetwork network;
-  final CoreUpdatePendingManager pending;
-  final CoreUpdateProcessUtils processUtils;
-  final void Function(String)? log;
-
-  late final ArchiveExtractor _extractor = ArchiveExtractor(
-    processUtils: processUtils,
-    log: log,
-  );
+  final GithubReleaseUpdater _updater;
 
   SstpProxyUpdater({
-    required this.network,
-    required this.pending,
-    required this.processUtils,
-    this.log,
-  });
+    required CoreUpdateNetwork network,
+    required CoreUpdatePendingManager pending,
+    required CoreUpdateProcessUtils processUtils,
+    void Function(String)? log,
+  }) : _updater = GithubReleaseUpdater(
+          spec: GithubCoreSpec(
+            coreId: 'sstp',
+            displayName: 'SSTP Proxy',
+            owner: 'FossilizedProgrammer',
+            repo: 'sstp-proxy',
+            binaryBaseName: 'sstp-proxy',
+            fallbackPattern: 'sstp',
+            destPathResolver: AppDataService.getSstpBinaryPath,
+            tempPrefix: 'mischiefpingu_sstp_',
+            defaultDownloadSize: 8000000,
+          ),
+          network: network,
+          pending: pending,
+          processUtils: processUtils,
+          log: log,
+        );
 
-  void _log(String m) => log?.call(m);
-  bool get _isWin => AppDataService.isWindows;
-  String get _exeExt => AppDataService.exeExt;
+  Future<CoreUpdateInfo> check(String? proxy, {required String installed}) =>
+      _updater.check(proxy, installed: installed);
 
-  // ═══════════════════════════════════════════
-  //  CHECK
-  // ═══════════════════════════════════════════
-  Future<CoreUpdateInfo> check(String? proxy,
-      {required String installed}) async {
-    try {
-      network.logRoute(proxy);
-      final rel = await network.getJson(
-        'https://api.github.com/repos/$_owner/$_repo/releases/latest',
-        proxy,
-      );
-
-      final tag = (rel['tag_name'] as String? ?? '').trim();
-      final latest = tag.replaceAll(RegExp(r'^[vV]'), '').trim();
-      final notes = (rel['body'] as String? ?? '').trim();
-      final assets = (rel['assets'] as List?) ?? [];
-
-      _log('→ SSTP release $tag has ${assets.length} asset(s):');
-      for (final a in assets) {
-        final m = a as Map<String, dynamic>;
-        _log('   • ${m['name']} (${m['size']} bytes)');
-      }
-
-      String url = '';
-      var size = 0;
-
-      final arch = await network.detectArch();
-      final asset = AssetPicker.pick(assets, arch);
-
-      if (asset != null) {
-        url = (asset['browser_download_url'] as String? ?? '');
-        size = (asset['size'] as num? ?? 0).toInt();
-        _log('→ SSTP asset chosen: ${asset['name']} ($size bytes)');
-      } else {
-        _log('⚠ No matching SSTP asset found for arch=$arch '
-            '(${_isWin ? 'windows' : 'linux'})');
-      }
-
-      return CoreUpdateInfo(
-        coreId: 'sstp',
-        displayName: 'SSTP Proxy',
-        installedVersion: installed,
-        latestVersion: latest.isEmpty ? installed : latest,
-        hasUpdate: latest.isNotEmpty &&
-            (CoreUpdateUtils.isMissingVersion(installed) ||
-                CoreUpdateUtils.isNewerVersion(installed, latest)),
-        downloadUrl: url,
-        releaseNotes: notes,
-        downloadSizeBytes: size,
-      );
-    } catch (e) {
-      _log('✗ SSTP update check failed: $e');
-      rethrow;
-    }
-  }
-
-  // ═══════════════════════════════════════════
-  //  UPDATE
-  // ═══════════════════════════════════════════
   Future<bool> update(
     CoreUpdateInfo info, {
     required String installed,
     String? proxy,
     void Function(int percent)? onProgress,
     bool Function()? onCancelCheck,
-  }) async {
-    if (info.downloadUrl.isEmpty) {
-      throw StateError('Could not find SSTP download URL.');
-    }
-    if (!CoreUpdateUtils.isMissingVersion(installed) && !info.hasUpdate) {
-      _log('★ SSTP proxy is already up to date ($installed) — skipped');
-      return false;
-    }
-
-    _log('→ Downloading SSTP Proxy ${info.latestVersion} from '
-        '${info.downloadUrl.split('/').last} …');
-    final tmp = await Directory.systemTemp.createTemp('mischiefpingu_sstp_');
-    try {
-      final cls = _extractor.classifyArchive(info.downloadUrl, 'sstp');
-      final archive = '${tmp.path}/${cls.archiveName}';
-
-      await network.download(
-        info.downloadUrl,
-        archive,
+  }) =>
+      _updater.update(
+        info,
+        installed: installed,
         proxy: proxy,
         onProgress: onProgress,
         onCancelCheck: onCancelCheck,
-        totalHint: info.downloadSizeBytes > 0
-            ? info.downloadSizeBytes
-            : 8000000,
       );
-      onProgress?.call(80);
-
-      final binaryName = '$_binaryBaseName$_exeExt';
-      final dest = await AppDataService.getSstpBinaryPath();
-      _log('→ SSTP destination path (always dataDir): $dest');
-
-      final extractDir = Directory('${tmp.path}/extract');
-      await extractDir.create(recursive: true);
-
-      String found;
-      if (cls.isArchive) {
-        await _extractor.extract(
-          archive: archive,
-          extractDir: extractDir,
-          isZip: cls.isZip,
-          isTarXz: cls.isTarXz,
-        );
-        await _extractor.logExtractedFiles(extractDir);
-        found = await _extractor.findBinary(
-          extractDir: extractDir,
-          binaryBaseName: _binaryBaseName,
-          fallbackPattern: 'sstp',
-        );
-      } else {
-        found = archive;
-        _log('→ Raw binary (not archive): $archive');
-      }
-
-      // ─── safe copy برای اطمینان از سالم بودن ───
-      found = await _extractor.safeCopyBinary(
-        source: found,
-        tmpPath: tmp.path,
-      );
-
-      if (!await CoreUpdateUtils.isRealFile(found)) {
-        throw StateError('Safe copy verification failed: $found');
-      }
-      final foundSize = await CoreUpdateUtils.fileSize(found);
-      _log('→ Source file ready: $found ($foundSize bytes)');
-
-      onProgress?.call(90);
-
-      // ─── جایگزینی باینری ───
-      final isRunning = await processUtils.isProcessRunning(binaryName);
-      if (isRunning) {
-        await _deferUpdate(
-          found: found,
-          dest: dest,
-          binaryName: binaryName,
-          version: info.latestVersion,
-        );
-        onProgress?.call(100);
-        return true;
-      }
-
-      final oldSize = await CoreUpdateUtils.fileSize(dest);
-      final newSize = await processUtils.replaceBinary(found, dest);
-      if (newSize == 0) throw StateError('Replacement failed (0 bytes).');
-
-      await _verifyInstall(dest);
-
-      await processUtils.updateExecutableDirBinary('sstp', found);
-
-      onProgress?.call(100);
-      _log(
-          '★ SSTP updated: $installed → ${info.latestVersion} '
-          '(${CoreUpdateUtils.formatBytes(oldSize)} → '
-          '${CoreUpdateUtils.formatBytes(newSize)})');
-      _log('★ SSTP binary saved at: $dest');
-      return true;
-    } finally {
-      try {
-        await tmp.delete(recursive: true);
-      } catch (_) {}
-    }
-  }
-
-  Future<void> _deferUpdate({
-    required String found,
-    required String dest,
-    required String binaryName,
-    required String version,
-  }) async {
-    final stagingDir =
-        await Directory.systemTemp.createTemp('mischiefpingu_deferred_sstp_');
-    final stagingPath = '${stagingDir.path}/$binaryName';
-    await File(found).copy(stagingPath);
-    if (!_isWin) {
-      await Process.run('chmod', ['+x', stagingPath]);
-    }
-    await pending.add(PendingCoreUpdate(
-      coreId: 'sstp',
-      stagingPath: stagingPath,
-      destPath: dest,
-      version: version,
-      createdAt: DateTime.now(),
-    ));
-    _log(
-        '★ SSTP update downloaded ($version) — deferred, will apply on next startup');
-  }
-
-  Future<void> _verifyInstall(String dest) async {
-    final exists = await File(dest).exists();
-    final size = await CoreUpdateUtils.fileSize(dest);
-    _log('→ VERIFY: file exists at $dest = $exists (size: $size bytes)');
-    if (!exists || size == 0) {
-      throw StateError(
-          'Update reported success but file not found at $dest. '
-          'Check dataDir permissions.');
-    }
-  }
 }
 
 
@@ -9918,240 +10165,66 @@ lib/services/core_update/core_update_sunandlion.dart
 // lib/services/core_update/core_update_sunandlion.dart
 library;
 
-import 'dart:io';
 import '../app_data_service.dart';
 import '../core_update_models.dart';
-import '../core_update_utils.dart';
 import 'core_update_network.dart';
 import 'core_update_pending.dart';
 import 'core_update_process_utils.dart';
-import 'shared/archive_extractor.dart';
-import 'shared/asset_picker.dart';
+import 'shared/github_release_updater.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  SunAndLion Psiphon Core Updater
 ///  مخزن: https://github.com/FossilizedProgrammer/sunandlion
+///
+///  این فایل حالا فقط spec را تعریف می‌کند و منطق را به
+///  GithubReleaseUpdater delegate می‌دهد.
 /// ═══════════════════════════════════════════════════════════════
 class SunAndLionUpdater {
-  static const String _owner = 'FossilizedProgrammer';
-  static const String _repo = 'sunandlion';
   static const String _binaryBaseName = 'psiphon-tunnel-core-sunandlion';
 
-  final CoreUpdateNetwork network;
-  final CoreUpdatePendingManager pending;
-  final CoreUpdateProcessUtils processUtils;
-  final void Function(String)? log;
-
-  late final ArchiveExtractor _extractor = ArchiveExtractor(
-    processUtils: processUtils,
-    log: log,
-  );
+  final GithubReleaseUpdater _updater;
 
   SunAndLionUpdater({
-    required this.network,
-    required this.pending,
-    required this.processUtils,
-    this.log,
-  });
+    required CoreUpdateNetwork network,
+    required CoreUpdatePendingManager pending,
+    required CoreUpdateProcessUtils processUtils,
+    void Function(String)? log,
+  }) : _updater = GithubReleaseUpdater(
+          spec: GithubCoreSpec(
+            coreId: 'sunandlion',
+            displayName: 'SunAndLion Psiphon Core',
+            owner: 'FossilizedProgrammer',
+            repo: 'sunandlion',
+            binaryBaseName: _binaryBaseName,
+            fallbackPattern: 'sunandlion',
+            destPathResolver: () =>
+                AppDataService.getBinaryPath(_binaryBaseName),
+            tempPrefix: 'mischiefpingu_sunlion_',
+            defaultDownloadSize: 12000000,
+          ),
+          network: network,
+          pending: pending,
+          processUtils: processUtils,
+          log: log,
+        );
 
-  void _log(String m) => log?.call(m);
-  bool get _isWin => AppDataService.isWindows;
-  String get _exeExt => AppDataService.exeExt;
+  Future<CoreUpdateInfo> check(String? proxy, {required String installed}) =>
+      _updater.check(proxy, installed: installed);
 
-  // ═══════════════════════════════════════════
-  //  CHECK
-  // ═══════════════════════════════════════════
-  Future<CoreUpdateInfo> check(String? proxy,
-      {required String installed}) async {
-    try {
-      network.logRoute(proxy);
-      final rel = await network.getJson(
-        'https://api.github.com/repos/$_owner/$_repo/releases/latest',
-        proxy,
-      );
-
-      final tag = (rel['tag_name'] as String? ?? '').trim();
-      final latest = tag.replaceAll(RegExp(r'^[vV]'), '').trim();
-      final notes = (rel['body'] as String? ?? '').trim();
-      final assets = (rel['assets'] as List?) ?? [];
-
-      _log('→ SunAndLion release $tag has ${assets.length} asset(s):');
-      for (final a in assets) {
-        final m = a as Map<String, dynamic>;
-        _log('   • ${m['name']} (${m['size']} bytes)');
-      }
-
-      String url = '';
-      var size = 0;
-
-      final arch = await network.detectArch();
-      final asset = AssetPicker.pick(assets, arch);
-
-      if (asset != null) {
-        url = (asset['browser_download_url'] as String? ?? '');
-        size = (asset['size'] as num? ?? 0).toInt();
-        _log('→ SunAndLion asset chosen: ${asset['name']} ($size bytes)');
-      } else {
-        _log('⚠ No matching SunAndLion asset found for arch=$arch '
-            '(${_isWin ? 'windows' : 'linux'})');
-      }
-
-      return CoreUpdateInfo(
-        coreId: 'sunandlion',
-        displayName: 'SunAndLion Psiphon Core',
-        installedVersion: installed,
-        latestVersion: latest.isEmpty ? installed : latest,
-        hasUpdate: latest.isNotEmpty &&
-            (CoreUpdateUtils.isMissingVersion(installed) ||
-                CoreUpdateUtils.isNewerVersion(installed, latest)),
-        downloadUrl: url,
-        releaseNotes: notes,
-        downloadSizeBytes: size,
-      );
-    } catch (e) {
-      _log('✗ SunAndLion update check failed: $e');
-      rethrow;
-    }
-  }
-
-  // ═══════════════════════════════════════════
-  //  UPDATE
-  // ═══════════════════════════════════════════
   Future<bool> update(
     CoreUpdateInfo info, {
     required String installed,
     String? proxy,
     void Function(int percent)? onProgress,
     bool Function()? onCancelCheck,
-  }) async {
-    if (info.downloadUrl.isEmpty) {
-      throw StateError('Could not find SunAndLion download URL.');
-    }
-    if (!CoreUpdateUtils.isMissingVersion(installed) && !info.hasUpdate) {
-      _log('★ SunAndLion core is already up to date ($installed) — skipped');
-      return false;
-    }
-
-    _log('→ Downloading SunAndLion ${info.latestVersion} from '
-        '${info.downloadUrl.split('/').last} …');
-    final tmp = await Directory.systemTemp.createTemp('mischiefpingu_sunlion_');
-    try {
-      final cls = _extractor.classifyArchive(info.downloadUrl, 'sunlion');
-      final archive = '${tmp.path}/${cls.archiveName}';
-
-      await network.download(
-        info.downloadUrl,
-        archive,
+  }) =>
+      _updater.update(
+        info,
+        installed: installed,
         proxy: proxy,
         onProgress: onProgress,
         onCancelCheck: onCancelCheck,
-        totalHint: info.downloadSizeBytes > 0
-            ? info.downloadSizeBytes
-            : 12000000,
       );
-      onProgress?.call(80);
-
-      final binaryName = '$_binaryBaseName$_exeExt';
-      final dest = await AppDataService.getBinaryPath(_binaryBaseName);
-
-      final extractDir = Directory('${tmp.path}/extract');
-      await extractDir.create(recursive: true);
-
-      String found;
-      if (cls.isArchive) {
-        await _extractor.extract(
-          archive: archive,
-          extractDir: extractDir,
-          isZip: cls.isZip,
-          isTarXz: cls.isTarXz,
-        );
-        await _extractor.logExtractedFiles(extractDir);
-        found = await _extractor.findBinary(
-          extractDir: extractDir,
-          binaryBaseName: _binaryBaseName,
-          fallbackPattern: 'sunandlion',
-        );
-        _log('→ Chosen binary: $found');
-      } else {
-        found = archive;
-        _log('→ Raw binary (not archive): $archive');
-      }
-
-      if (!await CoreUpdateUtils.isRealFile(found)) {
-        throw StateError('Source file does not exist or is invalid: $found');
-      }
-      final foundSize = await CoreUpdateUtils.fileSize(found);
-      _log('→ Source file size: $foundSize bytes ($found)');
-
-      onProgress?.call(90);
-
-      final isRunning = await processUtils.isProcessRunning(binaryName);
-      if (isRunning) {
-        await _deferUpdate(
-          found: found,
-          dest: dest,
-          binaryName: binaryName,
-          version: info.latestVersion,
-        );
-        onProgress?.call(100);
-        return true;
-      }
-
-      final oldSize = await CoreUpdateUtils.fileSize(dest);
-      final newSize = await processUtils.replaceBinary(found, dest);
-      if (newSize == 0) throw StateError('Replacement failed (0 bytes).');
-
-      await _verifyInstall(dest);
-
-      await processUtils.updateExecutableDirBinary('sunandlion', found);
-      onProgress?.call(100);
-      _log(
-          '★ SunAndLion updated: $installed → ${info.latestVersion} '
-          '(${CoreUpdateUtils.formatBytes(oldSize)} → '
-          '${CoreUpdateUtils.formatBytes(newSize)})');
-      _log('★ SunAndLion binary saved at: $dest');
-      return true;
-    } finally {
-      try {
-        await tmp.delete(recursive: true);
-      } catch (_) {}
-    }
-  }
-
-  Future<void> _deferUpdate({
-    required String found,
-    required String dest,
-    required String binaryName,
-    required String version,
-  }) async {
-    final stagingDir = await Directory.systemTemp
-        .createTemp('mischiefpingu_deferred_sunlion_');
-    final stagingPath = '${stagingDir.path}/$binaryName';
-    await File(found).copy(stagingPath);
-    if (!_isWin) {
-      await Process.run('chmod', ['+x', stagingPath]);
-    }
-    await pending.add(PendingCoreUpdate(
-      coreId: 'sunandlion',
-      stagingPath: stagingPath,
-      destPath: dest,
-      version: version,
-      createdAt: DateTime.now(),
-    ));
-    _log(
-        '★ SunAndLion update downloaded ($version) — deferred, will apply on next startup');
-  }
-
-  Future<void> _verifyInstall(String dest) async {
-    final exists = await File(dest).exists();
-    final size = await CoreUpdateUtils.fileSize(dest);
-    _log('→ VERIFY: file exists at $dest = $exists (size: $size bytes)');
-    if (!exists || size == 0) {
-      throw StateError(
-          'Update reported success but file not found at $dest. '
-          'Check dataDir permissions.');
-    }
-  }
 }
 
 
@@ -10413,6 +10486,93 @@ class CoreUpdateVersionChecker {
     } catch (_) {
       return null;
     }
+  }
+}
+
+
+******************************************************
+lib/services/core_update/file_finder.dart
+******************************************************
+
+// lib/services/core_update/file_finder.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  FileFinder — پیدا کردن فایل‌ها در دایرکتوری‌ها
+//  (تفکیک شده از core_update_utils.dart)
+// ═══════════════════════════════════════════════════════════════
+library;
+
+import 'dart:io';
+import 'package:path/path.dart' as p;
+
+class FileFinder {
+  FileFinder._();
+
+  /// آیا مسیر یک فایل واقعی و قابل خواندن است؟
+  static Future<bool> isRealFile(String path) async {
+    try {
+      final type = await FileSystemEntity.type(path, followLinks: true);
+      if (type != FileSystemEntityType.file) return false;
+      final size = await File(path).length();
+      return size > 0;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// اندازه فایل (0 اگر خطا).
+  static Future<int> fileSize(String path) async {
+    try {
+      return await File(path).length();
+    } catch (_) {
+      return 0;
+    }
+  }
+
+  /// فایل با نام دقیق.
+  static Future<String?> byName(Directory root, String name) async {
+    await for (final e in root.list(recursive: true, followLinks: false)) {
+      if (e is! File) continue;
+      if (p.basename(e.path) != name) continue;
+      if (await isRealFile(e.path)) return e.path;
+    }
+    return null;
+  }
+
+  /// فایل با پیشوند مشخص.
+  static Future<String?> byPrefix(Directory root, String prefix) async {
+    final candidates = <String>[];
+    await for (final e in root.list(recursive: true, followLinks: false)) {
+      if (e is! File) continue;
+      final base = p.basename(e.path);
+      if (base.startsWith(prefix)) candidates.add(e.path);
+    }
+
+    candidates.sort((a, b) {
+      final ba = p.basename(a).toLowerCase();
+      final bb = p.basename(b).toLowerCase();
+      final sa = ba.endsWith('.exe') ? 1 : 0;
+      final sb = bb.endsWith('.exe') ? 1 : 0;
+      if (sa != sb) return sa.compareTo(sb);
+      return ba.length.compareTo(bb.length);
+    });
+
+    for (final c in candidates) {
+      if (await isRealFile(c)) return c;
+    }
+    return null;
+  }
+
+  /// فایل با الگو در مسیر.
+  static Future<String?> byContaining(Directory root, String pattern) async {
+    final lower = pattern.toLowerCase();
+    await for (final e in root.list(recursive: true, followLinks: false)) {
+      if (e is! File) continue;
+      if (e.path.toLowerCase().contains(lower) && await isRealFile(e.path)) {
+        return e.path;
+      }
+    }
+    return null;
   }
 }
 
@@ -11210,9 +11370,6 @@ lib/services/core_update/shared/asset_picker.dart
 // ═══════════════════════════════════════════════════════════════
 //  AssetPicker — انتخاب asset مناسب از لیست release های GitHub
 //  بر اساس OS و معماری CPU.
-//
-//  این منطق قبلاً در core_update_sstp.dart و
-//  core_update_sunandlion.dart به‌صورت تکراری وجود داشت.
 // ═══════════════════════════════════════════════════════════════
 library;
 
@@ -11318,22 +11475,363 @@ class AssetPicker {
 
 
 ******************************************************
+lib/services/core_update/shared/github_release_updater.dart
+******************************************************
+
+// lib/services/core_update/shared/github_release_updater.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  GitHubReleaseUpdater — منطق مشترک آپدیت از GitHub Releases
+//
+//  این کلاس تمام logic تکراری بین SstpProxyUpdater و
+//  SunAndLionUpdater را یک‌جا جمع می‌کند:
+//    • check: دریافت release + انتخاب asset بر اساس arch
+//    • update: دانلود، استخراج، safe copy، نصب، defer اگر در حال اجرا
+// ═══════════════════════════════════════════════════════════════
+library;
+
+import 'dart:io';
+
+import '../../app_data_service.dart';
+import '../../core_update_models.dart';
+import '../../core_update_utils.dart';
+import '../core_update_network.dart';
+import '../core_update_pending.dart';
+import '../core_update_process_utils.dart';
+import 'archive_extractor.dart';
+import 'asset_picker.dart';
+
+/// تنظیمات یک core مبتنی بر GitHub Releases.
+class GithubCoreSpec {
+  /// شناسه core (برای لاگ و PendingCoreUpdate).
+  final String coreId;
+
+  /// نام نمایشی.
+  final String displayName;
+
+  /// مالک مخزن GitHub.
+  final String owner;
+
+  /// نام مخزن GitHub.
+  final String repo;
+
+  /// نام پایه باینری بدون پسوند (مثل `sstp-proxy`).
+  final String binaryBaseName;
+
+  /// الگوی fallback برای جستجوی باینری در آرشیو.
+  final String fallbackPattern;
+
+  /// مسیر ذخیره‌سازی نهایی (تابع async).
+  final Future<String> Function() destPathResolver;
+
+  /// پیشوند temp dir برای دانلود.
+  final String tempPrefix;
+
+  /// تخمین اندازه دانلود (بایت) اگر GitHub size نداشت.
+  final int defaultDownloadSize;
+
+  const GithubCoreSpec({
+    required this.coreId,
+    required this.displayName,
+    required this.owner,
+    required this.repo,
+    required this.binaryBaseName,
+    required this.fallbackPattern,
+    required this.destPathResolver,
+    required this.tempPrefix,
+    required this.defaultDownloadSize,
+  });
+}
+
+/// آپدیت‌کننده عمومی برای coreهای مبتنی بر GitHub Releases.
+class GithubReleaseUpdater {
+  final GithubCoreSpec spec;
+  final CoreUpdateNetwork network;
+  final CoreUpdatePendingManager pending;
+  final CoreUpdateProcessUtils processUtils;
+  final void Function(String)? log;
+
+  late final ArchiveExtractor _extractor = ArchiveExtractor(
+    processUtils: processUtils,
+    log: log,
+  );
+
+  GithubReleaseUpdater({
+    required this.spec,
+    required this.network,
+    required this.pending,
+    required this.processUtils,
+    this.log,
+  });
+
+  void _log(String m) => log?.call(m);
+  bool get _isWin => AppDataService.isWindows;
+  String get _exeExt => AppDataService.exeExt;
+
+  // ═══════════════════════════════════════════
+  //  CHECK
+  // ═══════════════════════════════════════════
+  Future<CoreUpdateInfo> check(String? proxy,
+      {required String installed}) async {
+    try {
+      network.logRoute(proxy);
+      final rel = await network.getJson(
+        'https://api.github.com/repos/${spec.owner}/${spec.repo}/releases/latest',
+        proxy,
+      );
+
+      final tag = (rel['tag_name'] as String? ?? '').trim();
+      final latest = tag.replaceAll(RegExp(r'^[vV]'), '').trim();
+      final notes = (rel['body'] as String? ?? '').trim();
+      final assets = (rel['assets'] as List?) ?? [];
+
+      _log('→ ${spec.displayName} release $tag has ${assets.length} asset(s):');
+      for (final a in assets) {
+        final m = a as Map<String, dynamic>;
+        _log('   • ${m['name']} (${m['size']} bytes)');
+      }
+
+      String url = '';
+      var size = 0;
+
+      final arch = await network.detectArch();
+      final asset = AssetPicker.pick(assets, arch);
+
+      if (asset != null) {
+        url = (asset['browser_download_url'] as String? ?? '');
+        size = (asset['size'] as num? ?? 0).toInt();
+        _log('→ ${spec.displayName} asset chosen: ${asset['name']} ($size bytes)');
+      } else {
+        _log('⚠ No matching ${spec.displayName} asset found for arch=$arch '
+            '(${_isWin ? 'windows' : 'linux'})');
+      }
+
+      return CoreUpdateInfo(
+        coreId: spec.coreId,
+        displayName: spec.displayName,
+        installedVersion: installed,
+        latestVersion: latest.isEmpty ? installed : latest,
+        hasUpdate: latest.isNotEmpty &&
+            (CoreUpdateUtils.isMissingVersion(installed) ||
+                CoreUpdateUtils.isNewerVersion(installed, latest)),
+        downloadUrl: url,
+        releaseNotes: notes,
+        downloadSizeBytes: size,
+      );
+    } catch (e) {
+      _log('✗ ${spec.displayName} update check failed: $e');
+      rethrow;
+    }
+  }
+
+  // ═══════════════════════════════════════════
+  //  UPDATE
+  // ═══════════════════════════════════════════
+  Future<bool> update(
+    CoreUpdateInfo info, {
+    required String installed,
+    String? proxy,
+    void Function(int percent)? onProgress,
+    bool Function()? onCancelCheck,
+  }) async {
+    if (info.downloadUrl.isEmpty) {
+      throw StateError('Could not find ${spec.displayName} download URL.');
+    }
+    if (!CoreUpdateUtils.isMissingVersion(installed) && !info.hasUpdate) {
+      _log('★ ${spec.displayName} is already up to date ($installed) — skipped');
+      return false;
+    }
+
+    _log('→ Downloading ${spec.displayName} ${info.latestVersion} from '
+        '${info.downloadUrl.split('/').last} …');
+    final tmp = await Directory.systemTemp.createTemp(spec.tempPrefix);
+    try {
+      final cls = _extractor.classifyArchive(info.downloadUrl, spec.coreId);
+      final archive = '${tmp.path}/${cls.archiveName}';
+
+      await network.download(
+        info.downloadUrl,
+        archive,
+        proxy: proxy,
+        onProgress: onProgress,
+        onCancelCheck: onCancelCheck,
+        totalHint: info.downloadSizeBytes > 0
+            ? info.downloadSizeBytes
+            : spec.defaultDownloadSize,
+      );
+      onProgress?.call(80);
+
+      final binaryName = '${spec.binaryBaseName}$_exeExt';
+      final dest = await spec.destPathResolver();
+      _log('→ ${spec.displayName} destination: $dest');
+
+      final extractDir = Directory('${tmp.path}/extract');
+      await extractDir.create(recursive: true);
+
+      String found;
+      if (cls.isArchive) {
+        await _extractor.extract(
+          archive: archive,
+          extractDir: extractDir,
+          isZip: cls.isZip,
+          isTarXz: cls.isTarXz,
+        );
+        await _extractor.logExtractedFiles(extractDir);
+        found = await _extractor.findBinary(
+          extractDir: extractDir,
+          binaryBaseName: spec.binaryBaseName,
+          fallbackPattern: spec.fallbackPattern,
+        );
+      } else {
+        found = archive;
+        _log('→ Raw binary (not archive): $archive');
+      }
+
+      found = await _extractor.safeCopyBinary(
+        source: found,
+        tmpPath: tmp.path,
+      );
+
+      if (!await CoreUpdateUtils.isRealFile(found)) {
+        throw StateError('Safe copy verification failed: $found');
+      }
+      final foundSize = await CoreUpdateUtils.fileSize(found);
+      _log('→ Source file ready: $found ($foundSize bytes)');
+
+      onProgress?.call(90);
+
+      final isRunning = await processUtils.isProcessRunning(binaryName);
+      if (isRunning) {
+        await _deferUpdate(
+          found: found,
+          dest: dest,
+          binaryName: binaryName,
+          version: info.latestVersion,
+        );
+        onProgress?.call(100);
+        return true;
+      }
+
+      final oldSize = await CoreUpdateUtils.fileSize(dest);
+      final newSize = await processUtils.replaceBinary(found, dest);
+      if (newSize == 0) throw StateError('Replacement failed (0 bytes).');
+
+      await _verifyInstall(dest);
+      await processUtils.updateExecutableDirBinary(spec.coreId, found);
+
+      onProgress?.call(100);
+      _log(
+          '★ ${spec.displayName} updated: $installed → ${info.latestVersion} '
+          '(${CoreUpdateUtils.formatBytes(oldSize)} → '
+          '${CoreUpdateUtils.formatBytes(newSize)})');
+      _log('★ ${spec.displayName} binary saved at: $dest');
+      return true;
+    } finally {
+      try {
+        await tmp.delete(recursive: true);
+      } catch (_) {}
+    }
+  }
+
+  Future<void> _deferUpdate({
+    required String found,
+    required String dest,
+    required String binaryName,
+    required String version,
+  }) async {
+    final stagingDir = await Directory.systemTemp
+        .createTemp('${spec.tempPrefix}deferred_');
+    final stagingPath = '${stagingDir.path}/$binaryName';
+    await File(found).copy(stagingPath);
+    if (!_isWin) {
+      await Process.run('chmod', ['+x', stagingPath]);
+    }
+    await pending.add(PendingCoreUpdate(
+      coreId: spec.coreId,
+      stagingPath: stagingPath,
+      destPath: dest,
+      version: version,
+      createdAt: DateTime.now(),
+    ));
+    _log(
+        '★ ${spec.displayName} update downloaded ($version) — deferred, will apply on next startup');
+  }
+
+  Future<void> _verifyInstall(String dest) async {
+    final exists = await File(dest).exists();
+    final size = await CoreUpdateUtils.fileSize(dest);
+    _log('→ VERIFY: file exists at $dest = $exists (size: $size bytes)');
+    if (!exists || size == 0) {
+      throw StateError(
+          'Update reported success but file not found at $dest. '
+          'Check dataDir permissions.');
+    }
+  }
+}
+
+
+******************************************************
 lib/services/core_update_utils.dart
 ******************************************************
 
 // lib/services/core_update_utils.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  Facade — CoreUpdateUtils
+//  تمام متدها به VersionParsers و FileFinder delegate می‌شوند.
+//  این کار سازگاری کامل با کد موجود را حفظ می‌کند.
+// ═══════════════════════════════════════════════════════════════
 library;
 
 import 'dart:io';
-import 'package:path/path.dart' as p;
+import 'core_update/version_parsers.dart';
+import 'core_update/file_finder.dart';
 
 class CoreUpdateUtils {
-  static bool isMissingVersion(String v) {
-    final t = v.trim().toLowerCase();
-    return t.isEmpty || t == 'unknown' || t == 'not installed';
-  }
+  CoreUpdateUtils._();
 
-  static String? parseAetherVersion(String? output) {
+  // ─── Version parsers (delegate → VersionParsers) ───
+  static bool isMissingVersion(String v) => VersionParsers.isMissing(v);
+  static String? parseAetherVersion(String? output) =>
+      VersionParsers.parseAether(output);
+  static String? parsePsiphonVersion(String? output) =>
+      VersionParsers.parsePsiphon(output);
+  static String? parseTorVersion(String? output) =>
+      VersionParsers.parseTor(output);
+  static String? parseSemver(String? output) => VersionParsers.parseSemver(output);
+  static bool isNewerVersion(String installed, String latest) =>
+      VersionParsers.isNewer(installed, latest);
+  static String formatBytes(int bytes) => VersionParsers.formatBytes(bytes);
+
+  // ─── File operations (delegate → FileFinder) ───
+  static Future<int> fileSize(String path) => FileFinder.fileSize(path);
+  static Future<bool> isRealFile(String path) => FileFinder.isRealFile(path);
+  static Future<String?> findFile(Directory root, String name) =>
+      FileFinder.byName(root, name);
+  static Future<String?> findFileByPrefix(Directory root, String prefix) =>
+      FileFinder.byPrefix(root, prefix);
+  static Future<String?> findFileContaining(Directory root, String pattern) =>
+      FileFinder.byContaining(root, pattern);
+}
+
+
+******************************************************
+lib/services/core_update/version_parsers.dart
+******************************************************
+
+// lib/services/core_update/version_parsers.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  Version parsers برای Core Updates
+//  (تفکیک شده از core_update_utils.dart)
+// ═══════════════════════════════════════════════════════════════
+library;
+
+class VersionParsers {
+  VersionParsers._();
+
+  /// پارس نسخه Aether از خروجی `--version`.
+  static String? parseAether(String? output) {
     if (output == null || output.isEmpty) return null;
     final parts = output.split(RegExp(r'\s+'));
     for (final pt in parts.reversed) {
@@ -11342,7 +11840,8 @@ class CoreUpdateUtils {
     return output.trim().split('\n').first.trim();
   }
 
-  static String? parsePsiphonVersion(String? output) {
+  /// پارس نسخه Psiphon از خروجی `-v`.
+  static String? parsePsiphon(String? output) {
     if (output == null || output.isEmpty) return null;
     final revMatch =
         RegExp(r'Revision:\s*([0-9a-f]{7,40})', caseSensitive: false)
@@ -11356,7 +11855,8 @@ class CoreUpdateUtils {
     return date != null ? '$short ($date)' : short;
   }
 
-  static String? parseTorVersion(String? output) {
+  /// پارس نسخه Tor از خروجی `--version`.
+  static String? parseTor(String? output) {
     if (output == null || output.isEmpty) return null;
     final m = RegExp(r'version\s+([0-9][\w.\-]+)', caseSensitive: false)
         .firstMatch(output);
@@ -11364,7 +11864,16 @@ class CoreUpdateUtils {
     return output.trim().split('\n').first.trim();
   }
 
-  static bool isNewerVersion(String installed, String latest) {
+  /// پارس نسخه semantic از خروجی عمومی (برای SSTP).
+  static String? parseSemver(String? output) {
+    if (output == null || output.isEmpty) return null;
+    final m = RegExp(r'\b(\d+\.\d+\.\d+(?:[-\+][\w\.]+)?)\b')
+        .firstMatch(output);
+    return m?.group(1);
+  }
+
+  /// آیا [latest] از [installed] جدیدتر است؟
+  static bool isNewer(String installed, String latest) {
     List<int> parse(String v) => v
         .split(RegExp(r'[.\-+]'))
         .map((e) =>
@@ -11380,84 +11889,17 @@ class CoreUpdateUtils {
     return false;
   }
 
+  /// آیا نسخه "ناموجود" است؟
+  static bool isMissing(String v) {
+    final t = v.trim().toLowerCase();
+    return t.isEmpty || t == 'unknown' || t == 'not installed';
+  }
+
+  /// فرمت بایت به رشته خوانا.
   static String formatBytes(int bytes) {
     if (bytes >= 1048576) return '${(bytes / 1048576).toStringAsFixed(1)} MB';
     if (bytes >= 1024) return '${(bytes / 1024).toStringAsFixed(0)} KB';
     return '$bytes B';
-  }
-
-  static Future<int> fileSize(String path) async {
-    try {
-      return await File(path).length();
-    } catch (_) {
-      return 0;
-    }
-  }
-
-  /// بررسی می‌کند که مسیر یک فایل واقعی و قابل خواندن است
-  /// (نه symlink شکسته، نه دایرکتوری).
-  static Future<bool> isRealFile(String path) async {
-    try {
-      final type = await FileSystemEntity.type(path, followLinks: true);
-      if (type != FileSystemEntityType.file) return false;
-      final f = File(path);
-      final size = await f.length();
-      if (size == 0) return false;
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
-
-  /// فایل را با نام دقیق پیدا می‌کند.
-  static Future<String?> findFile(Directory root, String name) async {
-    await for (final e in root.list(recursive: true, followLinks: false)) {
-      if (e is! File) continue;
-      if (p.basename(e.path) != name) continue;
-      if (await isRealFile(e.path)) return e.path;
-    }
-    return null;
-  }
-
-  /// فایل را با پیشوند مشخص پیدا می‌کند.
-  /// اولویت: بدون پسوند `.exe` اول، سپس کوتاه‌ترین اسم.
-  static Future<String?> findFileByPrefix(Directory root, String prefix) async {
-    final candidates = <String>[];
-    await for (final e in root.list(recursive: true, followLinks: false)) {
-      if (e is! File) continue;
-      final base = p.basename(e.path);
-      if (base.startsWith(prefix)) {
-        candidates.add(e.path);
-      }
-    }
-
-    candidates.sort((a, b) {
-      final ba = p.basename(a).toLowerCase();
-      final bb = p.basename(b).toLowerCase();
-      final sa = ba.endsWith('.exe') ? 1 : 0;
-      final sb = bb.endsWith('.exe') ? 1 : 0;
-      if (sa != sb) return sa.compareTo(sb);
-      return ba.length.compareTo(bb.length);
-    });
-
-    for (final c in candidates) {
-      if (await isRealFile(c)) return c;
-    }
-    return null;
-  }
-
-  /// هر فایلی که در اسم یا مسیرش الگوی مشخصی داشته باشد پیدا می‌کند.
-  static Future<String?> findFileContaining(
-      Directory root, String pattern) async {
-    final lower = pattern.toLowerCase();
-    await for (final e in root.list(recursive: true, followLinks: false)) {
-      if (e is! File) continue;
-      if (e.path.toLowerCase().contains(lower) &&
-          await isRealFile(e.path)) {
-        return e.path;
-      }
-    }
-    return null;
   }
 }
 
@@ -13113,23 +13555,69 @@ extension ProcessServiceTor on ProcessService {
 lib/services/psiphon_config_builder.dart
 ******************************************************
 
+// lib/services/psiphon_config_builder.dart
+library;
+
 import 'dart:convert';
 import '../models/settings_model.dart';
 import 'process_service.dart';
+import 'psiphon/psiphon_fronting_builder.dart';
+import 'psiphon/psiphon_upstream_builder.dart';
 
 class PsiphonConfigBuilder {
   final AppSettings settings;
   final List<String> ipList;
   final ProcessService processService;
+
+  late final PsiphonFrontingBuilder _fronting;
+  late final PsiphonUpstreamBuilder _upstream;
+
   PsiphonConfigBuilder({
     required this.settings,
     required this.ipList,
     required this.processService,
-  });
+  }) {
+    _fronting = PsiphonFrontingBuilder(
+      settings: settings,
+      ipList: ipList,
+      processService: processService,
+    );
+    _upstream = PsiphonUpstreamBuilder(
+      settings: settings,
+      processService: processService,
+    );
+  }
 
   String build() {
-    final bool isConduit = settings.upstreamType == 3;
-    final Map<String, dynamic> config = {
+    final isConduit = settings.upstreamType == 3;
+    final config = _baseConfig(isConduit: isConduit);
+
+    if (settings.onlyIpv4) config["NetworkStack"] = "IPv4Only";
+
+    _upstream.apply(config);
+
+    if (isConduit && !_upstream.hasOverride) {
+      _applyConduit(config);
+    } else if (_upstream.hasOverride) {
+      config["InproxyEnabled"] = false;
+      config["InproxyAllowClient"] = false;
+    }
+
+    _fronting.apply(config);
+
+    final jsonStr = const JsonEncoder.withIndent('  ').convert(config);
+    processService.addLog(
+      '→ Psiphon config generated (${jsonStr.length} bytes)',
+      source: LogSource.psiphon,
+    );
+
+    _logFinalState();
+
+    return jsonStr;
+  }
+
+  Map<String, dynamic> _baseConfig({required bool isConduit}) {
+    final config = <String, dynamic>{
       "PropagationChannelId": "92AACC5BABE0944C",
       "SponsorId": "1BC527D3D09985CF",
       "LocalSocksProxyPort": settings.socksPort,
@@ -13143,179 +13631,76 @@ class PsiphonConfigBuilder {
       "EmitDiagnosticNotices": true,
       "EmitBytesTransferred": true,
       "ClientPlatform": "Linux",
-      // ⚠️ توجه: دو کلید زیر عمداً از اینجا حذف شده‌اند تا Fronting خراب نشود.
     };
 
-    // ─── این دو کلید فقط و فقط برای Conduit (upstreamType == 3) لازم هستند ───
     if (isConduit) {
       config["ServerEntrySignaturePublicKey"] =
           "sHuUVTWaRyh5pZwy4UguSgkwmBe0EHtJJkoF5WrxmvA=";
       config["DeviceRegion"] = "IR";
     }
 
-    if (settings.onlyIpv4) config["NetworkStack"] = "IPv4Only";
+    return config;
+  }
 
-    final bool hasUpstreamOverride =
-        settings.upstreamType == 1 ||
-        settings.upstreamType == 2 ||
-        settings.upstreamType == 4 ||
-        settings.upstreamType == 5;
+  void _applyConduit(Map<String, dynamic> config) {
+    config["ClientVersion"] = "45";
+    config["LimitTunnelProtocols"] = [
+      "INPROXY-WEBRTC-SSH",
+      "INPROXY-WEBRTC-OSSH",
+      "INPROXY-WEBRTC-TLS-OSSH",
+      "INPROXY-WEBRTC-UNFRONTED-MEEK-OSSH",
+      "INPROXY-WEBRTC-UNFRONTED-MEEK-HTTPS-OSSH",
+      "INPROXY-WEBRTC-UNFRONTED-MEEK-SESSION-TICKET-OSSH",
+      "INPROXY-WEBRTC-FRONTED-MEEK-OSSH",
+      "INPROXY-WEBRTC-FRONTED-MEEK-HTTP-OSSH",
+      "INPROXY-WEBRTC-QUIC-OSSH",
+      "INPROXY-WEBRTC-FRONTED-MEEK-QUIC-OSSH",
+      "INPROXY-WEBRTC-SHADOWSOCKS-OSSH",
+    ];
+    config["InproxyEnabled"] = true;
+    config["InproxyAllowClient"] = true;
 
-    // ─── Upstream proxy configuration ───
-    switch (settings.upstreamType) {
-      case 1:
-        String url = "${settings.proxyType}://";
-        if (settings.proxyUser.isNotEmpty) {
-          url += "${settings.proxyUser}:${settings.proxyPass}@";
-        }
-        url += "${settings.proxyIp}:${settings.proxyPort}";
-        config["UpstreamProxyURL"] = url;
-        processService.addLog(
-          '→ Psiphon upstream: Manual proxy ($url)',
-          source: LogSource.psiphon,
-        );
-        break;
-      case 2:
-        config["UpstreamProxyURL"] =
-            "socks5://127.0.0.1:${settings.aetherLocalPort}";
-        processService.addLog(
-          '→ Psiphon upstream: Aether (127.0.0.1:${settings.aetherLocalPort})',
-          source: LogSource.psiphon,
-        );
-        break;
-      case 4:
-        config["UpstreamProxyURL"] =
-            "socks5://127.0.0.1:${settings.torSocksPort}";
-        processService.addLog(
-          '→ Psiphon upstream: Tor (127.0.0.1:${settings.torSocksPort})',
-          source: LogSource.psiphon,
-        );
-        break;
-      case 5:
-        config["UpstreamProxyURL"] =
-            "socks5://127.0.0.1:${settings.sstpSocksPort}";
-        processService.addLog(
-          '→ Psiphon upstream: SSTP (127.0.0.1:${settings.sstpSocksPort})',
-          source: LogSource.psiphon,
-        );
-        break;
-      default:
-        break;
+    final compartment = settings.conduitCompartmentId.trim();
+    if (compartment.isNotEmpty && settings.conduitMode != 'public') {
+      config["InproxyClientPersonalCompartmentID"] = compartment;
     }
 
-    if (settings.upstreamType == 3 && !hasUpstreamOverride) {
-      config["ClientVersion"] = "45";
-      config["LimitTunnelProtocols"] = [
-        "INPROXY-WEBRTC-SSH",
-        "INPROXY-WEBRTC-OSSH",
-        "INPROXY-WEBRTC-TLS-OSSH",
-        "INPROXY-WEBRTC-UNFRONTED-MEEK-OSSH",
-        "INPROXY-WEBRTC-UNFRONTED-MEEK-HTTPS-OSSH",
-        "INPROXY-WEBRTC-UNFRONTED-MEEK-SESSION-TICKET-OSSH",
-        "INPROXY-WEBRTC-FRONTED-MEEK-OSSH",
-        "INPROXY-WEBRTC-FRONTED-MEEK-HTTP-OSSH",
-        "INPROXY-WEBRTC-QUIC-OSSH",
-        "INPROXY-WEBRTC-FRONTED-MEEK-QUIC-OSSH",
-        "INPROXY-WEBRTC-SHADOWSOCKS-OSSH",
+    if (settings.conduitRejectCensoredCountries) {
+      config["InproxyRejectProxyCountryCodes"] = [
+        "IR", "CN", "RU", "BY", "TM", "KP"
       ];
-      config["InproxyEnabled"] = true;
-      config["InproxyAllowClient"] = true;
-
-      final compartment = settings.conduitCompartmentId.trim();
-      if (compartment.isNotEmpty && settings.conduitMode != 'public') {
-        config["InproxyClientPersonalCompartmentID"] = compartment;
-      }
-
-      if (settings.conduitRejectCensoredCountries) {
-        config["InproxyRejectProxyCountryCodes"] = [
-          "IR",
-          "CN",
-          "RU",
-          "BY",
-          "TM",
-          "KP"
-        ];
-      }
-
-      final brokerJson = settings.conduitBrokerSpecsJson.trim();
-      if (brokerJson.isNotEmpty) {
-        try {
-          final decoded = jsonDecode(brokerJson);
-          if (decoded is List && decoded.isNotEmpty) {
-            config["InproxyClientBrokerSpecs"] = decoded;
-            processService.addLog(
-              '→ Conduit: ${decoded.length} static broker spec(s) configured',
-              source: LogSource.psiphon,
-            );
-          } else {
-            processService.addLog(
-              '⚠ Conduit broker specs ignored: expected a non-empty JSON array',
-              source: LogSource.psiphon,
-            );
-          }
-        } catch (e) {
-          processService.addLog(
-            '⚠ Conduit broker specs ignored: invalid JSON ($e)',
-            source: LogSource.psiphon,
-          );
-        }
-      }
-    } else if (hasUpstreamOverride) {
-      config["InproxyEnabled"] = false;
-      config["InproxyAllowClient"] = false;
     }
 
-    if (settings.useSunAndLion &&
-        settings.isFronted &&
-        settings.upstreamType != 3) {
-      config["ClientVersion"] = "45";
-      config["LimitTunnelProtocols"] = [
-        "FRONTED-MEEK-CDN-OSSH",
-        "FRONTED-MEEK-CDN-HTTP-OSSH",
-        "FRONTED-MEEK-CDN-QUIC-OSSH"
-      ];
+    _applyBrokerSpecs(config);
+  }
 
-      final dialAddresses = <String>{};
-      if (settings.ip.isNotEmpty) dialAddresses.add(settings.ip);
-      dialAddresses.addAll(ipList);
-      final addresses = dialAddresses.take(20).toList();
+  void _applyBrokerSpecs(Map<String, dynamic> config) {
+    final brokerJson = settings.conduitBrokerSpecsJson.trim();
+    if (brokerJson.isEmpty) return;
 
-      config["FrontedMeekDialOverrides"] = [
-        {
-          "OverrideID": "user-fronting",
-          "MatchDialAddressRegexes": [".*"],
-          "DialAddresses": addresses,
-          "SNIServerName": settings.tlsSni,
-          "VerifyServerNames": [
-            settings.tlsSni,
-            settings.httpHost,
-            if (settings.ip.isNotEmpty) settings.ip
-          ],
-          "ALPNProtocols": ["h2", "http/1.1"],
-          "TLSProfile": "Chrome-83",
-        }
-      ];
-      config["FrontedMeekDialOverridesProbability"] = 1.0;
-      config["FrontedMeekCDNScanUseBuiltInSpec"] = settings.autoFindIpAndSni;
+    try {
+      final decoded = jsonDecode(brokerJson);
+      if (decoded is List && decoded.isNotEmpty) {
+        config["InproxyClientBrokerSpecs"] = decoded;
+        processService.addLog(
+          '→ Conduit: ${decoded.length} static broker spec(s) configured',
+          source: LogSource.psiphon,
+        );
+      } else {
+        processService.addLog(
+          '⚠ Conduit broker specs ignored: expected a non-empty JSON array',
+          source: LogSource.psiphon,
+        );
+      }
+    } catch (e) {
+      processService.addLog(
+        '⚠ Conduit broker specs ignored: invalid JSON ($e)',
+        source: LogSource.psiphon,
+      );
     }
+  }
 
-    final jsonStr = const JsonEncoder.withIndent('  ').convert(config);
-    processService.addLog(
-      '→ Psiphon config generated (${jsonStr.length} bytes)',
-      source: LogSource.psiphon,
-    );
-
-    if (settings.isFronted) {
-      processService.addLog('→ Fronting IP: ${settings.ip}',
-          source: LogSource.psiphon);
-      processService.addLog('→ TLS SNI: ${settings.tlsSni}',
-          source: LogSource.psiphon);
-      processService.addLog('→ HTTP Host: ${settings.httpHost}',
-          source: LogSource.psiphon);
-      processService.addLog('→ SunAndLion: ${settings.useSunAndLion}',
-          source: LogSource.psiphon);
-    }
-
+  void _logFinalState() {
     if (settings.upstreamType == 3) {
       processService.addLog(
         '→ Conduit mode: ${settings.conduitMode}'
@@ -13338,8 +13723,6 @@ class PsiphonConfigBuilder {
         source: LogSource.psiphon,
       );
     }
-
-    return jsonStr;
   }
 }
 
@@ -13566,6 +13949,159 @@ extension ProcessServicePsiphonLauncher on ProcessService {
       addLog('Psiphon exited with code $code', source: src);
       touch();
     });
+  }
+}
+
+
+******************************************************
+lib/services/psiphon/psiphon_fronting_builder.dart
+******************************************************
+
+// lib/services/psiphon/psiphon_fronting_builder.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  PsiphonFrontingBuilder — ساخت بخش fronting کانفیگ Psiphon
+//  (تفکیک شده از psiphon_config_builder.dart)
+// ═══════════════════════════════════════════════════════════════
+library;
+
+import '../../models/settings_model.dart';
+import '../process_service.dart';
+
+class PsiphonFrontingBuilder {
+  final AppSettings settings;
+  final List<String> ipList;
+  final ProcessService processService;
+
+  PsiphonFrontingBuilder({
+    required this.settings,
+    required this.ipList,
+    required this.processService,
+  });
+
+  /// آیا fronting باید اعمال شود؟
+  bool get shouldApply =>
+      settings.useSunAndLion &&
+      settings.isFronted &&
+      settings.upstreamType != 3;
+
+  /// بخش fronting را به config اضافه می‌کند.
+  void apply(Map<String, dynamic> config) {
+    if (!shouldApply) return;
+
+    config["ClientVersion"] = "45";
+    config["LimitTunnelProtocols"] = [
+      "FRONTED-MEEK-CDN-OSSH",
+      "FRONTED-MEEK-CDN-HTTP-OSSH",
+      "FRONTED-MEEK-CDN-QUIC-OSSH"
+    ];
+
+    final dialAddresses = <String>{};
+    if (settings.ip.isNotEmpty) dialAddresses.add(settings.ip);
+    dialAddresses.addAll(ipList);
+    final addresses = dialAddresses.take(20).toList();
+
+    config["FrontedMeekDialOverrides"] = [
+      {
+        "OverrideID": "user-fronting",
+        "MatchDialAddressRegexes": [".*"],
+        "DialAddresses": addresses,
+        "SNIServerName": settings.tlsSni,
+        "VerifyServerNames": [
+          settings.tlsSni,
+          settings.httpHost,
+          if (settings.ip.isNotEmpty) settings.ip
+        ],
+        "ALPNProtocols": ["h2", "http/1.1"],
+        "TLSProfile": "Chrome-83",
+      }
+    ];
+    config["FrontedMeekDialOverridesProbability"] = 1.0;
+    config["FrontedMeekCDNScanUseBuiltInSpec"] = settings.autoFindIpAndSni;
+
+    // لاگ
+    processService.addLog('→ Fronting IP: ${settings.ip}',
+        source: LogSource.psiphon);
+    processService.addLog('→ TLS SNI: ${settings.tlsSni}',
+        source: LogSource.psiphon);
+    processService.addLog('→ HTTP Host: ${settings.httpHost}',
+        source: LogSource.psiphon);
+    processService.addLog('→ SunAndLion: ${settings.useSunAndLion}',
+        source: LogSource.psiphon);
+  }
+}
+
+
+******************************************************
+lib/services/psiphon/psiphon_upstream_builder.dart
+******************************************************
+
+// lib/services/psiphon/psiphon_upstream_builder.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  PsiphonUpstreamBuilder — ساخت بخش upstream کانفیگ Psiphon
+//  (تفکیک شده از psiphon_config_builder.dart)
+// ═══════════════════════════════════════════════════════════════
+library;
+
+import '../../models/settings_model.dart';
+import '../process_service.dart';
+
+class PsiphonUpstreamBuilder {
+  final AppSettings settings;
+  final ProcessService processService;
+
+  PsiphonUpstreamBuilder({
+    required this.settings,
+    required this.processService,
+  });
+
+  /// آیا upstream override فعال است؟
+  bool get hasOverride =>
+      settings.upstreamType == 1 ||
+      settings.upstreamType == 2 ||
+      settings.upstreamType == 4 ||
+      settings.upstreamType == 5;
+
+  /// بخش upstream را به config اضافه می‌کند.
+  void apply(Map<String, dynamic> config) {
+    switch (settings.upstreamType) {
+      case 1:
+        _applyManual(config);
+        break;
+      case 2:
+        _applySocks(config, settings.aetherLocalPort, 'Aether');
+        break;
+      case 4:
+        _applySocks(config, settings.torSocksPort, 'Tor');
+        break;
+      case 5:
+        _applySocks(config, settings.sstpSocksPort, 'SSTP');
+        break;
+      default:
+        break;
+    }
+  }
+
+  void _applyManual(Map<String, dynamic> config) {
+    String url = "${settings.proxyType}://";
+    if (settings.proxyUser.isNotEmpty) {
+      url += "${settings.proxyUser}:${settings.proxyPass}@";
+    }
+    url += "${settings.proxyIp}:${settings.proxyPort}";
+    config["UpstreamProxyURL"] = url;
+    processService.addLog(
+      '→ Psiphon upstream: Manual proxy ($url)',
+      source: LogSource.psiphon,
+    );
+  }
+
+  void _applySocks(Map<String, dynamic> config, int port, String label) {
+    config["UpstreamProxyURL"] = "socks5://127.0.0.1:$port";
+    processService.addLog(
+      '→ Psiphon upstream: $label (127.0.0.1:$port)',
+      source: LogSource.psiphon,
+    );
   }
 }
 
@@ -13874,16 +14410,9 @@ library;
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
-import 'sstp/tls_client_hello_builder.dart';
+import 'sstp/sstp_tls_probe.dart';
 
-enum SstpHealth {
-  unknown,
-  checking,
-  alive,
-  tcpOnly,
-  dead,
-}
+enum SstpHealth { unknown, checking, alive, tcpOnly, dead }
 
 class SstpHealthResult {
   final SstpHealth status;
@@ -13905,7 +14434,6 @@ class SstpHealthResult {
 
 class SstpHealthChecker {
   static const Duration tcpTimeout = Duration(seconds: 5);
-  static const Duration firstByteTimeout = Duration(seconds: 4);
 
   Future<SstpHealthResult> check(String ip, int port) async {
     final sw = Stopwatch()..start();
@@ -13932,85 +14460,11 @@ class SstpHealthChecker {
 
     final tcpLatency = sw.elapsedMilliseconds;
 
-    // ─── ارسال TLS ClientHello ───
+    // ─── TLS probe ───
     try {
-      sock.add(TlsClientHelloBuilder.build());
-      await sock.flush();
-    } catch (e) {
+      final outcome = await SstpTlsProbe.sendClientHello(sock);
       sw.stop();
-      try {
-        sock.destroy();
-      } catch (_) {}
-      return SstpHealthResult(
-        status: SstpHealth.dead,
-        latencyMs: tcpLatency,
-        message: 'failed to send TLS hello: ${_short(e)}',
-      );
-    }
-
-    // ─── منتظر پاسخ ───
-    final completer = Completer<_ProbeOutcome>();
-    StreamSubscription<Uint8List>? sub;
-    Timer? timer;
-
-    void finish(_ProbeOutcome outcome) {
-      if (completer.isCompleted) return;
-      completer.complete(outcome);
-    }
-
-    try {
-      sub = sock.listen(
-        (data) {
-          if (data.isNotEmpty) {
-            finish(_ProbeOutcome.gotData(data.length));
-          }
-        },
-        onError: (Object e) => finish(_ProbeOutcome.error(e)),
-        onDone: () => finish(_ProbeOutcome.closed()),
-        cancelOnError: true,
-      );
-
-      timer = Timer(firstByteTimeout, () {
-        finish(_ProbeOutcome.stillOpen());
-      });
-
-      final outcome = await completer.future;
-      sw.stop();
-
-      switch (outcome.kind) {
-        case _ProbeKind.gotData:
-          return SstpHealthResult(
-            status: SstpHealth.alive,
-            latencyMs: tcpLatency,
-            message: 'alive (TLS responded with ${outcome.dataLength}B)',
-          );
-        case _ProbeKind.stillOpen:
-          return SstpHealthResult(
-            status: SstpHealth.tcpOnly,
-            latencyMs: tcpLatency,
-            message: 'TCP open, no TLS response',
-          );
-        case _ProbeKind.closed:
-          return SstpHealthResult(
-            status: SstpHealth.tcpOnly,
-            latencyMs: tcpLatency,
-            message: 'TCP open, closed without TLS response',
-          );
-        case _ProbeKind.error:
-          final errStr = outcome.error?.toString() ?? '';
-          if (errStr.contains('reset') || errStr.contains('Connection')) {
-            return SstpHealthResult(
-              status: SstpHealth.alive,
-              latencyMs: tcpLatency,
-              message: 'alive (connection reset - server active)',
-            );
-          }
-          return SstpHealthResult(
-            status: SstpHealth.dead,
-            latencyMs: tcpLatency,
-            message: _short(outcome.error ?? 'unknown error'),
-          );
-      }
+      return _interpret(outcome, tcpLatency);
     } catch (e) {
       sw.stop();
       return SstpHealthResult(
@@ -14019,13 +14473,46 @@ class SstpHealthChecker {
         message: _short(e),
       );
     } finally {
-      timer?.cancel();
-      try {
-        await sub?.cancel();
-      } catch (_) {}
       try {
         sock.destroy();
       } catch (_) {}
+    }
+  }
+
+  SstpHealthResult _interpret(SstpProbeOutcome outcome, int tcpLatency) {
+    switch (outcome.kind) {
+      case SstpProbeKind.gotData:
+        return SstpHealthResult(
+          status: SstpHealth.alive,
+          latencyMs: tcpLatency,
+          message: 'alive (TLS responded with ${outcome.dataLength}B)',
+        );
+      case SstpProbeKind.stillOpen:
+        return SstpHealthResult(
+          status: SstpHealth.tcpOnly,
+          latencyMs: tcpLatency,
+          message: 'TCP open, no TLS response',
+        );
+      case SstpProbeKind.closed:
+        return SstpHealthResult(
+          status: SstpHealth.tcpOnly,
+          latencyMs: tcpLatency,
+          message: 'TCP open, closed without TLS response',
+        );
+      case SstpProbeKind.error:
+        final errStr = outcome.error?.toString() ?? '';
+        if (errStr.contains('reset') || errStr.contains('Connection')) {
+          return SstpHealthResult(
+            status: SstpHealth.alive,
+            latencyMs: tcpLatency,
+            message: 'alive (connection reset - server active)',
+          );
+        }
+        return SstpHealthResult(
+          status: SstpHealth.dead,
+          latencyMs: tcpLatency,
+          message: _short(outcome.error ?? 'unknown error'),
+        );
     }
   }
 
@@ -14033,24 +14520,6 @@ class SstpHealthChecker {
     final s = e.toString();
     return s.length > 80 ? '${s.substring(0, 80)}…' : s;
   }
-}
-
-enum _ProbeKind { gotData, stillOpen, closed, error }
-
-class _ProbeOutcome {
-  final _ProbeKind kind;
-  final int dataLength;
-  final Object? error;
-
-  const _ProbeOutcome._(this.kind, {this.dataLength = 0, this.error});
-
-  factory _ProbeOutcome.gotData(int length) =>
-      _ProbeOutcome._(_ProbeKind.gotData, dataLength: length);
-  factory _ProbeOutcome.stillOpen() =>
-      const _ProbeOutcome._(_ProbeKind.stillOpen);
-  factory _ProbeOutcome.closed() => const _ProbeOutcome._(_ProbeKind.closed);
-  factory _ProbeOutcome.error(Object e) =>
-      _ProbeOutcome._(_ProbeKind.error, error: e);
 }
 
 
@@ -14249,6 +14718,90 @@ class SstpServerStore {
   Future<void> clear() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_key);
+  }
+}
+
+
+******************************************************
+lib/services/sstp/sstp_tls_probe.dart
+******************************************************
+
+// lib/services/sstp/sstp_tls_probe.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  SstpTlsProbe — پروب TLS برای بررسی سلامت سرور SSTP
+//  (تفکیک شده از sstp_health_checker.dart)
+// ═══════════════════════════════════════════════════════════════
+library;
+
+import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
+import 'tls_client_hello_builder.dart';
+
+enum SstpProbeKind { gotData, stillOpen, closed, error }
+
+class SstpProbeOutcome {
+  final SstpProbeKind kind;
+  final int dataLength;
+  final Object? error;
+
+  const SstpProbeOutcome._(this.kind, {this.dataLength = 0, this.error});
+
+  factory SstpProbeOutcome.gotData(int length) =>
+      SstpProbeOutcome._(SstpProbeKind.gotData, dataLength: length);
+  factory SstpProbeOutcome.stillOpen() =>
+      const SstpProbeOutcome._(SstpProbeKind.stillOpen);
+  factory SstpProbeOutcome.closed() =>
+      const SstpProbeOutcome._(SstpProbeKind.closed);
+  factory SstpProbeOutcome.error(Object e) =>
+      SstpProbeOutcome._(SstpProbeKind.error, error: e);
+}
+
+class SstpTlsProbe {
+  static const Duration firstByteTimeout = Duration(seconds: 4);
+
+  /// ارسال ClientHello به سوکت و انتظار برای پاسخ.
+  static Future<SstpProbeOutcome> sendClientHello(Socket sock) async {
+    // ارسال ClientHello
+    try {
+      sock.add(TlsClientHelloBuilder.build());
+      await sock.flush();
+    } catch (e) {
+      return SstpProbeOutcome.error(e);
+    }
+
+    // انتظار برای پاسخ
+    final completer = Completer<SstpProbeOutcome>();
+    StreamSubscription<Uint8List>? sub;
+    Timer? timer;
+
+    void finish(SstpProbeOutcome outcome) {
+      if (completer.isCompleted) return;
+      completer.complete(outcome);
+    }
+
+    try {
+      sub = sock.listen(
+        (data) {
+          if (data.isNotEmpty) finish(SstpProbeOutcome.gotData(data.length));
+        },
+        onError: (Object e) => finish(SstpProbeOutcome.error(e)),
+        onDone: () => finish(SstpProbeOutcome.closed()),
+        cancelOnError: true,
+      );
+
+      timer = Timer(firstByteTimeout, () {
+        finish(SstpProbeOutcome.stillOpen());
+      });
+
+      return await completer.future;
+    } finally {
+      timer?.cancel();
+      try {
+        await sub?.cancel();
+      } catch (_) {}
+    }
   }
 }
 
@@ -16071,26 +16624,23 @@ class VpngateFetcher {
 
 
 ******************************************************
-lib/services/vpngate/vpngate_html_parser.dart
+lib/services/vpngate/vpngate_full_page_parser.dart
 ******************************************************
 
-// lib/services/vpngate/vpngate_html_parser.dart
+// lib/services/vpngate/vpngate_full_page_parser.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  VpngateFullPageParser — fallback: پارس کل صفحه HTML
+//  (تفکیک شده از vpngate_html_parser.dart)
+// ═══════════════════════════════════════════════════════════════
 library;
 
 import 'vpngate_country_extractor.dart';
+import 'vpngate_row_parser.dart';
 import '../vpngate_scraper_service.dart';
 
-class VpngateHtmlParser {
-  final void Function(String message, {String source}) log;
-  VpngateHtmlParser({required this.log});
-
-  static final _tableRegex = RegExp(
-    r'''<table[^>]*id\s*=\s*["']vg_hosts_table_id["'][^>]*>([\s\S]*?)</table>''',
-    caseSensitive: false,
-  );
-
-  static final _rowRegex =
-      RegExp(r'<tr[^>]*>([\s\S]*?)</tr>', caseSensitive: false);
+class VpngateFullPageParser {
+  VpngateFullPageParser._();
 
   static final _sstpRegex = RegExp(
     r'SSTP\s+Hostname\s*:[\s\S]{0,120}?'
@@ -16102,104 +16652,7 @@ class VpngateHtmlParser {
   static final _ipRegex =
       RegExp(r'\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b');
 
-  List<SstpServer> parse(String html) {
-    final servers = <SstpServer>[];
-    final seen = <String>{};
-
-    log('→ HTML length: ${html.length}', source: 'Vpngate');
-
-    final tables = _tableRegex.allMatches(html).toList();
-    log('→ Found ${tables.length} tables with id=vg_hosts_table_id',
-        source: 'Vpngate');
-
-    if (tables.isEmpty) {
-      log('→ No table found, using full page fallback', source: 'Vpngate');
-      return _parseFromFullPage(html);
-    }
-
-    final targetTable = tables.length >= 3 ? tables[2] : tables.last;
-    final tableHtml = targetTable.group(1) ?? '';
-
-    log('→ Using table #${tables.length >= 3 ? 3 : tables.length}',
-        source: 'Vpngate');
-
-    final rows = _rowRegex.allMatches(tableHtml).toList();
-    log('→ Found ${rows.length} rows', source: 'Vpngate');
-
-    for (final rowMatch in rows) {
-      final row = rowMatch.group(1) ?? '';
-      final lowerRow = row.toLowerCase();
-
-      if (lowerRow.contains('country') &&
-          lowerRow.contains('physical location')) {
-        continue;
-      }
-      if (!lowerRow.contains('sstp hostname')) continue;
-
-      final sstpMatch = _sstpRegex.firstMatch(row);
-      if (sstpMatch == null) continue;
-
-      final host = sstpMatch.group(1)?.trim() ?? '';
-      if (host.isEmpty) continue;
-
-      int port = 443;
-      if (sstpMatch.group(2) != null) {
-        final p = int.tryParse(sstpMatch.group(2)!);
-        if (p != null && p >= 1 && p <= 65535) port = p;
-      }
-
-      final ipMatch = _ipRegex.firstMatch(row);
-      if (ipMatch == null) continue;
-      final ip = ipMatch.group(1)!;
-      if (!_isValidIp(ip)) continue;
-
-      final countryInfo = VpngateCountryExtractor.extract(row);
-
-      int ping = 0;
-      final pingMatch =
-          RegExp(r'(\d+)\s*ms', caseSensitive: false).firstMatch(row);
-      if (pingMatch != null) ping = int.tryParse(pingMatch.group(1)!) ?? 0;
-
-      int speed = 0;
-      final speedMatch =
-          RegExp(r'([\d.,]+)\s*Mbps', caseSensitive: false).firstMatch(row);
-      if (speedMatch != null) {
-        final s = speedMatch.group(1)!.replaceAll(',', '');
-        speed = (double.tryParse(s) ?? 0).round();
-      }
-
-      String operator = '';
-      final opMatch =
-          RegExp(r'\*By\s+([^<*\n]{2,50})', caseSensitive: false)
-              .firstMatch(row);
-      if (opMatch != null) operator = opMatch.group(1)!.trim();
-
-      final key = '$ip:$port';
-      if (seen.add(key)) {
-        servers.add(SstpServer(
-          ip: ip,
-          port: port,
-          country: countryInfo.name,
-          countryShort: countryInfo.code,
-          ping: ping,
-          speed: speed,
-          operator: operator,
-        ));
-      }
-    }
-
-    if (servers.isEmpty) {
-      log('→ Table returned 0 — trying full page', source: 'Vpngate');
-      return _parseFromFullPage(html);
-    }
-
-    final non443 = servers.where((s) => s.port != 443).length;
-    log('→ Non-443 ports found: $non443', source: 'Vpngate');
-
-    return servers;
-  }
-
-  List<SstpServer> _parseFromFullPage(String html) {
+  static List<SstpServer> parse(String html) {
     final servers = <SstpServer>[];
     final seen = <String>{};
 
@@ -16222,7 +16675,7 @@ class VpngateHtmlParser {
       String? ip;
       for (var i = ipMatches.length - 1; i >= 0; i--) {
         final candidate = ipMatches[i].group(1)!;
-        if (_isValidIp(candidate)) {
+        if (VpngateRowParser.isValidIp(candidate)) {
           ip = candidate;
           break;
         }
@@ -16245,8 +16698,165 @@ class VpngateHtmlParser {
     }
     return servers;
   }
+}
 
-  bool _isValidIp(String s) {
+
+******************************************************
+lib/services/vpngate/vpngate_html_parser.dart
+******************************************************
+
+// lib/services/vpngate/vpngate_html_parser.dart
+library;
+
+import 'vpngate_full_page_parser.dart';
+import 'vpngate_row_parser.dart';
+import '../vpngate_scraper_service.dart';
+
+class VpngateHtmlParser {
+  final void Function(String message, {String source}) log;
+  VpngateHtmlParser({required this.log});
+
+  static final _tableRegex = RegExp(
+    r'''<table[^>]*id\s*=\s*["']vg_hosts_table_id["'][^>]*>([\s\S]*?)</table>''',
+    caseSensitive: false,
+  );
+
+  static final _rowRegex =
+      RegExp(r'<tr[^>]*>([\s\S]*?)</tr>', caseSensitive: false);
+
+  List<SstpServer> parse(String html) {
+    log('→ HTML length: ${html.length}', source: 'Vpngate');
+
+    final tables = _tableRegex.allMatches(html).toList();
+    log('→ Found ${tables.length} tables with id=vg_hosts_table_id',
+        source: 'Vpngate');
+
+    if (tables.isEmpty) {
+      log('→ No table found, using full page fallback', source: 'Vpngate');
+      return VpngateFullPageParser.parse(html);
+    }
+
+    final targetTable = tables.length >= 3 ? tables[2] : tables.last;
+    final tableHtml = targetTable.group(1) ?? '';
+
+    log('→ Using table #${tables.length >= 3 ? 3 : tables.length}',
+        source: 'Vpngate');
+
+    final rows = _rowRegex.allMatches(tableHtml).toList();
+    log('→ Found ${rows.length} rows', source: 'Vpngate');
+
+    final servers = <SstpServer>[];
+    final seen = <String>{};
+
+    for (final rowMatch in rows) {
+      final row = rowMatch.group(1) ?? '';
+      final server = VpngateRowParser.parse(row);
+      if (server == null) continue;
+      if (seen.add(server.key)) servers.add(server);
+    }
+
+    if (servers.isEmpty) {
+      log('→ Table returned 0 — trying full page', source: 'Vpngate');
+      return VpngateFullPageParser.parse(html);
+    }
+
+    final non443 = servers.where((s) => s.port != 443).length;
+    log('→ Non-443 ports found: $non443', source: 'Vpngate');
+
+    return servers;
+  }
+}
+
+
+******************************************************
+lib/services/vpngate/vpngate_row_parser.dart
+******************************************************
+
+// lib/services/vpngate/vpngate_row_parser.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  VpngateRowParser — پارس یک ردیف جدول به SstpServer
+//  (تفکیک شده از vpngate_html_parser.dart)
+// ═══════════════════════════════════════════════════════════════
+library;
+
+import 'vpngate_country_extractor.dart';
+import '../vpngate_scraper_service.dart';
+
+class VpngateRowParser {
+  VpngateRowParser._();
+
+  static final _sstpRegex = RegExp(
+    r'SSTP\s+Hostname\s*:[\s\S]{0,120}?'
+    r'([a-zA-Z0-9][a-zA-Z0-9\.\-]{2,60}\.opengw\.net)'
+    r'(?::(\d{2,5}))?',
+    caseSensitive: false,
+  );
+
+  static final _ipRegex =
+      RegExp(r'\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b');
+
+  /// پارس یک ردیف جدول. null اگر ردیف نامعتبر باشد.
+  static SstpServer? parse(String row) {
+    final lowerRow = row.toLowerCase();
+
+    // رد کردن ردیف header
+    if (lowerRow.contains('country') &&
+        lowerRow.contains('physical location')) {
+      return null;
+    }
+    if (!lowerRow.contains('sstp hostname')) return null;
+
+    final sstpMatch = _sstpRegex.firstMatch(row);
+    if (sstpMatch == null) return null;
+
+    final host = sstpMatch.group(1)?.trim() ?? '';
+    if (host.isEmpty) return null;
+
+    int port = 443;
+    if (sstpMatch.group(2) != null) {
+      final p = int.tryParse(sstpMatch.group(2)!);
+      if (p != null && p >= 1 && p <= 65535) port = p;
+    }
+
+    final ipMatch = _ipRegex.firstMatch(row);
+    if (ipMatch == null) return null;
+    final ip = ipMatch.group(1)!;
+    if (!isValidIp(ip)) return null;
+
+    final countryInfo = VpngateCountryExtractor.extract(row);
+
+    return SstpServer(
+      ip: ip,
+      port: port,
+      country: countryInfo.name,
+      countryShort: countryInfo.code,
+      ping: _parsePing(row),
+      speed: _parseSpeed(row),
+      operator: _parseOperator(row),
+    );
+  }
+
+  static int _parsePing(String row) {
+    final m = RegExp(r'(\d+)\s*ms', caseSensitive: false).firstMatch(row);
+    return m != null ? (int.tryParse(m.group(1)!) ?? 0) : 0;
+  }
+
+  static int _parseSpeed(String row) {
+    final m =
+        RegExp(r'([\d.,]+)\s*Mbps', caseSensitive: false).firstMatch(row);
+    if (m == null) return 0;
+    final s = m.group(1)!.replaceAll(',', '');
+    return (double.tryParse(s) ?? 0).round();
+  }
+
+  static String _parseOperator(String row) {
+    final m = RegExp(r'\*By\s+([^<*\n]{2,50})', caseSensitive: false)
+        .firstMatch(row);
+    return m != null ? m.group(1)!.trim() : '';
+  }
+
+  static bool isValidIp(String s) {
     final parts = s.split('.');
     if (parts.length != 4) return false;
     for (final p in parts) {
@@ -16627,6 +17237,230 @@ class AetherProtocolCard extends StatelessWidget {
 
 
 ******************************************************
+lib/widgets/cdn_scanner/cdn_custom_ips_manager.dart
+******************************************************
+
+import 'package:flutter/material.dart';
+import '../../providers/cdn_scanner_provider.dart';
+
+/// بخش مدیریت IPهای کاستوم (ذخیره/حذف/پاک‌سازی).
+///
+/// ⚠️ به‌جای Icon از کاراکترهای یونیکد متنی استفاده می‌کنیم تا
+/// مستقل از فونت Material Icons باشیم.
+class CdnCustomIpsManager extends StatelessWidget {
+  final CdnScannerProvider scan;
+  final TextEditingController inputCtrl;
+  final ThemeData theme;
+
+  const CdnCustomIpsManager({
+    super.key,
+    required this.scan,
+    required this.inputCtrl,
+    required this.theme,
+  });
+
+  Future<void> _saveCurrentAsCustom(BuildContext context) async {
+    final raw = inputCtrl.text.trim();
+    if (raw.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('IP list is empty')),
+      );
+      return;
+    }
+    final lines = raw
+        .split('\n')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+
+    await scan.addCustomIps(lines);
+
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '${lines.length} line(s) saved to Custom (total: ${scan.customIps.length})',
+        ),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  Future<void> _confirmClear(BuildContext context) async {
+    if (scan.customIps.isEmpty) return;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Clear custom IPs?'),
+        content: Text(
+          '${scan.customIps.length} saved line(s) will be removed.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Clear'),
+          ),
+        ],
+      ),
+    );
+    if (ok == true) {
+      await scan.clearCustomIps();
+    }
+  }
+
+  void _showManageDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) {
+            final items = scan.customIps;
+            return AlertDialog(
+              title: Text('Custom IPs (${items.length})'),
+              content: SizedBox(
+                width: double.maxFinite,
+                height: 360,
+                child: items.isEmpty
+                    ? const Center(child: Text('No custom IPs saved yet'))
+                    : ListView.builder(
+                        itemCount: items.length,
+                        itemBuilder: (ctx, i) {
+                          final ip = items[i];
+                          return ListTile(
+                            dense: true,
+                            title: Text(
+                              ip,
+                              style: const TextStyle(
+                                fontFamily: 'monospace',
+                                fontSize: 12,
+                              ),
+                            ),
+                            trailing: TextButton(
+                              onPressed: () async {
+                                await scan.removeCustomIp(ip);
+                                setDialogState(() {});
+                              },
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.red,
+                                minimumSize: const Size(36, 36),
+                                padding: EdgeInsets.zero,
+                              ),
+                              child: const Text(
+                                '✕',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Close'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    await scan.clearCustomIps();
+                    if (ctx.mounted) Navigator.pop(ctx);
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.red,
+                  ),
+                  child: const Text('✕  Clear all'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final count = scan.customIps.length;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.25),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.colorScheme.primary.withValues(alpha: 0.25),
+        ),
+      ),
+      child: Row(
+        children: [
+          // ★ به‌جای Icons.bookmark_outline
+          Text(
+            '★',
+            style: TextStyle(
+              fontSize: 18,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              count == 0
+                  ? 'Custom IPs: none saved'
+                  : 'Custom IPs: $count line(s) saved',
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+          ),
+          // ↓ به‌جای Icons.save_outlined
+          TextButton(
+            onPressed: () => _saveCurrentAsCustom(context),
+            style: TextButton.styleFrom(
+              visualDensity: VisualDensity.compact,
+            ),
+            child: const Text('💾  Save'),
+          ),
+          // ↓ به‌جای Icons.list_alt
+          IconButton(
+            tooltip: 'Manage saved IPs',
+            visualDensity: VisualDensity.compact,
+            onPressed: () => _showManageDialog(context),
+            icon: const Text(
+              '☰',
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
+          // ↓ به‌جای Icons.delete_outline
+          IconButton(
+            tooltip: 'Clear all custom IPs',
+            visualDensity: VisualDensity.compact,
+            onPressed: count == 0 ? null : () => _confirmClear(context),
+            icon: Text(
+              '✕',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: count == 0
+                    ? theme.disabledColor
+                    : theme.colorScheme.error,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+******************************************************
 lib/widgets/cdn_scanner/cdn_scanner_inputs.dart
 ******************************************************
 
@@ -16665,16 +17499,26 @@ class CdnScannerInputs extends StatelessWidget {
           runSpacing: 8,
           children: CdnPresets.all.map((preset) {
             final selected = scan.selectedPresetId == preset.id;
+            final isCustom = preset.id == 'custom';
+
+            // ✅ برای Custom از یک avatar متنی استفاده می‌کنیم
+            // تا مشکل فونت Material Icons پیش نیاید.
+            final Widget? avatar = isCustom
+                ? _CustomAvatar(
+                    selected: selected,
+                    theme: theme,
+                  )
+                : null;
+
             return FilterChip(
               label: Text(preset.name),
               selected: selected,
+              avatar: avatar,
               onSelected: scan.isRunning
                   ? null
                   : (v) {
                       if (v) {
                         scan.applyPreset(preset.id);
-                        inputCtrl.text = scan.customInput;
-                        sniCtrl.text = scan.snis.join('\n');
                       }
                     },
             );
@@ -16735,6 +17579,47 @@ class CdnScannerInputs extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+/// ═══════════════════════════════════════════════════════════════
+///  آواتار متنی برای chip «Custom» — به‌جای Icon تا مستقل از
+///  فونت Material Icons باشد.
+/// ═══════════════════════════════════════════════════════════════
+class _CustomAvatar extends StatelessWidget {
+  final bool selected;
+  final ThemeData theme;
+
+  const _CustomAvatar({
+    required this.selected,
+    required this.theme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // در حالت انتخاب‌شده، رنگ chip معمولاً روشن می‌شود → از onSurface
+    // استفاده می‌کنیم. در حالت غیرانتخاب، از primary.
+    final color = selected
+        ? theme.colorScheme.onSecondaryContainer
+        : theme.colorScheme.primary;
+
+    return Container(
+      width: 18,
+      height: 18,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        '★', // یک کاراکتر یونیکد که در همهٔ فونت‌ها هست
+        style: TextStyle(
+          fontSize: 12,
+          height: 1,
+          color: color,
+        ),
+      ),
     );
   }
 }
@@ -16958,6 +17843,7 @@ import '../providers/cdn_scanner_provider.dart';
 import 'settings_tile_base.dart';
 import 'cdn_scanner/cdn_scanner_inputs.dart';
 import 'cdn_scanner/cdn_scanner_results.dart';
+import 'cdn_scanner/cdn_custom_ips_manager.dart';
 
 class CdnScannerSection extends StatefulWidget {
   const CdnScannerSection({super.key});
@@ -16969,15 +17855,8 @@ class CdnScannerSection extends StatefulWidget {
 class _CdnScannerSectionState extends State<CdnScannerSection> {
   final _inputCtrl = TextEditingController();
   final _sniCtrl = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    final p = context.read<CdnScannerProvider>();
-    p.applyPreset('akamai');
-    _sniCtrl.text = p.snis.join('\n');
-    _inputCtrl.text = p.customInput;
-  }
+  bool _controllersSynced = false;
+  String? _lastSyncedPreset;
 
   @override
   void dispose() {
@@ -16986,10 +17865,37 @@ class _CdnScannerSectionState extends State<CdnScannerSection> {
     super.dispose();
   }
 
+  /// controllerها رو با state فعلی provider sync می‌کنه
+  /// (فقط وقتی preset عوض بشه یا اولین بار load بشه).
+  void _syncControllers(CdnScannerProvider scan) {
+    if (!scan.isLoaded) return;
+
+    final presetChanged = _lastSyncedPreset != scan.selectedPresetId;
+    final firstTime = !_controllersSynced;
+
+    if (firstTime || presetChanged) {
+      _lastSyncedPreset = scan.selectedPresetId;
+      _controllersSynced = true;
+
+      // در post-frame اجرا کن تا با rebuild تداخل نکنه
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (scan.selectedPresetId == 'custom') {
+          _inputCtrl.text = scan.customIps.join('\n');
+        } else {
+          _inputCtrl.text = scan.customInput;
+        }
+        _sniCtrl.text = scan.snis.join('\n');
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final scan = context.watch<CdnScannerProvider>();
     final theme = Theme.of(context);
+
+    _syncControllers(scan);
 
     return SettingsTile(
       title: 'CDN IP Scanner',
@@ -17057,6 +17963,12 @@ class _CdnScannerSectionState extends State<CdnScannerSection> {
             ),
           ],
         ),
+        const SizedBox(height: 8),
+        CdnCustomIpsManager(
+          scan: scan,
+          inputCtrl: _inputCtrl,
+          theme: theme,
+        ),
         CdnScannerResults(scan: scan, theme: theme),
       ],
     );
@@ -17072,88 +17984,24 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import 'connection/connection_button_builder.dart';
+import 'connection/connection_state_resolver.dart';
 import 'connection/circle_connect_button.dart';
 
 class ConnectionButtons extends StatelessWidget {
   const ConnectionButtons({super.key});
 
-  static bool _aetherHealthy(String status) {
-    final s = status.toLowerCase();
-    if (s.contains('unverified')) return false;
-    if (s.contains('healthy')) return true;
-    if (s.contains('upstream') && s.contains('running')) return true;
-    return false;
-  }
-
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
-    final ps = provider.processService;
     final theme = Theme.of(context);
     final builder =
         ConnectionButtonBuilder(primaryColor: theme.colorScheme.primary);
+    final resolver = ConnectionStateResolver(provider);
 
-    // ═══════════════════════════════════════════
-    //  Aether
-    // ═══════════════════════════════════════════
-    final aetherBusy = provider.isAutoTesting;
-    final aetherHealthy = ps.isAetherRunning &&
-        !aetherBusy &&
-        _aetherHealthy(provider.aetherStatus);
-    final aetherRunningForButton = ps.isAetherRunning || aetherBusy;
-    final aetherData = builder.forAether(
-      isRunning: aetherRunningForButton,
-      isConnected: aetherHealthy,
-      isBusy: aetherBusy,
-      progress: null,
-    );
-
-    // ═══════════════════════════════════════════
-    //  Psiphon
-    // ═══════════════════════════════════════════
-    final psiphonOn = ps.isPsiphonConnected;
-    final psiphonBusy = provider.isPsiphonBusy && !ps.isPsiphonRunning;
-    final psiphonRunningForButton =
-        ps.isPsiphonRunning || (provider.isPsiphonBusy && !psiphonOn);
-    final psiphonData = builder.forPsiphon(
-      isRunning: psiphonRunningForButton,
-      isConnected: psiphonOn,
-      isBusy: psiphonBusy,
-    );
-
-    // ═══════════════════════════════════════════
-    //  Tor — با progress در bootstrap
-    // ═══════════════════════════════════════════
-    final torOn = ps.isTorConnected;
-    final torBootstrapping = ps.isTorRunning && !torOn;
-    final torStarting = provider.isTorBusy && !ps.isTorRunning;
-
-    final torBusy = torBootstrapping || torStarting;
-    final torRunningForButton = ps.isTorRunning || torStarting;
-
-    final int torProgress = ps.torBootstrapProgress;
-    final bool showTorProgress =
-        torBusy && !torOn && torProgress > 0 && torProgress < 100;
-
-    final torData = builder.forTor(
-      isRunning: torRunningForButton,
-      isConnected: torOn,
-      isBusy: torBusy,
-      progress: showTorProgress ? torProgress : null,
-    );
-
-    // ═══════════════════════════════════════════
-    //  SSTP
-    // ═══════════════════════════════════════════
-    final sstpOn = ps.isSstpConnected;
-    final sstpBusy = provider.isSstpBusy && !ps.isSstpRunning;
-    final sstpRunningForButton =
-        ps.isSstpRunning || (provider.isSstpBusy && !sstpOn);
-    final sstpData = builder.forSstp(
-      isRunning: sstpRunningForButton,
-      isConnected: sstpOn,
-      isBusy: sstpBusy,
-    );
+    final aetherData = resolver.resolveAether(builder);
+    final psiphonData = resolver.resolvePsiphon(builder);
+    final torData = resolver.resolveTor(builder);
+    final sstpData = resolver.resolveSstp(builder);
 
     final onSurface = theme.colorScheme.onSurface;
 
@@ -17636,10 +18484,103 @@ class ConnectionButtonState {
 
 
 ******************************************************
+lib/widgets/connection/connection_state_resolver.dart
+******************************************************
+
+// lib/widgets/connection/connection_state_resolver.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  ConnectionStateResolver — محاسبهٔ state هر دکمه از ProcessService
+//  (تفکیک شده از connection_buttons.dart)
+// ═══════════════════════════════════════════════════════════════
+library;
+
+import '../../providers/app_provider.dart';
+import 'connection_button_builder.dart';
+
+class ConnectionStateResolver {
+  final AppProvider provider;
+
+  const ConnectionStateResolver(this.provider);
+
+  static bool _aetherHealthy(String status) {
+    final s = status.toLowerCase();
+    if (s.contains('unverified')) return false;
+    if (s.contains('healthy')) return true;
+    if (s.contains('upstream') && s.contains('running')) return true;
+    return false;
+  }
+
+  ConnectionButtonData resolveAether(ConnectionButtonBuilder builder) {
+    final ps = provider.processService;
+    final aetherBusy = provider.isAutoTesting;
+    final aetherHealthy = ps.isAetherRunning &&
+        !aetherBusy &&
+        _aetherHealthy(provider.aetherStatus);
+    final aetherRunningForButton = ps.isAetherRunning || aetherBusy;
+    return builder.forAether(
+      isRunning: aetherRunningForButton,
+      isConnected: aetherHealthy,
+      isBusy: aetherBusy,
+      progress: null,
+    );
+  }
+
+  ConnectionButtonData resolvePsiphon(ConnectionButtonBuilder builder) {
+    final ps = provider.processService;
+    final psiphonOn = ps.isPsiphonConnected;
+    final psiphonBusy = provider.isPsiphonBusy && !ps.isPsiphonRunning;
+    final psiphonRunningForButton =
+        ps.isPsiphonRunning || (provider.isPsiphonBusy && !psiphonOn);
+    return builder.forPsiphon(
+      isRunning: psiphonRunningForButton,
+      isConnected: psiphonOn,
+      isBusy: psiphonBusy,
+    );
+  }
+
+  ConnectionButtonData resolveTor(ConnectionButtonBuilder builder) {
+    final ps = provider.processService;
+    final torOn = ps.isTorConnected;
+    final torBootstrapping = ps.isTorRunning && !torOn;
+    final torStarting = provider.isTorBusy && !ps.isTorRunning;
+
+    final torBusy = torBootstrapping || torStarting;
+    final torRunningForButton = ps.isTorRunning || torStarting;
+
+    final int torProgress = ps.torBootstrapProgress;
+    final bool showTorProgress =
+        torBusy && !torOn && torProgress > 0 && torProgress < 100;
+
+    return builder.forTor(
+      isRunning: torRunningForButton,
+      isConnected: torOn,
+      isBusy: torBusy,
+      progress: showTorProgress ? torProgress : null,
+    );
+  }
+
+  ConnectionButtonData resolveSstp(ConnectionButtonBuilder builder) {
+    final ps = provider.processService;
+    final sstpOn = ps.isSstpConnected;
+    final sstpBusy = provider.isSstpBusy && !ps.isSstpRunning;
+    final sstpRunningForButton =
+        ps.isSstpRunning || (provider.isSstpBusy && !sstpOn);
+    return builder.forSstp(
+      isRunning: sstpRunningForButton,
+      isConnected: sstpOn,
+      isBusy: sstpBusy,
+    );
+  }
+}
+
+
+******************************************************
 lib/widgets/editable_list_dropdown.dart
 ******************************************************
 
 import 'package:flutter/material.dart';
+import 'editable_list/editable_list_dialogs.dart';
 
 class EditableListDropdown extends StatefulWidget {
   final String label;
@@ -17684,107 +18625,47 @@ class _EditableListDropdownState extends State<EditableListDropdown> {
   }
 
   Future<void> _showAddDialog() async {
-    final controller = TextEditingController();
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Add ${widget.label}'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: const InputDecoration(
-            hintText: 'Enter new value',
-            border: OutlineInputBorder(),
-          ),
-          onSubmitted: (v) => Navigator.pop(context, v.trim()),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, controller.text.trim()),
-            child: const Text('Add'),
-          ),
-        ],
-      ),
-    );
-    if (result != null && result.isNotEmpty) {
-      if (!_items.contains(result)) {
-        setState(() {
-          _items = [..._items, result];
-        });
-        widget.onListChanged(_items);
-      }
-      setState(() => _currentValue = result);
-      widget.onChanged(result);
+    final result =
+        await EditableListDialogs.showAdd(context, widget.label);
+    if (result == null) return;
+
+    if (!_items.contains(result)) {
+      setState(() => _items = [..._items, result]);
+      widget.onListChanged(_items);
     }
+    setState(() => _currentValue = result);
+    widget.onChanged(result);
   }
 
   Future<void> _showManageDialog() async {
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return AlertDialog(
-              title: Text('Manage ${widget.label} list'),
-              content: SizedBox(
-                width: double.maxFinite,
-                child: _items.isEmpty
-                    ? const Text('List is empty')
-                    : ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: _items.length,
-                        itemBuilder: (context, index) {
-                          final item = _items[index];
-                          return ListTile(
-                            title: Text(item),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete_outline,
-                                  color: Colors.red),
-                              tooltip: 'Delete',
-                              onPressed: () {
-                                setDialogState(() {
-                                  _items.removeAt(index);
-                                });
-                                setState(() {});
-                                widget.onListChanged(List.from(_items));
-                                if (_currentValue == item) {
-                                  setState(() => _currentValue = '');
-                                  widget.onChanged('');
-                                }
-                              },
-                            ),
-                            onTap: () {
-                              setState(() => _currentValue = item);
-                              widget.onChanged(item);
-                              Navigator.pop(context);
-                            },
-                          );
-                        },
-                      ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Close'),
-                ),
-                FilledButton.icon(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    _showAddDialog();
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add new'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+    while (true) {
+      final result = await EditableListDialogs.showManage(
+        context,
+        widget.label,
+        _items,
+      );
+      if (result == null) return;
+
+      switch (result.action) {
+        case 'delete':
+          setState(() {
+            _items.remove(result.value);
+          });
+          widget.onListChanged(List.from(_items));
+          if (_currentValue == result.value) {
+            setState(() => _currentValue = '');
+            widget.onChanged('');
+          }
+          break;
+        case 'select':
+          setState(() => _currentValue = result.value ?? '');
+          widget.onChanged(result.value ?? '');
+          return;
+        case 'add':
+          await _showAddDialog();
+          return;
+      }
+    }
   }
 
   @override
@@ -17805,10 +18686,7 @@ class _EditableListDropdownState extends State<EditableListDropdown> {
             items: _items
                 .map((item) => DropdownMenuItem(
                       value: item,
-                      child: Text(
-                        item,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      child: Text(item, overflow: TextOverflow.ellipsis),
                     ))
                 .toList(),
             onChanged: (v) {
@@ -17826,6 +18704,127 @@ class _EditableListDropdownState extends State<EditableListDropdown> {
           onPressed: _showManageDialog,
         ),
       ],
+    );
+  }
+}
+
+
+******************************************************
+lib/widgets/editable_list/editable_list_dialogs.dart
+******************************************************
+
+// lib/widgets/editable_list/editable_list_dialogs.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  EditableListDialogs — دیالوگ‌های add/manage برای EditableListDropdown
+//  (تفکیک شده از editable_list_dropdown.dart)
+// ═══════════════════════════════════════════════════════════════
+library;
+
+import 'package:flutter/material.dart';
+
+class EditableListDialogs {
+  EditableListDialogs._();
+
+  /// دیالوگ افزودن یک آیتم جدید. مقدار وارد‌شده را برمی‌گرداند.
+  static Future<String?> showAdd(
+    BuildContext context,
+    String label,
+  ) async {
+    final controller = TextEditingController();
+    final result = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Add $label'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            hintText: 'Enter new value',
+            border: OutlineInputBorder(),
+          ),
+          onSubmitted: (v) => Navigator.pop(ctx, v.trim()),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+    return (result != null && result.isNotEmpty) ? result : null;
+  }
+
+  /// دیالوگ مدیریت لیست. نتیجه یک action است:
+  ///   - null اگر بسته شد
+  ///   - (action: 'delete', value) اگر آیتم حذف شد
+  ///   - (action: 'select', value) اگر آیتم انتخاب شد
+  ///   - (action: 'add') اگر add زده شد
+  static Future<({String action, String? value})?> showManage(
+    BuildContext context,
+    String label,
+    List<String> items,
+  ) async {
+    return showDialog<({String action, String? value})>(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) {
+            return AlertDialog(
+              title: Text('Manage $label list'),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: items.isEmpty
+                    ? const Text('List is empty')
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: items.length,
+                        itemBuilder: (ctx, index) {
+                          final item = items[index];
+                          return ListTile(
+                            title: Text(item),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete_outline,
+                                  color: Colors.red),
+                              tooltip: 'Delete',
+                              onPressed: () {
+                                items.removeAt(index);
+                                setDialogState(() {});
+                                Navigator.pop(
+                                  ctx,
+                                  (action: 'delete', value: item),
+                                );
+                              },
+                            ),
+                            onTap: () => Navigator.pop(
+                              ctx,
+                              (action: 'select', value: item),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Close'),
+                ),
+                FilledButton.icon(
+                  onPressed: () =>
+                      Navigator.pop(ctx, (action: 'add', value: null)),
+                  icon: const Icon(Icons.add),
+                  label: const Text('Add new'),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }

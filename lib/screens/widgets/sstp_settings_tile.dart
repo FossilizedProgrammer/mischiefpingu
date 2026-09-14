@@ -9,14 +9,9 @@ import 'sstp/sstp_fronting_section.dart';
 import 'sstp/sstp_ports_section.dart';
 import 'sstp/sstp_switches_section.dart';
 
-class SstpSettingsTile extends StatefulWidget {
+class SstpSettingsTile extends StatelessWidget {
   const SstpSettingsTile({super.key});
 
-  @override
-  State<SstpSettingsTile> createState() => _SstpSettingsTileState();
-}
-
-class _SstpSettingsTileState extends State<SstpSettingsTile> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();

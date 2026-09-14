@@ -17,11 +17,11 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('MischiefPingu',
+              const Text('Mischief Pingu',
                   style: TextStyle(fontWeight: FontWeight.w800)),
               const SizedBox(height: 8),
               Text(
-                'Unofficial Psiphon + Aether + Tor + SSTP client',
+                'Unofficial Psiphon client ,Aether client, Tor client, SSTP client',
                 style: theme.textTheme.bodySmall?.copyWith(
                     fontSize: 11,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),

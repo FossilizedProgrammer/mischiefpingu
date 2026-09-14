@@ -1,4 +1,4 @@
-# Pingu Proxy
+# MischiefPingu
 
 **Unofficial multi-core proxy client — Psiphon • Aether • Tor • SSTP**
 

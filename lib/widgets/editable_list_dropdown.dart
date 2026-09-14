@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'editable_list/editable_list_dialogs.dart';
 
 class EditableListDropdown extends StatefulWidget {
   final String label;
@@ -43,107 +44,47 @@ class _EditableListDropdownState extends State<EditableListDropdown> {
   }
 
   Future<void> _showAddDialog() async {
-    final controller = TextEditingController();
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Add ${widget.label}'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: const InputDecoration(
-            hintText: 'Enter new value',
-            border: OutlineInputBorder(),
-          ),
-          onSubmitted: (v) => Navigator.pop(context, v.trim()),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, controller.text.trim()),
-            child: const Text('Add'),
-          ),
-        ],
-      ),
-    );
-    if (result != null && result.isNotEmpty) {
-      if (!_items.contains(result)) {
-        setState(() {
-          _items = [..._items, result];
-        });
-        widget.onListChanged(_items);
-      }
-      setState(() => _currentValue = result);
-      widget.onChanged(result);
+    final result =
+        await EditableListDialogs.showAdd(context, widget.label);
+    if (result == null) return;
+
+    if (!_items.contains(result)) {
+      setState(() => _items = [..._items, result]);
+      widget.onListChanged(_items);
     }
+    setState(() => _currentValue = result);
+    widget.onChanged(result);
   }
 
   Future<void> _showManageDialog() async {
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return AlertDialog(
-              title: Text('Manage ${widget.label} list'),
-              content: SizedBox(
-                width: double.maxFinite,
-                child: _items.isEmpty
-                    ? const Text('List is empty')
-                    : ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: _items.length,
-                        itemBuilder: (context, index) {
-                          final item = _items[index];
-                          return ListTile(
-                            title: Text(item),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete_outline,
-                                  color: Colors.red),
-                              tooltip: 'Delete',
-                              onPressed: () {
-                                setDialogState(() {
-                                  _items.removeAt(index);
-                                });
-                                setState(() {});
-                                widget.onListChanged(List.from(_items));
-                                if (_currentValue == item) {
-                                  setState(() => _currentValue = '');
-                                  widget.onChanged('');
-                                }
-                              },
-                            ),
-                            onTap: () {
-                              setState(() => _currentValue = item);
-                              widget.onChanged(item);
-                              Navigator.pop(context);
-                            },
-                          );
-                        },
-                      ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Close'),
-                ),
-                FilledButton.icon(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    _showAddDialog();
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add new'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+    while (true) {
+      final result = await EditableListDialogs.showManage(
+        context,
+        widget.label,
+        _items,
+      );
+      if (result == null) return;
+
+      switch (result.action) {
+        case 'delete':
+          setState(() {
+            _items.remove(result.value);
+          });
+          widget.onListChanged(List.from(_items));
+          if (_currentValue == result.value) {
+            setState(() => _currentValue = '');
+            widget.onChanged('');
+          }
+          break;
+        case 'select':
+          setState(() => _currentValue = result.value ?? '');
+          widget.onChanged(result.value ?? '');
+          return;
+        case 'add':
+          await _showAddDialog();
+          return;
+      }
+    }
   }
 
   @override
@@ -164,10 +105,7 @@ class _EditableListDropdownState extends State<EditableListDropdown> {
             items: _items
                 .map((item) => DropdownMenuItem(
                       value: item,
-                      child: Text(
-                        item,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      child: Text(item, overflow: TextOverflow.ellipsis),
                     ))
                 .toList(),
             onChanged: (v) {
