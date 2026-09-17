@@ -1,0 +1,194 @@
+name: Build mischiefpingu Desktop Apps
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - '*.*.*'
+      - 'v*.*.*'
+
+  pull_request:
+    branches:
+      - main
+      - master
+
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (مثلاً 1.0.1)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-24.04
+
+    env:
+      PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            clang \
+            cmake \
+            ninja-build \
+            pkg-config \
+            zip \
+            libgtk-3-dev \
+            liblzma-dev \
+            libstdc++-12-dev \
+            libayatana-appindicator3-dev \
+            libunwind-dev \
+            libgstreamer1.0-dev \
+            libgstreamer-plugins-base1.0-dev \
+            gstreamer1.0-plugins-base \
+            gstreamer1.0-plugins-good \
+            gstreamer1.0-plugins-bad
+
+      - name: Verify GStreamer
+        run: |
+          echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
+          pkg-config --variable pc_path pkg-config
+          test -f /usr/lib/x86_64-linux-gnu/pkgconfig/gstreamer-1.0.pc
+          pkg-config --exists gstreamer-1.0
+          pkg-config --modversion gstreamer-1.0
+          pkg-config --cflags gstreamer-1.0
+          pkg-config --libs gstreamer-1.0
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.1'
+          cache: true
+
+      - name: Enable Linux desktop
+        run: flutter config --enable-linux-desktop
+
+      - name: Flutter doctor
+        run: flutter doctor -v
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Build Linux release
+        run: flutter build linux --release
+
+      - name: Package Linux bundle
+        run: |
+          cd build/linux/x64/release
+          zip -r ../../../../mischiefpingu-linux-x64.zip bundle
+          cd ../../../..
+          ls -lh mischiefpingu-linux-x64.zip
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mischiefpingu-linux-x64
+          path: mischiefpingu-linux-x64.zip
+          if-no-files-found: error
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-2022
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.1'
+          cache: true
+
+      - name: Enable Windows desktop
+        run: flutter config --enable-windows-desktop
+
+      - name: Flutter doctor
+        run: flutter doctor -v
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Build Windows release
+        run: flutter build windows --release
+
+      - name: Package Windows bundle
+        shell: pwsh
+        run: |
+          Compress-Archive `
+            -Path "build/windows/x64/runner/Release/*" `
+            -DestinationPath "mischiefpingu-windows-x64.zip" `
+            -Force
+          Get-Item "mischiefpingu-windows-x64.zip"
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mischiefpingu-windows-x64
+          path: mischiefpingu-windows-x64.zip
+          if-no-files-found: error
+
+  create-release:
+    name: Create GitHub Release
+    if: |
+      startsWith(github.ref, 'refs/tags/') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.version != '')
+    needs:
+      - build-linux
+      - build-windows
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: mischiefpingu-*
+          path: release-files
+          merge-multiple: true
+
+      - name: Verify release files
+        run: |
+          ls -lah release-files
+          test -f release-files/mischiefpingu-linux-x64.zip
+          test -f release-files/mischiefpingu-windows-x64.zip
+
+      - name: Determine version tag
+        id: ver
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION="${{ github.ref_name }}"
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "→ Release version: $VERSION"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.version }}
+          name: mischiefpingu ${{ steps.ver.outputs.version }}
+          generate_release_notes: true
+          files: |
+            release-files/mischiefpingu-linux-x64.zip
+            release-files/mischiefpingu-windows-x64.zip
+          fail_on_unmatched_files: true
