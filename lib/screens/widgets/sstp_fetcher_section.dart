@@ -1,5 +1,7 @@
+// lib/screens/widgets/sstp_fetcher_section.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 import '../../providers/sstp_fetcher_provider.dart';
 import '../../services/vpngate_scraper_service.dart';
@@ -44,7 +46,7 @@ class _SstpFetcherSectionState extends State<SstpFetcherSection> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'SSTP set to ${s.ip}:${s.port}'
+          'SSTP → ${s.ip}:${s.port}'
           '${s.country.isNotEmpty ? ' (${s.country})' : ''}',
         ),
         duration: const Duration(seconds: 3),
@@ -53,20 +55,20 @@ class _SstpFetcherSectionState extends State<SstpFetcherSection> {
   }
 
   Future<void> _clearAll(SstpFetcherProvider fetcher) async {
+    final l10n = AppLocalizations.of(context);
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Clear all SSTP servers?'),
-        content: Text(
-            '${fetcher.servers.length} server(s) will be removed from the data file.'),
+        title: Text('${l10n.clearAll}?'),
+        content: Text('${fetcher.servers.length}'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancelBtn),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Clear'),
+            child: Text(l10n.clearAll),
           ),
         ],
       ),
@@ -78,14 +80,15 @@ class _SstpFetcherSectionState extends State<SstpFetcherSection> {
   Widget build(BuildContext context) {
     final fetcher = context.watch<SstpFetcherProvider>();
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final aliveCount = fetcher.aliveCount;
 
     return SettingsTile(
-      title: 'VPN Gate SSTP Servers',
+      title: l10n.vpngateServers,
       icon: Icons.public,
       iconBackgroundColor: theme.colorScheme.tertiary,
       trailingText: fetcher.servers.isNotEmpty
-          ? '$aliveCount alive · ${fetcher.servers.length} total'
+          ? '$aliveCount / ${fetcher.servers.length}'
           : null,
       initiallyExpanded: false,
       children: [
@@ -98,7 +101,7 @@ class _SstpFetcherSectionState extends State<SstpFetcherSection> {
                 ? null
                 : () => _clearAll(fetcher),
             icon: const Icon(Icons.delete_outline, size: 18),
-            label: const Text('Clear all'),
+            label: Text(l10n.clearAll),
           ),
         ),
         const SizedBox(height: 4),

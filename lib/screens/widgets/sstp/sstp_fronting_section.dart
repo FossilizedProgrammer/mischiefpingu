@@ -1,4 +1,6 @@
+// lib/screens/widgets/sstp/sstp_fronting_section.dart
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 
 class SstpFrontingSection extends StatelessWidget {
   final ThemeData theme;
@@ -18,11 +20,12 @@ class SstpFrontingSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Fronting (advanced, optional)',
+          l10n.frontingAdvanced,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.tertiary,
@@ -34,8 +37,8 @@ class SstpFrontingSection extends StatelessWidget {
             Expanded(
               child: TextFormField(
                 initialValue: sstpSni,
-                decoration: const InputDecoration(
-                  labelText: 'SNI',
+                decoration: InputDecoration(
+                  labelText: l10n.sni,
                   hintText: 'aparat.com',
                   isDense: true,
                 ),
@@ -46,8 +49,8 @@ class SstpFrontingSection extends StatelessWidget {
             Expanded(
               child: DropdownButtonFormField<String>(
                 initialValue: sstpFingerprint.isEmpty ? null : sstpFingerprint,
-                decoration: const InputDecoration(
-                  labelText: 'Fingerprint',
+                decoration: InputDecoration(
+                  labelText: l10n.fingerprint,
                   isDense: true,
                 ),
                 items: const [

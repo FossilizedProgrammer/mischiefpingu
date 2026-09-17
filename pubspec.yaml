@@ -9,6 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
   provider: ^6.1.5
   path_provider: ^2.1.5
   shared_preferences: ^2.5.2
@@ -26,7 +29,9 @@ flutter:
   assets:
     - assets/images/logo.png
     - assets/images/logo_hurt.png
+    - assets/images/logo_sad.png
+    - assets/images/logo_happy.png
+    - assets/images/logo_hi.png
     - assets/sounds/ouch.mp3
-
-  # برای ویندوز باید پلتفرم فعال شده باشه
-  # (این بخش با flutter create --platforms=windows,linux اضافه می‌شه)
+    - assets/sounds/sigh.mp3
+    - assets/sounds/happy.mp3

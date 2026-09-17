@@ -1,17 +1,11 @@
 // lib/services/process/process_notifications.dart
+//
+// ⚠️ اضافه شد: happy notification (وقتی اتصال برقرار می‌شود)
+library;
 
-/// وضعیت notificationها و state داخلی Psiphon/Aether/Tor/SSTP.
-///
-/// این mixin را ProcessService استفاده می‌کند تا فیلدهای state و
-/// pending/notification از منطق پروسه جدا شوند.
-///
-/// ⚠️ فیلدهای state به صورت public تعریف شده‌اند تا فایل‌های part
-/// (process_service_psiphon.dart، process_service_tor.dart،
-/// process_service_sstp.dart) بتوانند مستقیماً به آن‌ها دسترسی داشته باشند.
 mixin ProcessNotifications {
   // ═══════════════════════════════════════════
   //  Running / Connected state
-  //  (public — برای دسترسی از فایل‌های part)
   // ═══════════════════════════════════════════
   bool isPsiphonRunning = false;
   bool isAetherRunning = false;
@@ -78,7 +72,6 @@ mixin ProcessNotifications {
     pendingTorTransportDetail = detail;
   }
 
-  /// پاک‌سازی state داخلی Tor (در exit handler).
   void resetTorState() {
     torBootstrapProgress = 0;
     pendingTorTransportType = null;
@@ -100,13 +93,11 @@ mixin ProcessNotifications {
     pendingSstpTransportType = null;
   }
 
-  /// آماده‌سازی notification — قبل از اتصال واقعی.
   void prepareSstpNotification(String serverInfo, String detail) {
     pendingSstpTransportType = serverInfo;
     pendingSstpTransportDetail = detail;
   }
 
-  /// تنظیم notification بعد از اتصال موفق.
   void setSstpNotification(String serverInfo, {String detail = ''}) {
     lastSstpServer = serverInfo;
     pendingSstpNotification = serverInfo;
@@ -138,5 +129,41 @@ mixin ProcessNotifications {
 
   void clearBinaryMissingMessage() {
     pendingBinaryMissingMessage = null;
+  }
+
+  // ═══════════════════════════════════════════
+  //  ⚠️ Sad notification — وقتی watchdog تونل را
+  //  به‌خاطر keep-alive restart می‌کند
+  // ═══════════════════════════════════════════
+  String? pendingSadNotification;
+  DateTime? pendingSadTimestamp;
+
+  void setSadNotification(String tunnelName) {
+    pendingSadNotification = tunnelName;
+    pendingSadTimestamp = DateTime.now();
+  }
+
+  void clearSadNotification() {
+    pendingSadNotification = null;
+    pendingSadTimestamp = null;
+  }
+
+  // ═══════════════════════════════════════════
+  //  ⚠️ Happy notification — وقتی اتصال برقرار می‌شود
+  //  (فقط در transition از disconnected → connected)
+  // ═══════════════════════════════════════════
+  String? pendingHappyNotification;
+  DateTime? pendingHappyTimestamp;
+
+  /// ست کردن notification «خوشحال» — وقتی تونل وصل می‌شود.
+  /// ⚠️ فقط یک‌بار در transition صدا زده می‌شود تا از تکرار جلوگیری شود.
+  void setHappyNotification(String tunnelName) {
+    pendingHappyNotification = tunnelName;
+    pendingHappyTimestamp = DateTime.now();
+  }
+
+  void clearHappyNotification() {
+    pendingHappyNotification = null;
+    pendingHappyTimestamp = null;
   }
 }

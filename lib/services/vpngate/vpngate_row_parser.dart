@@ -19,8 +19,7 @@ class VpngateRowParser {
     caseSensitive: false,
   );
 
-  static final _ipRegex =
-      RegExp(r'\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b');
+  static final _ipRegex = RegExp(r'\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b');
 
   /// پارس یک ردیف جدول. null اگر ردیف نامعتبر باشد.
   static SstpServer? parse(String row) {
@@ -69,16 +68,15 @@ class VpngateRowParser {
   }
 
   static int _parseSpeed(String row) {
-    final m =
-        RegExp(r'([\d.,]+)\s*Mbps', caseSensitive: false).firstMatch(row);
+    final m = RegExp(r'([\d.,]+)\s*Mbps', caseSensitive: false).firstMatch(row);
     if (m == null) return 0;
     final s = m.group(1)!.replaceAll(',', '');
     return (double.tryParse(s) ?? 0).round();
   }
 
   static String _parseOperator(String row) {
-    final m = RegExp(r'\*By\s+([^<*\n]{2,50})', caseSensitive: false)
-        .firstMatch(row);
+    final m =
+        RegExp(r'\*By\s+([^<*\n]{2,50})', caseSensitive: false).firstMatch(row);
     return m != null ? m.group(1)!.trim() : '';
   }
 

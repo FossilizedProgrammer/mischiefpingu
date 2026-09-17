@@ -1,6 +1,8 @@
+// lib/screens/widgets/snackbar_mixin.dart
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
+import 'snackbar_builders.dart';
 
-/// Mixin برای نمایش SnackBarهای یکپارچه در صفحه اصلی.
 mixin SnackBarMixin<T extends StatefulWidget> on State<T> {
   String? lastShownProtocol;
   String? lastShownAetherProtocol;
@@ -15,159 +17,74 @@ mixin SnackBarMixin<T extends StatefulWidget> on State<T> {
     required IconData icon,
   }) {
     if (!mounted) return;
-    final theme = Theme.of(context);
-    final bgColor = theme.colorScheme.primary;
-    final fgColor = theme.colorScheme.onPrimary;
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(icon, color: fgColor, size: 22),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(title,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                          color: fgColor)),
-                  if (subtitle.isNotEmpty) ...[
-                    const SizedBox(height: 2),
-                    Text(subtitle,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            color: fgColor.withValues(alpha: 0.9))),
-                  ],
-                ],
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: bgColor,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 6),
-      ),
+    SnackBarBuilders.showUnified(
+      context,
+      title: title,
+      subtitle: subtitle,
+      icon: icon,
     );
   }
 
   void showProtocolSnackBar(String protocol, String? binaryName) {
+    final l10n = AppLocalizations.of(context);
     final binaryLabel = binaryName == 'psiphon-tunnel-core-sunandlion'
         ? 'SunAndLion psiphon-tunnel-core'
         : 'Official psiphon-tunnel-core';
     showUnifiedSnackBar(
-      title: 'Psiphon Connected via $protocol',
-      subtitle: '($binaryLabel binary)',
+      title: '${l10n.psiphonConnectedVia} $protocol',
+      subtitle: '($binaryLabel)',
       icon: Icons.check_circle_rounded,
     );
   }
 
   void showAetherProtocolSnackBar(String protocol) {
+    final l10n = AppLocalizations.of(context);
     showUnifiedSnackBar(
-      title: 'Aether Connected',
+      title: l10n.aetherConnected,
       subtitle: 'via ${protocol.toUpperCase()}',
       icon: Icons.cloud_done_rounded,
     );
   }
 
   void showTorTransportSnackBar(String transport, String detail) {
+    final l10n = AppLocalizations.of(context);
     String transportLabel;
     switch (transport) {
       case 'direct':
-        transportLabel = 'Direct Connection';
+        transportLabel = l10n.torDirect;
         break;
       case 'aether':
-        transportLabel = 'Tor-over-Aether';
+        transportLabel = l10n.torViaAether;
         break;
       case 'bridge':
-        transportLabel = 'Bridge Connection';
+        transportLabel = l10n.torBridge;
         break;
       default:
-        transportLabel = 'Unknown';
+        transportLabel = transport;
     }
     showUnifiedSnackBar(
-      title: 'Tor Connected',
+      title: l10n.torConnected,
       subtitle: '$transportLabel ($detail)',
       icon: Icons.shield_outlined,
     );
   }
 
-  /// SnackBar برای اتصال موفق SSTP
   void showSstpConnectedSnackBar(String serverInfo) {
+    final l10n = AppLocalizations.of(context);
     showUnifiedSnackBar(
-      title: 'SSTP Connected',
-      subtitle: 'Server: $serverInfo',
+      title: l10n.sstpConnected,
+      subtitle: '${l10n.server}: $serverInfo',
       icon: Icons.vpn_lock_outlined,
     );
   }
 
   void showPortConflictSnackBar(String message) {
     if (!mounted) return;
-    final theme = Theme.of(context);
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(children: [
-          Icon(Icons.error_outline, color: Colors.white, size: 22),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(message,
-                style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                    color: Colors.white)),
-          ),
-        ]),
-        backgroundColor: theme.colorScheme.error,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 7),
-      ),
-    );
+    SnackBarBuilders.showPortConflict(context, message);
   }
 
   void showBinaryMissingSnackBar(String message) {
     if (!mounted) return;
-    final theme = Theme.of(context);
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(children: [
-          Icon(Icons.download_outlined, color: Colors.white, size: 22),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('Binary Not Found',
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                        color: Colors.white)),
-                const SizedBox(height: 2),
-                Text(message,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
-                        color: Colors.white.withValues(alpha: 0.9))),
-              ],
-            ),
-          ),
-        ]),
-        backgroundColor: theme.colorScheme.tertiary,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 8),
-      ),
-    );
+    SnackBarBuilders.showBinaryMissing(context, message);
   }
 }

@@ -1,27 +1,44 @@
-// lib/services/aether_attempts.dart
 library;
 
 import '../models/settings_model.dart';
+import 'aether/aether_args_builder.dart';
 
-/// One way to bring Aether up (protocol + masque + optional endpoint).
 class EndpointAttempt {
   final String label;
   final String protocol;
   final String masque;
   final String endpoint;
+  final bool fragmentH2;
 
   EndpointAttempt({
     required this.label,
     required this.protocol,
     required this.masque,
     required this.endpoint,
+    this.fragmentH2 = false,
   });
 }
 
-/// Builds the ordered candidate/argument lists for the auto-test.
 class AetherAttemptPlanner {
   final AppSettings settings;
+  late final AetherArgsBuilder _argsBuilder = AetherArgsBuilder(settings);
+
   AetherAttemptPlanner(this.settings);
+
+  static String _labelFor(ProfileCandidate c) {
+    switch (c.protocol) {
+      case 'masque':
+        return 'MASQUE/${c.masque}${c.fragmentH2 ? "+fragment" : ""}';
+      case 'mim':
+        return 'MIM/${c.masque}${c.fragmentH2 ? "+fragment" : ""}';
+      case 'gool':
+        return 'GOOL (WARP-in-WARP)';
+      case 'wireguard':
+        return 'WIREGUARD';
+      default:
+        return c.protocol.toUpperCase();
+    }
+  }
 
   List<EndpointAttempt> buildCandidates({
     MapEntry<String, String>? autoWinner,
@@ -30,17 +47,20 @@ class AetherAttemptPlanner {
     final seen = <String>{};
 
     void add(EndpointAttempt a) {
-      final key = '${a.protocol}|${a.masque}|${a.endpoint}';
+      final key = '${a.protocol}|${a.masque}|${a.endpoint}|${a.fragmentH2}';
       if (seen.add(key)) list.add(a);
     }
 
     final custom = settings.aetherCustomEndpoint.trim();
     if (custom.isNotEmpty) {
       final proto = resolveProtocolForEndpoint(
-        settings.aetherProtocol,
+        settings.isAetherProfileAutomatic
+            ? 'auto'
+            : settings.aetherProtocol,
         custom,
       );
-      final masque = (proto == 'masque') ? settings.masqueOption : '';
+      final masque =
+          (proto == 'masque' || proto == 'mim') ? settings.masqueOption : '';
       add(EndpointAttempt(
         label: 'Custom Endpoint ($custom)',
         protocol: proto,
@@ -59,41 +79,58 @@ class AetherAttemptPlanner {
       ));
     }
 
-    if (settings.aetherProtocol != 'auto') {
-      add(EndpointAttempt(
-        label: settings.aetherProtocol.toUpperCase(),
-        protocol: settings.aetherProtocol,
-        masque:
-            settings.aetherProtocol == 'masque' ? settings.masqueOption : '',
-        endpoint: '',
-      ));
-    } else {
-      add(EndpointAttempt(
-        label: 'MASQUE/HTTP-3',
-        protocol: 'masque',
-        masque: 'HTTP-3',
-        endpoint: '',
-      ));
-      add(EndpointAttempt(
-        label: 'MASQUE/HTTP-2',
-        protocol: 'masque',
-        masque: 'HTTP-2',
-        endpoint: '',
-      ));
-      add(EndpointAttempt(
-        label: 'WIREGUARD',
-        protocol: 'wireguard',
-        masque: '',
-        endpoint: '',
-      ));
-      add(EndpointAttempt(
-        label: 'GOOL (WARP-in-WARP)',
-        protocol: 'gool',
-        masque: '',
-        endpoint: '',
-      ));
+    if (settings.isAetherProfileAutomatic) {
+      final profile = settings.activeAetherProfile;
+      final candidates = profile?.candidates ?? const <ProfileCandidate>[];
+
+      if (candidates.isEmpty) {
+        add(EndpointAttempt(
+            label: 'MASQUE/HTTP-3',
+            protocol: 'masque',
+            masque: 'HTTP-3',
+            endpoint: ''));
+        add(EndpointAttempt(
+            label: 'MASQUE/HTTP-2',
+            protocol: 'masque',
+            masque: 'HTTP-2',
+            endpoint: ''));
+        add(EndpointAttempt(
+            label: 'WIREGUARD', protocol: 'wireguard', masque: '', endpoint: ''));
+        add(EndpointAttempt(
+            label: 'GOOL (WARP-in-WARP)',
+            protocol: 'gool',
+            masque: '',
+            endpoint: ''));
+        return list;
+      }
+
+      for (final c in candidates) {
+        add(EndpointAttempt(
+          label: _labelFor(c),
+          protocol: c.protocol,
+          masque: c.masque,
+          endpoint: '',
+          fragmentH2: c.fragmentH2,
+        ));
+      }
+      return list;
     }
 
+    final proto = settings.aetherProtocol;
+    final masque =
+        (proto == 'masque' || proto == 'mim') ? settings.masqueOption : '';
+    final frag = settings.aetherProfile == 'strict' && masque == 'HTTP-2';
+    add(EndpointAttempt(
+      label: _labelFor(ProfileCandidate(
+        protocol: proto,
+        masque: masque,
+        fragmentH2: frag,
+      )),
+      protocol: proto,
+      masque: masque,
+      endpoint: '',
+      fragmentH2: frag,
+    ));
     return list;
   }
 
@@ -107,41 +144,13 @@ class AetherAttemptPlanner {
     required String masqueOption,
     required int port,
     String endpointOverride = '',
-  }) {
-    // Aether binds natively: 0.0.0.0 for LAN share, 127.0.0.1 otherwise.
-    // Unlike Psiphon/Tor, it does not need a Dart TCP forwarder.
-    final bindHost = settings.aetherShareLan ? '0.0.0.0' : '127.0.0.1';
-    final args = <String>[
-      '--bind',
-      '$bindHost:$port',
-      if (protocol == 'wireguard') '--wg',
-      if (protocol == 'gool') '--gool',
-      if (protocol == 'masque') '--masque',
-      if (settings.ipType == 'ipv4') '-4',
-      if (settings.ipType == 'ipv6') '-6',
-      if (settings.ipType == 'both') '--dual',
-      if (protocol == 'masque' && masqueOption == 'HTTP-2') '--h2',
-      if (settings.obfuscation != 'off') ...['--noize', settings.obfuscation],
-      if (settings.aetherQuickReconnect)
-        '--quick-reconnect'
-      else
-        '--no-quick-reconnect',
-    ];
-
-    final endpoint = endpointOverride.isNotEmpty
-        ? endpointOverride
-        : settings.aetherCustomEndpoint.trim();
-
-    if (endpoint.isNotEmpty) {
-      if (protocol == 'gool') {
-        args.addAll(['--wiw-outer', endpoint]);
-      } else {
-        args.addAll(['--peer', endpoint]);
-      }
-    } else {
-      args.addAll(['--scan', settings.aetherScanMode]);
-    }
-
-    return args;
-  }
+    bool forceFragmentH2 = false,
+  }) =>
+      _argsBuilder.build(
+        protocol: protocol,
+        masqueOption: masqueOption,
+        port: port,
+        endpointOverride: endpointOverride,
+        forceFragmentH2: forceFragmentH2,
+      );
 }

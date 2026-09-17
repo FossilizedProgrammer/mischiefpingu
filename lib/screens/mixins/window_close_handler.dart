@@ -1,26 +1,13 @@
+// lib/screens/mixins/window_close_handler.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 
-/// Mixin برای مدیریت بستن پنجره و disconnect کردن تونل‌ها.
-///
-/// ⚠️ نکته: کلاس استفاده‌کننده باید `WindowListener` را در `with` خود
-/// قبل از این mixin بیاورد، مثلاً:
-///
-/// ```dart
-/// class _MyState extends State<MyWidget>
-///     with WindowListener, WindowCloseHandler {
-/// ```
 mixin WindowCloseHandler<T extends StatefulWidget> on State<T> {
   bool _closing = false;
 
-  /// باید در initState صدا زده شود: `windowManager.addListener(this);`
-  /// و در dispose: `windowManager.removeListener(this);`
-
-  // ⚠️ توجه: این متد `onWindowClose` را از WindowListener که در کلاس
-  // اصلی mix شده، override می‌کند. چون این mixin خودش WindowListener
-  // نیست، نباید @override بگذاریم.
   void onWindowClose() async {
     if (_closing) return;
     _closing = true;
@@ -33,13 +20,11 @@ mixin WindowCloseHandler<T extends StatefulWidget> on State<T> {
         ps.isTorRunning ||
         ps.isSstpRunning;
 
-    // ─── مسیر A: هیچ تونلی فعال نیست → بستن سریع ───
     if (!hasActiveTunnel) {
       await _fastClose(provider);
       return;
     }
 
-    // ─── مسیر B: تونل فعاله → disconnect کامل ───
     await _safeClose(provider);
   }
 
@@ -60,12 +45,14 @@ mixin WindowCloseHandler<T extends StatefulWidget> on State<T> {
   }
 
   Future<void> _safeClose(AppProvider provider) async {
+    final l10n = AppLocalizations.of(context);
+
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 18,
                 height: 18,
                 child: CircularProgressIndicator(
@@ -73,16 +60,16 @@ mixin WindowCloseHandler<T extends StatefulWidget> on State<T> {
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Disconnecting active tunnels…',
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                  l10n.disconnectingTunnels,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
             ],
           ),
-          duration: Duration(seconds: 15),
+          duration: const Duration(seconds: 15),
           behavior: SnackBarBehavior.floating,
         ),
       );

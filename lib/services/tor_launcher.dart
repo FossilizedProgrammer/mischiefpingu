@@ -36,7 +36,6 @@ extension ProcessServiceTorLauncher on ProcessService {
       );
       await Future.delayed(const Duration(milliseconds: 900));
 
-      // ─── بررسی خروج سریع ───
       bool exitedQuickly = false;
       try {
         final code = await torProcess!.exitCode.timeout(
@@ -60,7 +59,6 @@ extension ProcessServiceTorLauncher on ProcessService {
       addLog('Tor is running (PID: ${torProcess!.pid})', source: src);
       touch();
 
-      // ─── forwarderها برای LAN ───
       if (shareLan) {
         torSocksForwarder = await createForwarder(
           publicPort: socksPort,
@@ -94,20 +92,17 @@ extension ProcessServiceTorLauncher on ProcessService {
       if (trimmed.isEmpty) return;
       addLog(trimmed, source: src);
 
-      // ─── پارس درصد bootstrap ───
-      final bootstrapMatch =
-          RegExp(r'Bootstrapped (\d+)%').firstMatch(trimmed);
+      final bootstrapMatch = RegExp(r'Bootstrapped (\d+)%').firstMatch(trimmed);
       if (bootstrapMatch != null) {
         final progress = int.tryParse(bootstrapMatch.group(1) ?? '0') ?? 0;
-        // ✅ فقط اگر progress تغییر کرد، notify کن
         if (progress != torBootstrapProgress) {
           torBootstrapProgress = progress;
           touch();
         }
       }
 
-      // ─── Bootstrap کامل ───
       if (trimmed.contains('Bootstrapped 100%')) {
+        final wasConnected = isTorConnected;
         isTorConnected = true;
         torBootstrapProgress = 100;
 
@@ -117,6 +112,13 @@ extension ProcessServiceTorLauncher on ProcessService {
             pendingTorTransportDetailPrepared ?? '',
           );
         }
+
+        // ⚠️ fire happy notification در transition
+        checkHappyTransition(
+          tunnelName: 'Tor',
+          wasConnected: wasConnected,
+          isConnected: true,
+        );
 
         touch();
       }
@@ -134,12 +136,20 @@ extension ProcessServiceTorLauncher on ProcessService {
     });
 
     torProcess!.exitCode.then((code) {
+      final wasConnected = isTorConnected;
       isTorRunning = false;
       isTorConnected = false;
       torBootstrapProgress = 0;
       pendingTorTransportType = null;
       pendingTorTransportDetailPrepared = null;
       torProcess = null;
+
+      checkHappyTransition(
+        tunnelName: 'Tor',
+        wasConnected: wasConnected,
+        isConnected: false,
+      );
+
       addLog('Tor exited with code $code', source: src);
       touch();
     });

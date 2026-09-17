@@ -1,4 +1,6 @@
+// lib/widgets/editable_list_dropdown.dart
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'editable_list/editable_list_dialogs.dart';
 
 class EditableListDropdown extends StatefulWidget {
@@ -44,8 +46,8 @@ class _EditableListDropdownState extends State<EditableListDropdown> {
   }
 
   Future<void> _showAddDialog() async {
-    final result =
-        await EditableListDialogs.showAdd(context, widget.label);
+    final result = await EditableListDialogs.showAdd(context, widget.label);
+    if (!mounted) return;
     if (result == null) return;
 
     if (!_items.contains(result)) {
@@ -58,11 +60,15 @@ class _EditableListDropdownState extends State<EditableListDropdown> {
 
   Future<void> _showManageDialog() async {
     while (true) {
+      if (!mounted) return;
+
       final result = await EditableListDialogs.showManage(
         context,
         widget.label,
         _items,
       );
+
+      if (!mounted) return;
       if (result == null) return;
 
       switch (result.action) {
@@ -76,11 +82,14 @@ class _EditableListDropdownState extends State<EditableListDropdown> {
             widget.onChanged('');
           }
           break;
+
         case 'select':
           setState(() => _currentValue = result.value ?? '');
           widget.onChanged(result.value ?? '');
           return;
+
         case 'add':
+          if (!mounted) return;
           await _showAddDialog();
           return;
       }
@@ -89,6 +98,7 @@ class _EditableListDropdownState extends State<EditableListDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final effectiveValue =
         _items.contains(_currentValue) ? _currentValue : null;
     return Row(
@@ -101,7 +111,7 @@ class _EditableListDropdownState extends State<EditableListDropdown> {
               labelText: widget.label,
               isDense: true,
             ),
-            hint: const Text('Select...'),
+            hint: Text(l10n.select),
             items: _items
                 .map((item) => DropdownMenuItem(
                       value: item,
@@ -119,7 +129,7 @@ class _EditableListDropdownState extends State<EditableListDropdown> {
         const SizedBox(width: 4),
         IconButton(
           icon: const Icon(Icons.edit_outlined),
-          tooltip: 'Manage list (Add / Delete)',
+          tooltip: l10n.manageList,
           onPressed: _showManageDialog,
         ),
       ],

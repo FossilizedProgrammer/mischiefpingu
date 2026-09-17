@@ -9,8 +9,10 @@ import 'app_data_service.dart';
 import 'log_line_parsers.dart';
 import 'port_manager.dart';
 import 'process/log_source.dart';
+import 'process/log_store.dart'; // ← جدید
 import 'process/process_notifications.dart';
 import 'process/process_forwarder.dart';
+import 'process/process_happy_detector.dart';
 
 // ─── Re-export ───
 export 'process/log_source.dart' show LogSource;
@@ -53,14 +55,41 @@ class ProcessService extends ChangeNotifier with ProcessNotifications {
   ServerSocket? torSocksForwarder;
   ServerSocket? torHttpForwarder;
 
-  final List<String> _logs = [];
+  // ─── Log store (جدا شده) ───
+  final LogStore _logStore = LogStore();
+  Stream<String> get logStream => _logStore.stream;
+  List<String> get fullLog => _logStore.fullLog;
+
   bool _initialized = false;
-  bool _loggingEnabled = true;
 
   late final ProcessForwarder forwarder = ProcessForwarder(
     addLog: (message, {source = LogSource.empty}) =>
         addLog(message, source: source),
   );
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Happy detector
+  // ═══════════════════════════════════════════════════════════════
+  late final ProcessHappyDetector _happyDetector = ProcessHappyDetector(
+    onHappy: _fireHappyNotification,
+  );
+
+  void _fireHappyNotification(String tunnelName) {
+    setHappyNotification(tunnelName);
+    notifyListeners();
+  }
+
+  void checkHappyTransition({
+    required String tunnelName,
+    required bool wasConnected,
+    required bool isConnected,
+  }) {
+    _happyDetector.checkTransition(
+      tunnelName: tunnelName,
+      wasConnected: wasConnected,
+      isConnected: isConnected,
+    );
+  }
 
   // ═══════════════════════════════════════════
   //  Override — برای notifyListeners
@@ -74,6 +103,18 @@ class ProcessService extends ChangeNotifier with ProcessNotifications {
   @override
   void setBinaryMissingMessage(String message) {
     super.setBinaryMissingMessage(message);
+    notifyListeners();
+  }
+
+  @override
+  void setSadNotification(String tunnelName) {
+    super.setSadNotification(tunnelName);
+    notifyListeners();
+  }
+
+  @override
+  void setHappyNotification(String tunnelName) {
+    super.setHappyNotification(tunnelName);
     notifyListeners();
   }
 
@@ -95,26 +136,20 @@ class ProcessService extends ChangeNotifier with ProcessNotifications {
     _initialized = true;
   }
 
-  // ─── Logging ───
-  List<String> get fullLog => List.unmodifiable(_logs);
-
+  // ─── Logging (delegate به LogStore) ───
   void addLog(String message, {String source = LogSource.empty}) {
-    if (!_loggingEnabled) return;
-    final time = DateTime.now().toString().substring(11, 19);
-    final tag = source.isNotEmpty ? '[$source] ' : '';
-    _logs.add('$time $tag$message');
-    if (_logs.length > 1000) _logs.removeAt(0);
+    _logStore.add(message, source: source);
     notifyListeners();
   }
 
-  bool get loggingEnabled => _loggingEnabled;
+  bool get loggingEnabled => _logStore.enabled;
   set loggingEnabled(bool v) {
-    _loggingEnabled = v;
+    _logStore.enabled = v;
     notifyListeners();
   }
 
   void clearLog() {
-    _logs.clear();
+    _logStore.clear();
     notifyListeners();
   }
 
@@ -157,4 +192,10 @@ class ProcessService extends ChangeNotifier with ProcessNotifications {
         label: label,
         source: source,
       );
+
+  @override
+  void dispose() {
+    _logStore.dispose();
+    super.dispose();
+  }
 }

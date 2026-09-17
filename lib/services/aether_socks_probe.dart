@@ -4,6 +4,7 @@ library;
 import 'dart:async';
 import 'dart:io';
 
+import 'aether_probe_fallbacks.dart';
 import 'process_service.dart';
 
 enum SocksDiag {
@@ -21,6 +22,10 @@ class SocksProber {
 
   /// polled while waiting; when true the wait aborts early.
   final bool Function() isCancelled;
+
+  late final AetherProbeFallbacks _fallbacks = AetherProbeFallbacks(
+    processService: processService,
+  );
 
   SocksProber(this.processService, {required this.isCancelled});
 
@@ -102,39 +107,6 @@ class SocksProber {
     }
   }
 
-  Future<bool> curlProbe(int port) async {
-    try {
-      final r = await Process.run('curl', [
-        '--socks5-hostname',
-        '127.0.0.1:$port',
-        '--connect-timeout',
-        '5',
-        '--max-time',
-        '8',
-        '-s',
-        '-o',
-        '/dev/null',
-        '-w',
-        '%{http_code}',
-        'https://1.1.1.1/cdn-cgi/trace',
-      ]).timeout(const Duration(seconds: 11));
-      return r.exitCode == 0 && r.stdout.toString().trim().startsWith('2');
-    } catch (_) {
-      return false;
-    }
-  }
-
-  bool coreSaysReady(int port) {
-    final logs = processService.fullLog;
-    final tail = logs.length > 80 ? logs.sublist(logs.length - 80) : logs;
-    final hasTunnel = tail.any((l) => l.contains('tunnel validated'));
-    final hasSocks = tail.any((l) =>
-        l.toLowerCase().contains('socks5') &&
-        l.contains('listening') &&
-        (l.contains(':$port') || l.contains('127.0.0.1:$port')));
-    return hasTunnel && hasSocks;
-  }
-
   String diagText(SocksDiag d, int port) {
     switch (d) {
       case SocksDiag.healthy:
@@ -168,9 +140,9 @@ class SocksProber {
       last = await diagnoseSocks(port);
       if (last == SocksDiag.healthy) return SocksDiag.healthy;
 
-      if (await curlProbe(port)) return SocksDiag.healthy;
+      if (await _fallbacks.curlProbe(port)) return SocksDiag.healthy;
 
-      if (coreSaysReady(port)) {
+      if (_fallbacks.coreSaysReady(port)) {
         processService.addLog(
           '✗ Loopback probes blocked. Aether log shows tunnel validated + '
           'SOCKS on :$port.',

@@ -36,61 +36,10 @@ extension AppProviderPsiphon on AppProvider {
     }
 
     // ═══════════════════════════════════════════
-    //  بررسی وجود باینری Psiphon قبل از هر کاری
+    //  بررسی وجود باینری Psiphon و آزاد بودن پورت‌ها
     // ═══════════════════════════════════════════
-    try {
-      final useSunAndLion = settings.effectiveUseSunAndLion;
-      final binaryName = useSunAndLion
-          ? 'psiphon-tunnel-core-sunandlion'
-          : 'psiphon-tunnel-core';
-      final binaryPath = await AppDataService.getBinaryPath(binaryName);
-
-      if (!await File(binaryPath).exists()) {
-        String msg;
-        if (useSunAndLion) {
-          msg =
-              'SunAndLion Psiphon binary not found. Please place "psiphon-tunnel-core-sunandlion" in the app folder or data folder manually.';
-        } else {
-          msg =
-              'Psiphon binary not found. Please click "Show more" and download it from "Core Updates".';
-        }
-        processService.setBinaryMissingMessage(msg);
-        processService.addLog(
-          '✗ Psiphon binary missing: $binaryPath',
-          source: src,
-        );
-        touch();
-        return;
-      }
-    } catch (e) {
-      processService.addLog('✗ Error checking Psiphon binary: $e', source: src);
-    }
-
-    // ─── چک پورت‌ها قبل از هر کاری ───
-    final socksPort = settings.socksPort;
-    final httpPort = settings.httpPort;
-    if (await ProcessService.isPortInUse(socksPort)) {
-      final msg =
-          'Psiphon: SOCKS port $socksPort is already in use by another application. Cannot start.';
-      processService.setPortConflictMessage(msg);
-      processService.addLog(
-        '✗ SOCKS port $socksPort is in use — Psiphon not started',
-        source: src,
-      );
-      touch();
-      return;
-    }
-    if (await ProcessService.isPortInUse(httpPort)) {
-      final msg =
-          'Psiphon: HTTP port $httpPort is already in use by another application. Cannot start.';
-      processService.setPortConflictMessage(msg);
-      processService.addLog(
-        '✗ HTTP port $httpPort is in use — Psiphon not started',
-        source: src,
-      );
-      touch();
-      return;
-    }
+    if (!await checkPsiphonBinary()) return;
+    if (!await checkPsiphonPorts()) return;
 
     userStoppedPsiphon = false;
     isPsiphonBusy = true;

@@ -1,4 +1,6 @@
+// lib/screens/widgets/main_app_bar.dart
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import '../../widgets/painful_logo.dart';
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -10,6 +12,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return AppBar(
       title: Row(children: [
         Expanded(
@@ -17,11 +20,11 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Mischief Pingu',
-                  style: TextStyle(fontWeight: FontWeight.w800)),
+              Text(l10n.appTitle,
+                  style: const TextStyle(fontWeight: FontWeight.w800)),
               const SizedBox(height: 8),
               Text(
-                'Unofficial Psiphon client ,Aether client, Tor client, SSTP client',
+                l10n.appSubtitle,
                 style: theme.textTheme.bodySmall?.copyWith(
                     fontSize: 11,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),

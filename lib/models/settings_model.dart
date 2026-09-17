@@ -1,10 +1,11 @@
-// lib/models/settings_model.dart
 library;
 
 import 'settings_serialization.dart';
 
+part 'settings_presets.dart';
+part 'settings_profiles.dart';
+
 class AppSettings {
-  // ─── Fronting / Psiphon core ───
   String ip;
   String httpHost;
   String tlsSni;
@@ -14,13 +15,6 @@ class AppSettings {
   bool autoFindIpAndSni;
   bool saveFoundIpsAndSni;
 
-  /// upstreamType:
-  ///   0 = Direct (no upstream)
-  ///   1 = Manual proxy
-  ///   2 = Aether (SOCKS upstream)
-  ///   3 = Conduit (WebRTC Inproxy)
-  ///   4 = Tor (SOCKS upstream)
-  ///   5 = SSTP (SOCKS upstream)
   int upstreamType;
 
   int socksPort;
@@ -32,14 +26,15 @@ class AppSettings {
   String proxyUser;
   String proxyPass;
 
-  // ─── Auto reconnect ───
   bool autoReconnectPsiphon;
   bool autoReconnectAether;
   bool autoReconnectTor;
   bool autoReconnectSstp;
 
-  // ─── Aether ───
+  String aetherProfile;
+
   String aetherProtocol;
+
   String masqueOption;
   int aetherLocalPort;
   String aetherScanMode;
@@ -50,18 +45,15 @@ class AppSettings {
   String aetherCustomEndpoint;
   bool aetherTryLastEndpointFirst;
 
-  // ─── Psiphon ───
   bool psiphonShareLan;
   String psiphonBuildRev;
   String psiphonBinarySha;
 
-  // ─── Conduit ───
   String conduitMode;
   String conduitCompartmentId;
   bool conduitRejectCensoredCountries;
   String conduitBrokerSpecsJson;
 
-  // ─── Tor ───
   String torTransport;
   String torBridges;
   String torExitCountry;
@@ -69,7 +61,6 @@ class AppSettings {
   int torHttpPort;
   bool torShareLan;
 
-  // ─── SSTP ───
   String sstpServer;
   int sstpPort;
   String sstpUser;
@@ -87,8 +78,8 @@ class AppSettings {
   bool sstpShareLan;
   bool sstpVerbose;
 
-  // ─── Theme ───
   String themeId;
+  bool muted;
 
   AppSettings({
     this.ip = '23.215.0.206',
@@ -112,6 +103,7 @@ class AppSettings {
     this.autoReconnectAether = true,
     this.autoReconnectTor = true,
     this.autoReconnectSstp = true,
+    this.aetherProfile = 'adaptive',
     this.aetherProtocol = 'auto',
     this.masqueOption = 'HTTP-3',
     this.aetherLocalPort = 1819,
@@ -152,9 +144,9 @@ class AppSettings {
     this.psiphonBuildRev = '',
     this.psiphonBinarySha = '',
     this.themeId = 'ocean',
+    this.muted = false,
   });
 
-  // ─── Delegating serialization (سازگاری با کد قبلی) ───
   factory AppSettings.fromJson(Map<String, dynamic> m) =>
       AppSettingsSerialization.fromJson(m);
 
@@ -162,38 +154,12 @@ class AppSettings {
 
   String toJsonString() => AppSettingsSerialization(this).toJsonString();
 
-  // ─── Computed getters ───
   bool get isConduit => upstreamType == 3;
-
   bool get effectiveUseSunAndLion => useSunAndLion && isFronted && !isConduit;
-
   bool get isDirectPsiphon =>
       (upstreamType == 0 || upstreamType == 4) && !isFronted;
 
-  void applyPreset(int number) {
-    switch (number) {
-      case 1:
-        isFronted = true;
-        useSunAndLion = true;
-        upstreamType = 0;
-        autoFindIpAndSni = true;
-        saveFoundIpsAndSni = true;
-        break;
-      case 2:
-        isFronted = false;
-        useSunAndLion = false;
-        upstreamType = 2;
-        break;
-      case 3:
-        isFronted = false;
-        useSunAndLion = false;
-        upstreamType = 3;
-        break;
-      case 4:
-        isFronted = false;
-        useSunAndLion = false;
-        upstreamType = 4;
-        break;
-    }
-  }
+  bool get isAetherProfileAutomatic => aetherProfile != 'manual';
+
+  bool get isAetherProtocolLockedByProfile => isAetherProfileAutomatic;
 }

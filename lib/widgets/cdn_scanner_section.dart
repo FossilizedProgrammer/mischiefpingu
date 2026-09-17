@@ -1,5 +1,7 @@
+// lib/widgets/cdn_scanner_section.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/cdn_scanner_provider.dart';
 import 'settings_tile_base.dart';
 import 'cdn_scanner/cdn_scanner_inputs.dart';
@@ -26,8 +28,6 @@ class _CdnScannerSectionState extends State<CdnScannerSection> {
     super.dispose();
   }
 
-  /// controllerها رو با state فعلی provider sync می‌کنه
-  /// (فقط وقتی preset عوض بشه یا اولین بار load بشه).
   void _syncControllers(CdnScannerProvider scan) {
     if (!scan.isLoaded) return;
 
@@ -38,7 +38,6 @@ class _CdnScannerSectionState extends State<CdnScannerSection> {
       _lastSyncedPreset = scan.selectedPresetId;
       _controllersSynced = true;
 
-      // در post-frame اجرا کن تا با rebuild تداخل نکنه
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         if (scan.selectedPresetId == 'custom') {
@@ -55,11 +54,12 @@ class _CdnScannerSectionState extends State<CdnScannerSection> {
   Widget build(BuildContext context) {
     final scan = context.watch<CdnScannerProvider>();
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     _syncControllers(scan);
 
     return SettingsTile(
-      title: 'CDN IP Scanner',
+      title: l10n.cdnScanner,
       icon: Icons.search,
       trailingText: scan.good.isNotEmpty ? '${scan.good.length} usable' : null,
       iconBackgroundColor: theme.colorScheme.secondary,
@@ -107,7 +107,7 @@ class _CdnScannerSectionState extends State<CdnScannerSection> {
                         scan.start();
                       },
                 icon: const Icon(Icons.play_arrow),
-                label: const Text('Start Scan'),
+                label: Text(l10n.startScan),
               ),
             ),
             const SizedBox(width: 8),
@@ -115,7 +115,7 @@ class _CdnScannerSectionState extends State<CdnScannerSection> {
               child: FilledButton.icon(
                 onPressed: scan.isRunning ? () => scan.stop() : null,
                 icon: const Icon(Icons.stop),
-                label: const Text('Stop'),
+                label: Text(l10n.stopScan),
                 style: FilledButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,

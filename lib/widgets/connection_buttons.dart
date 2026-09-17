@@ -1,5 +1,7 @@
+// lib/widgets/connection_buttons.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/app_provider.dart';
 import 'connection/connection_button_builder.dart';
 import 'connection/connection_state_resolver.dart';
@@ -12,8 +14,11 @@ class ConnectionButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
     final theme = Theme.of(context);
-    final builder =
-        ConnectionButtonBuilder(primaryColor: theme.colorScheme.primary);
+    final l10n = AppLocalizations.of(context);
+    final builder = ConnectionButtonBuilder(
+      primaryColor: theme.colorScheme.primary,
+      l10n: l10n,
+    );
     final resolver = ConnectionStateResolver(provider);
 
     final aetherData = resolver.resolveAether(builder);
@@ -36,7 +41,7 @@ class ConnectionButtons extends StatelessWidget {
             busy: aetherData.state.busy,
             connected: aetherData.state.connected,
             onTap: () => provider.connectAether(),
-            statusText: aetherData.state.statusText(aetherData.progress),
+            statusText: aetherData.state.statusText(aetherData.progress, l10n),
             statusColor: aetherData.state
                 .statusColor(theme.colorScheme.primary, onSurface),
           ),
@@ -48,7 +53,8 @@ class ConnectionButtons extends StatelessWidget {
             busy: psiphonData.state.busy,
             connected: psiphonData.state.connected,
             onTap: () => provider.connectPsiphon(),
-            statusText: psiphonData.state.statusText(psiphonData.progress),
+            statusText:
+                psiphonData.state.statusText(psiphonData.progress, l10n),
             statusColor: psiphonData.state
                 .statusColor(theme.colorScheme.primary, onSurface),
           ),
@@ -61,9 +67,9 @@ class ConnectionButtons extends StatelessWidget {
             connected: torData.state.connected,
             onTap: () => provider.connectTor(),
             progress: torData.progress,
-            statusText: torData.state.statusText(torData.progress),
-            statusColor: torData.state
-                .statusColor(theme.colorScheme.primary, onSurface),
+            statusText: torData.state.statusText(torData.progress, l10n),
+            statusColor:
+                torData.state.statusColor(theme.colorScheme.primary, onSurface),
           ),
           CircleConnectButton(
             title: 'SSTP',
@@ -73,7 +79,7 @@ class ConnectionButtons extends StatelessWidget {
             busy: sstpData.state.busy,
             connected: sstpData.state.connected,
             onTap: () => provider.connectSstp(),
-            statusText: sstpData.state.statusText(sstpData.progress),
+            statusText: sstpData.state.statusText(sstpData.progress, l10n),
             statusColor: sstpData.state
                 .statusColor(theme.colorScheme.primary, onSurface),
           ),

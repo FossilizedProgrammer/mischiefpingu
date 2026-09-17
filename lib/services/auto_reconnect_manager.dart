@@ -1,3 +1,11 @@
+// lib/services/auto_reconnect_manager.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  AutoReconnectManager — زمان‌بندی auto-reconnect پس از مرگ پروسه
+//
+//  ⚠️ delay افزایش یافته چون در اینترنت ایران، پروسه ممکن است
+//  به‌خاطر اختلال موقتی بمیرد و نباید فوراً reconnect شود.
+// ═══════════════════════════════════════════════════════════════
 import 'dart:async';
 import 'process_service.dart';
 
@@ -7,7 +15,11 @@ class AutoReconnectManager {
   Timer? _torTimer;
   Timer? _sstpTimer;
 
-  static const Duration defaultDelay = Duration(seconds: 5);
+  /// ⚠️ افزایش از 5 به 15 ثانیه — برای اینترنت ناپایدار.
+  static const Duration defaultDelay = Duration(seconds: 15);
+
+  /// برای تونل‌هایی که کند boot می‌شوند (مثل Tor).
+  static const Duration slowTunnelDelay = Duration(seconds: 30);
 
   void schedulePsiphonReconnect({
     Duration delay = defaultDelay,
@@ -40,7 +52,7 @@ class AutoReconnectManager {
   }
 
   void scheduleTorReconnect({
-    Duration delay = defaultDelay,
+    Duration delay = slowTunnelDelay,
     required bool Function() shouldReconnect,
     required void Function() onReconnect,
     required void Function(String, {String source}) log,

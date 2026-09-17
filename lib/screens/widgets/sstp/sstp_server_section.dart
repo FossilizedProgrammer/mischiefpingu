@@ -1,4 +1,6 @@
+// lib/screens/widgets/sstp/sstp_server_section.dart
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 
 class SstpServerSection extends StatelessWidget {
   final ThemeData theme;
@@ -26,11 +28,12 @@ class SstpServerSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Server',
+          l10n.server,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.tertiary,
@@ -43,8 +46,8 @@ class SstpServerSection extends StatelessWidget {
               flex: 3,
               child: TextFormField(
                 initialValue: sstpServer,
-                decoration: const InputDecoration(
-                  labelText: 'Server address',
+                decoration: InputDecoration(
+                  labelText: l10n.serverAddress,
                   hintText: '60.121.223.189',
                   isDense: true,
                 ),
@@ -57,9 +60,9 @@ class SstpServerSection extends StatelessWidget {
               child: TextFormField(
                 initialValue: sstpPort.toString(),
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: '443',
-                  labelText: 'Port',
+                  labelText: l10n.port,
                   isDense: true,
                 ),
                 onChanged: onPortChanged,
@@ -69,7 +72,7 @@ class SstpServerSection extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Text(
-          'Authentication (optional)',
+          l10n.authenticationOptional,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.tertiary,
@@ -81,8 +84,8 @@ class SstpServerSection extends StatelessWidget {
             Expanded(
               child: TextFormField(
                 initialValue: sstpUser,
-                decoration: const InputDecoration(
-                  labelText: 'Username',
+                decoration: InputDecoration(
+                  labelText: l10n.username,
                   hintText: 'vpn',
                   isDense: true,
                 ),
@@ -94,8 +97,8 @@ class SstpServerSection extends StatelessWidget {
               child: TextFormField(
                 initialValue: sstpPass,
                 obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
+                decoration: InputDecoration(
+                  labelText: l10n.password,
                   isDense: true,
                 ),
                 onChanged: onPassChanged,

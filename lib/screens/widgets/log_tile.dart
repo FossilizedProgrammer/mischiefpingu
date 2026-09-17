@@ -1,5 +1,7 @@
+// lib/screens/widgets/log_tile.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 
 class LogTile extends StatelessWidget {
@@ -10,6 +12,7 @@ class LogTile extends StatelessWidget {
     final provider = context.watch<AppProvider>();
     final logs = provider.processService.fullLog;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -35,7 +38,7 @@ class LogTile extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                'Log',
+                l10n.log,
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
@@ -49,7 +52,7 @@ class LogTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  '${logs.length} lines',
+                  '${logs.length} ${l10n.lines}',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -77,9 +80,8 @@ class LogTile extends StatelessWidget {
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
                       dense: true,
-                      title: const Text('Enable logging'),
-                      subtitle:
-                          const Text('When off, no new logs are collected'),
+                      title: Text(l10n.enableLogging),
+                      subtitle: Text(l10n.enableLoggingSubtitle),
                       value: provider.loggingEnabled,
                       onChanged: (v) => provider.setLoggingEnabled(v == true),
                     ),
@@ -90,12 +92,12 @@ class LogTile extends StatelessWidget {
                         TextButton.icon(
                           onPressed: () => provider.processService.clearLog(),
                           icon: const Icon(Icons.delete_outline, size: 16),
-                          label: const Text('Clear'),
+                          label: Text(l10n.clearLog),
                         ),
                         TextButton.icon(
                           onPressed: () => provider.copyLogToClipboard(),
                           icon: const Icon(Icons.copy, size: 16),
-                          label: const Text('Copy'),
+                          label: Text(l10n.copyLog),
                         ),
                       ],
                     ),
@@ -103,7 +105,7 @@ class LogTile extends StatelessWidget {
                     SizedBox(
                       height: 260,
                       child: logs.isEmpty
-                          ? const Center(child: Text('No logs yet'))
+                          ? Center(child: Text(l10n.noLogsYet))
                           : ListView.builder(
                               reverse: true,
                               itemCount: logs.length,

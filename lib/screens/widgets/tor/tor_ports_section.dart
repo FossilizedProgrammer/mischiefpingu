@@ -1,5 +1,6 @@
 // lib/screens/widgets/tor/tor_ports_section.dart
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 
 class TorPortsSection extends StatelessWidget {
   final int torSocksPort;
@@ -17,14 +18,15 @@ class TorPortsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
         Expanded(
           child: TextFormField(
             initialValue: torSocksPort.toString(),
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'SOCKS port',
+            decoration: InputDecoration(
+              labelText: l10n.socksPort,
               isDense: true,
             ),
             onChanged: onSocksPortChanged,
@@ -35,8 +37,8 @@ class TorPortsSection extends StatelessWidget {
           child: TextFormField(
             initialValue: torHttpPort.toString(),
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'HTTP port',
+            decoration: InputDecoration(
+              labelText: l10n.httpPort,
               isDense: true,
             ),
             onChanged: onHttpPortChanged,

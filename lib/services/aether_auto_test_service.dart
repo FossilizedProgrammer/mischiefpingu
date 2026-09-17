@@ -1,13 +1,3 @@
-// lib/services/aether_auto_test_service.dart
-//
-// ═══════════════════════════════════════════════════════════════
-//  AetherAutoTestService — orchestrator اصلی auto-test Aether.
-//
-//  مسئولیت‌ها:
-//    • ساخت collaboratorها (planner/store/runner/cache/helpers)
-//    • مدیریت _testFuture و _cancelRequested
-//    • delegate کردن اجرا به AetherTestExecutor
-// ═══════════════════════════════════════════════════════════════
 library;
 
 import 'dart:async';
@@ -28,7 +18,6 @@ class AetherAutoTestService {
 
   Future<bool>? _testFuture;
 
-  // ─── collaborators ───
   late SocksProber _prober;
   late AetherAttemptPlanner _planner;
   late AetherEndpointStore _store;
@@ -86,7 +75,6 @@ class AetherAutoTestService {
 
   void requestCancel() => _executor.requestCancel();
 
-  /// نقطهٔ ورود عمومی — idempotent.
   Future<bool> ensureHealthy({bool showUi = true}) {
     final existing = _testFuture;
     if (existing != null) return existing;
@@ -104,6 +92,6 @@ class AetherAutoTestService {
 
   Future<bool> _runAutoTest() async {
     _executor.reset();
-    return _executor.run(isAuto: settings.aetherProtocol == 'auto');
+    return _executor.run(isAuto: settings.isAetherProfileAutomatic);
   }
 }

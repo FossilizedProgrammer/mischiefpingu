@@ -1,7 +1,8 @@
+// lib/widgets/connection/connection_button_builder.dart
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import 'connection_state.dart';
 
-/// داده‌های محاسبه‌شده برای یک دکمه اتصال.
 class ConnectionButtonData {
   final ConnectionButtonState state;
   final int? progress;
@@ -9,10 +10,13 @@ class ConnectionButtonData {
   const ConnectionButtonData({required this.state, this.progress});
 }
 
-/// سازندهٔ state دکمه‌ها بر اساس وضعیت ProcessService.
 class ConnectionButtonBuilder {
   final Color primaryColor;
-  const ConnectionButtonBuilder({required this.primaryColor});
+  final AppLocalizations l10n;
+  const ConnectionButtonBuilder({
+    required this.primaryColor,
+    required this.l10n,
+  });
 
   ConnectionButtonData forAether({
     required bool isRunning,
@@ -74,6 +78,7 @@ class ConnectionButtonBuilder {
         isConnected: isConnected,
         isBusy: isBusy,
         primaryColor: primaryColor,
+        l10n: l10n,
       ),
       progress: progress,
     );

@@ -1,7 +1,9 @@
+// lib/screens/widgets/psiphon/psiphon_fronting_tile.dart
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../providers/app_provider.dart';
-import '../../../widgets/editable_list_dropdown.dart';
-import 'psiphon_manual_proxy_section.dart';
+import 'psiphon_fronting_fields.dart';
+import 'psiphon_upstream_selector.dart';
 
 class PsiphonFrontingTile extends StatelessWidget {
   final ThemeData theme;
@@ -27,31 +29,32 @@ class PsiphonFrontingTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           dense: true,
-          title: const Text('Use fronting (CDN)'),
+          title: Text(l10n.useFronting),
           value: isFronted,
           onChanged: onFrontedChanged,
         ),
         const SizedBox(height: 12),
         DropdownButtonFormField<bool>(
           initialValue: provider.settings.useSunAndLion,
-          decoration: const InputDecoration(
-            labelText: 'Tunnel core',
+          decoration: InputDecoration(
+            labelText: l10n.tunnelCore,
             isDense: true,
           ),
-          items: const [
+          items: [
             DropdownMenuItem(
               value: false,
-              child: Text('official psiphon tunnel core'),
+              child: Text(l10n.officialCore),
             ),
             DropdownMenuItem(
               value: true,
-              child: Text('sunandlion psiphon tunnel core'),
+              child: Text(l10n.sunandlionCore),
             ),
           ],
           onChanged: (v) {
@@ -60,102 +63,13 @@ class PsiphonFrontingTile extends StatelessWidget {
             provider.touch();
           },
         ),
-        if (isFronted) ...[
-          const SizedBox(height: 12),
-          EditableListDropdown(
-            label: 'Fronting IP',
-            value: provider.settings.ip,
-            items: provider.ipList,
-            onChanged: (v) {
-              provider.settings.ip = v;
-              provider.saveSettings();
-              provider.touch();
-            },
-            onListChanged: (list) {
-              provider.saveIpList(list);
-            },
-          ),
-          const SizedBox(height: 12),
-          EditableListDropdown(
-            label: 'HTTP Host Header (e.g. aparat.com, snapp.ir)',
-            value: provider.settings.httpHost,
-            items: provider.httpHostList,
-            onChanged: (v) {
-              provider.settings.httpHost = v;
-              provider.saveSettings();
-              provider.touch();
-            },
-            onListChanged: (list) {
-              provider.saveHttpHostList(list);
-            },
-          ),
-          const SizedBox(height: 12),
-          EditableListDropdown(
-            label: 'TLS SNI (e.g. a248.e.akamai.net)',
-            value: provider.settings.tlsSni,
-            items: provider.tlsSniList,
-            onChanged: (v) {
-              provider.settings.tlsSni = v;
-              provider.saveSettings();
-              provider.touch();
-            },
-            onListChanged: (list) {
-              provider.saveTlsSniList(list);
-            },
-          ),
-          const SizedBox(height: 8),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            dense: true,
-            title: const Text('Auto-find IP & SNI'),
-            value: provider.settings.autoFindIpAndSni,
-            onChanged: (v) {
-              provider.settings.autoFindIpAndSni = v;
-              provider.saveSettings();
-              provider.touch();
-            },
-          ),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            dense: true,
-            title: const Text('Save found IPs & SNI automatically'),
-            value: provider.settings.saveFoundIpsAndSni,
-            onChanged: (v) {
-              provider.settings.saveFoundIpsAndSni = v;
-              provider.saveSettings();
-              provider.touch();
-            },
-          ),
-        ],
-        const Divider(height: 28),
-        DropdownButtonFormField<int>(
-          initialValue: upstreamType == 4 ? 0 : upstreamType,
-          decoration: const InputDecoration(
-            labelText: 'Upstream',
-            isDense: true,
-          ),
-          items: const [
-            DropdownMenuItem(value: 0, child: Text('Direct (no upstream)')),
-            DropdownMenuItem(value: 1, child: Text('Manual proxy')),
-            DropdownMenuItem(value: 2, child: Text('Aether (SOCKS upstream)')),
-            DropdownMenuItem(value: 3, child: Text('Conduit (WebRTC Inproxy)')),
-            DropdownMenuItem(value: 4, child: Text('Tor (SOCKS upstream)')),
-            DropdownMenuItem(value: 5, child: Text('SSTP (SOCKS upstream)')),
-          ],
-          onChanged: onUpstreamTypeChanged,
+        if (isFronted) PsiphonFrontingFields(provider: provider),
+        PsiphonUpstreamSelector(
+          upstreamType: upstreamType,
+          onUpstreamTypeChanged: onUpstreamTypeChanged,
+          autoReconnectPsiphon: autoReconnectPsiphon,
+          onAutoReconnectChanged: onAutoReconnectChanged,
         ),
-        const SizedBox(height: 8),
-        SwitchListTile(
-          contentPadding: EdgeInsets.zero,
-          dense: true,
-          title: const Text('Auto-reconnect Psiphon'),
-          value: autoReconnectPsiphon,
-          onChanged: onAutoReconnectChanged,
-        ),
-        if (upstreamType == 1) ...[
-          const SizedBox(height: 12),
-          const PsiphonManualProxySection(),
-        ],
       ],
     );
   }

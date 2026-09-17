@@ -1,11 +1,9 @@
 // lib/screens/widgets/sstp_fetcher/sstp_actions.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../providers/sstp_fetcher_provider.dart';
 
-/// ═══════════════════════════════════════════════════════════════
-///  اکشن‌های کپی کلیپ‌بورد برای لیست SSTP
-/// ═══════════════════════════════════════════════════════════════
 class SstpClipboardActions {
   SstpClipboardActions._();
 
@@ -14,12 +12,13 @@ class SstpClipboardActions {
     String text,
     String label,
   ) async {
+    final l10n = AppLocalizations.of(context);
     await Clipboard.setData(ClipboardData(text: text));
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('$label copied: $text'),
+        content: Text('${l10n.copiedToClipboard}: $text'),
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),
@@ -30,6 +29,7 @@ class SstpClipboardActions {
     BuildContext context,
     SstpFetcherProvider fetcher,
   ) async {
+    final l10n = AppLocalizations.of(context);
     final visible = fetcher.visibleServers;
     if (visible.isEmpty) return;
     final lines = visible.map((s) => '${s.ip}:${s.port}').join('\n');
@@ -38,7 +38,7 @@ class SstpClipboardActions {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${visible.length} server(s) copied to clipboard'),
+        content: Text('${visible.length} · ${l10n.copiedToClipboard}'),
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),
@@ -49,6 +49,7 @@ class SstpClipboardActions {
     BuildContext context,
     SstpFetcherProvider fetcher,
   ) async {
+    final l10n = AppLocalizations.of(context);
     final visible = fetcher.visibleServers;
     if (visible.isEmpty) return;
 
@@ -65,7 +66,7 @@ class SstpClipboardActions {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${visible.length} server(s) copied (CSV format)'),
+        content: Text('${visible.length} · ${l10n.copiedToClipboard} (CSV)'),
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),

@@ -65,8 +65,8 @@ class CoreUpdateEntryState extends ChangeNotifier {
   }
 
   Future<void> update({
-    required Future<bool> Function(String? proxy,
-            void Function(int percent) onProgress)
+    required Future<bool> Function(
+            String? proxy, void Function(int percent) onProgress)
         runUpdate,
     required Future<void> Function() afterUpdate,
   }) async {

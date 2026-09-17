@@ -46,8 +46,8 @@ class VersionParsers {
   /// پارس نسخه semantic از خروجی عمومی (برای SSTP).
   static String? parseSemver(String? output) {
     if (output == null || output.isEmpty) return null;
-    final m = RegExp(r'\b(\d+\.\d+\.\d+(?:[-\+][\w\.]+)?)\b')
-        .firstMatch(output);
+    final m =
+        RegExp(r'\b(\d+\.\d+\.\d+(?:[-\+][\w\.]+)?)\b').firstMatch(output);
     return m?.group(1);
   }
 

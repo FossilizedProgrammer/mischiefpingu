@@ -1,5 +1,7 @@
+// lib/screens/widgets/tor_settings_tile.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 import '../../widgets/settings_tile_base.dart';
 import 'tor/tor_transport_tile.dart';
@@ -39,6 +41,7 @@ class TorSettingsTile extends StatelessWidget {
     final provider = context.watch<AppProvider>();
     final s = provider.settings;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     void save() {
       provider.saveSettings();
@@ -46,17 +49,16 @@ class TorSettingsTile extends StatelessWidget {
     }
 
     return SettingsTile(
-      title: 'Tor Settings',
+      title: l10n.torSettings,
       icon: Icons.shield_outlined,
       iconBackgroundColor: theme.colorScheme.secondary,
       initiallyExpanded: false,
       children: [
         TorTransportTile(
           theme: theme,
-          transportLabel: 'Tor connection',
+          transportLabel: l10n.torConnection,
           torTransport: s.torTransport,
           onTransportChanged: (v) {
-            // ✅ پیش‌فرض بدون آپ‌استریم (direct)
             s.torTransport = v ?? 'direct';
             save();
           },

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 import '../../services/core_update_service.dart';
 import '../../widgets/settings_tile_base.dart';
@@ -50,8 +51,9 @@ class _CoreUpdateTileState extends State<CoreUpdateTile> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return SettingsTile(
-      title: 'Core Updates',
+      title: l10n.coreUpdates,
       icon: Icons.system_update_outlined,
       iconBackgroundColor: theme.colorScheme.primary,
       initiallyExpanded: false,

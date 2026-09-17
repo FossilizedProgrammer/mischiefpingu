@@ -1,8 +1,9 @@
 // lib/screens/widgets/tor/tor_transport_tile.dart
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 import 'tor_transport_selector.dart';
 import 'tor_ports_section.dart';
-import 'tor_exit_country_section.dart';  // ← این خط جا افتاده
+import 'tor_exit_country_section.dart';
 import 'tor_bridges_section.dart';
 import 'tor_switches_section.dart';
 
@@ -48,6 +49,7 @@ class TorTransportTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -88,7 +90,7 @@ class TorTransportTile extends StatelessWidget {
         ] else ...[
           const SizedBox(height: 8),
           Text(
-            'Direct Tor with no bridges and no upstream.',
+            l10n.torDirect,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),

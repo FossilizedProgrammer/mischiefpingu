@@ -1,5 +1,6 @@
 // lib/screens/widgets/tor/tor_transport_selector.dart
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 
 class TorTransportSelector extends StatelessWidget {
   final String transportLabel;
@@ -15,6 +16,7 @@ class TorTransportSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return DropdownButtonFormField<String>(
       key: ValueKey('tor-transport:$torTransport'),
       initialValue: torTransport,
@@ -22,26 +24,26 @@ class TorTransportSelector extends StatelessWidget {
         labelText: transportLabel,
         isDense: true,
       ),
-      items: const [
+      items: [
         DropdownMenuItem(
           value: 'direct',
-          child: Text('Direct (no bridge, no upstream) — default'),
+          child: Text(l10n.torDirect),
         ),
         DropdownMenuItem(
           value: 'bridge',
-          child: Text('Bridge (obfs4 / snowflake / custom)'),
+          child: Text(l10n.torBridge),
         ),
         DropdownMenuItem(
           value: 'aether',
-          child: Text('Via Aether (Tor-over-Aether)'),
+          child: Text(l10n.torViaAether),
         ),
         DropdownMenuItem(
           value: 'psiphon',
-          child: Text('Via Psiphon (Tor-over-Psiphon)'),
+          child: Text(l10n.torViaPsiphon),
         ),
         DropdownMenuItem(
           value: 'sstp',
-          child: Text('Via SSTP (Tor-over-SSTP)'),
+          child: Text(l10n.torViaSstp),
         ),
       ],
       onChanged: onTransportChanged,

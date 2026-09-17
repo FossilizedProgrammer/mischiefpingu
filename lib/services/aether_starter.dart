@@ -1,7 +1,6 @@
 // lib/services/aether_starter.dart
 part of 'process_service.dart';
 
-/// forwarder SOCKS مخصوص Aether در حالت Share-on-LAN
 ServerSocket? _aetherSocksForwarder;
 
 extension ProcessServiceAetherStarter on ProcessService {
@@ -49,7 +48,6 @@ extension ProcessServiceAetherStarter on ProcessService {
       isAetherRunning = true;
       addLog('Aether is running (PID: ${proc.pid})', source: src);
 
-      // ─── forwarder برای LAN ───
       if (bindInfo.shareLan &&
           prepared.publicPort != null &&
           prepared.internalPort != null) {
@@ -83,7 +81,6 @@ extension ProcessServiceAetherStarter on ProcessService {
       }
       touch();
 
-      // ─── listenerها ───
       attachProcessListeners(
         process: proc,
         handleLine: (line) {
@@ -96,8 +93,16 @@ extension ProcessServiceAetherStarter on ProcessService {
           await _aetherSocksForwarder?.close();
         } catch (_) {}
         _aetherSocksForwarder = null;
+        final wasRunning = isAetherRunning;
         isAetherRunning = false;
         aetherProcess = null;
+
+        checkHappyTransition(
+          tunnelName: 'Aether',
+          wasConnected: wasRunning,
+          isConnected: false,
+        );
+
         addLog('Aether exited with code $code', source: src);
         touch();
       });

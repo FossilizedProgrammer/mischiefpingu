@@ -1,13 +1,11 @@
 // lib/screens/widgets/sstp_fetcher/sstp_server_tile.dart
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../services/sstp_health_checker.dart';
 import '../../../services/vpngate_scraper_service.dart';
 import 'sstp_country_helpers.dart';
 import 'sstp_health_helpers.dart';
 
-/// ═══════════════════════════════════════════════════════════════
-///  یک ردیف سرور SSTP در لیست
-/// ═══════════════════════════════════════════════════════════════
 class SstpServerTile extends StatelessWidget {
   final SstpServer server;
   final bool isCurrent;
@@ -27,6 +25,7 @@ class SstpServerTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final h = health.status;
     final color = SstpHealthHelpers.color(h, theme);
     final badgeColor =
@@ -39,8 +38,9 @@ class SstpServerTile extends StatelessWidget {
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       leading: CircleAvatar(
         radius: 14,
-        backgroundColor:
-            isCurrent ? Colors.green.withValues(alpha: 0.25) : color.withValues(alpha: 0.15),
+        backgroundColor: isCurrent
+            ? Colors.green.withValues(alpha: 0.25)
+            : color.withValues(alpha: 0.15),
         child: Icon(
           isCurrent ? Icons.check_circle : SstpHealthHelpers.icon(h),
           size: 16,
@@ -103,17 +103,16 @@ class SstpServerTile extends StatelessWidget {
         children: [
           IconButton(
             icon: const Icon(Icons.copy, size: 18),
-            tooltip: 'Copy ip:port',
+            tooltip: l10n.copy,
             visualDensity: VisualDensity.compact,
-            onPressed: () =>
-                onCopy('${server.ip}:${server.port}', 'Server'),
+            onPressed: () => onCopy('${server.ip}:${server.port}', 'Server'),
           ),
           if (isCurrent)
             const Icon(Icons.check_circle, color: Colors.green, size: 20)
           else
             IconButton(
               icon: const Icon(Icons.play_arrow),
-              tooltip: 'Use this server',
+              tooltip: l10n.start,
               visualDensity: VisualDensity.compact,
               onPressed: onApply,
             ),

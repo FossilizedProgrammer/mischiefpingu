@@ -1,5 +1,7 @@
+// lib/screens/widgets/psiphon_settings_tile.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 import '../../widgets/settings_tile_base.dart';
 import 'psiphon/psiphon_ports_region_tile.dart';
@@ -48,13 +50,13 @@ class _PsiphonSettingsTileState extends State<PsiphonSettingsTile> {
     final provider = context.watch<AppProvider>();
     final s = provider.settings;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     void save() {
       provider.saveSettings();
       provider.touch();
     }
 
-    // ✅ نام‌ها بدون _ (چون local هستن)
     void handleFrontedChanged(bool value) {
       setState(() => s.isFronted = value);
       if (value) {
@@ -79,7 +81,7 @@ class _PsiphonSettingsTileState extends State<PsiphonSettingsTile> {
     }
 
     return SettingsTile(
-      title: 'Psiphon Settings',
+      title: l10n.psiphonSettings,
       icon: Icons.security,
       iconBackgroundColor: theme.colorScheme.secondary,
       initiallyExpanded: false,

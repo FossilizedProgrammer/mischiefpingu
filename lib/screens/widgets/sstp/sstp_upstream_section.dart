@@ -1,4 +1,6 @@
+// lib/screens/widgets/sstp/sstp_upstream_section.dart
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 import 'sstp_upstream_info_box.dart';
 import 'sstp_manual_proxy_fields.dart';
 
@@ -38,11 +40,12 @@ class SstpUpstreamSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Upstream',
+          l10n.upstream,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.tertiary,
@@ -51,16 +54,16 @@ class SstpUpstreamSection extends StatelessWidget {
         const SizedBox(height: 8),
         DropdownButtonFormField<int>(
           initialValue: sstpUpstreamType,
-          decoration: const InputDecoration(
-            labelText: 'Upstream type',
+          decoration: InputDecoration(
+            labelText: l10n.upstreamType,
             isDense: true,
           ),
-          items: const [
-            DropdownMenuItem(value: 0, child: Text('No upstream (direct)')),
-            DropdownMenuItem(value: 1, child: Text('Manual proxy')),
-            DropdownMenuItem(value: 2, child: Text('Aether (SOCKS upstream)')),
-            DropdownMenuItem(value: 3, child: Text('Psiphon (SOCKS upstream)')),
-            DropdownMenuItem(value: 4, child: Text('Tor (SOCKS upstream)')),
+          items: [
+            DropdownMenuItem(value: 0, child: Text(l10n.noUpstreamDirect)),
+            DropdownMenuItem(value: 1, child: Text(l10n.manualProxyOption)),
+            DropdownMenuItem(value: 2, child: Text(l10n.aetherUpstream)),
+            DropdownMenuItem(value: 3, child: Text(l10n.psiphonUpstream)),
+            DropdownMenuItem(value: 4, child: Text(l10n.torUpstream)),
           ],
           onChanged: (v) => onUpstreamTypeChanged(v ?? 0),
         ),
@@ -79,34 +82,54 @@ class SstpUpstreamSection extends StatelessWidget {
             onProxyPassChanged: onProxyPassChanged,
           ),
         ],
-        if (sstpUpstreamType == 2) ...[
-          const SizedBox(height: 8),
-          SstpUpstreamInfoBox(
+        if (sstpUpstreamType == 2)
+          _InfoBox(
             theme: theme,
             icon: Icons.info_outline,
             message:
                 'SSTP will route through Aether on 127.0.0.1:$aetherLocalPort. '
                 'Make sure Aether is running.',
           ),
-        ],
-        if (sstpUpstreamType == 3) ...[
-          const SizedBox(height: 8),
-          SstpUpstreamInfoBox(
+        if (sstpUpstreamType == 3)
+          _InfoBox(
             theme: theme,
             icon: Icons.info_outline,
             message: 'SSTP will route through Psiphon. '
                 'Make sure Psiphon is running.',
           ),
-        ],
-        if (sstpUpstreamType == 4) ...[
-          const SizedBox(height: 8),
-          SstpUpstreamInfoBox(
+        if (sstpUpstreamType == 4)
+          _InfoBox(
             theme: theme,
             icon: Icons.info_outline,
             message: 'SSTP will route through Tor. '
                 'Make sure Tor is running.',
           ),
-        ],
+      ],
+    );
+  }
+}
+
+class _InfoBox extends StatelessWidget {
+  final ThemeData theme;
+  final IconData icon;
+  final String message;
+
+  const _InfoBox({
+    required this.theme,
+    required this.icon,
+    required this.message,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 8),
+        SstpUpstreamInfoBox(
+          theme: theme,
+          icon: icon,
+          message: message,
+        ),
       ],
     );
   }

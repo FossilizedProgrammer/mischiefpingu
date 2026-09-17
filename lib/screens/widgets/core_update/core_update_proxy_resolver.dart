@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/app_provider.dart';
 
-/// ═══════════════════════════════════════════════════════════════
-///  Resolver پروکسی برای دانلود Core Updates
-/// ═══════════════════════════════════════════════════════════════
 class CoreUpdateProxyResolver {
   final String proxyMode;
   const CoreUpdateProxyResolver(this.proxyMode);
@@ -26,6 +23,10 @@ class CoreUpdateProxyResolver {
           return p.processService.isTorConnected
               ? '127.0.0.1:${p.settings.torSocksPort}'
               : null;
+        case 'sstp':
+          return p.processService.isSstpConnected
+              ? '127.0.0.1:${p.settings.sstpSocksPort}'
+              : null;
         default:
           return null;
       }
@@ -41,7 +42,7 @@ class CoreUpdateProxyResolver {
       }
       return v;
     }
-    for (final m in ['psiphon', 'aether', 'tor']) {
+    for (final m in ['psiphon', 'aether', 'tor', 'sstp']) {
       final v = pick(m);
       if (v != null) return v;
     }
@@ -49,11 +50,22 @@ class CoreUpdateProxyResolver {
   }
 }
 
-/// گزینه‌های dropdown پروکسی — برای استفاده در UI.
-const coreUpdateProxyItems = [
-  DropdownMenuItem(value: 'auto', child: Text('Auto (first running proxy)')),
-  DropdownMenuItem(value: 'direct', child: Text('Direct (no proxy)')),
+List<DropdownMenuItem<String>> buildCoreUpdateProxyItems(dynamic l10n) {
+  return [
+    DropdownMenuItem(value: 'auto', child: Text(l10n.autoFirstProxy)),
+    DropdownMenuItem(value: 'direct', child: Text(l10n.directNoProxyOption)),
+    const DropdownMenuItem(value: 'psiphon', child: Text('Psiphon')),
+    const DropdownMenuItem(value: 'aether', child: Text('Aether')),
+    const DropdownMenuItem(value: 'tor', child: Text('Tor')),
+    const DropdownMenuItem(value: 'sstp', child: Text('SSTP')),
+  ];
+}
+
+const List<DropdownMenuItem<String>> coreUpdateProxyItems = [
+  DropdownMenuItem(value: 'auto', child: Text('Auto')),
+  DropdownMenuItem(value: 'direct', child: Text('Direct')),
   DropdownMenuItem(value: 'psiphon', child: Text('Psiphon')),
   DropdownMenuItem(value: 'aether', child: Text('Aether')),
   DropdownMenuItem(value: 'tor', child: Text('Tor')),
+  DropdownMenuItem(value: 'sstp', child: Text('SSTP')),
 ];

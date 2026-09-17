@@ -16,17 +16,31 @@ import '../services/auto_reconnect_manager.dart';
 import '../services/core_update_service.dart';
 import '../services/log_line_parsers.dart';
 import '../services/port_manager.dart';
+import '../services/tunnel_watchdog_manager.dart';
+import '../services/tunnel_watchdog_factory.dart';
+import '../services/psiphon/psiphon_log_watcher.dart';
+import '../services/tor/tor_log_watcher.dart';
+import '../services/sstp/sstp_log_watcher.dart';
 import '../constants/default_lists.dart';
 
+// ═══════════════════════════════════════════════════════════════
+//  part files — تفکیک‌شده برای کاهش اندازه
+// ═══════════════════════════════════════════════════════════════
 part 'app_provider_lifecycle.dart';
 part 'app_provider_parsers.dart';
 part 'app_provider_psiphon.dart';
+part 'app_provider_psiphon_preflight.dart';
 part 'app_provider_aether.dart';
-part 'app_provider_tor.dart';               
+part 'app_provider_tor.dart';
+part 'app_provider_tor_assets.dart';
 part 'app_provider_tor_upstream.dart';
-part 'app_provider_sstp.dart';              
+part 'app_provider_tor_preflight.dart';
+part 'app_provider_sstp.dart';
 part 'app_provider_sstp_upstream.dart';
-
+part 'app_provider_watchdogs.dart';
+part 'app_provider_reconnect.dart';
+part 'app_provider_log_watchers.dart';
+part 'app_provider_process_listener.dart';
 
 class AppProvider extends ChangeNotifier {
   final ProcessService processService = ProcessService();
@@ -36,6 +50,26 @@ class AppProvider extends ChangeNotifier {
   final SettingsPersistenceService persistence = SettingsPersistenceService();
   final AutoReconnectManager _reconnectManager = AutoReconnectManager();
   AutoReconnectManager get reconnectManager => _reconnectManager;
+
+  // ═══════════════════════════════════════════════════════════════
+  //  TunnelWatchdog — تشخیص «وصل است ولی data-plane مرده»
+  // ═══════════════════════════════════════════════════════════════
+  TunnelWatchdogManager? _watchdogManager;
+  TunnelWatchdogManager? get watchdogManager => _watchdogManager;
+
+  // ─── Log watcherها ───
+  late final PsiphonLogWatcher _psiphonLog;
+  late final TorLogWatcher _torLog;
+  late final SstpLogWatcher _sstpLog;
+
+  /// دسترسی از extensionهای part file.
+  PsiphonLogWatcher get psiphonLog => _psiphonLog;
+  TorLogWatcher get torLog => _torLog;
+  SstpLogWatcher get sstpLog => _sstpLog;
+
+  /// اشتراک logStream — برای dispose کردن.
+  StreamSubscription<String>? _logSubscription;
+  StreamSubscription<String>? get logSubscription => _logSubscription;
 
   AppSettings settings = AppSettings();
   List<String> ipList = List.from(DefaultLists.ipList);
@@ -52,7 +86,6 @@ class AppProvider extends ChangeNotifier {
   String sstpStatus = 'SSTP: Ready';
   bool isElevated = false;
 
-
   bool isAutoTesting = false;
 
   bool userStoppedPsiphon = true;
@@ -62,119 +95,48 @@ class AppProvider extends ChangeNotifier {
 
   bool isShuttingDown = false;
 
+  // ═══════════════════════════════════════════════════════════════
+  //  قفل‌های restart — جلوگیری از restart همزمان
+  // ═══════════════════════════════════════════════════════════════
+  bool restartingPsiphon = false;
+  bool restartingAether = false;
+  bool restartingTor = false;
+  bool restartingSstp = false;
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Getters برای دسترسی از extension ها
+  // ═══════════════════════════════════════════════════════════════
+
   String cleanIp(String ip) => ip.replaceAll(r'\', '').trim();
   List<String> cleanIpList(List<String> list) =>
       list.map(cleanIp).where((e) => e.isNotEmpty).toSet().toList();
 
   AppProvider() {
     processService.ensureInitialized();
-    processService.addListener(_onProcessServiceChanged);
+    processService.addListener(handleProcessServiceChange);
+
+    // ─── Log watcherها ───
+    _psiphonLog = PsiphonLogWatcher(log: processService.addLog);
+    _torLog = TorLogWatcher(log: processService.addLog);
+    _sstpLog = SstpLogWatcher(log: processService.addLog);
+
+    // ─── گوش دادن به logStream ───
+    _logSubscription = processService.logStream.listen(
+      feedLogWatchers,
+      onError: (e) {
+        processService.addLog(
+          '⚠ logStream error: $e',
+          source: LogSource.app,
+        );
+      },
+    );
+
     _aetherTestService = AetherAutoTestService(
       processService: processService,
       settings: settings,
     );
+
     Future.microtask(initializeProvider);
-  }
-
-  void _onProcessServiceChanged() {
-    if (isShuttingDown) return;
-
-    final logs = processService.fullLog;
-    if (logs.isNotEmpty) {
-      tryParseFoundFronting(logs.last);
-      tryParseBuildRev(logs.last);
-    }
-
-    if (!processService.isPsiphonRunning &&
-        !userStoppedPsiphon &&
-        settings.autoReconnectPsiphon &&
-        !isPsiphonBusy &&
-        !isAutoTesting) {
-      _reconnectManager.schedulePsiphonReconnect(
-        shouldReconnect: () =>
-            !processService.isPsiphonRunning &&
-            !userStoppedPsiphon &&
-            settings.autoReconnectPsiphon &&
-            !isPsiphonBusy &&
-            !isAutoTesting &&
-            !isShuttingDown,
-        onReconnect: () => connectPsiphon(fromAutoReconnect: true),
-        log: processService.addLog,
-      );
-    }
-
-    if (!processService.isAetherRunning &&
-        !userStoppedAether &&
-        !isAutoTesting &&
-        settings.autoReconnectAether &&
-        !isPsiphonBusy) {
-      _reconnectManager.scheduleAetherReconnect(
-        shouldReconnect: () =>
-            !processService.isAetherRunning &&
-            !userStoppedAether &&
-            settings.autoReconnectAether &&
-            !isPsiphonBusy &&
-            !isAutoTesting &&
-            !isShuttingDown,
-        onReconnect: () => connectAether(fromAutoReconnect: true),
-        log: processService.addLog,
-      );
-    }
-
-    if (!processService.isTorRunning &&
-        !userStoppedTor &&
-        settings.autoReconnectTor &&
-        !isTorBusy &&
-        !isAutoTesting) {
-      _reconnectManager.scheduleTorReconnect(
-        shouldReconnect: () =>
-            !processService.isTorRunning &&
-            !userStoppedTor &&
-            settings.autoReconnectTor &&
-            !isTorBusy &&
-            !isAutoTesting &&
-            !isShuttingDown,
-        onReconnect: () => connectTor(fromAutoReconnect: true),
-        log: processService.addLog,
-      );
-    }
-
-    if (!processService.isSstpRunning &&
-        !userStoppedSstp &&
-        settings.autoReconnectSstp &&
-        !isSstpBusy &&
-        !isAutoTesting) {
-      _reconnectManager.scheduleSstpReconnect(
-        shouldReconnect: () =>
-            !processService.isSstpRunning &&
-            !userStoppedSstp &&
-            settings.autoReconnectSstp &&
-            !isSstpBusy &&
-            !isAutoTesting &&
-            !isShuttingDown,
-        onReconnect: () => connectSstp(fromAutoReconnect: true),
-        log: processService.addLog,
-      );
-    }
-
-    if (processService.isTorRunning) {
-      if (processService.isTorConnected) {
-        torStatus = 'Tor: Connected';
-      } else if (torStatus == 'Tor: Ready' || torStatus == 'Tor: Stopped') {
-        torStatus = 'Tor: Bootstrapping…';
-      }
-    }
-
-    if (processService.isSstpRunning) {
-      if (processService.isSstpConnected) {
-        sstpStatus = 'SSTP: Connected';
-      } else if (sstpStatus == 'SSTP: Ready' ||
-          sstpStatus == 'SSTP: Stopped') {
-        sstpStatus = 'SSTP: Connecting…';
-      }
-    }
-
-    notifyListeners();
   }
 
   void touch() {
@@ -226,6 +188,7 @@ class AppProvider extends ChangeNotifier {
 
   void cancelAllAutoReconnect() {
     _reconnectManager.cancelAll();
+    _watchdogManager?.stopAll();
     try {
       _aetherTestService.requestCancel();
     } catch (_) {}
@@ -236,9 +199,15 @@ class AppProvider extends ChangeNotifier {
   @override
   void dispose() {
     isShuttingDown = true;
+
+    _watchdogManager?.disposeAll();
+
+    _logSubscription?.cancel();
+    _logSubscription = null;
+
     _aetherTestService.requestCancel();
     _reconnectManager.cancelAll();
-    processService.removeListener(_onProcessServiceChanged);
+    processService.removeListener(handleProcessServiceChange);
     super.dispose();
   }
 }

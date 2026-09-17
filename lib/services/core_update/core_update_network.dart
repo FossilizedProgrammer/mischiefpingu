@@ -4,7 +4,6 @@ library;
 import 'network/core_update_http.dart';
 import 'network/core_update_arch.dart';
 import 'network/core_update_downloader.dart';
-import 'core_update_process_utils.dart'; // اضافه شد
 
 /// ═══════════════════════════════════════════════════════════════
 ///  Facade — API عمومی CoreUpdateNetwork حفظ می‌شود،
@@ -14,10 +13,7 @@ class CoreUpdateNetwork {
   final void Function(String)? log;
 
   late final CoreUpdateHttp _http = CoreUpdateHttp(log: log);
-  late final CoreUpdateDownloader _downloader =
-      CoreUpdateDownloader(log: log);
-  late final CoreUpdateProcessUtils _processUtils = // اضافه شد
-      CoreUpdateProcessUtils(log: log);
+  late final CoreUpdateDownloader _downloader = CoreUpdateDownloader(log: log);
 
   CoreUpdateNetwork({this.log});
 
@@ -64,8 +60,4 @@ class CoreUpdateNetwork {
         span: span,
         totalHint: totalHint,
       );
-
-  // ─── delegate to process utils ───
-  Future<void> extractArchive(String archive, String destDir) =>
-      _processUtils.extractArchive(archive, destDir);
 }

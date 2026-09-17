@@ -1,4 +1,6 @@
+// lib/screens/widgets/show_more_button.dart
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 
 class ShowMoreButton extends StatelessWidget {
   final bool showMore;
@@ -13,6 +15,7 @@ class ShowMoreButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: InkWell(
@@ -75,15 +78,15 @@ class ShowMoreButton extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(showMore ? 'Show less' : 'Show more',
+                    Text(showMore ? l10n.showLess : l10n.showMore,
                         style: theme.textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.w700,
                             color: theme.colorScheme.onSurface)),
                     const SizedBox(height: 2),
                     Text(
                       showMore
-                          ? 'Hide advanced settings & logs'
-                          : 'Appearance, Aether, Psiphon, Tor, Scanner, Updates, Log',
+                          ? l10n.showLessSubtitle
+                          : l10n.showMoreSubtitle,
                       style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                           fontSize: 11),

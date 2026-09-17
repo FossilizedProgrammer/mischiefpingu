@@ -11,6 +11,7 @@ import '../tor/tor_bundle_installer.dart';
 import 'core_update_network.dart';
 import 'core_update_pending.dart';
 import 'core_update_process_utils.dart';
+import 'core_update_tor_version.dart';
 
 class TorUpdater {
   final CoreUpdateNetwork network;
@@ -105,23 +106,12 @@ class TorUpdater {
       final dest = p.join(torDir, searchName);
       final isRunning = await processUtils.isProcessRunning(searchName);
       if (isRunning) {
-        final stagingDir =
-            await Directory.systemTemp.createTemp('mischiefpingu_deferred_tor_');
-        final stagingRoot = Directory(p.join(stagingDir.path, 'bundle'));
-        await stagingRoot.create(recursive: true);
-        await TorBundleInstaller.installTree(
-            srcRoot: srcRoot, torDir: stagingRoot.path, log: _log);
-        final stagingPath =
-            p.join(stagingRoot.path, p.relative(torBin, from: srcRoot));
-        await pending.add(PendingCoreUpdate(
-          coreId: 'tor',
-          stagingPath: stagingPath,
-          destPath: dest,
-          version: 'bundle',
-          createdAt: DateTime.now(),
-        ));
-        onProgress?.call(100);
-        _log('★ Tor update downloaded — deferred, will apply on next startup');
+        await _deferUpdate(
+          srcRoot: srcRoot,
+          torBin: torBin,
+          dest: dest,
+          onProgress: onProgress,
+        );
         return true;
       }
       final oldSize = await CoreUpdateUtils.fileSize(dest);
@@ -141,8 +131,7 @@ class TorUpdater {
       final newSize = await CoreUpdateUtils.fileSize(installedBin);
       if (newSize == 0) throw StateError('Replacement failed (0 bytes).');
       final newVer =
-          CoreUpdateUtils.parseTorVersion(await _queryVersion(installedBin)) ??
-              'bundle';
+          await TorVersionQuery.queryAndParse(installedBin) ?? 'bundle';
       onProgress?.call(100);
       _log(
           '★ Tor installed: $installed → $newVer ($count files, ${CoreUpdateUtils.formatBytes(oldSize)} → ${CoreUpdateUtils.formatBytes(newSize)}) → $torDir');
@@ -154,15 +143,28 @@ class TorUpdater {
     }
   }
 
-  Future<String?> _queryVersion(String exe) async {
-    try {
-      if (!await File(exe).exists()) return null;
-      final r = await Process.run(exe, ['--version'])
-          .timeout(const Duration(seconds: 10));
-      final out = '${r.stdout}${r.stderr}'.trim();
-      return out.isEmpty ? null : out;
-    } catch (_) {
-      return null;
-    }
+  Future<void> _deferUpdate({
+    required String srcRoot,
+    required String torBin,
+    required String dest,
+    void Function(int percent)? onProgress,
+  }) async {
+    final stagingDir =
+        await Directory.systemTemp.createTemp('mischiefpingu_deferred_tor_');
+    final stagingRoot = Directory(p.join(stagingDir.path, 'bundle'));
+    await stagingRoot.create(recursive: true);
+    await TorBundleInstaller.installTree(
+        srcRoot: srcRoot, torDir: stagingRoot.path, log: _log);
+    final stagingPath =
+        p.join(stagingRoot.path, p.relative(torBin, from: srcRoot));
+    await pending.add(PendingCoreUpdate(
+      coreId: 'tor',
+      stagingPath: stagingPath,
+      destPath: dest,
+      version: 'bundle',
+      createdAt: DateTime.now(),
+    ));
+    onProgress?.call(100);
+    _log('★ Tor update downloaded — deferred, will apply on next startup');
   }
 }

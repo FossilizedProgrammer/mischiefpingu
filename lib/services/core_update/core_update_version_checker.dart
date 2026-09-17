@@ -52,16 +52,13 @@ class CoreUpdateVersionChecker {
         final v = await _queryExeVersion(exe, ['--version']);
         if (v == null) return 'installed';
         // پارس اولین نسخه‌ی سمنتیک در خروجی
-        final m = RegExp(r'\b(\d+\.\d+\.\d+(?:[-\+][\w\.]+)?)\b')
-            .firstMatch(v);
+        final m = RegExp(r'\b(\d+\.\d+\.\d+(?:[-\+][\w\.]+)?)\b').firstMatch(v);
         return m?.group(1) ?? 'installed';
       }
       return 'unknown';
     } catch (e) {
       _log('⚠ Could not detect $coreId version: $e');
-      if (coreId == 'tor' ||
-          coreId == 'sunandlion' ||
-          coreId == 'sstp') {
+      if (coreId == 'tor' || coreId == 'sunandlion' || coreId == 'sstp') {
         return 'not installed';
       }
       return 'unknown';

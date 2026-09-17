@@ -6,10 +6,11 @@ import 'core_update/core_update_network.dart';
 import 'core_update/core_update_pending.dart';
 import 'core_update/core_update_process_utils.dart';
 import 'core_update/core_update_psiphon.dart';
-import 'core_update/core_update_sstp.dart'; // ✅ فایل جدید
-import 'core_update/core_update_sunandlion.dart'; // ✅ فایل جدید
+import 'core_update/core_update_sstp.dart';
+import 'core_update/core_update_sunandlion.dart';
 import 'core_update/core_update_tor.dart';
 import 'core_update/core_update_version_checker.dart';
+import 'core_update/core_updater_registry.dart';
 import 'core_update_models.dart';
 import 'core_update_utils.dart';
 
@@ -29,35 +30,37 @@ class CoreUpdateService {
   late final CoreUpdateVersionChecker _versions =
       CoreUpdateVersionChecker(log: log);
 
-  late final AetherUpdater _aether = AetherUpdater(
-    network: _network,
-    pending: _pending,
-    processUtils: _process,
-    log: log,
-  );
-  late final TorUpdater _tor = TorUpdater(
-    network: _network,
-    pending: _pending,
-    processUtils: _process,
-    log: log,
-  );
-  late final PsiphonUpdater _psiphon = PsiphonUpdater(
-    network: _network,
-    pending: _pending,
-    processUtils: _process,
-    log: log,
-  );
-  late final SunAndLionUpdater _sunAndLion = SunAndLionUpdater( // ✅ جدید
-    network: _network,
-    pending: _pending,
-    processUtils: _process,
-    log: log,
-  );
-  late final SstpProxyUpdater _sstp = SstpProxyUpdater( // ✅ جدید
-    network: _network,
-    pending: _pending,
-    processUtils: _process,
-    log: log,
+  late final CoreUpdaterRegistry _registry = CoreUpdaterRegistry(
+    aether: AetherUpdater(
+      network: _network,
+      pending: _pending,
+      processUtils: _process,
+      log: log,
+    ),
+    tor: TorUpdater(
+      network: _network,
+      pending: _pending,
+      processUtils: _process,
+      log: log,
+    ),
+    psiphon: PsiphonUpdater(
+      network: _network,
+      pending: _pending,
+      processUtils: _process,
+      log: log,
+    ),
+    sunAndLion: SunAndLionUpdater(
+      network: _network,
+      pending: _pending,
+      processUtils: _process,
+      log: log,
+    ),
+    sstp: SstpProxyUpdater(
+      network: _network,
+      pending: _pending,
+      processUtils: _process,
+      log: log,
+    ),
   );
 
   static bool isMissingVersion(String v) => CoreUpdateUtils.isMissingVersion(v);
@@ -77,37 +80,33 @@ class CoreUpdateService {
     String psiphonRev = '',
     String psiphonBinSha = '',
   }) async {
+    final updater = _registry.byId(coreId);
+    if (updater == null) {
+      final installed = await _versions.getInstalledVersion(
+        coreId,
+        psiphonRev: psiphonRev,
+      );
+      return CoreUpdateInfo(
+        coreId: coreId,
+        displayName: coreId,
+        installedVersion: installed,
+        latestVersion: installed,
+        hasUpdate: false,
+        downloadUrl: '',
+        releaseNotes: 'Unknown core.',
+        downloadSizeBytes: 0,
+      );
+    }
+
     final installed = await _versions.getInstalledVersion(
       coreId,
       psiphonRev: psiphonRev,
     );
-    switch (coreId) {
-      case 'aether':
-        return _aether.check(proxy, installed: installed);
-      case 'tor':
-        return _tor.check(proxy, installed: installed);
-      case 'psiphon':
-        return _psiphon.check(
-          proxy,
-          installed: installed,
-          psiphonBinSha: psiphonBinSha,
-        );
-      case 'sunandlion': // ✅ استفاده از آپدیت‌کننده جدید
-        return _sunAndLion.check(proxy, installed: installed);
-      case 'sstp': // ✅ استفاده از آپدیت‌کننده جدید
-        return _sstp.check(proxy, installed: installed);
-      default:
-        return CoreUpdateInfo(
-          coreId: coreId,
-          displayName: coreId,
-          installedVersion: installed,
-          latestVersion: installed,
-          hasUpdate: false,
-          downloadUrl: '',
-          releaseNotes: 'Unknown core.',
-          downloadSizeBytes: 0,
-        );
-    }
+    return updater.check(
+      proxy,
+      installed: installed,
+      psiphonBinSha: psiphonBinSha,
+    );
   }
 
   Future<bool> updateCore(
@@ -118,61 +117,27 @@ class CoreUpdateService {
     String psiphonBinSha = '',
     bool Function()? onCancelCheck,
   }) async {
+    final updater = _registry.byId(coreId);
+    if (updater == null) {
+      throw UnsupportedError("Updating core '$coreId' is not supported.");
+    }
+
     final installed = await _versions.getInstalledVersion(
       coreId,
       psiphonRev: psiphonRev,
     );
-    switch (coreId) {
-      case 'aether':
-        final info = await _aether.check(proxy, installed: installed);
-        return _aether.update(
-          info,
-          installed: installed,
-          proxy: proxy,
-          onProgress: onProgress,
-          onCancelCheck: onCancelCheck,
-        );
-      case 'tor':
-        return _tor.update(
-          installed: installed,
-          proxy: proxy,
-          onProgress: onProgress,
-          onCancelCheck: onCancelCheck,
-        );
-      case 'psiphon':
-        final info = await _psiphon.check(
-          proxy,
-          installed: installed,
-          psiphonBinSha: psiphonBinSha,
-        );
-        return _psiphon.update(
-          info,
-          installed: installed,
-          proxy: proxy,
-          psiphonBinSha: psiphonBinSha,
-          onProgress: onProgress,
-          onCancelCheck: onCancelCheck,
-        );
-      case 'sunandlion': // ✅ استفاده از آپدیت‌کننده جدید
-        final info = await _sunAndLion.check(proxy, installed: installed);
-        return _sunAndLion.update(
-          info,
-          installed: installed,
-          proxy: proxy,
-          onProgress: onProgress,
-          onCancelCheck: onCancelCheck,
-        );
-      case 'sstp': // ✅ استفاده از آپدیت‌کننده جدید
-        final info = await _sstp.check(proxy, installed: installed);
-        return _sstp.update(
-          info,
-          installed: installed,
-          proxy: proxy,
-          onProgress: onProgress,
-          onCancelCheck: onCancelCheck,
-        );
-      default:
-        throw UnsupportedError("Updating core '$coreId' is not supported.");
-    }
+    final info = await updater.check(
+      proxy,
+      installed: installed,
+      psiphonBinSha: psiphonBinSha,
+    );
+    return updater.update(
+      info,
+      installed: installed,
+      proxy: proxy,
+      psiphonBinSha: psiphonBinSha,
+      onProgress: onProgress,
+      onCancelCheck: onCancelCheck,
+    );
   }
 }

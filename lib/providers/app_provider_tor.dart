@@ -26,51 +26,9 @@ extension AppProviderTor on AppProvider {
       return;
     }
 
-    // ─── بررسی باینری ───
-    try {
-      final binaryPath = await AppDataService.findTorBinary() ??
-          await AppDataService.getTorBinaryPath();
-      if (!await File(binaryPath).exists()) {
-        final msg =
-            'Tor binary not found. Please click "Show more" and download it from "Core Updates".';
-        processService.setBinaryMissingMessage(msg);
-        processService.addLog(
-          '✗ Tor binary missing: $binaryPath — download it from Core Updates',
-          source: src,
-        );
-        torStatus = 'Tor: Binary missing';
-        touch();
-        return;
-      }
-    } catch (e) {
-      processService.addLog('✗ Error checking Tor binary: $e', source: src);
-    }
-
-    // ─── چک پورت‌ها ───
-    final socksPort = settings.torSocksPort;
-    final httpPort = settings.torHttpPort;
-    if (await ProcessService.isPortInUse(socksPort)) {
-      final msg =
-          'Tor: SOCKS port $socksPort is already in use by another application. Cannot start.';
-      processService.setPortConflictMessage(msg);
-      processService.addLog(
-        '✗ SOCKS port $socksPort is in use — Tor not started',
-        source: src,
-      );
-      torStatus = 'Tor: Port $socksPort in use';
-      touch();
-      return;
-    }
-    if (await ProcessService.isPortInUse(httpPort)) {
-      final msg =
-          'Tor: HTTP port $httpPort is already in use by another application. Cannot start.';
-      processService.setPortConflictMessage(msg);
-      processService.addLog('✗ HTTP port $httpPort is in use — Tor not started',
-          source: src);
-      torStatus = 'Tor: Port $httpPort in use';
-      touch();
-      return;
-    }
+    // ─── preflight: باینری + پورت‌ها ───
+    if (!await checkTorBinary()) return;
+    if (!await checkTorPorts()) return;
 
     userStoppedTor = false;
     isTorBusy = true;
@@ -107,43 +65,10 @@ extension AppProviderTor on AppProvider {
       }
 
       // ─── پیدا کردن مسیرهای pluggable transports ───
-      String? lyrebirdPath;
-      String? conjurePath;
-      String? geoipPath;
-      String? geoip6Path;
-
-      for (final cand in [
-        '$dataDir/lyrebird',
-        '$torDir/pluggable_transports/lyrebird',
-        '$torDir/lyrebird',
-      ]) {
-        if (await File(cand).exists()) {
-          lyrebirdPath = cand;
-          break;
-        }
-      }
-      for (final cand in [
-        '$dataDir/conjure-client',
-        '$torDir/pluggable_transports/conjure-client',
-        '$torDir/conjure-client',
-      ]) {
-        if (await File(cand).exists()) {
-          conjurePath = cand;
-          break;
-        }
-      }
-      for (final cand in ['$torDir/geoip', '$dataDir/geoip']) {
-        if (await File(cand).exists()) {
-          geoipPath = cand;
-          break;
-        }
-      }
-      for (final cand in ['$torDir/geoip6', '$dataDir/geoip6']) {
-        if (await File(cand).exists()) {
-          geoip6Path = cand;
-          break;
-        }
-      }
+      final assets = await resolveTorAssets(
+        dataDir: dataDir,
+        torDir: torDir,
+      );
 
       // ─── ساخت torrc ───
       final builder = TorConfigBuilder(
@@ -154,19 +79,16 @@ extension AppProviderTor on AppProvider {
         socksPort: internalSocks,
         httpPort: internalHttp,
         torDataDir: torDataDir,
-        geoipPath: geoipPath,
-        geoip6Path: geoip6Path,
-        lyrebirdPath: lyrebirdPath,
-        conjurePath: conjurePath,
-        aetherSocks: settings.torTransport == 'aether'
-            ? settings.aetherLocalPort
-            : null,
-        psiphonSocks: settings.torTransport == 'psiphon'
-            ? settings.socksPort
-            : null,
-        sstpSocks: settings.torTransport == 'sstp'
-            ? settings.sstpSocksPort
-            : null,
+        geoipPath: assets.geoipPath,
+        geoip6Path: assets.geoip6Path,
+        lyrebirdPath: assets.lyrebirdPath,
+        conjurePath: assets.conjurePath,
+        aetherSocks:
+            settings.torTransport == 'aether' ? settings.aetherLocalPort : null,
+        psiphonSocks:
+            settings.torTransport == 'psiphon' ? settings.socksPort : null,
+        sstpSocks:
+            settings.torTransport == 'sstp' ? settings.sstpSocksPort : null,
       );
 
       final torrcPath = '$torDir/torrc';

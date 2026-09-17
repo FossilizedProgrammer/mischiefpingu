@@ -1,3 +1,4 @@
+// lib/widgets/connection/circle_connect_button.dart
 import 'package:flutter/material.dart';
 import 'compass_ticks_painter.dart';
 
@@ -80,8 +81,7 @@ class CircleConnectButton extends StatelessWidget {
                     height: 96,
                     child: CircularProgressIndicator(
                       strokeWidth: 3.2,
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Colors.white70),
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white70),
                       backgroundColor: Colors.transparent,
                     ),
                   ),
@@ -92,8 +92,7 @@ class CircleConnectButton extends StatelessWidget {
                     child: CircularProgressIndicator(
                       strokeWidth: 3.2,
                       value: progress! / 100.0,
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Colors.white70),
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white70),
                       backgroundColor: Colors.transparent,
                     ),
                   ),

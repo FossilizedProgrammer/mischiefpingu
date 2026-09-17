@@ -1,8 +1,10 @@
+// lib/widgets/cdn_scanner/cdn_scanner_results.dart
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 import '../../providers/cdn_scanner_provider.dart';
+import 'cdn_clipboard_actions.dart';
 
 class CdnScannerResults extends StatelessWidget {
   final CdnScannerProvider scan;
@@ -14,58 +16,12 @@ class CdnScannerResults extends StatelessWidget {
     required this.theme,
   });
 
-  Future<void> _copySingle(BuildContext context, String text, String label) async {
-    await Clipboard.setData(ClipboardData(text: text));
-    if (!context.mounted) return;
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$label copied: $text'),
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
-  Future<void> _copyAllUsable(BuildContext context) async {
-    if (scan.good.isEmpty) return;
-    final lines = scan.good.map((r) => r.ip).join('\n');
-    await Clipboard.setData(ClipboardData(text: lines));
-    if (!context.mounted) return;
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${scan.good.length} IP(s) copied to clipboard'),
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
-  Future<void> _copyAllDetailed(BuildContext context) async {
-    if (scan.good.isEmpty) return;
-    final buffer = StringBuffer();
-    buffer.writeln('ip,sni,latency_ms,reliability,score');
-    for (final r in scan.good) {
-      buffer.writeln('${r.ip},${r.sni},${r.latencyMs},${r.reliability},${r.score}');
-    }
-    await Clipboard.setData(ClipboardData(text: buffer.toString()));
-    if (!context.mounted) return;
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${scan.good.length} IP(s) copied (CSV format)'),
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     if (scan.good.isEmpty) return const SizedBox.shrink();
 
     final app = context.read<AppProvider>();
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,21 +30,22 @@ class CdnScannerResults extends StatelessWidget {
         Row(
           children: [
             Text(
-              'Usable IPs (sorted by score)',
+              l10n.usableIps,
               style: theme.textTheme.titleSmall
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const Spacer(),
             IconButton(
               icon: const Icon(Icons.copy_all, size: 20),
-              tooltip: 'Copy all IPs (plain)',
-              onPressed: () => _copyAllUsable(context),
+              tooltip: l10n.copy,
+              onPressed: () => CdnClipboardActions.copyAllUsable(context, scan),
               visualDensity: VisualDensity.compact,
             ),
             IconButton(
               icon: const Icon(Icons.table_chart_outlined, size: 20),
-              tooltip: 'Copy all (CSV with details)',
-              onPressed: () => _copyAllDetailed(context),
+              tooltip: l10n.copyAllCsv,
+              onPressed: () =>
+                  CdnClipboardActions.copyAllDetailed(context, scan),
               visualDensity: VisualDensity.compact,
             ),
           ],
@@ -131,16 +88,20 @@ class CdnScannerResults extends StatelessWidget {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.copy, size: 18),
-                      tooltip: 'Copy IP',
+                      tooltip: l10n.copy,
                       visualDensity: VisualDensity.compact,
-                      onPressed: () => _copySingle(context, r.ip, 'IP'),
+                      onPressed: () =>
+                          CdnClipboardActions.copySingle(context, r.ip, 'IP'),
                     ),
                     IconButton(
                       icon: const Icon(Icons.copyright_outlined, size: 18),
-                      tooltip: 'Copy IP + SNI',
+                      tooltip: 'IP + SNI',
                       visualDensity: VisualDensity.compact,
-                      onPressed: () =>
-                          _copySingle(context, '${r.ip} | ${r.sni}', 'IP + SNI'),
+                      onPressed: () => CdnClipboardActions.copySingle(
+                        context,
+                        '${r.ip} | ${r.sni}',
+                        'IP + SNI',
+                      ),
                     ),
                     const Icon(Icons.check_circle,
                         color: Colors.green, size: 18),
@@ -161,13 +122,12 @@ class CdnScannerResults extends StatelessWidget {
                       ips: top5, tlsSni: scan.bestSni);
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Applied Top 5 IPs + SNI')),
+                      SnackBar(content: Text(l10n.appliedTop5Ips)),
                     );
                   }
                 },
                 icon: const Icon(Icons.filter_list),
-                label: const Text('Apply Top 5'),
+                label: Text(l10n.applyTop5),
               ),
             ),
             const SizedBox(width: 8),
@@ -179,15 +139,13 @@ class CdnScannerResults extends StatelessWidget {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(
-                          'Applied ${scan.topIps.length} IPs${scan.bestSni != null ? ' + SNI ${scan.bestSni}' : ''}',
-                        ),
+                        content: Text(l10n.appliedTop20Ips),
                       ),
                     );
                   }
                 },
                 icon: const Icon(Icons.security),
-                label: const Text('Apply Top 20'),
+                label: Text(l10n.applyTop20),
                 style: FilledButton.styleFrom(
                   backgroundColor: theme.colorScheme.secondary,
                   foregroundColor: Colors.white,

@@ -20,8 +20,7 @@ class VpngateFullPageParser {
     caseSensitive: false,
   );
 
-  static final _ipRegex =
-      RegExp(r'\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b');
+  static final _ipRegex = RegExp(r'\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b');
 
   static List<SstpServer> parse(String html) {
     final servers = <SstpServer>[];

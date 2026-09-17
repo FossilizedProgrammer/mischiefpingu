@@ -1,9 +1,3 @@
-// lib/services/aether/aether_test_executor.dart
-//
-// ═══════════════════════════════════════════════════════════════
-//  AetherTestExecutor — اجرای حلقه اصلی auto-test Aether.
-//  (تفکیک شده از aether_auto_test_service.dart)
-// ═══════════════════════════════════════════════════════════════
 library;
 
 import 'dart:async';
@@ -14,6 +8,7 @@ import '../aether_attempts.dart';
 import '../aether_cache_manager.dart';
 import '../aether_endpoint_store.dart';
 import '../process_service.dart';
+import 'aether_failure_handler.dart';
 import 'aether_test_helpers.dart';
 
 class AetherTestExecutor {
@@ -24,6 +19,12 @@ class AetherTestExecutor {
   final AetherAttemptRunner runner;
   final AetherCacheManager cacheManager;
   final AetherTestHelpers helpers;
+
+  late final AetherFailureHandler _failureHandler = AetherFailureHandler(
+    processService: processService,
+    cacheManager: cacheManager,
+    helpers: helpers,
+  );
 
   bool _cancelRequested = false;
   bool _portSwapTried = false;
@@ -46,11 +47,11 @@ class AetherTestExecutor {
     _portSwapTried = false;
   }
 
-  /// اجرای تست خودکار. true اگر یک attempt موفق شد.
   Future<bool> run({required bool isAuto}) async {
     var port = settings.aetherLocalPort;
 
-    // بارگذاری برندهٔ قبلی (فقط برای حالت auto)
+    final wasRunningBefore = processService.isAetherRunning;
+
     MapEntry<String, String>? autoWinner;
     if (isAuto) {
       autoWinner = await helpers.safe<MapEntry<String, String>?>(
@@ -73,6 +74,7 @@ class AetherTestExecutor {
         masqueOption: attempt.masque,
         port: port,
         endpointOverride: attempt.endpoint,
+        forceFragmentH2: attempt.fragmentH2,
       );
 
       final result = await runner.run(
@@ -81,7 +83,6 @@ class AetherTestExecutor {
         port: port,
       );
 
-      // ─── موفقیت ───
       if (result.isSuccess) {
         await store.saveSuccessState(
           protocol: attempt.protocol,
@@ -89,6 +90,20 @@ class AetherTestExecutor {
           endpoint: attempt.endpoint,
         );
         processService.setAetherProtocolNotification(attempt.protocol);
+
+        if (!wasRunningBefore) {
+          processService.checkHappyTransition(
+            tunnelName: 'Aether',
+            wasConnected: false,
+            isConnected: true,
+          );
+        } else {
+          processService.addLog(
+            '★ ${attempt.label} connected (already running — no happy notification)',
+            source: LogSource.aether,
+          );
+        }
+
         processService.addLog(
           '★ ${attempt.label} connected successfully',
           source: LogSource.aether,
@@ -96,14 +111,19 @@ class AetherTestExecutor {
         return true;
       }
 
-      // ─── شکست — تصمیم‌گیری ───
-      final shouldContinue = await _handleFailure(
+      final shouldContinue = await _failureHandler.handle(
         result: result,
         attempt: attempt,
         port: port,
-        onPortSwapped: (newPort) => port = newPort,
+        portSwapTried: _portSwapTried,
+        isCancelRequested: () => _cancelRequested,
+        onPortSwapped: (newPort) {
+          settings.aetherLocalPort = newPort;
+          port = newPort;
+        },
+        onPortSwapTried: () => _portSwapTried = true,
       );
-      if (!shouldContinue) continue;
+      if (!shouldContinue) break;
     }
 
     processService.addLog(
@@ -111,66 +131,5 @@ class AetherTestExecutor {
       source: LogSource.aether,
     );
     return false;
-  }
-
-  Future<bool> _handleFailure({
-    required AttemptResult result,
-    required EndpointAttempt attempt,
-    required int port,
-    required void Function(int) onPortSwapped,
-  }) async {
-    switch (result.outcome) {
-      case AttemptOutcome.refused:
-        processService.addLog(
-          '→ ${attempt.label} refused, trying next candidate…',
-          source: LogSource.aether,
-        );
-        await processService.stopAether();
-        await Future.delayed(const Duration(milliseconds: 400));
-        return true;
-
-      case AttemptOutcome.tunnelDead:
-        processService.addLog(
-          '→ ${attempt.label} tunnel dead, clearing cache and retrying…',
-          source: LogSource.aether,
-        );
-        await processService.stopAether();
-        await Future.delayed(const Duration(milliseconds: 800));
-        await helpers.safe<void>(
-          () => cacheManager.clearCachedGateway(
-            specificProtocol: attempt.protocol,
-          ),
-        );
-        return true;
-
-      case AttemptOutcome.timeout:
-      case AttemptOutcome.startFailed:
-        final hasListener = await ProcessService.isPortInUse(port);
-        if (!_portSwapTried && !_cancelRequested && !hasListener) {
-          await processService.stopAether();
-          await Future.delayed(const Duration(milliseconds: 800));
-          final np = await helpers.swapPort(
-            currentPort: port,
-            onPortChanged: (newPort) {
-              settings.aetherLocalPort = newPort;
-              _portSwapTried = true;
-            },
-          );
-          if (np != null) {
-            onPortSwapped(np);
-            processService.addLog(
-              '→ Switched to port $np, retrying…',
-              source: LogSource.aether,
-            );
-            return true;
-          }
-        }
-        await processService.stopAether();
-        await Future.delayed(const Duration(milliseconds: 600));
-        return true;
-
-      case AttemptOutcome.success:
-        return false;
-    }
   }
 }

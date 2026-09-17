@@ -1,11 +1,7 @@
 // lib/widgets/aether/aether_connection_mode_section.dart
-//
-// ═══════════════════════════════════════════════════════════════
-//  بخش Connection Mode + Custom Endpoint کارت Aether
-//  (تفکیک شده از aether_protocol_card.dart)
-// ═══════════════════════════════════════════════════════════════
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 
 class AetherConnectionModeSection extends StatelessWidget {
@@ -21,6 +17,7 @@ class AetherConnectionModeSection extends StatelessWidget {
     final provider = context.watch<AppProvider>();
     final s = provider.settings;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     void save() {
       provider.saveSettings();
@@ -31,7 +28,7 @@ class AetherConnectionModeSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Connection Mode',
+          l10n.connectionMode,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.primary,
@@ -41,10 +38,10 @@ class AetherConnectionModeSection extends StatelessWidget {
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           dense: true,
-          title: const Text('Try last successful endpoint first'),
-          subtitle: const Text(
-            'If enabled, will try the last working endpoint before scanning',
-            style: TextStyle(fontSize: 11),
+          title: Text(l10n.tryLastEndpointFirst),
+          subtitle: Text(
+            l10n.tryLastEndpointFirstSubtitle,
+            style: const TextStyle(fontSize: 11),
           ),
           value: s.aetherTryLastEndpointFirst,
           onChanged: isRunning
@@ -56,27 +53,19 @@ class AetherConnectionModeSection extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          'Custom Endpoint (optional)',
+          l10n.customEndpoint,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.primary,
           ),
         ),
-        const SizedBox(height: 4),
-        Text(
-          'If set, will connect directly to this endpoint without scanning',
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-            fontSize: 11,
-          ),
-        ),
         const SizedBox(height: 8),
         TextFormField(
           initialValue: s.aetherCustomEndpoint,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'Endpoint (e.g., 1.2.3.4:2408)',
             border: InputBorder.none,
-            hintText: 'Leave empty for auto-scan',
+            hintText: l10n.customEndpointHint,
           ),
           enabled: !isRunning,
           onChanged: (v) {

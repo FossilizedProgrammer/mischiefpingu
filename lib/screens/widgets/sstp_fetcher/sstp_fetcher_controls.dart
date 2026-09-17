@@ -1,4 +1,6 @@
+// lib/screens/widgets/sstp_fetcher/sstp_fetcher_controls.dart
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../providers/sstp_fetcher_provider.dart';
 
 class SstpFetcherControls extends StatelessWidget {
@@ -13,11 +15,12 @@ class SstpFetcherControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Fetch via',
+          l10n.fetchVia,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.tertiary,
@@ -26,18 +29,18 @@ class SstpFetcherControls extends StatelessWidget {
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           initialValue: fetcher.proxyMode,
-          decoration: const InputDecoration(
-            labelText: 'Proxy for vpngate fetch',
+          decoration: InputDecoration(
+            labelText: l10n.fetchVia,
             isDense: true,
           ),
-          items: const [
+          items: [
             DropdownMenuItem(
-                value: 'auto', child: Text('Auto (first running proxy)')),
-            DropdownMenuItem(value: 'direct', child: Text('Direct (no proxy)')),
-            DropdownMenuItem(value: 'psiphon', child: Text('Psiphon')),
-            DropdownMenuItem(value: 'aether', child: Text('Aether')),
-            DropdownMenuItem(value: 'tor', child: Text('Tor')),
-            DropdownMenuItem(value: 'sstp', child: Text('SSTP')),
+                value: 'auto', child: Text(l10n.autoFirstRunningProxy)),
+            DropdownMenuItem(value: 'direct', child: Text(l10n.directNoProxy)),
+            const DropdownMenuItem(value: 'psiphon', child: Text('Psiphon')),
+            const DropdownMenuItem(value: 'aether', child: Text('Aether')),
+            const DropdownMenuItem(value: 'tor', child: Text('Tor')),
+            const DropdownMenuItem(value: 'sstp', child: Text('SSTP')),
           ],
           onChanged: fetcher.isLoading
               ? null
@@ -47,10 +50,10 @@ class SstpFetcherControls extends StatelessWidget {
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           dense: true,
-          title: const Text('Auto-refresh every 15 minutes'),
-          subtitle: const Text(
-            'Fetches new servers and re-checks health automatically',
-            style: TextStyle(fontSize: 11),
+          title: Text(l10n.autoRefresh15Min),
+          subtitle: Text(
+            l10n.autoRefreshSubtitle,
+            style: const TextStyle(fontSize: 11),
           ),
           value: fetcher.autoRefresh,
           onChanged: fetcher.setAutoRefresh,
@@ -68,7 +71,7 @@ class SstpFetcherControls extends StatelessWidget {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.download),
-                label: Text(fetcher.isLoading ? 'Fetching…' : 'Fetch'),
+                label: Text(fetcher.isLoading ? l10n.fetching : l10n.fetch),
               ),
             ),
             const SizedBox(width: 8),
@@ -83,8 +86,8 @@ class SstpFetcherControls extends StatelessWidget {
                     ? Icons.stop
                     : Icons.network_check),
                 label: Text(fetcher.isHealthChecking
-                    ? 'Stop (${fetcher.healthProgressDone}/${fetcher.healthProgressTotal})'
-                    : 'Check health'),
+                    ? '${l10n.stopHealthCheck} (${fetcher.healthProgressDone}/${fetcher.healthProgressTotal})'
+                    : l10n.checkHealth),
                 style: FilledButton.styleFrom(
                   backgroundColor: fetcher.isHealthChecking
                       ? Colors.red

@@ -1,6 +1,7 @@
 // lib/screens/widgets/tor/tor_bridges_section.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../providers/app_provider.dart';
 import '../../../services/tor_bridges.dart';
 
@@ -56,29 +57,17 @@ class _TorBridgesSectionState extends State<TorBridgesSection> {
     context.read<AppProvider>().touch();
   }
 
-  String get _hintText {
-    switch (widget.torTransport) {
-      case 'aether':
-        return 'Empty = plain Tor-over-Aether. Filled = bridges dial through Aether (TOR_PT_PROXY).';
-      case 'psiphon':
-        return 'Empty = plain Tor-over-Psiphon. Filled = bridges dial through Psiphon (TOR_PT_PROXY).';
-      case 'sstp':
-        return 'Empty = plain Tor-over-SSTP. Filled = bridges dial through SSTP (TOR_PT_PROXY).';
-      default:
-        return 'Paste obfs4 / snowflake / meek / webtunnel / conjure lines. Empty = direct Tor.';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = widget.theme;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 12),
         Text(
-          'Bridge presets (optional)',
+          l10n.bridgePresets,
           style: theme.textTheme.labelMedium?.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -101,13 +90,12 @@ class _TorBridgesSectionState extends State<TorBridgesSection> {
               child: const Text('obfs4 (anti-timing)'),
             ),
             OutlinedButton(
-              onPressed: () =>
-                  _applyPreset(TorBridges.obfs4Public.join('\n')),
+              onPressed: () => _applyPreset(TorBridges.obfs4Public.join('\n')),
               child: const Text('obfs4 (public)'),
             ),
             TextButton(
               onPressed: _clearBridges,
-              child: const Text('Clear'),
+              child: Text(l10n.clear),
             ),
           ],
         ),
@@ -115,10 +103,9 @@ class _TorBridgesSectionState extends State<TorBridgesSection> {
         TextFormField(
           controller: _bridgesController,
           maxLines: 5,
-          decoration: const InputDecoration(
-            labelText:
-                'Bridges (one per line, custom supported — incl. webtunnel)',
-            hintText: 'obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0',
+          decoration: InputDecoration(
+            labelText: l10n.bridges,
+            hintText: l10n.bridgesHint,
             alignLabelWithHint: true,
           ),
           onChanged: (v) {
@@ -127,13 +114,6 @@ class _TorBridgesSectionState extends State<TorBridgesSection> {
             provider.saveSettings();
             widget.onBridgesChanged(v);
           },
-        ),
-        const SizedBox(height: 4),
-        Text(
-          _hintText,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
         ),
       ],
     );

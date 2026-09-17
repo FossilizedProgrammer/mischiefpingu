@@ -31,8 +31,7 @@ extension AppProviderLifecycle on AppProvider {
     settings = await persistence.loadSettings();
     aetherTestService.updateSettings(settings);
 
-    final hasExisting =
-        (await persistence.loadIpList(const [])).isNotEmpty;
+    final hasExisting = (await persistence.loadIpList(const [])).isNotEmpty;
     if (!hasExisting) {
       applySetting(1);
     }
@@ -95,6 +94,15 @@ extension AppProviderLifecycle on AppProvider {
     if (isShuttingDown) return;
     isShuttingDown = true;
 
+    // ═══════════════════════════════════════════
+    //  اول watchdogها را متوقف کن تا وسط shutdown
+    //  دوباره restart نزنند و با پروسه‌های در حال
+    //  مرگ تداخل نکنند.
+    // ═══════════════════════════════════════════
+    try {
+      watchdogManager?.disposeAll();
+    } catch (_) {}
+
     processService.addLog(
       '→ App is closing — disconnecting all active tunnels…',
       source: LogSource.app,
@@ -134,8 +142,7 @@ extension AppProviderLifecycle on AppProvider {
         await processService.stopSstp();
       }
     } catch (e) {
-      processService.addLog('⚠ SSTP shutdown error: $e',
-          source: LogSource.app);
+      processService.addLog('⚠ SSTP shutdown error: $e', source: LogSource.app);
     }
 
     // Aether (آخر)

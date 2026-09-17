@@ -1,10 +1,13 @@
+// lib/screens/widgets/psiphon/psiphon_manual_proxy_section.dart
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 
 class PsiphonManualProxySection extends StatelessWidget {
   const PsiphonManualProxySection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -13,8 +16,8 @@ class PsiphonManualProxySection extends StatelessWidget {
             Expanded(
               child: DropdownButtonFormField<String>(
                 initialValue: 'socks5',
-                decoration: const InputDecoration(
-                  labelText: 'Proxy type',
+                decoration: InputDecoration(
+                  labelText: l10n.proxyType,
                   isDense: true,
                 ),
                 items: const [
@@ -28,8 +31,8 @@ class PsiphonManualProxySection extends StatelessWidget {
             Expanded(
               child: TextFormField(
                 initialValue: '',
-                decoration: const InputDecoration(
-                  labelText: 'Proxy IP',
+                decoration: InputDecoration(
+                  labelText: l10n.proxyIp,
                   isDense: true,
                 ),
                 onChanged: (v) {},
@@ -40,8 +43,8 @@ class PsiphonManualProxySection extends StatelessWidget {
               child: TextFormField(
                 initialValue: '1080',
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Port',
+                decoration: InputDecoration(
+                  labelText: l10n.port,
                   isDense: true,
                 ),
                 onChanged: (v) {},
@@ -55,8 +58,8 @@ class PsiphonManualProxySection extends StatelessWidget {
             Expanded(
               child: TextFormField(
                 initialValue: '',
-                decoration: const InputDecoration(
-                  labelText: 'User (optional)',
+                decoration: InputDecoration(
+                  labelText: l10n.userOptional,
                   isDense: true,
                 ),
                 onChanged: (v) {},
@@ -67,8 +70,8 @@ class PsiphonManualProxySection extends StatelessWidget {
               child: TextFormField(
                 initialValue: '',
                 obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Password (optional)',
+                decoration: InputDecoration(
+                  labelText: l10n.passwordOptional,
                   isDense: true,
                 ),
                 onChanged: (v) {},

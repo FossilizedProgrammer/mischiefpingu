@@ -1,15 +1,21 @@
+// lib/services/tor_config_builder.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  TorConfigBuilder — ساخت torrc
+//  تصمیم‌گیری bridges/upstream به TorBridgeResolver منتقل شده.
+// ═══════════════════════════════════════════════════════════════
 library;
 
 import '../models/settings_model.dart';
 import 'process_service.dart';
 import 'tor_bridges.dart';
+import 'tor/tor_bridge_resolver.dart';
 
 class TorConfigBuilder {
   final AppSettings settings;
   final ProcessService processService;
   TorConfigBuilder({required this.settings, required this.processService});
 
-  /// Result of [build]: torrc text + env overrides for the Tor process.
   TorConfigResult build({
     required int socksPort,
     required int httpPort,
@@ -22,41 +28,19 @@ class TorConfigBuilder {
     int? psiphonSocks,
     int? sstpSocks,
   }) {
-    final bridges = TorBridges.parseBridges(
-      settings.torTransport == 'bridge' ||
-              settings.torTransport == 'aether' ||
-              settings.torTransport == 'psiphon' ||
-              settings.torTransport == 'sstp'
-          ? settings.torBridges
-          : '',
+    final decision = TorBridgeResolver.resolve(
+      settings: settings,
+      aetherSocks: aetherSocks,
+      psiphonSocks: psiphonSocks,
+      sstpSocks: sstpSocks,
     );
-    // 'direct' mode never uses bridges even if text is present.
-    final effectiveBridges =
-        settings.torTransport == 'direct' ? <String>[] : bridges;
-
-    // Determine which upstream proxy to use (if any)
-    final useAether = settings.torTransport == 'aether' && aetherSocks != null;
-    final usePsiphon =
-        settings.torTransport == 'psiphon' && psiphonSocks != null;
-    final useSstp = settings.torTransport == 'sstp' && sstpSocks != null;
 
     final sb = StringBuffer();
     sb.writeln('SocksPort 127.0.0.1:$socksPort');
 
-    // ─── Upstream SOCKS proxy configuration ───
-    // For direct Tor with no bridges: use Socks5Proxy
-    // For Tor with bridges: use TOR_PT_PROXY env (pluggable transports)
-    int? upstreamSocks;
-    if (useAether) {
-      upstreamSocks = aetherSocks;
-    } else if (usePsiphon) {
-      upstreamSocks = psiphonSocks;
-    } else if (useSstp) {
-      upstreamSocks = sstpSocks;
-    }
-
-    if (upstreamSocks != null && effectiveBridges.isEmpty) {
-      sb.writeln('Socks5Proxy 127.0.0.1:$upstreamSocks');
+    // ─── SOCKS upstream (فقط اگر bridge نداریم) ───
+    if (decision.upstreamSocks != null && decision.bridges.isEmpty) {
+      sb.writeln('Socks5Proxy 127.0.0.1:${decision.upstreamSocks}');
     }
 
     sb.writeln('HTTPTunnelPort 127.0.0.1:$httpPort');
@@ -70,13 +54,16 @@ class TorConfigBuilder {
     sb.writeln('Log notice stdout');
     sb.writeln('ClientOnly 1');
     sb.writeln('AvoidDiskWrites 1');
+
     final exit = TorBridges.normalizeExitCountry(settings.torExitCountry);
     if (exit.length == 2) {
       sb.writeln('ExitNodes {$exit}');
       sb.writeln('StrictNodes 1');
       sb.writeln('MaxCircuitDirtiness 60');
     }
-    if (effectiveBridges.isNotEmpty) {
+
+    // ─── bridges ───
+    if (decision.bridges.isNotEmpty) {
       sb.writeln('UseBridges 1');
       final pt = lyrebirdPath ?? 'lyrebird';
       sb.writeln(
@@ -84,18 +71,25 @@ class TorConfigBuilder {
       if (conjurePath != null && conjurePath.isNotEmpty) {
         sb.writeln('ClientTransportPlugin conjure exec ${_p(conjurePath)}');
       }
-      for (final b in effectiveBridges) {
+      for (final b in decision.bridges) {
         sb.writeln('Bridge $b');
       }
     }
+
+    // ─── env ───
     Map<String, String>? env;
-    if (upstreamSocks != null) {
-      // Pluggable transports honour TOR_PT_PROXY; direct Tor uses Socks5Proxy.
-      env = {'TOR_PT_PROXY': 'socks5://127.0.0.1:$upstreamSocks'};
+    if (decision.upstreamSocks != null) {
+      env = {
+        'TOR_PT_PROXY': 'socks5://127.0.0.1:${decision.upstreamSocks}',
+      };
     }
+
     final torrc = sb.toString();
     processService.addLog(
-      '→ Tor torrc generated (${torrc.length} bytes, transport=${settings.torTransport}, bridges=${effectiveBridges.length}${upstreamSocks != null ? ', upstream socks5:127.0.0.1:$upstreamSocks' : ''})',
+      '→ Tor torrc generated (${torrc.length} bytes, '
+      'transport=${settings.torTransport}, '
+      'bridges=${decision.bridges.length}'
+      '${decision.upstreamSocks != null ? ', upstream socks5:127.0.0.1:${decision.upstreamSocks}' : ''})',
       source: LogSource.tor,
     );
     return TorConfigResult(torrc: torrc, env: env);

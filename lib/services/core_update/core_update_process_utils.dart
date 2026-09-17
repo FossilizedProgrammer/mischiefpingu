@@ -23,8 +23,7 @@ class CoreUpdateProcessUtils {
   Future<void> extractArchive(String archive, String destDir) =>
       _archive.extract(archive, destDir);
 
-  String binaryNameForCore(String coreId) =>
-      _archive.binaryNameForCore(coreId);
+  String binaryNameForCore(String coreId) => _archive.binaryNameForCore(coreId);
 
   // ─── process management ───
   Future<bool> isProcessRunning(String binaryName) async {

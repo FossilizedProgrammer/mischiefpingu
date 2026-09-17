@@ -1,10 +1,9 @@
+// lib/widgets/cdn_scanner/cdn_custom_ips_manager.dart
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/cdn_scanner_provider.dart';
+import 'cdn_custom_ips_dialogs.dart';
 
-/// بخش مدیریت IPهای کاستوم (ذخیره/حذف/پاک‌سازی).
-///
-/// ⚠️ به‌جای Icon از کاراکترهای یونیکد متنی استفاده می‌کنیم تا
-/// مستقل از فونت Material Icons باشیم.
 class CdnCustomIpsManager extends StatelessWidget {
   final CdnScannerProvider scan;
   final TextEditingController inputCtrl;
@@ -18,10 +17,11 @@ class CdnCustomIpsManager extends StatelessWidget {
   });
 
   Future<void> _saveCurrentAsCustom(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
     final raw = inputCtrl.text.trim();
     if (raw.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('IP list is empty')),
+        SnackBar(content: Text(l10n.listIsEmpty)),
       );
       return;
     }
@@ -37,7 +37,7 @@ class CdnCustomIpsManager extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          '${lines.length} line(s) saved to Custom (total: ${scan.customIps.length})',
+          '${lines.length} → ${scan.customIps.length}',
         ),
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
@@ -45,106 +45,9 @@ class CdnCustomIpsManager extends StatelessWidget {
     );
   }
 
-  Future<void> _confirmClear(BuildContext context) async {
-    if (scan.customIps.isEmpty) return;
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Clear custom IPs?'),
-        content: Text(
-          '${scan.customIps.length} saved line(s) will be removed.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Clear'),
-          ),
-        ],
-      ),
-    );
-    if (ok == true) {
-      await scan.clearCustomIps();
-    }
-  }
-
-  void _showManageDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (ctx, setDialogState) {
-            final items = scan.customIps;
-            return AlertDialog(
-              title: Text('Custom IPs (${items.length})'),
-              content: SizedBox(
-                width: double.maxFinite,
-                height: 360,
-                child: items.isEmpty
-                    ? const Center(child: Text('No custom IPs saved yet'))
-                    : ListView.builder(
-                        itemCount: items.length,
-                        itemBuilder: (ctx, i) {
-                          final ip = items[i];
-                          return ListTile(
-                            dense: true,
-                            title: Text(
-                              ip,
-                              style: const TextStyle(
-                                fontFamily: 'monospace',
-                                fontSize: 12,
-                              ),
-                            ),
-                            trailing: TextButton(
-                              onPressed: () async {
-                                await scan.removeCustomIp(ip);
-                                setDialogState(() {});
-                              },
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.red,
-                                minimumSize: const Size(36, 36),
-                                padding: EdgeInsets.zero,
-                              ),
-                              child: const Text(
-                                '✕',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx),
-                  child: const Text('Close'),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    await scan.clearCustomIps();
-                    if (ctx.mounted) Navigator.pop(ctx);
-                  },
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.red,
-                  ),
-                  child: const Text('✕  Clear all'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final count = scan.customIps.length;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -157,7 +60,6 @@ class CdnCustomIpsManager extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // ★ به‌جای Icons.bookmark_outline
           Text(
             '★',
             style: TextStyle(
@@ -169,45 +71,49 @@ class CdnCustomIpsManager extends StatelessWidget {
           Expanded(
             child: Text(
               count == 0
-                  ? 'Custom IPs: none saved'
-                  : 'Custom IPs: $count line(s) saved',
+                  ? '${l10n.customIps}: 0'
+                  : '${l10n.customIps}: $count',
               style: theme.textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: theme.colorScheme.primary,
               ),
             ),
           ),
-          // ↓ به‌جای Icons.save_outlined
           TextButton(
             onPressed: () => _saveCurrentAsCustom(context),
             style: TextButton.styleFrom(
               visualDensity: VisualDensity.compact,
             ),
-            child: const Text('💾  Save'),
+            child: Text('💾  ${l10n.save}'),
           ),
-          // ↓ به‌جای Icons.list_alt
           IconButton(
-            tooltip: 'Manage saved IPs',
+            tooltip: l10n.manageList,
             visualDensity: VisualDensity.compact,
-            onPressed: () => _showManageDialog(context),
+            onPressed: () => CdnCustomIpsDialogs.showManage(context, scan),
             icon: const Text(
               '☰',
               style: TextStyle(fontSize: 18),
             ),
           ),
-          // ↓ به‌جای Icons.delete_outline
           IconButton(
-            tooltip: 'Clear all custom IPs',
+            tooltip: l10n.clearAll,
             visualDensity: VisualDensity.compact,
-            onPressed: count == 0 ? null : () => _confirmClear(context),
+            onPressed: count == 0
+                ? null
+                : () async {
+                    final ok = await CdnCustomIpsDialogs.confirmClear(
+                      context,
+                      scan,
+                    );
+                    if (ok) await scan.clearCustomIps();
+                  },
             icon: Text(
               '✕',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: count == 0
-                    ? theme.disabledColor
-                    : theme.colorScheme.error,
+                color:
+                    count == 0 ? theme.disabledColor : theme.colorScheme.error,
               ),
             ),
           ),

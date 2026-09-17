@@ -9,12 +9,18 @@ import '../core_update_utils.dart';
 import 'core_update_network.dart';
 import 'core_update_pending.dart';
 import 'core_update_process_utils.dart';
+import 'psiphon_binaries_head.dart';
 
 class PsiphonUpdater {
   final CoreUpdateNetwork network;
   final CoreUpdatePendingManager pending;
   final CoreUpdateProcessUtils processUtils;
   final void Function(String)? log;
+
+  late final PsiphonBinariesHead _binariesHead = PsiphonBinariesHead(
+    network: network,
+    log: log,
+  );
 
   PsiphonUpdater({
     required this.network,
@@ -36,7 +42,7 @@ class PsiphonUpdater {
       network.logRoute(proxy);
       final exe = await AppDataService.getBinaryPath('psiphon-tunnel-core');
       final missing = !await File(exe).exists();
-      final remote = await _psiphonBinariesHead(proxy);
+      final remote = await _binariesHead.fetch(proxy);
       if (remote.sha.isEmpty) {
         throw StateError('Binaries repo unreachable (empty tree).');
       }
@@ -121,8 +127,8 @@ class PsiphonUpdater {
       final isRunning = await processUtils.isProcessRunning(binName);
 
       if (isRunning) {
-        final stagingDir =
-            await Directory.systemTemp.createTemp('mischiefpingu_deferred_psi_');
+        final stagingDir = await Directory.systemTemp
+            .createTemp('mischiefpingu_deferred_psi_');
         final stagingPath = '${stagingDir.path}/$binName';
         await File(incoming).copy(stagingPath);
         if (!_isWin) {
@@ -159,32 +165,6 @@ class PsiphonUpdater {
       try {
         await tmp.delete(recursive: true);
       } catch (_) {}
-    }
-  }
-
-  /// اطلاعات باینری رسمی Psiphon را از GitHub Contents API می‌گیرد.
-  ///
-  /// روی همه پلتفرم‌ها از فایل i686 استفاده می‌کنیم — چون
-  /// در عمل روی ویندوز ۶۴ بیتی هم درست کار می‌کند.
-  Future<({String sha, int size, String url})> _psiphonBinariesHead(
-      String? proxy) async {
-    final targetPath = _isWin
-        ? 'windows/psiphon-tunnel-core-i686.exe'
-        : 'linux/psiphon-tunnel-core-x86_64';
-
-    final apiUrl =
-        'https://api.github.com/repos/Psiphon-Labs/psiphon-tunnel-core-binaries/contents/$targetPath?ref=master';
-
-    try {
-      final info = await network.getJson(apiUrl, proxy);
-      final sha = (info['sha'] as String? ?? '').trim();
-      final size = (info['size'] as num? ?? 0).toInt();
-      final url =
-          'https://raw.githubusercontent.com/Psiphon-Labs/psiphon-tunnel-core-binaries/master/$targetPath';
-      return (sha: sha, size: size, url: url);
-    } catch (e) {
-      _log('⚠ Failed to fetch Psiphon binary info via Contents API: $e');
-      rethrow;
     }
   }
 }

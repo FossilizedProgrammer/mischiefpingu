@@ -22,7 +22,8 @@ class CoreUpdateUtils {
       VersionParsers.parsePsiphon(output);
   static String? parseTorVersion(String? output) =>
       VersionParsers.parseTor(output);
-  static String? parseSemver(String? output) => VersionParsers.parseSemver(output);
+  static String? parseSemver(String? output) =>
+      VersionParsers.parseSemver(output);
   static bool isNewerVersion(String installed, String latest) =>
       VersionParsers.isNewer(installed, latest);
   static String formatBytes(int bytes) => VersionParsers.formatBytes(bytes);

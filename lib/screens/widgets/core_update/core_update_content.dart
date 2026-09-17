@@ -1,12 +1,8 @@
 // lib/screens/widgets/core_update/core_update_content.dart
-//
-// ═══════════════════════════════════════════════════════════════
-//  CoreUpdateContent — بدنهٔ UI برای CoreUpdateTile
-//  (تفکیک شده از core_update_tile.dart)
-// ═══════════════════════════════════════════════════════════════
 library;
 
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 
 import 'core_update_controller.dart';
 import 'core_update_section.dart';
@@ -27,22 +23,23 @@ class CoreUpdateContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DropdownButtonFormField<String>(
           initialValue: proxyMode,
-          decoration: const InputDecoration(
-            labelText: 'Download via',
+          decoration: InputDecoration(
+            labelText: l10n.downloadVia,
             isDense: true,
           ),
-          items: coreUpdateProxyItems,
+          items: buildCoreUpdateProxyItems(l10n),
           onChanged: (v) => onProxyModeChanged(v ?? 'auto'),
         ),
         const SizedBox(height: 4),
         Text(
-          'Checks and downloads ride the selected proxy when direct access is filtered.',
+          l10n.downloadViaSubtitle,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -69,8 +66,7 @@ class CoreUpdateContent extends StatelessWidget {
         progress: state.progress,
         onCheck: () => controller.check(spec.kind),
         onUpdate: () => controller.update(spec.kind),
-        updateLabel:
-            state.missing ? spec.updateLabelWhenMissing : null,
+        updateLabel: state.missing ? spec.updateLabelWhenMissing : null,
         note: spec.note,
         downloadUrl: state.downloadUrl,
         checkMessage: state.checkMessage,

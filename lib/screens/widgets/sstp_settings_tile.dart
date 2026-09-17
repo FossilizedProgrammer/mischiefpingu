@@ -1,6 +1,7 @@
 // lib/screens/widgets/sstp_settings_tile.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 import '../../widgets/settings_tile_base.dart';
 import 'sstp/sstp_server_section.dart';
@@ -17,6 +18,7 @@ class SstpSettingsTile extends StatelessWidget {
     final provider = context.watch<AppProvider>();
     final s = provider.settings;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     void save() {
       provider.saveSettings();
@@ -24,7 +26,7 @@ class SstpSettingsTile extends StatelessWidget {
     }
 
     return SettingsTile(
-      title: 'SSTP Settings',
+      title: l10n.sstpSettings,
       icon: Icons.vpn_lock_outlined,
       iconBackgroundColor: theme.colorScheme.tertiary,
       initiallyExpanded: false,

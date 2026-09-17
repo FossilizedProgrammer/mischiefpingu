@@ -1,16 +1,11 @@
 // lib/models/settings_serialization.dart
-//
-// ═══════════════════════════════════════════════════════════════
-//  fromJson / toJson و validation — به‌صورت extension جدا شده
-//  تا settings_model.dart فقط نگه‌دارندهٔ فیلدها باشد.
-// ═══════════════════════════════════════════════════════════════
 library;
 
 import 'dart:convert';
 import 'settings_model.dart';
+import 'settings_validation.dart';
 
 extension AppSettingsSerialization on AppSettings {
-  // ─── tolerant parsers ───
   static String _s(Map m, String k, String d) {
     final v = m[k];
     return v is String ? v : (v == null ? d : v.toString());
@@ -55,6 +50,7 @@ extension AppSettingsSerialization on AppSettings {
       autoReconnectAether: _b(m, 'autoReconnectAether', true),
       autoReconnectTor: _b(m, 'autoReconnectTor', true),
       autoReconnectSstp: _b(m, 'autoReconnectSstp', true),
+      aetherProfile: _s(m, 'aetherProfile', 'adaptive'),
       aetherProtocol: _s(m, 'aetherProtocol', 'auto'),
       masqueOption: _s(m, 'masqueOption', 'HTTP-3'),
       aetherLocalPort: _i(m, 'aetherLocalPort', 1819),
@@ -96,57 +92,10 @@ extension AppSettingsSerialization on AppSettings {
       aetherCustomEndpoint: _s(m, 'aetherCustomEndpoint', ''),
       aetherTryLastEndpointFirst: _b(m, 'aetherTryLastEndpointFirst', true),
       themeId: _s(m, 'themeId', 'ocean'),
+      muted: _b(m, 'muted', false),
     );
-
-    _validateAndNormalize(s);
+    SettingsValidation.validateAndNormalize(s);
     return s;
-  }
-
-  static void _validateAndNormalize(AppSettings s) {
-    if (!['auto', 'masque', 'wireguard', 'gool'].contains(s.aetherProtocol)) {
-      s.aetherProtocol = 'auto';
-    }
-    if (s.masqueOption != 'HTTP-2') s.masqueOption = 'HTTP-3';
-    if (!['turbo', 'balanced', 'thorough', 'stealth', 'ironclad']
-        .contains(s.aetherScanMode)) {
-      s.aetherScanMode = 'turbo';
-    }
-    if (!['ipv4', 'ipv6', 'both'].contains(s.ipType)) s.ipType = 'ipv4';
-    if (!['off', 'light', 'balanced', 'aggressive'].contains(s.obfuscation)) {
-      s.obfuscation = 'off';
-    }
-    if (!['socks5', 'http'].contains(s.proxyType)) s.proxyType = 'socks5';
-    if (!['auto', 'public', 'custom'].contains(s.conduitMode)) {
-      s.conduitMode = 'auto';
-    }
-    if (!['direct', 'bridge', 'aether', 'psiphon', 'sstp']
-        .contains(s.torTransport)) {
-      s.torTransport = 'direct';
-    }
-    if (s.torSocksPort < 1 || s.torSocksPort > 65535) s.torSocksPort = 19050;
-    if (s.torHttpPort < 1 || s.torHttpPort > 65535) s.torHttpPort = 18081;
-    if (s.aetherLocalPort < 1 || s.aetherLocalPort > 65535) {
-      s.aetherLocalPort = 1819;
-    }
-    if (s.sstpPort < 1 || s.sstpPort > 65535) s.sstpPort = 443;
-    if (s.sstpSocksPort < 1 || s.sstpSocksPort > 65535) {
-      s.sstpSocksPort = 1082;
-    }
-    if (s.sstpHttpPort < 1 || s.sstpHttpPort > 65535) {
-      s.sstpHttpPort = 8082;
-    }
-    if (s.sstpUpstreamType < 0 || s.sstpUpstreamType > 4) {
-      s.sstpUpstreamType = 0;
-    }
-    if (!['socks5', 'http', 'socks5h'].contains(s.sstpProxyType)) {
-      s.sstpProxyType = 'socks5';
-    }
-    if (s.sstpProxyPort < 0 || s.sstpProxyPort > 65535) {
-      s.sstpProxyPort = 0;
-    }
-    if (s.upstreamType < 0 || s.upstreamType > 5) {
-      s.upstreamType = 0;
-    }
   }
 
   Map<String, dynamic> toJsonMap() => {
@@ -171,6 +120,7 @@ extension AppSettingsSerialization on AppSettings {
         'autoReconnectAether': autoReconnectAether,
         'autoReconnectTor': autoReconnectTor,
         'autoReconnectSstp': autoReconnectSstp,
+        'aetherProfile': aetherProfile,
         'aetherProtocol': aetherProtocol,
         'masqueOption': masqueOption,
         'aetherLocalPort': aetherLocalPort,
@@ -211,6 +161,7 @@ extension AppSettingsSerialization on AppSettings {
         'aetherCustomEndpoint': aetherCustomEndpoint,
         'aetherTryLastEndpointFirst': aetherTryLastEndpointFirst,
         'themeId': themeId,
+        'muted': muted,
       };
 
   String toJsonString() => jsonEncode(toJsonMap());

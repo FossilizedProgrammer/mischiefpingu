@@ -1,6 +1,7 @@
+// lib/widgets/connection/connection_state.dart
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 
-/// حالت دکمه‌ی اتصال (Start/Stop/Cancel + رنگ + آیکون).
 class ConnectionButtonState {
   final String actionLabel;
   final IconData icon;
@@ -16,17 +17,16 @@ class ConnectionButtonState {
     required this.connected,
   });
 
-  /// منطق مشترک همهٔ دکمه‌های اتصال (Aether/Psiphon/Tor/SSTP).
   factory ConnectionButtonState.resolve({
     required bool isRunning,
     required bool isConnected,
     required bool isBusy,
     required Color primaryColor,
+    required AppLocalizations l10n,
   }) {
-    // ─── در حال اتصال (bootstrap / start) ───
     if (isBusy) {
       return ConnectionButtonState(
-        actionLabel: 'Cancel',
+        actionLabel: l10n.cancel,
         icon: Icons.close_rounded,
         color: Colors.red.shade600,
         busy: true,
@@ -34,10 +34,9 @@ class ConnectionButtonState {
       );
     }
 
-    // ─── متصل شده ───
     if (isConnected) {
       return ConnectionButtonState(
-        actionLabel: 'Stop',
+        actionLabel: l10n.stop,
         icon: Icons.stop_rounded,
         color: Colors.green.shade600,
         busy: false,
@@ -45,10 +44,9 @@ class ConnectionButtonState {
       );
     }
 
-    // ─── پروسه هست ولی هنوز وصل نشده ───
     if (isRunning) {
       return ConnectionButtonState(
-        actionLabel: 'Stop',
+        actionLabel: l10n.stop,
         icon: Icons.stop_rounded,
         color: Colors.orange.shade700,
         busy: true,
@@ -56,9 +54,8 @@ class ConnectionButtonState {
       );
     }
 
-    // ─── خاموش ───
     return ConnectionButtonState(
-      actionLabel: 'Start',
+      actionLabel: l10n.start,
       icon: Icons.power_settings_new_rounded,
       color: primaryColor,
       busy: false,
@@ -66,15 +63,13 @@ class ConnectionButtonState {
     );
   }
 
-  /// متن وضعیت زیر دکمه.
-  String statusText(int? progress) {
+  String statusText(int? progress, AppLocalizations l10n) {
     if (progress != null) return '$progress%';
-    if (busy && !connected) return 'Connecting…';
-    if (connected) return 'Connected';
-    return 'Disconnected';
+    if (busy && !connected) return l10n.connecting;
+    if (connected) return l10n.connected;
+    return l10n.disconnected;
   }
 
-  /// رنگ متن وضعیت زیر دکمه.
   Color statusColor(Color primaryColor, Color onSurface) {
     if (busy && !connected) return color;
     if (connected) return Colors.green.shade600;

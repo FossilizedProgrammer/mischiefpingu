@@ -12,9 +12,6 @@ extension ProcessServiceSstpLauncher on ProcessService {
 
     try {
       final dataDir = await AppDataService.getDataDir();
-
-      // ⚠️ برای اجرا از getSstpBinaryPathForExecution استفاده می‌کنیم
-      // (اول dataDir، بعد platformDir به عنوان fallback)
       final binaryPath = await AppDataService.getSstpBinaryPathForExecution();
 
       if (!await File(binaryPath).exists()) {
@@ -33,7 +30,6 @@ extension ProcessServiceSstpLauncher on ProcessService {
       );
       await Future.delayed(const Duration(milliseconds: 900));
 
-      // ─── بررسی خروج سریع ───
       bool exitedQuickly = false;
       try {
         final code = await sstpProcess!.exitCode.timeout(
@@ -79,6 +75,7 @@ extension ProcessServiceSstpLauncher on ProcessService {
 
       if (trimmed.contains('tunnel is UP') ||
           trimmed.contains('proxies ready')) {
+        final wasConnected = isSstpConnected;
         isSstpTunnelReady = true;
         isSstpConnected = true;
 
@@ -94,6 +91,13 @@ extension ProcessServiceSstpLauncher on ProcessService {
             detail: pendingSstpTransportDetail ?? '',
           );
         }
+
+        // ⚠️ fire happy notification در transition
+        checkHappyTransition(
+          tunnelName: 'SSTP',
+          wasConnected: wasConnected,
+          isConnected: true,
+        );
 
         touch();
       }
@@ -111,6 +115,7 @@ extension ProcessServiceSstpLauncher on ProcessService {
     });
 
     sstpProcess!.exitCode.then((code) {
+      final wasConnected = isSstpConnected;
       isSstpRunning = false;
       isSstpConnected = false;
       isSstpTunnelReady = false;
@@ -119,6 +124,13 @@ extension ProcessServiceSstpLauncher on ProcessService {
       pendingSstpTransportDetail = null;
       pendingSstpNotification = null;
       sstpProcess = null;
+
+      checkHappyTransition(
+        tunnelName: 'SSTP',
+        wasConnected: wasConnected,
+        isConnected: false,
+      );
+
       addLog('SSTP exited with code $code', source: src);
       touch();
     });

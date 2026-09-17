@@ -1,5 +1,7 @@
+// lib/widgets/cdn_scanner/cdn_scanner_inputs.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/cdn_scanner_provider.dart';
 import '../../cdn_presets.dart';
 
@@ -19,11 +21,12 @@ class CdnScannerInputs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'CDN Preset',
+          l10n.cdnPreset,
           style:
               theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
@@ -35,8 +38,6 @@ class CdnScannerInputs extends StatelessWidget {
             final selected = scan.selectedPresetId == preset.id;
             final isCustom = preset.id == 'custom';
 
-            // ✅ برای Custom از یک avatar متنی استفاده می‌کنیم
-            // تا مشکل فونت Material Icons پیش نیاید.
             final Widget? avatar = isCustom
                 ? _CustomAvatar(
                     selected: selected,
@@ -62,8 +63,8 @@ class CdnScannerInputs extends StatelessWidget {
         TextField(
           controller: inputCtrl,
           maxLines: 6,
-          decoration: const InputDecoration(
-            labelText: 'IPs / CIDR / Ranges',
+          decoration: InputDecoration(
+            labelText: l10n.ipsCidrRanges,
             hintText: '23.215.0.0/24\n1.2.3.4\n10.0.0.1-10.0.0.50',
             border: InputBorder.none,
             alignLabelWithHint: true,
@@ -75,8 +76,8 @@ class CdnScannerInputs extends StatelessWidget {
         TextField(
           controller: sniCtrl,
           maxLines: 3,
-          decoration: const InputDecoration(
-            labelText: 'SNI list (one per line, order = priority)',
+          decoration: InputDecoration(
+            labelText: l10n.sniList,
             border: InputBorder.none,
             alignLabelWithHint: true,
           ),
@@ -97,8 +98,8 @@ class CdnScannerInputs extends StatelessWidget {
               width: 110,
               child: TextFormField(
                 initialValue: scan.concurrency.toString(),
-                decoration: const InputDecoration(
-                  labelText: 'Threads',
+                decoration: InputDecoration(
+                  labelText: l10n.threads,
                   isDense: true,
                   border: InputBorder.none,
                 ),
@@ -117,10 +118,6 @@ class CdnScannerInputs extends StatelessWidget {
   }
 }
 
-/// ═══════════════════════════════════════════════════════════════
-///  آواتار متنی برای chip «Custom» — به‌جای Icon تا مستقل از
-///  فونت Material Icons باشد.
-/// ═══════════════════════════════════════════════════════════════
 class _CustomAvatar extends StatelessWidget {
   final bool selected;
   final ThemeData theme;
@@ -132,8 +129,6 @@ class _CustomAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // در حالت انتخاب‌شده، رنگ chip معمولاً روشن می‌شود → از onSurface
-    // استفاده می‌کنیم. در حالت غیرانتخاب، از primary.
     final color = selected
         ? theme.colorScheme.onSecondaryContainer
         : theme.colorScheme.primary;
@@ -147,7 +142,7 @@ class _CustomAvatar extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        '★', // یک کاراکتر یونیکد که در همهٔ فونت‌ها هست
+        '★',
         style: TextStyle(
           fontSize: 12,
           height: 1,

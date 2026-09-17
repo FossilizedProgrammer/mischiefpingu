@@ -2,7 +2,6 @@
 part of 'process_service.dart';
 
 extension ProcessServicePsiphonLauncher on ProcessService {
-  /// spawn پروسه Psiphon + تنظیم forwarderها + اتصال listenerها
   Future<bool> launchPsiphonProcess({
     required String binaryPath,
     required String binaryName,
@@ -14,7 +13,6 @@ extension ProcessServicePsiphonLauncher on ProcessService {
   }) async {
     const src = LogSource.psiphon;
 
-    // ─── اگر shareLan، پورت‌های داخلی رو جابجا کن ───
     int effectiveSocksPort = publicSocksPort;
     int effectiveHttpPort = publicHttpPort;
     String finalConfigJson = configJson;
@@ -42,21 +40,20 @@ extension ProcessServicePsiphonLauncher on ProcessService {
       );
     }
 
-    // ─── نوشتن فایل کانفیگ ───
     final configFile = File(p.join(dataDir, 'config_temp.json'));
     await configFile.writeAsString(finalConfigJson);
 
-    // ─── ساخت آرگومان‌ها ───
     final args = <String>['--config', configFile.path];
     final serverListPath = p.join(dataDir, 'server_list.dat');
     if (await File(serverListPath).exists()) {
       args.addAll(['--serverList', serverListPath]);
       addLog('Using server_list.dat', source: src);
     } else {
-      addLog('Warning: server_list.dat not found', source: src);
+      addLog(
+          'No server_list.dat — Psiphon will fetch a fresh list from the network',
+          source: src);
     }
 
-    // ─── spawn ───
     psiphonProcess = await Process.start(
       binaryPath,
       args,
@@ -65,7 +62,6 @@ extension ProcessServicePsiphonLauncher on ProcessService {
     );
     await Future.delayed(const Duration(milliseconds: 700));
 
-    // ─── بررسی خروج سریع ───
     bool exitedQuickly = false;
     try {
       await psiphonProcess!.exitCode.timeout(
@@ -84,7 +80,6 @@ extension ProcessServicePsiphonLauncher on ProcessService {
       return false;
     }
 
-    // ─── موفق ───
     isPsiphonRunning = true;
     lastPsiphonProtocol = null;
     currentPsiphonBinaryName = binaryName;
@@ -92,7 +87,6 @@ extension ProcessServicePsiphonLauncher on ProcessService {
         source: src);
     touch();
 
-    // ─── forwarder برای LAN ───
     if (shareLan) {
       await startDartLanForwarders(
         publicSocksPort: publicSocksPort,
@@ -103,7 +97,6 @@ extension ProcessServicePsiphonLauncher on ProcessService {
       );
     }
 
-    // ─── listenerها ───
     _attachPsiphonListeners(binaryName);
 
     return true;
@@ -116,16 +109,29 @@ extension ProcessServicePsiphonLauncher on ProcessService {
       if (trimmed.isEmpty) return;
       addLog(trimmed, source: src);
 
-      if (trimmed.contains('"noticeType":"ActiveTunnel"')) {
-        final protocol = LogLineParsers.parseActiveTunnelProtocol(trimmed);
-        isPsiphonConnected = true;
-        if (protocol != null) {
-          lastPsiphonProtocol = protocol;
-          pendingProtocolNotification = protocol;
-          pendingProtocolBinary = binaryName;
-        }
-        touch();
+      if (!trimmed.contains('"noticeType":"ActiveTunnel"')) {
+        return;
       }
+
+      final protocol = LogLineParsers.parseActiveTunnelProtocol(trimmed);
+      if (protocol == null || protocol.isEmpty) {
+        return;
+      }
+
+      final wasConnected = isPsiphonConnected;
+      isPsiphonConnected = true;
+      lastPsiphonProtocol = protocol;
+      pendingProtocolNotification = protocol;
+      pendingProtocolBinary = binaryName;
+
+      // ⚠️ fire happy notification در transition
+      checkHappyTransition(
+        tunnelName: 'Psiphon',
+        wasConnected: wasConnected,
+        isConnected: true,
+      );
+
+      touch();
     }
 
     psiphonProcess!.stdout.transform(utf8.decoder).listen((data) {
@@ -140,6 +146,7 @@ extension ProcessServicePsiphonLauncher on ProcessService {
     });
 
     psiphonProcess!.exitCode.then((code) {
+      final wasConnected = isPsiphonConnected;
       isPsiphonRunning = false;
       isPsiphonConnected = false;
       lastPsiphonProtocol = null;
@@ -147,6 +154,14 @@ extension ProcessServicePsiphonLauncher on ProcessService {
       pendingProtocolBinary = null;
       currentPsiphonBinaryName = null;
       psiphonProcess = null;
+
+      // ⚠️ اعلام قطع شدن
+      checkHappyTransition(
+        tunnelName: 'Psiphon',
+        wasConnected: wasConnected,
+        isConnected: false,
+      );
+
       addLog('Psiphon exited with code $code', source: src);
       touch();
     });

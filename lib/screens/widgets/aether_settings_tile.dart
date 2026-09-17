@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 import '../../widgets/aether_protocol_card.dart';
 
@@ -11,11 +12,16 @@ class AetherSettingsTile extends StatelessWidget {
     final provider = context.watch<AppProvider>();
     final s = provider.settings;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     void save() {
       provider.saveSettings();
       provider.touch();
     }
+
+    final protocolBadge = s.isAetherProfileAutomatic
+        ? l10n.profile
+        : s.aetherProtocol.toUpperCase();
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -46,7 +52,7 @@ class AetherSettingsTile extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                'Aether Settings',
+                l10n.aetherSettings,
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
@@ -60,9 +66,7 @@ class AetherSettingsTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  s.aetherProtocol == 'auto'
-                      ? 'Auto'
-                      : s.aetherProtocol.toUpperCase(),
+                  protocolBadge,
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -92,7 +96,7 @@ class AetherSettingsTile extends StatelessWidget {
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
                       dense: true,
-                      title: const Text('Share on LAN (bind 0.0.0.0)'),
+                      title: Text(l10n.shareOnLan),
                       value: s.aetherShareLan,
                       onChanged: (v) {
                         s.aetherShareLan = v;
@@ -102,7 +106,7 @@ class AetherSettingsTile extends StatelessWidget {
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
                       dense: true,
-                      title: const Text('Auto-reconnect Aether'),
+                      title: Text(l10n.autoReconnectAether),
                       value: s.autoReconnectAether,
                       onChanged: (v) {
                         s.autoReconnectAether = v;

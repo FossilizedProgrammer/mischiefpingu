@@ -1,10 +1,6 @@
 // lib/screens/widgets/sstp/sstp_ports_section.dart
-//
-// ═══════════════════════════════════════════════════════════════
-//  بخش Local proxy ports برای SSTP
-//  (تفکیک شده از sstp_settings_tile.dart)
-// ═══════════════════════════════════════════════════════════════
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../models/settings_model.dart';
 
 class SstpPortsSection extends StatelessWidget {
@@ -21,11 +17,12 @@ class SstpPortsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Local proxy ports',
+          l10n.localProxyPorts,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.tertiary,
@@ -38,8 +35,8 @@ class SstpPortsSection extends StatelessWidget {
               child: TextFormField(
                 initialValue: settings.sstpSocksPort.toString(),
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'SOCKS port',
+                decoration: InputDecoration(
+                  labelText: l10n.socksPort,
                   isDense: true,
                 ),
                 onChanged: (v) {
@@ -56,8 +53,8 @@ class SstpPortsSection extends StatelessWidget {
               child: TextFormField(
                 initialValue: settings.sstpHttpPort.toString(),
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'HTTP port',
+                decoration: InputDecoration(
+                  labelText: l10n.httpPort,
                   isDense: true,
                 ),
                 onChanged: (v) {

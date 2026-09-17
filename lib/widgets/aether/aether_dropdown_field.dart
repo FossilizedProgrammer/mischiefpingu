@@ -37,8 +37,7 @@ class AetherDropdownField extends StatelessWidget {
           initialValue: safeValue,
           decoration: const InputDecoration(
             border: InputBorder.none,
-            contentPadding:
-                EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           ),
           items: items
               .map((e) => DropdownMenuItem(value: e.key, child: Text(e.value)))

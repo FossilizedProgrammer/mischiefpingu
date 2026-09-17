@@ -1,4 +1,6 @@
+// lib/screens/widgets/sstp/sstp_manual_proxy_fields.dart
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 
 class SstpManualProxyFields extends StatelessWidget {
   final String proxyType;
@@ -28,12 +30,13 @@ class SstpManualProxyFields extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       children: [
         DropdownButtonFormField<String>(
           initialValue: proxyType,
-          decoration: const InputDecoration(
-            labelText: 'Proxy type',
+          decoration: InputDecoration(
+            labelText: l10n.proxyType,
             isDense: true,
           ),
           items: const [
@@ -50,8 +53,8 @@ class SstpManualProxyFields extends StatelessWidget {
               flex: 3,
               child: TextFormField(
                 initialValue: proxyIp,
-                decoration: const InputDecoration(
-                  labelText: 'Proxy IP',
+                decoration: InputDecoration(
+                  labelText: l10n.proxyIp,
                   hintText: '127.0.0.1',
                   isDense: true,
                 ),
@@ -64,8 +67,8 @@ class SstpManualProxyFields extends StatelessWidget {
               child: TextFormField(
                 initialValue: proxyPort.toString(),
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Port',
+                decoration: InputDecoration(
+                  labelText: l10n.port,
                   isDense: true,
                 ),
                 onChanged: onProxyPortChanged,
@@ -79,8 +82,8 @@ class SstpManualProxyFields extends StatelessWidget {
             Expanded(
               child: TextFormField(
                 initialValue: proxyUser,
-                decoration: const InputDecoration(
-                  labelText: 'User (optional)',
+                decoration: InputDecoration(
+                  labelText: l10n.userOptional,
                   isDense: true,
                 ),
                 onChanged: onProxyUserChanged,
@@ -91,8 +94,8 @@ class SstpManualProxyFields extends StatelessWidget {
               child: TextFormField(
                 initialValue: proxyPass,
                 obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Password (optional)',
+                decoration: InputDecoration(
+                  labelText: l10n.passwordOptional,
                   isDense: true,
                 ),
                 onChanged: onProxyPassChanged,

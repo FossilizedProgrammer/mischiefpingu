@@ -1,9 +1,4 @@
 // lib/screens/widgets/core_update/core_update_controller.dart
-//
-// ═══════════════════════════════════════════════════════════════
-//  CoreUpdateController — مدیریت state و منطق ۵ core updater
-//  (تفکیک شده از core_update_tile.dart)
-// ═══════════════════════════════════════════════════════════════
 library;
 
 import 'package:flutter/foundation.dart';
@@ -11,26 +6,10 @@ import 'package:flutter/foundation.dart';
 import '../../../providers/app_provider.dart';
 import '../../../services/core_update_service.dart';
 import 'core_update_state.dart';
+import 'core_update_spec.dart';
 
-/// شناسه‌های coreهای پشتیبانی‌شده.
-enum CoreKind { aether, tor, psiphon, sunandlion, sstp }
+export 'core_update_spec.dart';
 
-/// یک ردیف config برای core update.
-class CoreUpdateSpec {
-  final CoreKind kind;
-  final String displayName;
-  final String? note;
-  final String? updateLabelWhenMissing;
-
-  const CoreUpdateSpec({
-    required this.kind,
-    required this.displayName,
-    this.note,
-    this.updateLabelWhenMissing,
-  });
-}
-
-/// کنترلر مشترک برای همهٔ coreها.
 class CoreUpdateController extends ChangeNotifier {
   final CoreUpdateService Function() serviceFactory;
   final String Function() proxyResolver;
@@ -55,6 +34,8 @@ class CoreUpdateController extends ChangeNotifier {
 
   CoreUpdateEntryState stateOf(CoreKind kind) => _states[kind]!;
 
+  static const List<CoreUpdateSpec> specs = coreUpdateSpecs;
+
   @override
   void dispose() {
     for (final s in _states.values) {
@@ -64,9 +45,6 @@ class CoreUpdateController extends ChangeNotifier {
     super.dispose();
   }
 
-  // ═══════════════════════════════════════════
-  //  Refresh all installed versions
-  // ═══════════════════════════════════════════
   Future<void> refreshAll() async {
     final provider = providerResolver();
     final rev = provider.settings.psiphonBuildRev;
@@ -79,9 +57,6 @@ class CoreUpdateController extends ChangeNotifier {
     }
   }
 
-  // ═══════════════════════════════════════════
-  //  Check
-  // ═══════════════════════════════════════════
   Future<void> check(CoreKind kind) async {
     final state = _states[kind]!;
     final svc = serviceFactory();
@@ -104,9 +79,6 @@ class CoreUpdateController extends ChangeNotifier {
     );
   }
 
-  // ═══════════════════════════════════════════
-  //  Update
-  // ═══════════════════════════════════════════
   Future<void> update(CoreKind kind) async {
     final state = _states[kind]!;
     final svc = serviceFactory();
@@ -159,9 +131,6 @@ class CoreUpdateController extends ChangeNotifier {
         .refreshInstalled(psiphonRev: provider.settings.psiphonBuildRev);
   }
 
-  // ═══════════════════════════════════════════
-  //  Helper
-  // ═══════════════════════════════════════════
   static String _coreIdFor(CoreKind kind) {
     switch (kind) {
       case CoreKind.aether:
@@ -176,34 +145,4 @@ class CoreUpdateController extends ChangeNotifier {
         return 'sstp';
     }
   }
-
-  /// specهای ثابت برای نمایش در UI.
-  static const List<CoreUpdateSpec> specs = [
-    CoreUpdateSpec(
-      kind: CoreKind.aether,
-      displayName: 'Aether',
-    ),
-    CoreUpdateSpec(
-      kind: CoreKind.tor,
-      displayName: 'Tor',
-    ),
-    CoreUpdateSpec(
-      kind: CoreKind.psiphon,
-      displayName: 'Psiphon (official)',
-      note: 'Official binary from Psiphon-Labs.',
-      updateLabelWhenMissing: 'Download',
-    ),
-    CoreUpdateSpec(
-      kind: CoreKind.sunandlion,
-      displayName: 'SunAndLion Psiphon Core',
-      note: 'Unofficial Psiphon fork by ssmirr — required for fronting mode.',
-      updateLabelWhenMissing: 'Download',
-    ),
-    CoreUpdateSpec(
-      kind: CoreKind.sstp,
-      displayName: 'SSTP Proxy',
-      note: 'SSTP client from FossilizedProgrammer/sstp-proxy.',
-      updateLabelWhenMissing: 'Download',
-    ),
-  ];
 }

@@ -1,5 +1,7 @@
+// lib/screens/widgets/sstp_fetcher/sstp_server_list.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../providers/app_provider.dart';
 import '../../../providers/sstp_fetcher_provider.dart';
 import '../../../services/vpngate_scraper_service.dart';
@@ -24,6 +26,7 @@ class SstpServerList extends StatelessWidget {
   Widget build(BuildContext context) {
     final visible = fetcher.visibleServers;
     if (visible.isEmpty) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,21 +35,21 @@ class SstpServerList extends StatelessWidget {
         Row(
           children: [
             Text(
-              'All servers (${visible.length})',
+              '${l10n.allServers} (${visible.length})',
               style: theme.textTheme.titleSmall
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const Spacer(),
             IconButton(
               icon: const Icon(Icons.copy_all, size: 20),
-              tooltip: 'Copy all (ip:port)',
+              tooltip: l10n.copyAllIpPort,
               onPressed: () =>
                   SstpClipboardActions.copyAllServers(context, fetcher),
               visualDensity: VisualDensity.compact,
             ),
             IconButton(
               icon: const Icon(Icons.table_chart_outlined, size: 20),
-              tooltip: 'Copy all (CSV with details)',
+              tooltip: l10n.copyAllCsv,
               onPressed: () =>
                   SstpClipboardActions.copyAllDetailed(context, fetcher),
               visualDensity: VisualDensity.compact,

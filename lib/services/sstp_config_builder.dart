@@ -3,15 +3,23 @@ library;
 
 import '../models/settings_model.dart';
 import 'process_service.dart';
+import 'sstp/sstp_upstream_builder.dart';
 
 class SstpConfigBuilder {
   final AppSettings settings;
   final ProcessService processService;
 
+  late final SstpUpstreamBuilder _upstream;
+
   SstpConfigBuilder({
     required this.settings,
     required this.processService,
-  });
+  }) {
+    _upstream = SstpUpstreamBuilder(
+      settings: settings,
+      processService: processService,
+    );
+  }
 
   /// ساخت لیست آرگومان‌های خط فرمان برای باینری sstp-proxy
   List<String> buildArgs() {
@@ -43,61 +51,8 @@ class SstpConfigBuilder {
       args.addAll(['-pass', settings.sstpPass]);
     }
 
-    // ─── Upstream proxy ───
-    switch (settings.sstpUpstreamType) {
-      case 1:
-        // آپ‌استریم دستی — فقط اگر IP و پورت پر باشند
-        final upstream = _buildManualUpstreamUrl();
-        if (upstream.isNotEmpty) {
-          args.addAll(['-proxy', upstream]);
-          processService.addLog(
-            '→ SSTP upstream: Manual proxy ($upstream)',
-            source: LogSource.sstp,
-          );
-        } else {
-          processService.addLog(
-            '⚠ SSTP upstream is set to Manual but IP/port is empty — skipping -proxy',
-            source: LogSource.sstp,
-          );
-        }
-        break;
-      case 2:
-        // آپ‌استریم از طریق Aether
-        args.addAll([
-          '-proxy',
-          'socks5://127.0.0.1:${settings.aetherLocalPort}',
-        ]);
-        processService.addLog(
-          '→ SSTP upstream: Aether (127.0.0.1:${settings.aetherLocalPort})',
-          source: LogSource.sstp,
-        );
-        break;
-      case 3:
-        // آپ‌استریم از طریق Psiphon
-        args.addAll([
-          '-proxy',
-          'socks5://127.0.0.1:${settings.socksPort}',
-        ]);
-        processService.addLog(
-          '→ SSTP upstream: Psiphon (127.0.0.1:${settings.socksPort})',
-          source: LogSource.sstp,
-        );
-        break;
-      case 4:
-        // آپ‌استریم از طریق Tor
-        args.addAll([
-          '-proxy',
-          'socks5://127.0.0.1:${settings.torSocksPort}',
-        ]);
-        processService.addLog(
-          '→ SSTP upstream: Tor (127.0.0.1:${settings.torSocksPort})',
-          source: LogSource.sstp,
-        );
-        break;
-      default:
-        // 0 = بدون آپ‌استریم
-        break;
-    }
+    // ─── Upstream proxy (delegated) ───
+    _upstream.apply(args);
 
     // ─── SNI / Fronting (اختیاری) ───
     final sni = settings.sstpSni.trim();
@@ -122,23 +77,5 @@ class SstpConfigBuilder {
     );
 
     return args;
-  }
-
-  String _buildManualUpstreamUrl() {
-    final type = settings.sstpProxyType; // 'socks5' | 'http' | 'socks5h'
-    final ip = settings.sstpProxyIp.trim();
-    final port = settings.sstpProxyPort;
-
-    // هم IP و هم پورت باید معتبر باشند
-    if (ip.isEmpty || port <= 0) return '';
-
-    var url = '$type://';
-
-    if (settings.sstpProxyUser.trim().isNotEmpty) {
-      url += '${settings.sstpProxyUser.trim()}:${settings.sstpProxyPass}@';
-    }
-
-    url += '$ip:$port';
-    return url;
   }
 }

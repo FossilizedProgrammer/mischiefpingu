@@ -40,8 +40,8 @@ class ArchiveExtractor {
       return;
     }
     final tarFlag = isTarXz ? '-xJf' : '-xzf';
-    final r = await Process.run(
-        'tar', [tarFlag, archive, '-C', extractDir.path]);
+    final r =
+        await Process.run('tar', [tarFlag, archive, '-C', extractDir.path]);
     if (r.exitCode != 0) {
       throw StateError('tar extract failed: ${r.stderr}');
     }
@@ -54,8 +54,7 @@ class ArchiveExtractor {
         in extractDir.list(recursive: true, followLinks: false)) {
       if (e is File) {
         final size = await CoreUpdateUtils.fileSize(e.path);
-        _log(
-            '   • ${e.path.replaceFirst(extractDir.path, '.')} ($size bytes)');
+        _log('   • ${e.path.replaceFirst(extractDir.path, '.')} ($size bytes)');
       }
     }
   }
@@ -78,8 +77,7 @@ class ArchiveExtractor {
     }
 
     // ۲. پیشوند
-    found =
-        await CoreUpdateUtils.findFileByPrefix(extractDir, binaryBaseName);
+    found = await CoreUpdateUtils.findFileByPrefix(extractDir, binaryBaseName);
     if (found != null) {
       _log('→ [match-2] prefix match: $found');
       return found;
@@ -131,8 +129,7 @@ class ArchiveExtractor {
     final srcType = await FileSystemEntity.type(source, followLinks: true);
     _log('   • type (followLinks=true): $srcType');
     if (srcType != FileSystemEntityType.file) {
-      throw StateError(
-          'Source is not a regular file (type=$srcType): $source');
+      throw StateError('Source is not a regular file (type=$srcType): $source');
     }
 
     final List<int> bytes;

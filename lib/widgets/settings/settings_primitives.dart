@@ -1,7 +1,5 @@
-// lib/widgets/settings/settings_primitives.dart
 import 'package:flutter/material.dart';
 
-/// بخش ساده با عنوان (بدون کارت).
 class SettingsSection extends StatelessWidget {
   final String label;
   final List<Widget> children;
@@ -31,7 +29,6 @@ class SettingsSection extends StatelessWidget {
   }
 }
 
-/// زیربخش با Divider و راهنمای اختیاری.
 class SettingsSubSection extends StatelessWidget {
   final String label;
   final String? hint;
@@ -74,7 +71,6 @@ class SettingsSubSection extends StatelessWidget {
   }
 }
 
-/// کانتینر با پس‌زمینه ملایم.
 class SettingsContainer extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;

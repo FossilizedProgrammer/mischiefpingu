@@ -1,31 +1,25 @@
-// lib/widgets/editable_list/editable_list_dialogs.dart
-//
-// ═══════════════════════════════════════════════════════════════
-//  EditableListDialogs — دیالوگ‌های add/manage برای EditableListDropdown
-//  (تفکیک شده از editable_list_dropdown.dart)
-// ═══════════════════════════════════════════════════════════════
 library;
 
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 
 class EditableListDialogs {
   EditableListDialogs._();
 
-  /// دیالوگ افزودن یک آیتم جدید. مقدار وارد‌شده را برمی‌گرداند.
   static Future<String?> showAdd(
     BuildContext context,
     String label,
   ) async {
+    final l10n = AppLocalizations.of(context);
     final controller = TextEditingController();
     final result = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Add $label'),
+        title: Text('${l10n.addNew} · $label'),
         content: TextField(
           controller: controller,
           autofocus: true,
           decoration: const InputDecoration(
-            hintText: 'Enter new value',
             border: OutlineInputBorder(),
           ),
           onSubmitted: (v) => Navigator.pop(ctx, v.trim()),
@@ -33,11 +27,11 @@ class EditableListDialogs {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancelBtn),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: const Text('Add'),
+            child: Text(l10n.add),
           ),
         ],
       ),
@@ -45,27 +39,23 @@ class EditableListDialogs {
     return (result != null && result.isNotEmpty) ? result : null;
   }
 
-  /// دیالوگ مدیریت لیست. نتیجه یک action است:
-  ///   - null اگر بسته شد
-  ///   - (action: 'delete', value) اگر آیتم حذف شد
-  ///   - (action: 'select', value) اگر آیتم انتخاب شد
-  ///   - (action: 'add') اگر add زده شد
   static Future<({String action, String? value})?> showManage(
     BuildContext context,
     String label,
     List<String> items,
   ) async {
+    final l10n = AppLocalizations.of(context);
     return showDialog<({String action, String? value})>(
       context: context,
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setDialogState) {
             return AlertDialog(
-              title: Text('Manage $label list'),
+              title: Text(label),
               content: SizedBox(
                 width: double.maxFinite,
                 child: items.isEmpty
-                    ? const Text('List is empty')
+                    ? Text(l10n.listIsEmpty)
                     : ListView.builder(
                         shrinkWrap: true,
                         itemCount: items.length,
@@ -76,7 +66,7 @@ class EditableListDialogs {
                             trailing: IconButton(
                               icon: const Icon(Icons.delete_outline,
                                   color: Colors.red),
-                              tooltip: 'Delete',
+                              tooltip: l10n.delete,
                               onPressed: () {
                                 items.removeAt(index);
                                 setDialogState(() {});
@@ -97,13 +87,13 @@ class EditableListDialogs {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text('Close'),
+                  child: Text(l10n.close),
                 ),
                 FilledButton.icon(
                   onPressed: () =>
                       Navigator.pop(ctx, (action: 'add', value: null)),
                   icon: const Icon(Icons.add),
-                  label: const Text('Add new'),
+                  label: Text(l10n.addNew),
                 ),
               ],
             );

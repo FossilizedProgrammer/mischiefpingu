@@ -1,10 +1,6 @@
 // lib/screens/widgets/sstp/sstp_switches_section.dart
-//
-// ═══════════════════════════════════════════════════════════════
-//  بخش Switches (Share LAN / Auto-reconnect / Verbose) برای SSTP
-//  (تفکیک شده از sstp_settings_tile.dart)
-// ═══════════════════════════════════════════════════════════════
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../models/settings_model.dart';
 
 class SstpSwitchesSection extends StatelessWidget {
@@ -19,12 +15,13 @@ class SstpSwitchesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       children: [
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           dense: true,
-          title: const Text('Share on LAN (bind 0.0.0.0)'),
+          title: Text(l10n.shareOnLan),
           value: settings.sstpShareLan,
           onChanged: (v) {
             settings.sstpShareLan = v;
@@ -34,7 +31,7 @@ class SstpSwitchesSection extends StatelessWidget {
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           dense: true,
-          title: const Text('Auto-reconnect SSTP'),
+          title: Text(l10n.autoReconnectSstp),
           value: settings.autoReconnectSstp,
           onChanged: (v) {
             settings.autoReconnectSstp = v;
@@ -44,10 +41,10 @@ class SstpSwitchesSection extends StatelessWidget {
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           dense: true,
-          title: const Text('Verbose logging'),
-          subtitle: const Text(
-            'Enable detailed debug output from sstp-proxy',
-            style: TextStyle(fontSize: 11),
+          title: Text(l10n.verboseLogging),
+          subtitle: Text(
+            l10n.verboseLoggingSubtitle,
+            style: const TextStyle(fontSize: 11),
           ),
           value: settings.sstpVerbose,
           onChanged: (v) {

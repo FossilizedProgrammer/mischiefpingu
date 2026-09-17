@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import '../app_data_service.dart';
 import '../core_update_models.dart';
 import '../core_update_utils.dart';
+import 'aether_asset_resolver.dart';
 import 'core_update_network.dart';
 import 'core_update_pending.dart';
 import 'core_update_process_utils.dart';
@@ -38,7 +39,7 @@ class AetherUpdater {
       String url = '';
       var size = 0;
       final arch = await network.detectArch();
-      final fallbacks = assetNames(arch);
+      final fallbacks = AetherAssetResolver.assetNames(arch);
       final assets = (rel['assets'] as List?) ?? [];
       for (final fb in fallbacks) {
         for (final a in assets) {
@@ -133,9 +134,9 @@ class AetherUpdater {
       final newSize = await processUtils.replaceBinary(found, dest);
       if (newSize == 0) throw StateError('Replacement failed (0 bytes).');
       await processUtils.updateExecutableDirBinary('aether', found);
-      final newVer =
-          CoreUpdateUtils.parseAetherVersion(await _queryVersion(dest)) ??
-              info.latestVersion;
+      final newVer = CoreUpdateUtils.parseAetherVersion(
+              await AetherAssetResolver.queryVersion(dest)) ??
+          info.latestVersion;
       onProgress?.call(100);
       _log(
           '★ Aether updated: $installed → $newVer (${CoreUpdateUtils.formatBytes(oldSize)} → ${CoreUpdateUtils.formatBytes(newSize)})');
@@ -144,43 +145,6 @@ class AetherUpdater {
       try {
         await tmp.delete(recursive: true);
       } catch (_) {}
-    }
-  }
-
-  Future<String?> _queryVersion(String exe) async {
-    try {
-      if (!await File(exe).exists()) return null;
-      final r = await Process.run(exe, ['--version'])
-          .timeout(const Duration(seconds: 10));
-      final out = '${r.stdout}${r.stderr}'.trim();
-      return out.isEmpty ? null : out;
-    } catch (_) {
-      return null;
-    }
-  }
-
-  List<String> assetNames(String arch) {
-    if (AppDataService.isWindows) {
-      switch (arch) {
-        case 'aarch64':
-          return ['aether-windows-aarch64.zip', 'aether-windows-arm64.zip'];
-        default:
-          return ['aether-windows-x86_64.zip'];
-      }
-    }
-    switch (arch) {
-      case 'aarch64':
-        return [
-          'aether-linux-aarch64-musl.tar.gz',
-          'aether-linux-arm64.tar.gz'
-        ];
-      case 'armv7':
-        return ['aether-linux-armv7.tar.gz', 'aether-linux-armv7-musl.tar.gz'];
-      default:
-        return [
-          'aether-linux-x86_64.tar.gz',
-          'aether-linux-x86_64-musl.tar.gz'
-        ];
     }
   }
 }

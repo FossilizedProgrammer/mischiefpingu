@@ -1,5 +1,7 @@
+// lib/screens/widgets/psiphon/psiphon_ports_region_tile.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../providers/app_provider.dart';
 
 class PsiphonPortsRegionTile extends StatelessWidget {
@@ -32,6 +34,7 @@ class PsiphonPortsRegionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
     final providerS = provider.settings;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,8 +45,8 @@ class PsiphonPortsRegionTile extends StatelessWidget {
               child: TextFormField(
                 initialValue: providerS.socksPort.toString(),
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'SOCKS port',
+                decoration: InputDecoration(
+                  labelText: l10n.socksPort,
                   isDense: true,
                 ),
                 onChanged: onSocksPortChanged,
@@ -54,8 +57,8 @@ class PsiphonPortsRegionTile extends StatelessWidget {
               child: TextFormField(
                 initialValue: providerS.httpPort.toString(),
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'HTTP port',
+                decoration: InputDecoration(
+                  labelText: l10n.httpPort,
                   isDense: true,
                 ),
                 onChanged: onHttpPortChanged,
@@ -69,14 +72,14 @@ class PsiphonPortsRegionTile extends StatelessWidget {
                   regions.contains(providerS.egressRegion)
               ? providerS.egressRegion
               : '',
-          decoration: const InputDecoration(
-            labelText: 'Egress region',
+          decoration: InputDecoration(
+            labelText: l10n.egressRegion,
             isDense: true,
           ),
           items: regions
               .map((r) => DropdownMenuItem(
                     value: r,
-                    child: Text(r.isEmpty ? 'Any' : r),
+                    child: Text(r.isEmpty ? l10n.any : r),
                   ))
               .toList(),
           onChanged: onEgressRegionChanged,
@@ -85,10 +88,10 @@ class PsiphonPortsRegionTile extends StatelessWidget {
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           dense: true,
-          title: const Text('Share on LAN (bind 0.0.0.0)'),
-          subtitle: const Text(
-            'Forward SOCKS & HTTP ports on all interfaces via Dart',
-            style: TextStyle(fontSize: 11),
+          title: Text(l10n.shareOnLanPsiphon),
+          subtitle: Text(
+            l10n.shareOnLanPsiphonSubtitle,
+            style: const TextStyle(fontSize: 11),
           ),
           value: psiphonShareLan,
           onChanged: onShareLanChanged,
@@ -96,7 +99,7 @@ class PsiphonPortsRegionTile extends StatelessWidget {
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           dense: true,
-          title: const Text('IPv4 only'),
+          title: Text(l10n.ipv4Only),
           value: providerS.onlyIpv4,
           onChanged: (v) {
             provider.settings.onlyIpv4 = v;

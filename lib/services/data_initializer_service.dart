@@ -37,8 +37,15 @@ class DataInitializerService {
       _log('Running inside AppImage');
     }
 
-    // ─── فایل‌های مشترک ───
-    final sharedFiles = ['server_list.dat', 'geoip', 'geoip6'];
+    // ═══════════════════════════════════════════════════════════════
+    //  فایل‌های مشترک
+    //  ⚠️ server_list.dat دیگر کپی نمی‌شود!
+    //  دلیل: server_list.dat قدیمی که همراه با باینری توزیع می‌شود،
+    //  معمولاً با Psiphon core جدید سازگار نیست و باعث خطای
+    //  «missing public key» در verify امضای server entries می‌شود.
+    //  Psiphon خودش server list تازه از سرورها می‌گیرد.
+    // ═══════════════════════════════════════════════════════════════
+    final sharedFiles = ['geoip', 'geoip6'];
     for (final fileName in sharedFiles) {
       final source = File(p.join(exeDir, fileName));
       final dest = File(p.join(dataDir, fileName));
@@ -59,12 +66,34 @@ class DataInitializerService {
       }
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    //  پاک‌سازی server_list.dat قدیمی
+    //  اگر کاربر قبلاً این فایل را از نسخهٔ قدیمی داشته، حذفش می‌کنیم
+    //  تا Psiphon مجبور شود server list تازه بگیرد.
+    // ═══════════════════════════════════════════════════════════════
+    try {
+      final oldServerList = File(p.join(dataDir, 'server_list.dat'));
+      if (await oldServerList.exists()) {
+        final size = await oldServerList.length();
+        // اگر فایل کمتر از 5KB است، احتمالاً ناقص/قدیمی است
+        if (size < 5000) {
+          await oldServerList.delete();
+          _log(
+              '⚠ Removed stale server_list.dat (${size}B) — Psiphon will fetch fresh list');
+        } else {
+          _log('Kept server_list.dat (${size}B) — user-managed');
+        }
+      }
+    } catch (e) {
+      _log('Failed to check server_list.dat: $e');
+    }
+
     // ─── باینری‌های پلتفرم-مخصوص ───
     final platformBinaries = [
       'psiphon-tunnel-core',
       'psiphon-tunnel-core-sunandlion',
       'aether',
-      'sstp-proxy', // ← اضافه شد
+      'sstp-proxy',
     ];
     for (final fileName in platformBinaries) {
       final sourceName = '$fileName${PlatformInfo.exeExt}';

@@ -1,5 +1,5 @@
 // lib/providers/app_provider_tor_upstream.dart
-part of 'app_provider.dart'; 
+part of 'app_provider.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  هندل کردن upstream (Aether / Psiphon / SSTP) برای Tor
