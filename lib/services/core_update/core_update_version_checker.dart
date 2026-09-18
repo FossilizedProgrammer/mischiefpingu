@@ -14,7 +14,8 @@ class CoreUpdateVersionChecker {
       {String psiphonRev = ''}) async {
     try {
       if (coreId == 'aether') {
-        final exe = await AppDataService.getBinaryPath('aether');
+        final exe = await AppDataService.resolveBinaryPath('aether') ??
+            await AppDataService.getBinaryPath('aether');
         final v = await _queryExeVersion(exe, ['--version']);
         return CoreUpdateUtils.parseAetherVersion(v) ?? 'unknown';
       }
@@ -25,7 +26,9 @@ class CoreUpdateVersionChecker {
         return CoreUpdateUtils.parseTorVersion(v) ?? 'not installed';
       }
       if (coreId == 'psiphon') {
-        final exe = await AppDataService.getBinaryPath('psiphon-tunnel-core');
+        final exe =
+            await AppDataService.resolveBinaryPath('psiphon-tunnel-core') ??
+                await AppDataService.getBinaryPath('psiphon-tunnel-core');
         if (!await File(exe).exists()) return 'not installed';
         final v = await _queryExeVersion(exe, ['-v']);
         final parsed = CoreUpdateUtils.parsePsiphonVersion(v);
@@ -37,8 +40,10 @@ class CoreUpdateVersionChecker {
         return 'installed';
       }
       if (coreId == 'sunandlion') {
-        final exe = await AppDataService.getBinaryPath(
-            'psiphon-tunnel-core-sunandlion');
+        final exe = await AppDataService.resolveBinaryPath(
+                'psiphon-tunnel-core-sunandlion') ??
+            await AppDataService.getBinaryPath(
+                'psiphon-tunnel-core-sunandlion');
         if (!await File(exe).exists()) return 'not installed';
         final v = await _queryExeVersion(exe, ['-v']);
         final parsed = CoreUpdateUtils.parsePsiphonVersion(v);
@@ -46,7 +51,7 @@ class CoreUpdateVersionChecker {
         return 'installed';
       }
       if (coreId == 'sstp') {
-        final exe = await AppDataService.getSstpBinaryPath();
+        final exe = await AppDataService.getSstpBinaryPathForExecution();
         if (!await File(exe).exists()) return 'not installed';
         final v = await _queryExeVersion(exe, ['--version']);
         if (v == null) return 'installed';

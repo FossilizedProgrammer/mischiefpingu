@@ -10,9 +10,6 @@ import 'shared/github_release_updater.dart';
 /// ═══════════════════════════════════════════════════════════════
 ///  SunAndLion Psiphon Core Updater
 ///  مخزن: https://github.com/FossilizedProgrammer/sunandlion
-///
-///  این فایل حالا فقط spec را تعریف می‌کند و منطق را به
-///  GithubReleaseUpdater delegate می‌دهد.
 /// ═══════════════════════════════════════════════════════════════
 class SunAndLionUpdater {
   static const String _binaryBaseName = 'psiphon-tunnel-core-sunandlion';
@@ -33,7 +30,7 @@ class SunAndLionUpdater {
             binaryBaseName: _binaryBaseName,
             fallbackPattern: 'sunandlion',
             destPathResolver: () =>
-                AppDataService.getBinaryPath(_binaryBaseName),
+                AppDataService.getBinaryPathForWrite(_binaryBaseName),
             tempPrefix: 'mischiefpingu_sunlion_',
             defaultDownloadSize: 12000000,
           ),

@@ -22,36 +22,68 @@ extension AppProviderAether on AppProvider {
     }
 
     try {
-      final binaryPath = await AppDataService.getBinaryPath('aether');
-      if (!await File(binaryPath).exists()) {
-        final msg =
-            'Aether binary not found. Please click "Show more" and download it from "Core Updates".';
-        processService.setBinaryMissingMessage(msg);
+      final found = await AppDataService.resolveBinaryPath('aether');
+      if (found == null) {
         processService.addLog(
-          '✗ Aether binary missing: $binaryPath — download it from Core Updates',
+          '✗ Aether binary not found. Searched paths:',
           source: src,
         );
+        await AppDataService.logBinaryCandidates(
+          'aether',
+          log: (line) => processService.addLog(line, source: src),
+        );
+
+        final msg =
+            'Aether binary not found. Please click "Show more" and download '
+            'it from "Core Updates", or place "aether${AppDataService.exeExt}" '
+            'in the data folder.';
+        processService.setBinaryMissingMessage(msg);
         aetherStatus = 'Aether: Binary missing';
         touch();
         return;
       }
 
-      final dataDir = await AppDataService.getDataDir();
-      final ptDir = Directory('$dataDir/pt');
-      if (!await ptDir.exists()) {
-        final msg =
-            'Aether `pt` directory not found in data folder. Please click "Show more" and download Aether again from "Core Updates".';
-        processService.setBinaryMissingMessage(msg);
+      processService.addLog(
+        '✓ Aether binary found: $found',
+        source: src,
+      );
+    } catch (e) {
+      processService.addLog('✗ Error checking Aether binary: $e', source: src);
+    }
+
+    try {
+      final ptDir = await AppDataService.findAetherPtDir();
+      if (ptDir == null) {
         processService.addLog(
-          '✗ Aether `pt` directory missing: ${ptDir.path} — download Aether from Core Updates',
+          '✗ Aether `pt` directory not found. Searched paths:',
           source: src,
         );
+        for (final c in await AppDataService.aetherPtCandidates()) {
+          final exists = await Directory(c).exists();
+          processService.addLog(
+            '   ${exists ? "✓" : "✗"} $c',
+            source: src,
+          );
+        }
+
+        final msg =
+            'Aether `pt` directory not found. Please click "Show more" and '
+            'download Aether again from "Core Updates".';
+        processService.setBinaryMissingMessage(msg);
         aetherStatus = 'Aether: `pt` directory missing';
         touch();
         return;
       }
+
+      processService.addLog(
+        '✓ Aether `pt` directory found: $ptDir',
+        source: src,
+      );
     } catch (e) {
-      processService.addLog('✗ Error checking Aether binary: $e', source: src);
+      processService.addLog(
+        '✗ Error checking Aether `pt` directory: $e',
+        source: src,
+      );
     }
 
     final aetherPort = settings.aetherLocalPort;

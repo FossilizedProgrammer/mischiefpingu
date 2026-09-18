@@ -10,9 +10,6 @@ import 'shared/github_release_updater.dart';
 /// ═══════════════════════════════════════════════════════════════
 ///  SSTP Proxy Updater
 ///  مخزن: https://github.com/FossilizedProgrammer/sstp-proxy
-///
-///  این فایل حالا فقط spec را تعریف می‌کند و منطق را به
-///  GithubReleaseUpdater delegate می‌دهد.
 /// ═══════════════════════════════════════════════════════════════
 class SstpProxyUpdater {
   final GithubReleaseUpdater _updater;

@@ -26,17 +26,30 @@ extension AppProviderSstp on AppProvider {
     try {
       final binaryPath = await AppDataService.getSstpBinaryPathForExecution();
       if (!await File(binaryPath).exists()) {
-        final msg =
-            'SSTP binary not found. Please place "sstp-proxy" (Linux) or "sstp-proxy.exe" (Windows) next to the app binary or in Core Updates.';
-        processService.setBinaryMissingMessage(msg);
         processService.addLog(
-          '✗ SSTP binary missing: $binaryPath',
+          '✗ SSTP binary not found. Searched paths:',
           source: src,
         );
+        await AppDataService.logBinaryCandidates(
+          'sstp-proxy',
+          log: (line) => processService.addLog(line, source: src),
+        );
+
+        final msg =
+            'SSTP binary not found. Place "sstp-proxy${AppDataService.exeExt}" '
+            'in the data folder, next to the app binary, or inside the '
+            '"${AppDataService.osFolder}" folder. You can also download it '
+            'from "Core Updates".';
+        processService.setBinaryMissingMessage(msg);
         sstpStatus = 'SSTP: Binary missing';
         touch();
         return;
       }
+
+      processService.addLog(
+        '✓ SSTP binary found: $binaryPath',
+        source: src,
+      );
     } catch (e) {
       processService.addLog('✗ Error checking SSTP binary: $e', source: src);
     }

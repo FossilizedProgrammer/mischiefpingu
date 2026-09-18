@@ -2,26 +2,44 @@ part of 'app_provider.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  Tor Preflight — بررسی‌های قبل از شروع
-///  (وجود باینری + آزاد بودن پورت‌ها)
-///  (تفکیک شده از app_provider_tor.dart)
 /// ═══════════════════════════════════════════════════════════════
 extension AppProviderTorPreflight on AppProvider {
   /// چک وجود باینری Tor.
-  /// true = موجوده، false = نیست (پیام خطا ست شده).
   Future<bool> checkTorBinary() async {
     const src = LogSource.tor;
     try {
-      final binaryPath = await AppDataService.findTorBinary() ??
-          await AppDataService.getTorBinaryPath();
-      if (await File(binaryPath).exists()) return true;
+      final binaryPath = await AppDataService.findTorBinary();
 
-      final msg =
-          'Tor binary not found. Please click "Show more" and download it from "Core Updates".';
-      processService.setBinaryMissingMessage(msg);
+      if (binaryPath != null && await File(binaryPath).exists()) {
+        processService.addLog(
+          '✓ Tor binary found: $binaryPath',
+          source: src,
+        );
+        return true;
+      }
+
       processService.addLog(
-        '✗ Tor binary missing: $binaryPath — download it from Core Updates',
+        '✗ Tor binary not found. Searched paths:',
         source: src,
       );
+      await AppDataService.logTorBinaryCandidates(
+        log: (line) => processService.addLog(line, source: src),
+      );
+
+      final msg =
+          'Tor binary not found. Please click "Show more" and download it from '
+          '"Core Updates", or place "tor${AppDataService.exeExt}" in one of the '
+          'searched paths (see Log).';
+      processService.setBinaryMissingMessage(msg);
+
+      try {
+        final fallback = await AppDataService.getTorBinaryPath();
+        processService.addLog(
+          '→ Expected default location: $fallback',
+          source: src,
+        );
+      } catch (_) {}
+
       torStatus = 'Tor: Binary missing';
       touch();
       return false;
@@ -32,7 +50,6 @@ extension AppProviderTorPreflight on AppProvider {
   }
 
   /// چک آزاد بودن پورت‌های SOCKS و HTTP.
-  /// true = هر دو آزاد، false = یکی اشغال (پیام خطا ست شده).
   Future<bool> checkTorPorts() async {
     const src = LogSource.tor;
     final socksPort = settings.torSocksPort;

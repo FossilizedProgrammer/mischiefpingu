@@ -59,7 +59,8 @@ class AetherInstaller {
         throw StateError('`$searchName` binary not found inside the archive.');
       }
       onProgress?.call(90);
-      final dest = await AppDataService.getBinaryPath('aether');
+
+      final dest = await AppDataService.getBinaryPathForWrite('aether');
       final binName = p.basename(dest);
       final isRunning = await processUtils.isProcessRunning(binName);
 

@@ -10,7 +10,9 @@ extension ProcessServiceAetherStarter on ProcessService {
 
     try {
       final dataDir = await AppDataService.getDataDir();
-      final binaryPath = await AppDataService.getBinaryPath('aether');
+
+      final binaryPath = await AppDataService.resolveBinaryPath('aether') ??
+          await AppDataService.getBinaryPath('aether');
 
       if (!await checkBinaryExists(
         binaryPath: binaryPath,

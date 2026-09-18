@@ -38,16 +38,32 @@ class AppDataService {
   static Future<void> initializeDataFiles() =>
       DataInitializerService.initializeDataFiles();
 
+  static String getExeDir() => DataPathsService.getExeDir();
+  static String getPlatformDir() => DataPathsService.getPlatformDir();
+
   static Future<String> getBinaryPath(String name) =>
       DataPathsService.getBinaryPath(name);
 
-  /// ⚠️ مسیر ذخیره‌سازی SSTP (همیشه داخل dataDir).
-  /// برای نوشتن (آپدیت/دانلود) استفاده شود.
+  static Future<String?> resolveBinaryPath(String name) =>
+      DataPathsService.resolveBinaryPath(name);
+
+  static Future<List<String>> binaryCandidates(String name) =>
+      DataPathsService.binaryCandidates(name);
+
+  static Future<void> logBinaryCandidates(
+    String name, {
+    void Function(String)? log,
+  }) =>
+      DataPathsService.logBinaryCandidates(name, log: log);
+
+  static Future<String> getBinaryPathForWrite(String name) =>
+      DataPathsService.getBinaryPathForWrite(name);
+
+  /// مسیر ذخیره‌سازی SSTP (برای نوشتن — همیشه dataDir).
   static Future<String> getSstpBinaryPath() =>
       DataPathsService.getSstpBinaryPath();
 
-  /// ⚠️ مسیر اجرای SSTP (اول dataDir، بعد platformDir).
-  /// فقط برای اجرا استفاده شود، نه برای نوشتن.
+  /// مسیر اجرای SSTP — همه مسیرها را چک می‌کند.
   static Future<String> getSstpBinaryPathForExecution() =>
       DataPathsService.getSstpBinaryPathForExecution();
 
@@ -58,5 +74,19 @@ class AppDataService {
 
   static Future<String?> findTorBinary() => DataPathsService.findTorBinary();
 
+  static Future<List<String>> torBinaryCandidates() =>
+      DataPathsService.torBinaryCandidates();
+
+  static Future<void> logTorBinaryCandidates({
+    void Function(String)? log,
+  }) =>
+      DataPathsService.logTorBinaryCandidates(log: log);
+
   static Future<String> ensureTorDir() => DataPathsService.ensureTorDir();
+
+  static Future<List<String>> aetherPtCandidates() =>
+      DataPathsService.aetherPtCandidates();
+
+  static Future<String?> findAetherPtDir() =>
+      DataPathsService.findAetherPtDir();
 }

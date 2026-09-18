@@ -66,7 +66,8 @@ class PsiphonInstaller {
       }
       if (newSize == 0) throw StateError('Downloaded file is empty.');
 
-      final dest = await AppDataService.getBinaryPath('psiphon-tunnel-core');
+      final dest =
+          await AppDataService.getBinaryPathForWrite('psiphon-tunnel-core');
       final binName = p.basename(dest);
       final isRunning = await processUtils.isProcessRunning(binName);
 

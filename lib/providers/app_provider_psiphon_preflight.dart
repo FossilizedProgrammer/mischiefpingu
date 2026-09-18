@@ -3,7 +3,6 @@ part of 'app_provider.dart';
 /// ═══════════════════════════════════════════════════════════════
 ///  Psiphon Preflight — بررسی‌های قبل از شروع
 ///  (وجود باینری + آزاد بودن پورت‌ها)
-///  (تفکیک شده از app_provider_psiphon.dart)
 /// ═══════════════════════════════════════════════════════════════
 extension AppProviderPsiphonPreflight on AppProvider {
   /// چک وجود باینری Psiphon بر اساس useSunAndLion.
@@ -15,21 +14,35 @@ extension AppProviderPsiphonPreflight on AppProvider {
       final binaryName = useSunAndLion
           ? 'psiphon-tunnel-core-sunandlion'
           : 'psiphon-tunnel-core';
-      final binaryPath = await AppDataService.getBinaryPath(binaryName);
 
-      if (await File(binaryPath).exists()) return true;
+      final found = await AppDataService.resolveBinaryPath(binaryName);
+      if (found != null) {
+        processService.addLog(
+          '✓ Psiphon binary found: $found',
+          source: src,
+        );
+        return true;
+      }
+
+      processService.addLog(
+        '✗ Psiphon binary "$binaryName" not found. Searched paths:',
+        source: src,
+      );
+      await AppDataService.logBinaryCandidates(
+        binaryName,
+        log: (line) => processService.addLog(line, source: src),
+      );
 
       final msg = useSunAndLion
           ? 'SunAndLion Psiphon binary not found. Please place '
-              '"psiphon-tunnel-core-sunandlion" in the app folder or data '
-              'folder manually.'
+              '"psiphon-tunnel-core-sunandlion${AppDataService.exeExt}" '
+              'in the data folder or in the app folder, or download it from '
+              '"Core Updates".'
           : 'Psiphon binary not found. Please click "Show more" and '
-              'download it from "Core Updates".';
+              'download it from "Core Updates", or place '
+              '"psiphon-tunnel-core${AppDataService.exeExt}" '
+              'in the data folder.';
       processService.setBinaryMissingMessage(msg);
-      processService.addLog(
-        '✗ Psiphon binary missing: $binaryPath',
-        source: src,
-      );
       touch();
       return false;
     } catch (e) {
@@ -42,7 +55,6 @@ extension AppProviderPsiphonPreflight on AppProvider {
   }
 
   /// چک آزاد بودن پورت‌های SOCKS و HTTP.
-  /// true = هر دو آزاد هستن، false = یکی اشغاله (پیام خطا ست شده).
   Future<bool> checkPsiphonPorts() async {
     const src = LogSource.psiphon;
     final socksPort = settings.socksPort;
