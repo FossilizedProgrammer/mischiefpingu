@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../l10n/app_localizations.dart';
 import 'connection_state.dart';
 
@@ -22,48 +23,36 @@ class ConnectionButtonBuilder {
     required bool isConnected,
     required bool isBusy,
     required int? progress,
-  }) =>
-      _build(
-        isRunning: isRunning,
-        isConnected: isConnected,
-        isBusy: isBusy,
-        progress: progress,
-      );
+  }) => _build(
+    isRunning: isRunning,
+    isConnected: isConnected,
+    isBusy: isBusy,
+    progress: progress,
+  );
 
   ConnectionButtonData forPsiphon({
     required bool isRunning,
     required bool isConnected,
     required bool isBusy,
-  }) =>
-      _build(
-        isRunning: isRunning,
-        isConnected: isConnected,
-        isBusy: isBusy,
-      );
+  }) => _build(isRunning: isRunning, isConnected: isConnected, isBusy: isBusy);
 
   ConnectionButtonData forTor({
     required bool isRunning,
     required bool isConnected,
     required bool isBusy,
     required int? progress,
-  }) =>
-      _build(
-        isRunning: isRunning,
-        isConnected: isConnected,
-        isBusy: isBusy,
-        progress: progress,
-      );
+  }) => _build(
+    isRunning: isRunning,
+    isConnected: isConnected,
+    isBusy: isBusy,
+    progress: progress,
+  );
 
   ConnectionButtonData forSstp({
     required bool isRunning,
     required bool isConnected,
     required bool isBusy,
-  }) =>
-      _build(
-        isRunning: isRunning,
-        isConnected: isConnected,
-        isBusy: isBusy,
-      );
+  }) => _build(isRunning: isRunning, isConnected: isConnected, isBusy: isBusy);
 
   ConnectionButtonData _build({
     required bool isRunning,

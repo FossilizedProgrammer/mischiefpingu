@@ -2,6 +2,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../../../l10n/app_localizations.dart';
 
 class CoreUpdateMessageBox extends StatelessWidget {
@@ -21,16 +22,15 @@ class CoreUpdateMessageBox extends StatelessWidget {
         color: isSuccess
             ? Colors.green.withValues(alpha: 0.1)
             : isFailed
-                ? Colors.red.withValues(alpha: 0.1)
-                : theme.colorScheme.surfaceContainerHighest
-                    .withValues(alpha: 0.3),
+            ? Colors.red.withValues(alpha: 0.1)
+            : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isSuccess
               ? Colors.green.withValues(alpha: 0.3)
               : isFailed
-                  ? Colors.red.withValues(alpha: 0.3)
-                  : theme.colorScheme.outline.withValues(alpha: 0.2),
+              ? Colors.red.withValues(alpha: 0.3)
+              : theme.colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: Text(
@@ -39,8 +39,8 @@ class CoreUpdateMessageBox extends StatelessWidget {
           color: isSuccess
               ? Colors.green.shade700
               : isFailed
-                  ? Colors.red.shade700
-                  : theme.colorScheme.onSurface,
+              ? Colors.red.shade700
+              : theme.colorScheme.onSurface,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -70,8 +70,9 @@ class CoreUpdateUrlBox extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color:
-              theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+          color: theme.colorScheme.surfaceContainerHighest.withValues(
+            alpha: 0.3,
+          ),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(

@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../models/settings_model.dart';
 import '../services/process_service.dart';
 import '../services/privilege_service.dart';
@@ -107,10 +109,7 @@ class AppProvider extends ChangeNotifier {
     _logSubscription = processService.logStream.listen(
       feedLogWatchers,
       onError: (e) {
-        processService.addLog(
-          '⚠ logStream error: $e',
-          source: LogSource.app,
-        );
+        processService.addLog('⚠ logStream error: $e', source: LogSource.app);
       },
     );
 

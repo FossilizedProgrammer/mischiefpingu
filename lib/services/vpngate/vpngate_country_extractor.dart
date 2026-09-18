@@ -45,8 +45,10 @@ class VpngateCountryExtractor {
       return (name: VpngateCountryMaps.nameFromCode(code), code: code);
     }
 
-    final altMatch =
-        RegExp(r'<img[^>]*alt="([^"]+)"', caseSensitive: false).firstMatch(row);
+    final altMatch = RegExp(
+      r'<img[^>]*alt="([^"]+)"',
+      caseSensitive: false,
+    ).firstMatch(row);
     if (altMatch != null) {
       final alt = altMatch.group(1)!.trim();
       if (alt.length == 2) {
@@ -58,8 +60,9 @@ class VpngateCountryExtractor {
       }
     }
 
-    final countryNameMatch =
-        VpngateCountryMaps.countryNamePattern.firstMatch(row);
+    final countryNameMatch = VpngateCountryMaps.countryNamePattern.firstMatch(
+      row,
+    );
     if (countryNameMatch != null) {
       final name = countryNameMatch.group(1)!;
       return (name: name, code: VpngateCountryMaps.codeFromName(name));

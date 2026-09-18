@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'compass_ticks_painter.dart';
 
 class CircleConnectButton extends StatelessWidget {

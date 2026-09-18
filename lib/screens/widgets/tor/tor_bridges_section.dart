@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../../l10n/app_localizations.dart';
 import '../../../providers/app_provider.dart';
 import '../../../services/tor_bridges.dart';
@@ -92,10 +93,7 @@ class _TorBridgesSectionState extends State<TorBridgesSection> {
               onPressed: () => _applyPreset(TorBridges.obfs4Public.join('\n')),
               child: const Text('obfs4 (public)'),
             ),
-            TextButton(
-              onPressed: _clearBridges,
-              child: Text(l10n.clear),
-            ),
+            TextButton(onPressed: _clearBridges, child: Text(l10n.clear)),
           ],
         ),
         const SizedBox(height: 8),

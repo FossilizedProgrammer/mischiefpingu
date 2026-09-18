@@ -98,8 +98,10 @@ class ProcessForwarder {
       });
       return server;
     } catch (e) {
-      addLog('⚠ Cannot bind Dart forwarder on $publicPort ($label): $e',
-          source: source);
+      addLog(
+        '⚠ Cannot bind Dart forwarder on $publicPort ($label): $e',
+        source: source,
+      );
       return null;
     }
   }

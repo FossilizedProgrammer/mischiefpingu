@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../../l10n/app_localizations.dart';
 import '../../providers/cdn_scanner_provider.dart';
 import '../../cdn_presets.dart';
@@ -26,8 +27,9 @@ class CdnScannerInputs extends StatelessWidget {
       children: [
         Text(
           l10n.cdnPreset,
-          style:
-              theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 8),
         Wrap(
@@ -38,10 +40,7 @@ class CdnScannerInputs extends StatelessWidget {
             final isCustom = preset.id == 'custom';
 
             final Widget? avatar = isCustom
-                ? _CustomAvatar(
-                    selected: selected,
-                    theme: theme,
-                  )
+                ? _CustomAvatar(selected: selected, theme: theme)
                 : null;
 
             return FilterChip(
@@ -121,10 +120,7 @@ class _CustomAvatar extends StatelessWidget {
   final bool selected;
   final ThemeData theme;
 
-  const _CustomAvatar({
-    required this.selected,
-    required this.theme,
-  });
+  const _CustomAvatar({required this.selected, required this.theme});
 
   @override
   Widget build(BuildContext context) {
@@ -140,14 +136,7 @@ class _CustomAvatar extends StatelessWidget {
         color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(4),
       ),
-      child: Text(
-        '★',
-        style: TextStyle(
-          fontSize: 12,
-          height: 1,
-          color: color,
-        ),
-      ),
+      child: Text('★', style: TextStyle(fontSize: 12, height: 1, color: color)),
     );
   }
 }

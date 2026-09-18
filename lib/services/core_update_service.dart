@@ -24,10 +24,13 @@ class CoreUpdateService {
 
   late final CoreUpdateNetwork _network = CoreUpdateNetwork(log: log);
   late final CoreUpdateProcessUtils _process = CoreUpdateProcessUtils(log: log);
-  late final CoreUpdatePendingManager _pending =
-      CoreUpdatePendingManager(log: log, processUtils: _process);
-  late final CoreUpdateVersionChecker _versions =
-      CoreUpdateVersionChecker(log: log);
+  late final CoreUpdatePendingManager _pending = CoreUpdatePendingManager(
+    log: log,
+    processUtils: _process,
+  );
+  late final CoreUpdateVersionChecker _versions = CoreUpdateVersionChecker(
+    log: log,
+  );
 
   late final CoreUpdaterRegistry _registry = CoreUpdaterRegistry(
     aether: AetherUpdater(

@@ -17,10 +17,7 @@ extension AppProviderPsiphonPreflight on AppProvider {
 
       final found = await AppDataService.resolveBinaryPath(binaryName);
       if (found != null) {
-        processService.addLog(
-          '✓ Psiphon binary found: $found',
-          source: src,
-        );
+        processService.addLog('✓ Psiphon binary found: $found', source: src);
         return true;
       }
 
@@ -35,21 +32,18 @@ extension AppProviderPsiphonPreflight on AppProvider {
 
       final msg = useSunAndLion
           ? 'SunAndLion Psiphon binary not found. Please place '
-              '"psiphon-tunnel-core-sunandlion${AppDataService.exeExt}" '
-              'in the data folder or in the app folder, or download it from '
-              '"Core Updates".'
+                '"psiphon-tunnel-core-sunandlion${AppDataService.exeExt}" '
+                'in the data folder or in the app folder, or download it from '
+                '"Core Updates".'
           : 'Psiphon binary not found. Please click "Show more" and '
-              'download it from "Core Updates", or place '
-              '"psiphon-tunnel-core${AppDataService.exeExt}" '
-              'in the data folder.';
+                'download it from "Core Updates", or place '
+                '"psiphon-tunnel-core${AppDataService.exeExt}" '
+                'in the data folder.';
       processService.setBinaryMissingMessage(msg);
       touch();
       return false;
     } catch (e) {
-      processService.addLog(
-        '✗ Error checking Psiphon binary: $e',
-        source: src,
-      );
+      processService.addLog('✗ Error checking Psiphon binary: $e', source: src);
       return false;
     }
   }
@@ -61,7 +55,8 @@ extension AppProviderPsiphonPreflight on AppProvider {
     final httpPort = settings.httpPort;
 
     if (await ProcessService.isPortInUse(socksPort)) {
-      final msg = 'Psiphon: SOCKS port $socksPort is already in use by '
+      final msg =
+          'Psiphon: SOCKS port $socksPort is already in use by '
           'another application. Cannot start.';
       processService.setPortConflictMessage(msg);
       processService.addLog(
@@ -73,7 +68,8 @@ extension AppProviderPsiphonPreflight on AppProvider {
     }
 
     if (await ProcessService.isPortInUse(httpPort)) {
-      final msg = 'Psiphon: HTTP port $httpPort is already in use by '
+      final msg =
+          'Psiphon: HTTP port $httpPort is already in use by '
           'another application. Cannot start.';
       processService.setPortConflictMessage(msg);
       processService.addLog(

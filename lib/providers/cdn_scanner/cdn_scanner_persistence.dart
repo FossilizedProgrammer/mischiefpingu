@@ -7,8 +7,9 @@ extension CdnScannerPersistence on CdnScannerProvider {
       customIpsInternal =
           prefs.getStringList(CdnScannerProvider.prefsCustomIps) ?? [];
       final savedSnis = prefs.getStringList(CdnScannerProvider.prefsCustomSnis);
-      final savedPreset =
-          prefs.getString(CdnScannerProvider.prefsSelectedPreset);
+      final savedPreset = prefs.getString(
+        CdnScannerProvider.prefsSelectedPreset,
+      );
 
       if (savedPreset != null) {
         selectedPresetId = savedPreset;
@@ -41,10 +42,7 @@ extension CdnScannerPersistence on CdnScannerProvider {
   Future<void> persistCustomIps() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setStringList(
-        CdnScannerProvider.prefsCustomIps,
-        customIps,
-      );
+      await prefs.setStringList(CdnScannerProvider.prefsCustomIps, customIps);
     } catch (_) {}
   }
 
@@ -58,10 +56,7 @@ extension CdnScannerPersistence on CdnScannerProvider {
         );
       }
       if (selectedPresetId == 'custom') {
-        await prefs.setStringList(
-          CdnScannerProvider.prefsCustomSnis,
-          snis,
-        );
+        await prefs.setStringList(CdnScannerProvider.prefsCustomSnis, snis);
       }
     } catch (_) {}
   }

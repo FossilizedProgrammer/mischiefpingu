@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -146,7 +147,9 @@ class _PainfulLogoState extends State<PainfulLogo> {
                   return ScaleTransition(
                     scale: Tween<double>(begin: 0.85, end: 1.0).animate(
                       CurvedAnimation(
-                          parent: animation, curve: Curves.easeOutBack),
+                        parent: animation,
+                        curve: Curves.easeOutBack,
+                      ),
                     ),
                     child: FadeTransition(opacity: animation, child: child),
                   );

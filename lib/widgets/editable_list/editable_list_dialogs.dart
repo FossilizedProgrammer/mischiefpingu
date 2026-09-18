@@ -1,15 +1,13 @@
 library;
 
 import 'package:flutter/material.dart';
+
 import '../../l10n/app_localizations.dart';
 
 class EditableListDialogs {
   EditableListDialogs._();
 
-  static Future<String?> showAdd(
-    BuildContext context,
-    String label,
-  ) async {
+  static Future<String?> showAdd(BuildContext context, String label) async {
     final l10n = AppLocalizations.of(context);
     final controller = TextEditingController();
     final result = await showDialog<String>(
@@ -19,9 +17,7 @@ class EditableListDialogs {
         content: TextField(
           controller: controller,
           autofocus: true,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-          ),
+          decoration: const InputDecoration(border: OutlineInputBorder()),
           onSubmitted: (v) => Navigator.pop(ctx, v.trim()),
         ),
         actions: [
@@ -64,22 +60,24 @@ class EditableListDialogs {
                           return ListTile(
                             title: Text(item),
                             trailing: IconButton(
-                              icon: const Icon(Icons.delete_outline,
-                                  color: Colors.red),
+                              icon: const Icon(
+                                Icons.delete_outline,
+                                color: Colors.red,
+                              ),
                               tooltip: l10n.delete,
                               onPressed: () {
                                 items.removeAt(index);
                                 setDialogState(() {});
-                                Navigator.pop(
-                                  ctx,
-                                  (action: 'delete', value: item),
-                                );
+                                Navigator.pop(ctx, (
+                                  action: 'delete',
+                                  value: item,
+                                ));
                               },
                             ),
-                            onTap: () => Navigator.pop(
-                              ctx,
-                              (action: 'select', value: item),
-                            ),
+                            onTap: () => Navigator.pop(ctx, (
+                              action: 'select',
+                              value: item,
+                            )),
                           );
                         },
                       ),

@@ -11,8 +11,10 @@ extension AppProviderTorUpstream on AppProvider {
 
     if (settings.torTransport == 'aether') {
       if (processService.isAetherRunning) {
-        processService.addLog('→ Tor upstream: Aether already running',
-            source: src);
+        processService.addLog(
+          '→ Tor upstream: Aether already running',
+          source: src,
+        );
         return (ok: true, type: 'aether', detail: 'via Aether');
       }
 
@@ -40,8 +42,10 @@ extension AppProviderTorUpstream on AppProvider {
 
       if (!ok && !processService.isAetherRunning) {
         torStatus = 'Tor: Aether unavailable — Tor not started';
-        processService.addLog('✗ Aether unavailable → Tor not started',
-            source: src);
+        processService.addLog(
+          '✗ Aether unavailable → Tor not started',
+          source: src,
+        );
         return (ok: false, type: 'aether', detail: '');
       }
 
@@ -54,8 +58,10 @@ extension AppProviderTorUpstream on AppProvider {
 
     if (settings.torTransport == 'psiphon') {
       if (processService.isPsiphonRunning) {
-        processService.addLog('→ Tor upstream: Psiphon already running',
-            source: src);
+        processService.addLog(
+          '→ Tor upstream: Psiphon already running',
+          source: src,
+        );
         return (ok: true, type: 'psiphon', detail: 'via Psiphon');
       }
 
@@ -81,8 +87,10 @@ extension AppProviderTorUpstream on AppProvider {
 
       if (!processService.isPsiphonRunning) {
         torStatus = 'Tor: Psiphon unavailable — Tor not started';
-        processService.addLog('✗ Psiphon unavailable → Tor not started',
-            source: src);
+        processService.addLog(
+          '✗ Psiphon unavailable → Tor not started',
+          source: src,
+        );
         return (ok: false, type: 'psiphon', detail: '');
       }
 
@@ -92,8 +100,10 @@ extension AppProviderTorUpstream on AppProvider {
 
     if (settings.torTransport == 'sstp') {
       if (processService.isSstpRunning) {
-        processService.addLog('→ Tor upstream: SSTP already running',
-            source: src);
+        processService.addLog(
+          '→ Tor upstream: SSTP already running',
+          source: src,
+        );
         return (ok: true, type: 'sstp', detail: 'via SSTP');
       }
 
@@ -119,8 +129,10 @@ extension AppProviderTorUpstream on AppProvider {
 
       if (!processService.isSstpRunning) {
         torStatus = 'Tor: SSTP unavailable — Tor not started';
-        processService.addLog('✗ SSTP unavailable → Tor not started',
-            source: src);
+        processService.addLog(
+          '✗ SSTP unavailable → Tor not started',
+          source: src,
+        );
         return (ok: false, type: 'sstp', detail: '');
       }
 

@@ -19,7 +19,8 @@ class ConnectionStateResolver {
   ConnectionButtonData resolveAether(ConnectionButtonBuilder builder) {
     final ps = provider.processService;
     final aetherBusy = provider.isAutoTesting;
-    final aetherHealthy = ps.isAetherRunning &&
+    final aetherHealthy =
+        ps.isAetherRunning &&
         !aetherBusy &&
         _aetherHealthy(provider.aetherStatus);
     final aetherRunningForButton = ps.isAetherRunning || aetherBusy;

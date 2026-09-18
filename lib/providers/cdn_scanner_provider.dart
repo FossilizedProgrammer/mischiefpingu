@@ -2,6 +2,7 @@ library;
 
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../cdn_ip_checker.dart';
 import '../services/ip_range_parser.dart';
 import '../cdn_presets.dart';

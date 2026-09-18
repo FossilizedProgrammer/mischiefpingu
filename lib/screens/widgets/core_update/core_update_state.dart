@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+
 import '../../../services/core_update_service.dart';
 
 /// ═══════════════════════════════════════════════════════════════
@@ -26,15 +27,10 @@ class CoreUpdateEntryState extends ChangeNotifier {
 
   bool get missing => CoreUpdateService.isMissingVersion(installed);
 
-  Future<void> refreshInstalled({
-    String psiphonRev = '',
-  }) async {
+  Future<void> refreshInstalled({String psiphonRev = ''}) async {
     try {
       final svc = serviceFactory();
-      installed = await svc.getInstalledVersion(
-        coreId,
-        psiphonRev: psiphonRev,
-      );
+      installed = await svc.getInstalledVersion(coreId, psiphonRev: psiphonRev);
       if (latest == '…') latest = installed;
       notifyListeners();
     } catch (_) {}
@@ -65,8 +61,10 @@ class CoreUpdateEntryState extends ChangeNotifier {
 
   Future<void> update({
     required Future<bool> Function(
-            String? proxy, void Function(int percent) onProgress)
-        runUpdate,
+      String? proxy,
+      void Function(int percent) onProgress,
+    )
+    runUpdate,
     required Future<void> Function() afterUpdate,
   }) async {
     if (!missing && latest != '…' && installed == latest) {
@@ -85,8 +83,9 @@ class CoreUpdateEntryState extends ChangeNotifier {
         notifyListeners();
       });
       await afterUpdate();
-      checkMessage =
-          ok ? '★ $coreId updated successfully' : '$coreId update skipped';
+      checkMessage = ok
+          ? '★ $coreId updated successfully'
+          : '$coreId update skipped';
     } catch (e) {
       checkMessage = '$coreId update failed: $e';
     } finally {

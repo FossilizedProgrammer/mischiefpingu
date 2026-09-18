@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../l10n/app_localizations.dart';
 import 'sstp_upstream_info_box.dart';
 import 'sstp_manual_proxy_fields.dart';
@@ -93,14 +94,16 @@ class SstpUpstreamSection extends StatelessWidget {
           _InfoBox(
             theme: theme,
             icon: Icons.info_outline,
-            message: 'SSTP will route through Psiphon. '
+            message:
+                'SSTP will route through Psiphon. '
                 'Make sure Psiphon is running.',
           ),
         if (sstpUpstreamType == 4)
           _InfoBox(
             theme: theme,
             icon: Icons.info_outline,
-            message: 'SSTP will route through Tor. '
+            message:
+                'SSTP will route through Tor. '
                 'Make sure Tor is running.',
           ),
       ],
@@ -124,11 +127,7 @@ class _InfoBox extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 8),
-        SstpUpstreamInfoBox(
-          theme: theme,
-          icon: icon,
-          message: message,
-        ),
+        SstpUpstreamInfoBox(theme: theme, icon: icon, message: message),
       ],
     );
   }

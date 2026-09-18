@@ -7,10 +7,7 @@ class PsiphonBinariesHead {
   final CoreUpdateNetwork network;
   final void Function(String)? log;
 
-  const PsiphonBinariesHead({
-    required this.network,
-    this.log,
-  });
+  const PsiphonBinariesHead({required this.network, this.log});
 
   void _log(String m) => log?.call(m);
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../providers/sstp_fetcher_provider.dart';
 
 class SstpFetcherStatus extends StatelessWidget {
@@ -25,8 +26,9 @@ class SstpFetcherStatus extends StatelessWidget {
         children: [
           Text(
             fetcher.status,
-            style: theme.textTheme.bodyMedium
-                ?.copyWith(fontWeight: FontWeight.w600),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
           ),
           if (fetcher.lastMessage.isNotEmpty) ...[
             const SizedBox(height: 4),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../l10n/app_localizations.dart';
 import '../../../providers/app_provider.dart';
 import 'psiphon_fronting_fields.dart';
@@ -47,14 +48,8 @@ class PsiphonFrontingTile extends StatelessWidget {
             isDense: true,
           ),
           items: [
-            DropdownMenuItem(
-              value: false,
-              child: Text(l10n.officialCore),
-            ),
-            DropdownMenuItem(
-              value: true,
-              child: Text(l10n.sunandlionCore),
-            ),
+            DropdownMenuItem(value: false, child: Text(l10n.officialCore)),
+            DropdownMenuItem(value: true, child: Text(l10n.sunandlionCore)),
           ],
           onChanged: (v) {
             provider.settings.useSunAndLion = v ?? false;

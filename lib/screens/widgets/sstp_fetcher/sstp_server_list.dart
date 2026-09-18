@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../../l10n/app_localizations.dart';
 import '../../../providers/app_provider.dart';
 import '../../../providers/sstp_fetcher_provider.dart';
@@ -35,8 +36,9 @@ class SstpServerList extends StatelessWidget {
           children: [
             Text(
               '${l10n.allServers} (${visible.length})',
-              style: theme.textTheme.titleSmall
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const Spacer(),
             IconButton(
@@ -60,7 +62,8 @@ class SstpServerList extends StatelessWidget {
           height: 320,
           decoration: BoxDecoration(
             border: Border.all(
-                color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              color: theme.colorScheme.outline.withValues(alpha: 0.3),
+            ),
             borderRadius: BorderRadius.circular(12),
           ),
           child: ListView.builder(
@@ -68,7 +71,8 @@ class SstpServerList extends StatelessWidget {
             itemBuilder: (ctx, i) {
               final s = visible[i];
               final app = context.watch<AppProvider>();
-              final isCurrent = app.settings.sstpServer == s.ip &&
+              final isCurrent =
+                  app.settings.sstpServer == s.ip &&
                   app.settings.sstpPort == s.port;
               final h = fetcher.healthOf(s);
               return SstpServerTile(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../../../l10n/app_localizations.dart';
 import '../../../providers/sstp_fetcher_provider.dart';
 
@@ -54,11 +55,13 @@ class SstpClipboardActions {
 
     final buffer = StringBuffer();
     buffer.writeln(
-        'ip,port,country,country_code,ping_ms,speed_mbps,operator,health');
+      'ip,port,country,country_code,ping_ms,speed_mbps,operator,health',
+    );
     for (final s in visible) {
       final h = fetcher.healthOf(s);
       buffer.writeln(
-          '${s.ip},${s.port},"${s.country}",${s.countryShort},${s.ping},${s.speed},"${s.operator}",${h.status.name}');
+        '${s.ip},${s.port},"${s.country}",${s.countryShort},${s.ping},${s.speed},"${s.operator}",${h.status.name}',
+      );
     }
     await Clipboard.setData(ClipboardData(text: buffer.toString()));
     if (!context.mounted) return;

@@ -7,31 +7,29 @@ extension ProcessServiceLan on ProcessService {
     required int internalSocksPort,
     required int internalHttpPort,
     required String source,
-  }) =>
-      forwarder.startDartLanForwarders(
-        publicSocksPort: publicSocksPort,
-        publicHttpPort: publicHttpPort,
-        internalSocksPort: internalSocksPort,
-        internalHttpPort: internalHttpPort,
-        source: source,
-        onReady: (socks, http) {
-          psiphonSocksForwarder = socks;
-          psiphonHttpForwarder = http;
-        },
-      );
+  }) => forwarder.startDartLanForwarders(
+    publicSocksPort: publicSocksPort,
+    publicHttpPort: publicHttpPort,
+    internalSocksPort: internalSocksPort,
+    internalHttpPort: internalHttpPort,
+    source: source,
+    onReady: (socks, http) {
+      psiphonSocksForwarder = socks;
+      psiphonHttpForwarder = http;
+    },
+  );
 
   Future<ServerSocket?> createForwarder({
     required int publicPort,
     required int internalPort,
     required String label,
     required String source,
-  }) =>
-      forwarder.createForwarder(
-        publicPort: publicPort,
-        internalPort: internalPort,
-        label: label,
-        source: source,
-      );
+  }) => forwarder.createForwarder(
+    publicPort: publicPort,
+    internalPort: internalPort,
+    label: label,
+    source: source,
+  );
 
   Future<void> closeAllForwardSockets() async {
     for (final s in List<Socket>.from(activeForwardSockets)) {

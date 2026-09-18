@@ -1,6 +1,7 @@
 library;
 
 import 'dart:convert';
+
 import '../../models/settings_model.dart';
 import '../process_service.dart';
 
@@ -8,10 +9,7 @@ class PsiphonConduitBuilder {
   final AppSettings settings;
   final ProcessService processService;
 
-  PsiphonConduitBuilder({
-    required this.settings,
-    required this.processService,
-  });
+  PsiphonConduitBuilder({required this.settings, required this.processService});
 
   /// اعمال تنظیمات Conduit روی config.
   void apply(Map<String, dynamic> config) {
@@ -44,7 +42,7 @@ class PsiphonConduitBuilder {
         "RU",
         "BY",
         "TM",
-        "KP"
+        "KP",
       ];
     }
 
@@ -91,8 +89,10 @@ class PsiphonConduitBuilder {
       source: LogSource.psiphon,
     );
     if (settings.conduitRejectCensoredCountries) {
-      processService.addLog('→ Conduit: rejecting censored relays',
-          source: LogSource.psiphon);
+      processService.addLog(
+        '→ Conduit: rejecting censored relays',
+        source: LogSource.psiphon,
+      );
     }
   }
 }

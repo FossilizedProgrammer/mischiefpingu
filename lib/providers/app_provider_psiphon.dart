@@ -65,8 +65,10 @@ extension AppProviderPsiphon on AppProvider {
           isAutoTesting = false;
 
           if (userStoppedPsiphon || _aetherTestService.isCancelRequested) {
-            processService.addLog('Psiphon start cancelled by user',
-                source: src);
+            processService.addLog(
+              'Psiphon start cancelled by user',
+              source: src,
+            );
             return;
           }
 

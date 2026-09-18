@@ -1,7 +1,9 @@
 library;
 
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
+
 import 'platform_info.dart';
 import 'ownership_service.dart';
 import 'data_paths_service.dart';
@@ -34,15 +36,19 @@ class DataInitializerService {
     _log('Elevated (root/admin): ${PlatformInfo.isRoot}');
     if (PlatformInfo.realUsername != null) {
       _log(
-          'Real user: ${PlatformInfo.realUsername} (home: ${PlatformInfo.realUserHome ?? '?'})');
+        'Real user: ${PlatformInfo.realUsername} (home: ${PlatformInfo.realUserHome ?? '?'})',
+      );
     }
     if (PlatformInfo.isRunningInAppImage) {
       _log('Running inside AppImage');
     }
 
-    await SharedFilesSeeder.seedSharedFiles(
+    await SharedFilesSeeder.seedSharedFiles(dataDir: dataDir, exeDir: exeDir);
+
+    await SharedFilesSeeder.seedServerList(
       dataDir: dataDir,
       exeDir: exeDir,
+      platformDir: platformDir,
     );
 
     await SharedFilesSeeder.cleanupStaleServerList(dataDir: dataDir);
@@ -52,10 +58,7 @@ class DataInitializerService {
       platformDir: platformDir,
     );
 
-    await AetherPtSeeder.seed(
-      dataDir: dataDir,
-      platformDir: platformDir,
-    );
+    await AetherPtSeeder.seed(dataDir: dataDir, platformDir: platformDir);
 
     await OwnershipService.fixOwnership(dataDir);
     await DataPathsService.ensureTorDir();

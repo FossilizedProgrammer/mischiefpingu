@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../l10n/app_localizations.dart';
 import '../../main.dart';
 import '../../providers/app_provider.dart';
@@ -30,8 +31,9 @@ class ThemeSelectorTile extends StatelessWidget {
           initiallyExpanded: false,
           tilePadding: const EdgeInsets.symmetric(horizontal: 12),
           childrenPadding: EdgeInsets.zero,
-          backgroundColor:
-              theme.colorScheme.tertiaryContainer.withValues(alpha: 0.28),
+          backgroundColor: theme.colorScheme.tertiaryContainer.withValues(
+            alpha: 0.28,
+          ),
           collapsedBackgroundColor: Colors.transparent,
           title: Row(
             children: [

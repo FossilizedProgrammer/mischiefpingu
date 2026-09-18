@@ -1,6 +1,7 @@
 library;
 
 import 'dart:io';
+
 import '../app_data_service.dart';
 
 class CoreUpdateArchiveExtractor {

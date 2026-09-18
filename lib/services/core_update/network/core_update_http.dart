@@ -18,7 +18,8 @@ class CoreUpdateHttp {
       if (r.exitCode == 0) return;
     } catch (_) {}
     throw StateError(
-        'curl not found — install curl to download via proxy (or use Direct).');
+      'curl not found — install curl to download via proxy (or use Direct).',
+    );
   }
 
   void logRoute(String? proxy) {
@@ -30,8 +31,11 @@ class CoreUpdateHttp {
   }
 
   Future<Map<String, dynamic>> getJson(String url, String? proxy) async {
-    final body =
-        await getText(url, proxy, accept: 'application/vnd.github+json');
+    final body = await getText(
+      url,
+      proxy,
+      accept: 'application/vnd.github+json',
+    );
     return jsonDecode(body) as Map<String, dynamic>;
   }
 
@@ -58,7 +62,8 @@ class CoreUpdateHttp {
       ]).timeout(const Duration(seconds: 120));
       if (r.exitCode != 0) {
         throw HttpException(
-            'curl failed for $url (via $proxy): ${(r.stderr as String).trim()}');
+          'curl failed for $url (via $proxy): ${(r.stderr as String).trim()}',
+        );
       }
       return r.stdout as String;
     }

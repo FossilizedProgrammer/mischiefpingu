@@ -40,10 +40,7 @@ class AetherAttemptRunner {
   final ProcessService processService;
   final SocksProber prober;
 
-  AetherAttemptRunner({
-    required this.processService,
-    required this.prober,
-  });
+  AetherAttemptRunner({required this.processService, required this.prober});
 
   /// اجرای کامل یک attempt:
   ///   1. اگر Aether قبلاً روشن است، آن را متوقف کن
@@ -63,10 +60,7 @@ class AetherAttemptRunner {
 
     final started = await processService.startAether(args);
     if (!started) {
-      return AttemptResult(
-        outcome: AttemptOutcome.startFailed,
-        usedPort: port,
-      );
+      return AttemptResult(outcome: AttemptOutcome.startFailed, usedPort: port);
     }
 
     final diag = await prober.waitForHealthy(port, timeout: healthyTimeout);
@@ -76,11 +70,7 @@ class AetherAttemptRunner {
       source: LogSource.aether,
     );
 
-    return AttemptResult(
-      outcome: _translate(diag),
-      diag: diag,
-      usedPort: port,
-    );
+    return AttemptResult(outcome: _translate(diag), diag: diag, usedPort: port);
   }
 
   AttemptOutcome _translate(SocksDiag diag) {

@@ -49,15 +49,17 @@ class VpngateFullPageParser {
       final key = '$ip:$port';
       if (seen.add(key)) {
         final countryInfo = VpngateCountryExtractor.extract(context);
-        servers.add(SstpServer(
-          ip: ip,
-          port: port,
-          country: countryInfo.name,
-          countryShort: countryInfo.code,
-          ping: 0,
-          speed: 0,
-          operator: '',
-        ));
+        servers.add(
+          SstpServer(
+            ip: ip,
+            port: port,
+            country: countryInfo.name,
+            countryShort: countryInfo.code,
+            ping: 0,
+            speed: 0,
+            operator: '',
+          ),
+        );
       }
     }
     return servers;

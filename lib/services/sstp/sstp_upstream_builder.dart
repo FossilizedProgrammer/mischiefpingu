@@ -7,10 +7,7 @@ class SstpUpstreamBuilder {
   final AppSettings settings;
   final ProcessService processService;
 
-  SstpUpstreamBuilder({
-    required this.settings,
-    required this.processService,
-  });
+  SstpUpstreamBuilder({required this.settings, required this.processService});
 
   /// args مربوط به upstream را به لیست اضافه می‌کند.
   void apply(List<String> args) {
@@ -49,10 +46,7 @@ class SstpUpstreamBuilder {
   }
 
   void _applyAether(List<String> args) {
-    args.addAll([
-      '-proxy',
-      'socks5://127.0.0.1:${settings.aetherLocalPort}',
-    ]);
+    args.addAll(['-proxy', 'socks5://127.0.0.1:${settings.aetherLocalPort}']);
     processService.addLog(
       '→ SSTP upstream: Aether (127.0.0.1:${settings.aetherLocalPort})',
       source: LogSource.sstp,
@@ -60,10 +54,7 @@ class SstpUpstreamBuilder {
   }
 
   void _applyPsiphon(List<String> args) {
-    args.addAll([
-      '-proxy',
-      'socks5://127.0.0.1:${settings.socksPort}',
-    ]);
+    args.addAll(['-proxy', 'socks5://127.0.0.1:${settings.socksPort}']);
     processService.addLog(
       '→ SSTP upstream: Psiphon (127.0.0.1:${settings.socksPort})',
       source: LogSource.sstp,
@@ -71,10 +62,7 @@ class SstpUpstreamBuilder {
   }
 
   void _applyTor(List<String> args) {
-    args.addAll([
-      '-proxy',
-      'socks5://127.0.0.1:${settings.torSocksPort}',
-    ]);
+    args.addAll(['-proxy', 'socks5://127.0.0.1:${settings.torSocksPort}']);
     processService.addLog(
       '→ SSTP upstream: Tor (127.0.0.1:${settings.torSocksPort})',
       source: LogSource.sstp,

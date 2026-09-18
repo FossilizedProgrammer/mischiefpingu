@@ -1,6 +1,7 @@
 library;
 
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import 'logo_mode.dart';
@@ -36,7 +37,8 @@ class LogoStateMachine {
   /// شروع اولیه با hi — بعد از hiDuration به normal برمی‌گردد.
   void startInitial() {
     debugPrint(
-        'LogoStateMachine: startInitial (hi for ${hiDuration.inSeconds}s)');
+      'LogoStateMachine: startInitial (hi for ${hiDuration.inSeconds}s)',
+    );
     _applyMode(LogoMode.hi, hiDuration);
   }
 
@@ -52,8 +54,10 @@ class LogoStateMachine {
       _queuedMode = null;
     }
 
-    debugPrint('LogoStateMachine: transition → $newMode '
-        '(${_durationFor(newMode).inSeconds}s)');
+    debugPrint(
+      'LogoStateMachine: transition → $newMode '
+      '(${_durationFor(newMode).inSeconds}s)',
+    );
     _applyMode(newMode, _durationFor(newMode));
   }
 

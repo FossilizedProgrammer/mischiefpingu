@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
+
 import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 
@@ -14,7 +15,8 @@ mixin WindowCloseHandler<T extends StatefulWidget> on State<T> {
     final provider = context.read<AppProvider>();
     final ps = provider.processService;
 
-    final hasActiveTunnel = ps.isPsiphonRunning ||
+    final hasActiveTunnel =
+        ps.isPsiphonRunning ||
         ps.isAetherRunning ||
         ps.isTorRunning ||
         ps.isSstpRunning;

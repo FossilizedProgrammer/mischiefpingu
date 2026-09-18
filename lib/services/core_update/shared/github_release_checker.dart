@@ -12,17 +12,15 @@ class GithubReleaseChecker {
   final CoreUpdateNetwork network;
   final void Function(String)? log;
 
-  GithubReleaseChecker({
-    required this.spec,
-    required this.network,
-    this.log,
-  });
+  GithubReleaseChecker({required this.spec, required this.network, this.log});
 
   void _log(String m) => log?.call(m);
   bool get _isWin => AppDataService.isWindows;
 
-  Future<CoreUpdateInfo> check(String? proxy,
-      {required String installed}) async {
+  Future<CoreUpdateInfo> check(
+    String? proxy, {
+    required String installed,
+  }) async {
     try {
       network.logRoute(proxy);
       final rel = await network.getJson(
@@ -51,10 +49,13 @@ class GithubReleaseChecker {
         url = (asset['browser_download_url'] as String? ?? '');
         size = (asset['size'] as num? ?? 0).toInt();
         _log(
-            '→ ${spec.displayName} asset chosen: ${asset['name']} ($size bytes)');
+          '→ ${spec.displayName} asset chosen: ${asset['name']} ($size bytes)',
+        );
       } else {
-        _log('⚠ No matching ${spec.displayName} asset found for arch=$arch '
-            '(${_isWin ? 'windows' : 'linux'})');
+        _log(
+          '⚠ No matching ${spec.displayName} asset found for arch=$arch '
+          '(${_isWin ? 'windows' : 'linux'})',
+        );
       }
 
       return CoreUpdateInfo(
@@ -62,7 +63,8 @@ class GithubReleaseChecker {
         displayName: spec.displayName,
         installedVersion: installed,
         latestVersion: latest.isEmpty ? installed : latest,
-        hasUpdate: latest.isNotEmpty &&
+        hasUpdate:
+            latest.isNotEmpty &&
             (CoreUpdateUtils.isMissingVersion(installed) ||
                 CoreUpdateUtils.isNewerVersion(installed, latest)),
         downloadUrl: url,

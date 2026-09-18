@@ -1,6 +1,7 @@
 library;
 
 import 'dart:io';
+
 import '../core_update_utils.dart';
 
 class TorVersionQuery {
@@ -10,8 +11,9 @@ class TorVersionQuery {
   static Future<String?> query(String exe) async {
     try {
       if (!await File(exe).exists()) return null;
-      final r = await Process.run(exe, ['--version'])
-          .timeout(const Duration(seconds: 10));
+      final r = await Process.run(exe, [
+        '--version',
+      ]).timeout(const Duration(seconds: 10));
       final out = '${r.stdout}${r.stderr}'.trim();
       return out.isEmpty ? null : out;
     } catch (_) {

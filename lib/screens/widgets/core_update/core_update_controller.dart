@@ -113,7 +113,9 @@ class CoreUpdateController extends ChangeNotifier {
   }
 
   Future<void> _postUpdatePsiphon(
-      CoreUpdateService svc, AppProvider provider) async {
+    CoreUpdateService svc,
+    AppProvider provider,
+  ) async {
     try {
       final info = await svc.checkForUpdate(
         'psiphon',
@@ -126,8 +128,9 @@ class CoreUpdateController extends ChangeNotifier {
         await provider.saveSettings();
       }
     } catch (_) {}
-    await _states[CoreKind.psiphon]!
-        .refreshInstalled(psiphonRev: provider.settings.psiphonBuildRev);
+    await _states[CoreKind.psiphon]!.refreshInstalled(
+      psiphonRev: provider.settings.psiphonBuildRev,
+    );
   }
 
   static String _coreIdFor(CoreKind kind) {

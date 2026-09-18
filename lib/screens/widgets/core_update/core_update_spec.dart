@@ -17,14 +17,8 @@ class CoreUpdateSpec {
 }
 
 const List<CoreUpdateSpec> coreUpdateSpecs = [
-  CoreUpdateSpec(
-    kind: CoreKind.aether,
-    displayName: 'Aether',
-  ),
-  CoreUpdateSpec(
-    kind: CoreKind.tor,
-    displayName: 'Tor',
-  ),
+  CoreUpdateSpec(kind: CoreKind.aether, displayName: 'Aether'),
+  CoreUpdateSpec(kind: CoreKind.tor, displayName: 'Tor'),
   CoreUpdateSpec(
     kind: CoreKind.psiphon,
     displayName: 'Psiphon (official)',

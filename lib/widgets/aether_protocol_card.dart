@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
 import '../l10n/app_localizations.dart';
 import '../providers/app_provider.dart';
 import 'aether/aether_dropdown_field.dart';
@@ -22,7 +23,8 @@ class AetherProtocolCard extends StatelessWidget {
 
     final protocolLocked = s.isAetherProtocolLockedByProfile;
 
-    final showMasqueSection = !protocolLocked &&
+    final showMasqueSection =
+        !protocolLocked &&
         (s.aetherProtocol == 'masque' || s.aetherProtocol == 'mim');
 
     void save() {
@@ -63,8 +65,8 @@ class AetherProtocolCard extends StatelessWidget {
     final effectiveProtocol = protocolLocked
         ? 'masque'
         : (protocols.any((e) => e.key == s.aetherProtocol)
-            ? s.aetherProtocol
-            : protocols.first.key);
+              ? s.aetherProtocol
+              : protocols.first.key);
 
     return Card(
       margin: const EdgeInsets.fromLTRB(12, 8, 12, 8),
@@ -100,9 +102,7 @@ class AetherProtocolCard extends StatelessWidget {
             ),
             if (showMasqueSection) ...[
               const SizedBox(height: 12),
-              AetherMasqueSection(
-                isRunning: isRunning,
-              ),
+              AetherMasqueSection(isRunning: isRunning),
             ],
             const SizedBox(height: 16),
             AetherDropdownField(

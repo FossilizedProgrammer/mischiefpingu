@@ -24,10 +24,7 @@ class PortManager {
   ///   2. اگر bind شکست خورد، یعنی چیزی آن را اشغال کرده
   static Future<bool> isFree(int port) async {
     try {
-      final s = await ServerSocket.bind(
-        InternetAddress.loopbackIPv4,
-        port,
-      );
+      final s = await ServerSocket.bind(InternetAddress.loopbackIPv4, port);
       await s.close();
       return true;
     } catch (_) {

@@ -1,6 +1,7 @@
 library;
 
 import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'vpngate_scraper_service.dart';
@@ -25,7 +26,8 @@ class SstpServerStore {
   /// ادغام سرورهای جدید با قبلی، بدون تکرار (بر اساس ip:port).
   /// برمی‌گرداند: (همه سرورها، تعداد جدید)
   Future<({List<SstpServer> all, int added})> merge(
-      List<SstpServer> incoming) async {
+    List<SstpServer> incoming,
+  ) async {
     final existing = await load();
     final seen = existing.map((e) => e.key).toSet();
     var added = 0;

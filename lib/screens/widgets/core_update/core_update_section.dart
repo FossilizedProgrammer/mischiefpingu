@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../l10n/app_localizations.dart';
 import 'core_update_message_boxes.dart';
 
@@ -112,9 +113,7 @@ class CoreUpdateSection extends StatelessWidget {
         ],
         if (updating) ...[
           const SizedBox(height: 8),
-          LinearProgressIndicator(
-            value: progress > 0 ? progress / 100 : null,
-          ),
+          LinearProgressIndicator(value: progress > 0 ? progress / 100 : null),
         ],
       ],
     );

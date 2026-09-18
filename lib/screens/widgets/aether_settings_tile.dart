@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 import '../../widgets/aether_protocol_card.dart';
@@ -47,8 +48,11 @@ class AetherSettingsTile extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.cloud_outlined,
-                    size: 18, color: Colors.white),
+                child: const Icon(
+                  Icons.cloud_outlined,
+                  size: 18,
+                  color: Colors.white,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -59,8 +63,10 @@ class AetherSettingsTile extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../l10n/app_localizations.dart';
 import '../../models/settings_model.dart';
 import '../../providers/app_provider.dart';
@@ -65,10 +66,12 @@ class AetherProfileSelector extends StatelessWidget {
             contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           ),
           items: aetherProfiles
-              .map((p) => DropdownMenuItem(
-                    value: p.id,
-                    child: Text(_profileLabel(p.id, l10n)),
-                  ))
+              .map(
+                (p) => DropdownMenuItem(
+                  value: p.id,
+                  child: Text(_profileLabel(p.id, l10n)),
+                ),
+              )
               .toList(),
           onChanged: isRunning
               ? null

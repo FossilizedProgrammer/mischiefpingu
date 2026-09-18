@@ -11,10 +11,7 @@ extension AppProviderTorPreflight on AppProvider {
       final binaryPath = await AppDataService.findTorBinary();
 
       if (binaryPath != null && await File(binaryPath).exists()) {
-        processService.addLog(
-          '✓ Tor binary found: $binaryPath',
-          source: src,
-        );
+        processService.addLog('✓ Tor binary found: $binaryPath', source: src);
         return true;
       }
 

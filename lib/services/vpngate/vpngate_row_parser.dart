@@ -68,8 +68,10 @@ class VpngateRowParser {
   }
 
   static String _parseOperator(String row) {
-    final m =
-        RegExp(r'\*By\s+([^<*\n]{2,50})', caseSensitive: false).firstMatch(row);
+    final m = RegExp(
+      r'\*By\s+([^<*\n]{2,50})',
+      caseSensitive: false,
+    ).firstMatch(row);
     return m != null ? m.group(1)!.trim() : '';
   }
 

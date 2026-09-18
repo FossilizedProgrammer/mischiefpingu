@@ -40,10 +40,7 @@ class AetherTestHelpers {
     try {
       return await fn();
     } catch (e) {
-      processService.addLog(
-        '⚠ step skipped: $e',
-        source: LogSource.aether,
-      );
+      processService.addLog('⚠ step skipped: $e', source: LogSource.aether);
       return null;
     }
   }

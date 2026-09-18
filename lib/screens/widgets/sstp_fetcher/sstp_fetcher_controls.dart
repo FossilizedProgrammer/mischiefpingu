@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../l10n/app_localizations.dart';
 import '../../../providers/sstp_fetcher_provider.dart';
 
@@ -28,13 +29,12 @@ class SstpFetcherControls extends StatelessWidget {
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           initialValue: fetcher.proxyMode,
-          decoration: InputDecoration(
-            labelText: l10n.fetchVia,
-            isDense: true,
-          ),
+          decoration: InputDecoration(labelText: l10n.fetchVia, isDense: true),
           items: [
             DropdownMenuItem(
-                value: 'auto', child: Text(l10n.autoFirstRunningProxy)),
+              value: 'auto',
+              child: Text(l10n.autoFirstRunningProxy),
+            ),
             DropdownMenuItem(value: 'direct', child: Text(l10n.directNoProxy)),
             const DropdownMenuItem(value: 'psiphon', child: Text('Psiphon')),
             const DropdownMenuItem(value: 'aether', child: Text('Aether')),
@@ -79,14 +79,16 @@ class SstpFetcherControls extends StatelessWidget {
                 onPressed: fetcher.servers.isEmpty
                     ? null
                     : (fetcher.isHealthChecking
-                        ? fetcher.cancelHealthCheck
-                        : fetcher.checkAllHealth),
-                icon: Icon(fetcher.isHealthChecking
-                    ? Icons.stop
-                    : Icons.network_check),
-                label: Text(fetcher.isHealthChecking
-                    ? '${l10n.stopHealthCheck} (${fetcher.healthProgressDone}/${fetcher.healthProgressTotal})'
-                    : l10n.checkHealth),
+                          ? fetcher.cancelHealthCheck
+                          : fetcher.checkAllHealth),
+                icon: Icon(
+                  fetcher.isHealthChecking ? Icons.stop : Icons.network_check,
+                ),
+                label: Text(
+                  fetcher.isHealthChecking
+                      ? '${l10n.stopHealthCheck} (${fetcher.healthProgressDone}/${fetcher.healthProgressTotal})'
+                      : l10n.checkHealth,
+                ),
                 style: FilledButton.styleFrom(
                   backgroundColor: fetcher.isHealthChecking
                       ? Colors.red

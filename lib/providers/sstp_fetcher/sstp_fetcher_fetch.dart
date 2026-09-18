@@ -37,10 +37,7 @@ extension SstpFetcherFetch on SstpFetcherProvider {
           ? '★ Added ${merged.added} new server(s) (${result.servers.length} fetched)'
           : 'No new servers (${result.servers.length} fetched, all duplicates)';
 
-      processService.addLog(
-        '★ vpngate: $lastMessage',
-        source: 'Vpngate',
-      );
+      processService.addLog('★ vpngate: $lastMessage', source: 'Vpngate');
 
       touch();
 

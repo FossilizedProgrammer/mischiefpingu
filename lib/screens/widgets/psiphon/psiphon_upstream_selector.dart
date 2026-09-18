@@ -1,6 +1,7 @@
 library;
 
 import 'package:flutter/material.dart';
+
 import '../../../l10n/app_localizations.dart';
 import 'psiphon_manual_proxy_section.dart';
 
@@ -27,10 +28,7 @@ class PsiphonUpstreamSelector extends StatelessWidget {
         const Divider(height: 28),
         DropdownButtonFormField<int>(
           initialValue: upstreamType == 4 ? 0 : upstreamType,
-          decoration: InputDecoration(
-            labelText: l10n.upstream,
-            isDense: true,
-          ),
+          decoration: InputDecoration(labelText: l10n.upstream, isDense: true),
           items: [
             DropdownMenuItem(value: 0, child: Text(l10n.directNoUpstream)),
             DropdownMenuItem(value: 1, child: Text(l10n.manualProxy)),

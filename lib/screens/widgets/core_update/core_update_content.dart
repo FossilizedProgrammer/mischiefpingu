@@ -1,6 +1,7 @@
 library;
 
 import 'package:flutter/material.dart';
+
 import '../../../l10n/app_localizations.dart';
 
 import 'core_update_controller.dart';
@@ -55,21 +56,23 @@ class CoreUpdateContent extends StatelessWidget {
       final spec = CoreUpdateController.specs[i];
       final state = controller.stateOf(spec.kind);
 
-      widgets.add(CoreUpdateSection(
-        name: spec.displayName,
-        installed: state.installed,
-        latest: state.latest,
-        busy: state.checking || state.updating,
-        checking: state.checking,
-        updating: state.updating,
-        progress: state.progress,
-        onCheck: () => controller.check(spec.kind),
-        onUpdate: () => controller.update(spec.kind),
-        updateLabel: state.missing ? spec.updateLabelWhenMissing : null,
-        note: spec.note,
-        downloadUrl: state.downloadUrl,
-        checkMessage: state.checkMessage,
-      ));
+      widgets.add(
+        CoreUpdateSection(
+          name: spec.displayName,
+          installed: state.installed,
+          latest: state.latest,
+          busy: state.checking || state.updating,
+          checking: state.checking,
+          updating: state.updating,
+          progress: state.progress,
+          onCheck: () => controller.check(spec.kind),
+          onUpdate: () => controller.update(spec.kind),
+          updateLabel: state.missing ? spec.updateLabelWhenMissing : null,
+          note: spec.note,
+          downloadUrl: state.downloadUrl,
+          checkMessage: state.checkMessage,
+        ),
+      );
 
       if (i < CoreUpdateController.specs.length - 1) {
         widgets.add(const Divider(height: 24));

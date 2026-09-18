@@ -1,6 +1,7 @@
 library;
 
 import 'package:flutter/material.dart';
+
 import '../../l10n/language_selector_tile.dart';
 import 'theme_selector_tile.dart';
 import '../../widgets/notifications_settings_tile.dart';

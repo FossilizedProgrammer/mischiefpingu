@@ -59,7 +59,8 @@ class TorConfigBuilder {
       sb.writeln('UseBridges 1');
       final pt = lyrebirdPath ?? 'lyrebird';
       sb.writeln(
-          'ClientTransportPlugin obfs4,meek_lite,webtunnel,scramblesuit,snowflake exec ${_p(pt)}');
+        'ClientTransportPlugin obfs4,meek_lite,webtunnel,scramblesuit,snowflake exec ${_p(pt)}',
+      );
       if (conjurePath != null && conjurePath.isNotEmpty) {
         sb.writeln('ClientTransportPlugin conjure exec ${_p(conjurePath)}');
       }
@@ -70,9 +71,7 @@ class TorConfigBuilder {
 
     Map<String, String>? env;
     if (decision.upstreamSocks != null) {
-      env = {
-        'TOR_PT_PROXY': 'socks5://127.0.0.1:${decision.upstreamSocks}',
-      };
+      env = {'TOR_PT_PROXY': 'socks5://127.0.0.1:${decision.upstreamSocks}'};
     }
 
     final torrc = sb.toString();

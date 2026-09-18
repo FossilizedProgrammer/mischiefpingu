@@ -1,7 +1,9 @@
 library;
 
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
+
 import '../app_data_service.dart';
 import '../core_update_utils.dart';
 import 'core_update_archive_extractor.dart';
@@ -25,8 +27,10 @@ class CoreUpdateProcessUtils {
   Future<bool> isProcessRunning(String binaryName) async {
     try {
       if (_isWin) {
-        final r =
-            await Process.run('tasklist', ['/FI', 'IMAGENAME eq $binaryName']);
+        final r = await Process.run('tasklist', [
+          '/FI',
+          'IMAGENAME eq $binaryName',
+        ]);
         if (r.exitCode == 0) {
           return (r.stdout as String).contains(binaryName);
         }
@@ -49,8 +53,10 @@ class CoreUpdateProcessUtils {
         if (_isWin) {
           await Process.run('taskkill', ['/F', '/IM', binaryName]);
         } else {
-          await Process.run(
-              'pkill', ['-f', '(^|/)${RegExp.escape(binaryName)}\$']);
+          await Process.run('pkill', [
+            '-f',
+            '(^|/)${RegExp.escape(binaryName)}\$',
+          ]);
         }
         await Future.delayed(const Duration(milliseconds: 600));
       }
@@ -132,8 +138,10 @@ class CoreUpdateProcessUtils {
     await Directory(dest).create(recursive: true);
     var count = 0;
 
-    await for (final entity
-        in srcDir.list(recursive: true, followLinks: false)) {
+    await for (final entity in srcDir.list(
+      recursive: true,
+      followLinks: false,
+    )) {
       final rel = p.relative(entity.path, from: src);
       if (rel == '.' || rel.isEmpty) continue;
 
@@ -150,7 +158,8 @@ class CoreUpdateProcessUtils {
           final base = p.basename(destPath).toLowerCase();
           final relParts = p.split(rel);
           final isInsidePt = relParts.contains('pt');
-          final shouldChmod = base == 'aether' ||
+          final shouldChmod =
+              base == 'aether' ||
               base == 'aether.exe' ||
               !base.contains('.') ||
               isInsidePt;
@@ -192,8 +201,10 @@ class CoreUpdateProcessUtils {
     }
 
     if (srcPt == null) {
-      _log('→ installAetherPtDirectory: no `pt` directory found '
-          '(staging=$stagingSource, fallback=$fallbackSource)');
+      _log(
+        '→ installAetherPtDirectory: no `pt` directory found '
+        '(staging=$stagingSource, fallback=$fallbackSource)',
+      );
       return;
     }
 
@@ -213,14 +224,17 @@ class CoreUpdateProcessUtils {
   }
 
   Future<void> updateExecutableDirBinary(
-      String coreId, String stagingPath) async {
+    String coreId,
+    String stagingPath,
+  ) async {
     if (coreId == 'tor') {
       _log('→ Tor kept in data dir only (no exe-dir copy)');
       return;
     }
     if (AppDataService.isRunningInAppImage) {
       _log(
-          '→ AppImage mode: $coreId kept in data dir only (exe dir is read-only)');
+        '→ AppImage mode: $coreId kept in data dir only (exe dir is read-only)',
+      );
       return;
     }
     try {

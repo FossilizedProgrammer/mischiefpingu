@@ -9,8 +9,10 @@ extension AppProviderLifecycle on AppProvider {
       await coreUpdateService.applyPendingUpdates();
       touch();
     } catch (e) {
-      processService.addLog('⚠ Provider initialization failed: $e',
-          source: LogSource.app);
+      processService.addLog(
+        '⚠ Provider initialization failed: $e',
+        source: LogSource.app,
+      );
     }
   }
 
@@ -44,8 +46,10 @@ extension AppProviderLifecycle on AppProvider {
         await processService.stopPsiphon();
       }
     } catch (e) {
-      processService.addLog('⚠ Psiphon shutdown error: $e',
-          source: LogSource.app);
+      processService.addLog(
+        '⚠ Psiphon shutdown error: $e',
+        source: LogSource.app,
+      );
     }
 
     try {
@@ -72,8 +76,10 @@ extension AppProviderLifecycle on AppProvider {
         await processService.stopAether();
       }
     } catch (e) {
-      processService.addLog('⚠ Aether shutdown error: $e',
-          source: LogSource.app);
+      processService.addLog(
+        '⚠ Aether shutdown error: $e',
+        source: LogSource.app,
+      );
     }
 
     try {
@@ -82,7 +88,9 @@ extension AppProviderLifecycle on AppProvider {
 
     await Future.delayed(const Duration(milliseconds: 300));
 
-    processService.addLog('★ All tunnels disconnected. Safe to exit.',
-        source: LogSource.app);
+    processService.addLog(
+      '★ All tunnels disconnected. Safe to exit.',
+      source: LogSource.app,
+    );
   }
 }

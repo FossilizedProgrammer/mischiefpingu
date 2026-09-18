@@ -9,20 +9,20 @@ class AetherChecker {
   final CoreUpdateNetwork network;
   final void Function(String)? log;
 
-  const AetherChecker({
-    required this.network,
-    this.log,
-  });
+  const AetherChecker({required this.network, this.log});
 
   void _log(String m) => log?.call(m);
 
-  Future<CoreUpdateInfo> check(String? proxy,
-      {required String installed}) async {
+  Future<CoreUpdateInfo> check(
+    String? proxy, {
+    required String installed,
+  }) async {
     try {
       network.logRoute(proxy);
       final rel = await network.getJson(
-          'https://api.github.com/repos/CluvexStudio/Aether/releases/latest',
-          proxy);
+        'https://api.github.com/repos/CluvexStudio/Aether/releases/latest',
+        proxy,
+      );
       final tag = (rel['tag_name'] as String? ?? '').trim();
       final latest = tag.replaceAll(RegExp(r'^[vV]'), '').trim();
       final notes = (rel['body'] as String? ?? '').trim();
@@ -50,7 +50,8 @@ class AetherChecker {
         displayName: 'Aether (WARP / MASQUE)',
         installedVersion: installed,
         latestVersion: latest.isEmpty ? installed : latest,
-        hasUpdate: latest.isNotEmpty &&
+        hasUpdate:
+            latest.isNotEmpty &&
             (CoreUpdateUtils.isMissingVersion(installed) ||
                 CoreUpdateUtils.isNewerVersion(installed, latest)),
         downloadUrl: url,

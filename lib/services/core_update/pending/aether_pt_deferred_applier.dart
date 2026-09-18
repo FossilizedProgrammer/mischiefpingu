@@ -1,6 +1,7 @@
 library;
 
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
 
 import '../../app_data_service.dart';
@@ -12,10 +13,7 @@ class AetherPtDeferredApplier {
   final CoreUpdateProcessUtils processUtils;
   final void Function(String)? log;
 
-  AetherPtDeferredApplier({
-    required this.processUtils,
-    this.log,
-  });
+  AetherPtDeferredApplier({required this.processUtils, this.log});
 
   void _log(String m) => log?.call(m);
 
@@ -45,8 +43,10 @@ class AetherPtDeferredApplier {
         src: stagingPt.path,
         dest: destPtPath,
       );
-      _log('★ Aether `pt` directory updated (deferred) — '
-          '$count file(s) copied');
+      _log(
+        '★ Aether `pt` directory updated (deferred) — '
+        '$count file(s) copied',
+      );
     } else {
       _log('→ No `pt` directory in Aether staging dir — skipped');
     }

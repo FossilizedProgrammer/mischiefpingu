@@ -11,8 +11,7 @@ const Map<String, Map<String, String>> kTranslations = {
         'Unofficial Psiphon client, Aether client, Tor client, SSTP client',
     'psiphonConnectionMode': 'Psiphon connection mode',
     'preset1Title': '1 · Fronting (CDN). Best for heavy censorship.',
-    'preset1Subtitle':
-        'Uses the SunAndLion Psiphon Tunnel Core (Unofficial fork of Psiphon tunnel core).',
+    'preset1Subtitle': 'Uses the SunAndLion Psiphon Tunnel Core (Unofficial fork of Psiphon tunnel core).',
     'preset2Title':
         '2 · Aether traffic as upstream. Suitable when Aether works.',
     'preset2Subtitle':
@@ -32,8 +31,7 @@ const Map<String, Map<String, String>> kTranslations = {
     'colorThemeSubtitle': 'Choose a color scheme for the entire app.',
     'notifications': 'Notifications',
     'muteSounds': 'Mute sounds',
-    'muteSoundsSubtitle':
-        'Disable all penguin sounds (ouch / sigh / happy). The visual reactions still play.',
+    'muteSoundsSubtitle': 'Disable all penguin sounds (ouch / sigh / happy). The visual reactions still play.',
     'aetherSettings': 'Aether Settings',
     'psiphonSettings': 'Psiphon Settings',
     'torSettings': 'Tor Settings',
@@ -145,8 +143,7 @@ const Map<String, Map<String, String>> kTranslations = {
     'copyAllIpPort': 'Copy all (ip:port)',
     'copyAllCsv': 'Copy all (CSV with details)',
     'downloadVia': 'Download via',
-    'downloadViaSubtitle':
-        'Checks and downloads ride the selected proxy when direct access is filtered.',
+    'downloadViaSubtitle': 'Checks and downloads ride the selected proxy when direct access is filtered.',
     'autoFirstProxy': 'Auto (first running proxy)',
     'directNoProxyOption': 'Direct (no proxy)',
     'check': 'Check',
@@ -178,8 +175,7 @@ const Map<String, Map<String, String>> kTranslations = {
     'profilePatchyDesc':
         'Unstable mobile data — harder and more resilient search',
     'profileStrict': 'Strict network',
-    'profileStrictDesc':
-        'Restricted Wi-Fi or heavy filtering — fragment + masque-in-masque + noize gfw',
+    'profileStrictDesc': 'Restricted Wi-Fi or heavy filtering — fragment + masque-in-masque + noize gfw',
     'profileManual': 'Manual',
     'profileManualDesc': 'All options manual — for advanced users',
     'protoMasque': 'MASQUE (HTTP/3 or HTTP/2)',
@@ -357,8 +353,7 @@ const Map<String, Map<String, String>> kTranslations = {
     'copyAllIpPort': 'کپی همه (ip:port)',
     'copyAllCsv': 'کپی همه (CSV با جزئیات)',
     'downloadVia': 'دانلود از طریق',
-    'downloadViaSubtitle':
-        'بررسی و دانلود از پروکسی انتخاب‌شده استفاده می‌کند وقتی دسترسی مستقیم فیلتر باشد.',
+    'downloadViaSubtitle': 'بررسی و دانلود از پروکسی انتخاب‌شده استفاده می‌کند وقتی دسترسی مستقیم فیلتر باشد.',
     'autoFirstProxy': 'خودکار (اولین پروکسی فعال)',
     'directNoProxyOption': 'مستقیم (بدون پروکسی)',
     'check': 'بررسی',
@@ -388,8 +383,7 @@ const Map<String, Map<String, String>> kTranslations = {
     'profilePatchy': 'سیگنال ناپایدار',
     'profilePatchyDesc': 'دیتای موبایل ناپایدار — جستجوی سخت‌تر و مقاوم‌تر',
     'profileStrict': 'شبکه محدود',
-    'profileStrictDesc':
-        'وای‌فای محدود یا فیلتر سنگین — fragment + masque-in-masque + noize gfw',
+    'profileStrictDesc': 'وای‌فای محدود یا فیلتر سنگین — fragment + masque-in-masque + noize gfw',
     'profileManual': 'دستی',
     'profileManualDesc': 'همه گزینه‌ها دستی — برای کاربران حرفه‌ای',
     'protoMasque': 'MASQUE (HTTP/3 یا HTTP/2)',
@@ -475,8 +469,7 @@ const Map<String, Map<String, String>> kTranslations = {
     'customEndpoint': 'Пользовательский endpoint (опционально)',
     'customEndpointHint': 'Оставьте пустым для авто-сканирования',
     'tryLastEndpointFirst': 'Сначала попробовать последний успешный endpoint',
-    'tryLastEndpointFirstSubtitle':
-        'Если включено, попробует последний рабочий endpoint перед сканированием',
+    'tryLastEndpointFirstSubtitle': 'Если включено, попробует последний рабочий endpoint перед сканированием',
     'shareOnLan': 'Общий доступ в LAN (bind 0.0.0.0)',
     'autoReconnectAether': 'Авто-переподключение Aether',
     'socksPort': 'Порт SOCKS',
@@ -569,8 +562,7 @@ const Map<String, Map<String, String>> kTranslations = {
     'copyAllIpPort': 'Копировать все (ip:port)',
     'copyAllCsv': 'Копировать все (CSV с деталями)',
     'downloadVia': 'Скачать через',
-    'downloadViaSubtitle':
-        'Проверки и загрузки используют выбранный прокси, когда прямой доступ фильтруется.',
+    'downloadViaSubtitle': 'Проверки и загрузки используют выбранный прокси, когда прямой доступ фильтруется.',
     'autoFirstProxy': 'Авто (первый активный прокси)',
     'directNoProxyOption': 'Прямое (без прокси)',
     'check': 'Проверить',
@@ -602,8 +594,7 @@ const Map<String, Map<String, String>> kTranslations = {
     'profilePatchyDesc':
         'Нестабильные мобильные данные — более сложный и устойчивый поиск',
     'profileStrict': 'Строгая сеть',
-    'profileStrictDesc':
-        'Ограниченный Wi-Fi или жёсткая фильтрация — fragment + masque-in-masque + noize gfw',
+    'profileStrictDesc': 'Ограниченный Wi-Fi или жёсткая фильтрация — fragment + masque-in-masque + noize gfw',
     'profileManual': 'Ручной',
     'profileManualDesc': 'Все опции вручную — для продвинутых пользователей',
     'protoMasque': 'MASQUE (HTTP/3 или HTTP/2)',

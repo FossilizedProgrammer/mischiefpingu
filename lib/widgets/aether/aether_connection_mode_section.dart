@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 
 class AetherConnectionModeSection extends StatelessWidget {
   final bool isRunning;
 
-  const AetherConnectionModeSection({
-    super.key,
-    required this.isRunning,
-  });
+  const AetherConnectionModeSection({super.key, required this.isRunning});
 
   @override
   Widget build(BuildContext context) {

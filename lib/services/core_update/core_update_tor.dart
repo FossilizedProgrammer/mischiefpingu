@@ -17,13 +17,13 @@ class TorUpdater {
     required CoreUpdatePendingManager pending,
     required CoreUpdateProcessUtils processUtils,
     void Function(String)? log,
-  })  : _checker = TorChecker(network: network, log: log),
-        _installer = TorInstaller(
-          network: network,
-          processUtils: processUtils,
-          deferred: TorDeferredInstaller(pending: pending, log: log),
-          log: log,
-        );
+  }) : _checker = TorChecker(network: network, log: log),
+       _installer = TorInstaller(
+         network: network,
+         processUtils: processUtils,
+         deferred: TorDeferredInstaller(pending: pending, log: log),
+         log: log,
+       );
 
   Future<CoreUpdateInfo> check(String? proxy, {required String installed}) =>
       _checker.check(proxy, installed: installed);
@@ -37,7 +37,8 @@ class TorUpdater {
     final info = await _checker.check(proxy, installed: installed);
     if (info.downloadUrl.isEmpty) {
       throw StateError(
-          'Could not locate a stable Tor expert-bundle from torproject.org.');
+        'Could not locate a stable Tor expert-bundle from torproject.org.',
+      );
     }
     return _installer.install(
       installed: installed,

@@ -16,9 +16,10 @@ class VersionParsers {
   /// پارس نسخه Psiphon از خروجی `-v`.
   static String? parsePsiphon(String? output) {
     if (output == null || output.isEmpty) return null;
-    final revMatch =
-        RegExp(r'Revision:\s*([0-9a-f]{7,40})', caseSensitive: false)
-            .firstMatch(output);
+    final revMatch = RegExp(
+      r'Revision:\s*([0-9a-f]{7,40})',
+      caseSensitive: false,
+    ).firstMatch(output);
     final rev = revMatch?.group(1)?.trim();
     if (rev == null || rev.isEmpty) return null;
     final short = rev.length > 10 ? rev.substring(0, 10) : rev;
@@ -31,8 +32,10 @@ class VersionParsers {
   /// پارس نسخه Tor از خروجی `--version`.
   static String? parseTor(String? output) {
     if (output == null || output.isEmpty) return null;
-    final m = RegExp(r'version\s+([0-9][\w.\-]+)', caseSensitive: false)
-        .firstMatch(output);
+    final m = RegExp(
+      r'version\s+([0-9][\w.\-]+)',
+      caseSensitive: false,
+    ).firstMatch(output);
     if (m != null) return m.group(1)!.trim();
     return output.trim().split('\n').first.trim();
   }
@@ -40,8 +43,8 @@ class VersionParsers {
   /// پارس نسخه semantic از خروجی عمومی (برای SSTP).
   static String? parseSemver(String? output) {
     if (output == null || output.isEmpty) return null;
-    final m =
-        RegExp(r'\b(\d+\.\d+\.\d+(?:[-\+][\w\.]+)?)\b').firstMatch(output);
+    final m = RegExp(r'\b(\d+\.\d+\.\d+(?:[-\+][\w\.]+)?)\b')
+        .firstMatch(output);
     return m?.group(1);
   }
 
@@ -49,8 +52,10 @@ class VersionParsers {
   static bool isNewer(String installed, String latest) {
     List<int> parse(String v) => v
         .split(RegExp(r'[.\-+]'))
-        .map((e) =>
-            int.tryParse(RegExp(r'\d+').firstMatch(e)?.group(0) ?? '0') ?? 0)
+        .map(
+          (e) =>
+              int.tryParse(RegExp(r'\d+').firstMatch(e)?.group(0) ?? '0') ?? 0,
+        )
         .toList();
     final a = parse(installed);
     final b = parse(latest);

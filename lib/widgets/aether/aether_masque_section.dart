@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../providers/app_provider.dart';
 
 class AetherMasqueSection extends StatelessWidget {
   final bool isRunning;
 
-  const AetherMasqueSection({
-    super.key,
-    required this.isRunning,
-  });
+  const AetherMasqueSection({super.key, required this.isRunning});
 
   @override
   Widget build(BuildContext context) {

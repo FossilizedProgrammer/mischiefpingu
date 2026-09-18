@@ -1,6 +1,7 @@
 library;
 
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import '../services/vpngate_scraper_service.dart';
@@ -19,8 +20,9 @@ class SstpFetcherProvider extends ChangeNotifier {
   SstpFetcherProvider({required this.processService});
 
   final _store = SstpServerStore();
-  late final VpngateScraperService _scraper =
-      VpngateScraperService(log: processService.addLog);
+  late final VpngateScraperService _scraper = VpngateScraperService(
+    log: processService.addLog,
+  );
   final _healthChecker = SstpHealthChecker();
 
   List<SstpServer> servers = [];
@@ -49,9 +51,9 @@ class SstpFetcherProvider extends ChangeNotifier {
       health[s.key] ?? SstpHealthResult.unknown;
 
   int get aliveCount => servers.where((s) {
-        final h = health[s.key];
-        return h?.status == SstpHealth.alive;
-      }).length;
+    final h = health[s.key];
+    return h?.status == SstpHealth.alive;
+  }).length;
 
   Future<void> init() async {
     servers = await _store.load();

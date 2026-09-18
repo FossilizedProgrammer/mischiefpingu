@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
+
 import '../providers/app_provider.dart';
 import 'mixins/window_close_handler.dart';
 import 'widgets/main_screen_body.dart';
@@ -32,13 +33,14 @@ class _MainScreenState extends State<MainScreen>
       vsync: this,
       duration: const Duration(milliseconds: 450),
     );
-    _fadeAnim =
-        CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic);
-    _slideAnim = Tween<Offset>(
-      begin: const Offset(0, -0.08),
-      end: Offset.zero,
-    ).animate(
-        CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic));
+    _fadeAnim = CurvedAnimation(
+      parent: _animController,
+      curve: Curves.easeOutCubic,
+    );
+    _slideAnim = Tween<Offset>(begin: const Offset(0, -0.08), end: Offset.zero)
+        .animate(
+          CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
+        );
 
     windowManager.addListener(this);
   }

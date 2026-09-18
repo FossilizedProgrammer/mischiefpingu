@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../l10n/app_localizations.dart';
 import '../providers/cdn_scanner_provider.dart';
 import 'settings_tile_base.dart';
@@ -79,8 +80,9 @@ class _CdnScannerSectionState extends State<CdnScannerSection> {
           ),
           child: Text(
             scan.status,
-            style: theme.textTheme.bodyMedium
-                ?.copyWith(fontWeight: FontWeight.w600),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
         if (scan.isRunning || scan.total > 0) ...[
@@ -124,11 +126,7 @@ class _CdnScannerSectionState extends State<CdnScannerSection> {
           ],
         ),
         const SizedBox(height: 8),
-        CdnCustomIpsManager(
-          scan: scan,
-          inputCtrl: _inputCtrl,
-          theme: theme,
-        ),
+        CdnCustomIpsManager(scan: scan, inputCtrl: _inputCtrl, theme: theme),
         CdnScannerResults(scan: scan, theme: theme),
       ],
     );

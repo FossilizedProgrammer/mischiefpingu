@@ -10,10 +10,7 @@ class SstpConfigBuilder {
 
   late final SstpUpstreamBuilder _upstream;
 
-  SstpConfigBuilder({
-    required this.settings,
-    required this.processService,
-  }) {
+  SstpConfigBuilder({required this.settings, required this.processService}) {
     _upstream = SstpUpstreamBuilder(
       settings: settings,
       processService: processService,

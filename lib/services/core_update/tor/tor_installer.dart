@@ -1,7 +1,9 @@
 library;
 
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
+
 import '../../app_data_service.dart';
 import '../../core_update_utils.dart';
 import '../core_update_network.dart';
@@ -39,8 +41,13 @@ class TorInstaller {
       final isZip = downloadUrl.toLowerCase().endsWith('.zip');
       final archiveName = isZip ? 'tor.zip' : 'tor.tar.gz';
       final archive = '${tmp.path}/$archiveName';
-      await network.download(downloadUrl, archive,
-          proxy: proxy, onProgress: onProgress, onCancelCheck: onCancelCheck);
+      await network.download(
+        downloadUrl,
+        archive,
+        proxy: proxy,
+        onProgress: onProgress,
+        onCancelCheck: onCancelCheck,
+      );
       onProgress?.call(80);
       final extractDir = Directory('${tmp.path}/extract');
       await extractDir.create(recursive: true);
@@ -66,7 +73,10 @@ class TorInstaller {
       }
       final oldSize = await CoreUpdateUtils.fileSize(dest);
       final count = await TorBundleInstaller.installTree(
-          srcRoot: srcRoot, torDir: torDir, log: _log);
+        srcRoot: srcRoot,
+        torDir: torDir,
+        log: _log,
+      );
       if (count == 0) {
         throw StateError('Tor bundle install failed (0 files copied).');
       }
@@ -74,8 +84,10 @@ class TorInstaller {
       await AppDataService.fixDataDirOwnership();
       var installedBin = dest;
       if (!await File(installedBin).exists()) {
-        final found =
-            await CoreUpdateUtils.findFile(Directory(torDir), searchName);
+        final found = await CoreUpdateUtils.findFile(
+          Directory(torDir),
+          searchName,
+        );
         if (found != null) installedBin = found;
       }
       final newSize = await CoreUpdateUtils.fileSize(installedBin);
@@ -84,7 +96,8 @@ class TorInstaller {
           await TorVersionQuery.queryAndParse(installedBin) ?? 'bundle';
       onProgress?.call(100);
       _log(
-          '★ Tor installed: $installed → $newVer ($count files, ${CoreUpdateUtils.formatBytes(oldSize)} → ${CoreUpdateUtils.formatBytes(newSize)}) → $torDir');
+        '★ Tor installed: $installed → $newVer ($count files, ${CoreUpdateUtils.formatBytes(oldSize)} → ${CoreUpdateUtils.formatBytes(newSize)}) → $torDir',
+      );
       return true;
     } finally {
       try {

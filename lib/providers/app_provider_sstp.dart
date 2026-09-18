@@ -46,10 +46,7 @@ extension AppProviderSstp on AppProvider {
         return;
       }
 
-      processService.addLog(
-        '✓ SSTP binary found: $binaryPath',
-        source: src,
-      );
+      processService.addLog('✓ SSTP binary found: $binaryPath', source: src);
     } catch (e) {
       processService.addLog('✗ Error checking SSTP binary: $e', source: src);
     }
@@ -121,10 +118,7 @@ extension AppProviderSstp on AppProvider {
       }
 
       final serverInfo = '${settings.sstpServer}:${settings.sstpPort}';
-      processService.prepareSstpNotification(
-        serverInfo,
-        'Server: $serverInfo',
-      );
+      processService.prepareSstpNotification(serverInfo, 'Server: $serverInfo');
 
       final ok = await processService.startSstp(
         args: args,

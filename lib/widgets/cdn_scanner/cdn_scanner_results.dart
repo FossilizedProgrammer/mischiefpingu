@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 import '../../providers/cdn_scanner_provider.dart';
@@ -9,11 +10,7 @@ class CdnScannerResults extends StatelessWidget {
   final CdnScannerProvider scan;
   final ThemeData theme;
 
-  const CdnScannerResults({
-    super.key,
-    required this.scan,
-    required this.theme,
-  });
+  const CdnScannerResults({super.key, required this.scan, required this.theme});
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +27,9 @@ class CdnScannerResults extends StatelessWidget {
           children: [
             Text(
               l10n.usableIps,
-              style: theme.textTheme.titleSmall
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const Spacer(),
             IconButton(
@@ -54,7 +52,8 @@ class CdnScannerResults extends StatelessWidget {
           height: 200,
           decoration: BoxDecoration(
             border: Border.all(
-                color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              color: theme.colorScheme.outline.withValues(alpha: 0.3),
+            ),
             borderRadius: BorderRadius.circular(12),
           ),
           child: ListView.builder(
@@ -69,13 +68,17 @@ class CdnScannerResults extends StatelessWidget {
                   child: Text(
                     '${i + 1}',
                     style: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.bold),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 title: Text(
                   r.ip,
                   style: const TextStyle(
-                      fontFamily: 'monospace', fontWeight: FontWeight.w600),
+                    fontFamily: 'monospace',
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 subtitle: Text(
                   'Score ${r.score} · Rel ${r.reliability}/5 · ${r.latencyMs}ms · ${r.sni}',
@@ -102,8 +105,11 @@ class CdnScannerResults extends StatelessWidget {
                         'IP + SNI',
                       ),
                     ),
-                    const Icon(Icons.check_circle,
-                        color: Colors.green, size: 18),
+                    const Icon(
+                      Icons.check_circle,
+                      color: Colors.green,
+                      size: 18,
+                    ),
                   ],
                 ),
               );
@@ -118,7 +124,9 @@ class CdnScannerResults extends StatelessWidget {
                 onPressed: () async {
                   final top5 = scan.good.take(5).map((e) => e.ip).toList();
                   await app.applyScannerResults(
-                      ips: top5, tlsSni: scan.bestSni);
+                    ips: top5,
+                    tlsSni: scan.bestSni,
+                  );
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(l10n.appliedTop5Ips)),
@@ -134,12 +142,12 @@ class CdnScannerResults extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: () async {
                   await app.applyScannerResults(
-                      ips: scan.topIps, tlsSni: scan.bestSni);
+                    ips: scan.topIps,
+                    tlsSni: scan.bestSni,
+                  );
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(l10n.appliedTop20Ips),
-                      ),
+                      SnackBar(content: Text(l10n.appliedTop20Ips)),
                     );
                   }
                 },

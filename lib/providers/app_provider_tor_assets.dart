@@ -25,14 +25,8 @@ extension AppProviderTorAssets on AppProvider {
         '$torDir/pluggable_transports/conjure-client',
         '$torDir/conjure-client',
       ]),
-      geoipPath: await _firstExisting([
-        '$torDir/geoip',
-        '$dataDir/geoip',
-      ]),
-      geoip6Path: await _firstExisting([
-        '$torDir/geoip6',
-        '$dataDir/geoip6',
-      ]),
+      geoipPath: await _firstExisting(['$torDir/geoip', '$dataDir/geoip']),
+      geoip6Path: await _firstExisting(['$torDir/geoip6', '$dataDir/geoip6']),
     );
   }
 

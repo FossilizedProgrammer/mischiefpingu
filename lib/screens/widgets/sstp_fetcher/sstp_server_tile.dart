@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../l10n/app_localizations.dart';
 import '../../../services/sstp_health_checker.dart';
 import '../../../services/vpngate_scraper_service.dart';
@@ -27,8 +28,10 @@ class SstpServerTile extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final h = health.status;
     final color = SstpHealthHelpers.color(h, theme);
-    final badgeColor =
-        SstpCountryHelpers.badgeColor(server.countryShort, theme);
+    final badgeColor = SstpCountryHelpers.badgeColor(
+      server.countryShort,
+      theme,
+    );
     final hasCountry =
         server.country.isNotEmpty || server.countryShort.isNotEmpty;
 
@@ -61,7 +64,9 @@ class SstpServerTile extends StatelessWidget {
               ),
               child: Text(
                 SstpCountryHelpers.shortName(
-                    server.country, server.countryShort),
+                  server.country,
+                  server.countryShort,
+                ),
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,

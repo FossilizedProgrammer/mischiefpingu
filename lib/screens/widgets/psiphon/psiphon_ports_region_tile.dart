@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../../l10n/app_localizations.dart';
 import '../../../providers/app_provider.dart';
 
@@ -67,7 +68,8 @@ class PsiphonPortsRegionTile extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
-          initialValue: providerS.egressRegion.isNotEmpty &&
+          initialValue:
+              providerS.egressRegion.isNotEmpty &&
                   regions.contains(providerS.egressRegion)
               ? providerS.egressRegion
               : '',
@@ -76,10 +78,12 @@ class PsiphonPortsRegionTile extends StatelessWidget {
             isDense: true,
           ),
           items: regions
-              .map((r) => DropdownMenuItem(
-                    value: r,
-                    child: Text(r.isEmpty ? l10n.any : r),
-                  ))
+              .map(
+                (r) => DropdownMenuItem(
+                  value: r,
+                  child: Text(r.isEmpty ? l10n.any : r),
+                ),
+              )
               .toList(),
           onChanged: onEgressRegionChanged,
         ),

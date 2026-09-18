@@ -1,7 +1,9 @@
 library;
 
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
+
 import '../../app_data_service.dart';
 import '../../core_update_models.dart';
 import '../../core_update_utils.dart';
@@ -45,12 +47,16 @@ class AetherInstaller {
       final isZip = info.downloadUrl.toLowerCase().endsWith('.zip');
       final archiveName = isZip ? 'aether.zip' : 'aether.tar.gz';
       final archive = '${tmp.path}/$archiveName';
-      await network.download(info.downloadUrl, archive,
-          proxy: proxy,
-          onProgress: onProgress,
-          onCancelCheck: onCancelCheck,
-          totalHint:
-              info.downloadSizeBytes > 0 ? info.downloadSizeBytes : 4500000);
+      await network.download(
+        info.downloadUrl,
+        archive,
+        proxy: proxy,
+        onProgress: onProgress,
+        onCancelCheck: onCancelCheck,
+        totalHint: info.downloadSizeBytes > 0
+            ? info.downloadSizeBytes
+            : 4500000,
+      );
       onProgress?.call(80);
       await processUtils.extractArchive(archive, tmp.path);
       final searchName = 'aether${AppDataService.exeExt}';
@@ -65,8 +71,9 @@ class AetherInstaller {
       final isRunning = await processUtils.isProcessRunning(binName);
 
       if (isRunning) {
-        final stagingDir = await Directory.systemTemp
-            .createTemp('mischiefpingu_deferred_aether_');
+        final stagingDir = await Directory.systemTemp.createTemp(
+          'mischiefpingu_deferred_aether_',
+        );
         final stagingPath = '${stagingDir.path}/$binName';
         await File(found).copy(stagingPath);
         if (!AppDataService.isWindows) {
@@ -76,28 +83,35 @@ class AetherInstaller {
         final srcPt = Directory(p.join(tmp.path, 'pt'));
         if (await srcPt.exists()) {
           final destPtPath = p.join(stagingDir.path, 'pt');
-          _log('→ Staging Aether `pt` directory for deferred update: '
-              '${srcPt.path} → $destPtPath');
+          _log(
+            '→ Staging Aether `pt` directory for deferred update: '
+            '${srcPt.path} → $destPtPath',
+          );
           final count = await processUtils.copyDirectoryTree(
             src: srcPt.path,
             dest: destPtPath,
           );
           _log('→ Staged $count file(s) of `pt` in deferred staging dir');
         } else {
-          _log('⚠ No `pt` directory found in downloaded archive — '
-              'only binary will be applied on next startup');
+          _log(
+            '⚠ No `pt` directory found in downloaded archive — '
+            'only binary will be applied on next startup',
+          );
         }
 
-        await pending.add(PendingCoreUpdate(
-          coreId: 'aether',
-          stagingPath: stagingPath,
-          destPath: dest,
-          version: info.latestVersion,
-          createdAt: DateTime.now(),
-        ));
+        await pending.add(
+          PendingCoreUpdate(
+            coreId: 'aether',
+            stagingPath: stagingPath,
+            destPath: dest,
+            version: info.latestVersion,
+            createdAt: DateTime.now(),
+          ),
+        );
         onProgress?.call(100);
         _log(
-            '★ Aether update downloaded (${info.latestVersion}) — deferred, will apply on next startup');
+          '★ Aether update downloaded (${info.latestVersion}) — deferred, will apply on next startup',
+        );
         return true;
       }
 
@@ -115,12 +129,15 @@ class AetherInstaller {
         fallbackSource: platformDir,
       );
 
-      final newVer = CoreUpdateUtils.parseAetherVersion(
-              await AetherAssetResolver.queryVersion(dest)) ??
+      final newVer =
+          CoreUpdateUtils.parseAetherVersion(
+            await AetherAssetResolver.queryVersion(dest),
+          ) ??
           info.latestVersion;
       onProgress?.call(100);
       _log(
-          '★ Aether updated: $installed → $newVer (${CoreUpdateUtils.formatBytes(oldSize)} → ${CoreUpdateUtils.formatBytes(newSize)})');
+        '★ Aether updated: $installed → $newVer (${CoreUpdateUtils.formatBytes(oldSize)} → ${CoreUpdateUtils.formatBytes(newSize)})',
+      );
       return true;
     } finally {
       try {

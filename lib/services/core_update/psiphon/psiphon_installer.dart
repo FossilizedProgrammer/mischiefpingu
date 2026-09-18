@@ -1,7 +1,9 @@
 library;
 
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
+
 import '../../app_data_service.dart';
 import '../../core_update_models.dart';
 import '../../core_update_utils.dart';
@@ -52,8 +54,9 @@ class PsiphonInstaller {
         proxy: proxy,
         onProgress: onProgress,
         onCancelCheck: onCancelCheck,
-        totalHint:
-            info.downloadSizeBytes > 0 ? info.downloadSizeBytes : 10435684,
+        totalHint: info.downloadSizeBytes > 0
+            ? info.downloadSizeBytes
+            : 10435684,
       );
       onProgress?.call(85);
 
@@ -66,26 +69,30 @@ class PsiphonInstaller {
       }
       if (newSize == 0) throw StateError('Downloaded file is empty.');
 
-      final dest =
-          await AppDataService.getBinaryPathForWrite('psiphon-tunnel-core');
+      final dest = await AppDataService.getBinaryPathForWrite(
+        'psiphon-tunnel-core',
+      );
       final binName = p.basename(dest);
       final isRunning = await processUtils.isProcessRunning(binName);
 
       if (isRunning) {
-        final stagingDir = await Directory.systemTemp
-            .createTemp('mischiefpingu_deferred_psi_');
+        final stagingDir = await Directory.systemTemp.createTemp(
+          'mischiefpingu_deferred_psi_',
+        );
         final stagingPath = '${stagingDir.path}/$binName';
         await File(incoming).copy(stagingPath);
         if (!_isWin) {
           await Process.run('chmod', ['+x', stagingPath]);
         }
-        await pending.add(PendingCoreUpdate(
-          coreId: 'psiphon',
-          stagingPath: stagingPath,
-          destPath: dest,
-          version: info.latestVersion,
-          createdAt: DateTime.now(),
-        ));
+        await pending.add(
+          PendingCoreUpdate(
+            coreId: 'psiphon',
+            stagingPath: stagingPath,
+            destPath: dest,
+            version: info.latestVersion,
+            createdAt: DateTime.now(),
+          ),
+        );
         onProgress?.call(100);
         _log(
           '★ Official Psiphon core update downloaded (${info.latestVersion}) '

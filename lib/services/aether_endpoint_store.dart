@@ -26,8 +26,9 @@ class AetherEndpointStore {
       if (saved != null && saved.isNotEmpty) return saved;
     } catch (_) {}
 
-    final proto =
-        settings.aetherProtocol == 'auto' ? 'masque' : settings.aetherProtocol;
+    final proto = settings.aetherProtocol == 'auto'
+        ? 'masque'
+        : settings.aetherProtocol;
     return AetherConfigParser.extractEndpoint(proto);
   }
 

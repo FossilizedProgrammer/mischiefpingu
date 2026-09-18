@@ -18,7 +18,8 @@ class CoreUpdateDownloader {
       if (r.exitCode == 0) return;
     } catch (_) {}
     throw StateError(
-        'curl not found — install curl to download via proxy (or use Direct).');
+      'curl not found — install curl to download via proxy (or use Direct).',
+    );
   }
 
   /// دانلود فایل. اگر proxy داده شود، از curl استفاده می‌کند.
@@ -66,7 +67,8 @@ class CoreUpdateDownloader {
       final code = await proc.exitCode;
       if (code != 0) {
         throw HttpException(
-            'curl download failed (code $code): ${errBuf.toString().trim()}');
+          'curl download failed (code $code): ${errBuf.toString().trim()}',
+        );
       }
       try {
         final size = await File(dest).length();
@@ -84,8 +86,9 @@ class CoreUpdateDownloader {
       if (res.statusCode != 200) {
         throw HttpException('HTTP ${res.statusCode} downloading $url');
       }
-      final total =
-          res.contentLength > 0 ? res.contentLength : (totalHint ?? 0);
+      final total = res.contentLength > 0
+          ? res.contentLength
+          : (totalHint ?? 0);
       final file = File(dest).openWrite();
       var done = 0;
       await for (final chunk in res) {

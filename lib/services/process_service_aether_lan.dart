@@ -61,12 +61,8 @@ extension ProcessServiceAetherLan on ProcessService {
   ///   - local mode: Aether مستقیم روی loopback
   ///
   /// خروجی: (args نهایی, publicPort, internalPort)
-  Future<
-      ({
-        List<String> args,
-        int? publicPort,
-        int? internalPort,
-      })> prepareAetherArgs({
+  Future<({List<String> args, int? publicPort, int? internalPort})>
+  prepareAetherArgs({
     required List<String> effectiveArgs,
     required AetherBindInfo info,
   }) async {

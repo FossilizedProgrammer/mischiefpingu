@@ -10,10 +10,7 @@ class ArchiveExtractor {
   final CoreUpdateProcessUtils processUtils;
   final void Function(String)? log;
 
-  ArchiveExtractor({
-    required this.processUtils,
-    this.log,
-  });
+  ArchiveExtractor({required this.processUtils, this.log});
 
   void _log(String m) => log?.call(m);
 
@@ -32,8 +29,12 @@ class ArchiveExtractor {
       return;
     }
     final tarFlag = isTarXz ? '-xJf' : '-xzf';
-    final r =
-        await Process.run('tar', [tarFlag, archive, '-C', extractDir.path]);
+    final r = await Process.run('tar', [
+      tarFlag,
+      archive,
+      '-C',
+      extractDir.path,
+    ]);
     if (r.exitCode != 0) {
       throw StateError('tar extract failed: ${r.stderr}');
     }
@@ -42,8 +43,10 @@ class ArchiveExtractor {
   /// لاگ تمام فایل‌های استخراج‌شده (برای دیباگ).
   Future<void> logExtractedFiles(Directory extractDir) async {
     _log('→ Extracted files:');
-    await for (final e
-        in extractDir.list(recursive: true, followLinks: false)) {
+    await for (final e in extractDir.list(
+      recursive: true,
+      followLinks: false,
+    )) {
       if (e is File) {
         final size = await CoreUpdateUtils.fileSize(e.path);
         _log('   • ${e.path.replaceFirst(extractDir.path, '.')} ($size bytes)');
@@ -73,21 +76,24 @@ class ArchiveExtractor {
       return found;
     }
 
-    found =
-        await CoreUpdateUtils.findFileContaining(extractDir, fallbackPattern);
+    found = await CoreUpdateUtils.findFileContaining(
+      extractDir,
+      fallbackPattern,
+    );
     if (found != null) {
       _log('→ [match-3] contains match: $found');
       return found;
     }
 
     throw StateError(
-        'No executable matching `$binaryBaseName` found in archive. '
-        'Check the archive contents above.');
+      'No executable matching `$binaryBaseName` found in archive. '
+      'Check the archive contents above.',
+    );
   }
 
   /// تشخیص نوع آرشیو از روی URL.
   ({bool isZip, bool isTarXz, bool isArchive, String archiveName})
-      classifyArchive(String url, String baseName) {
+  classifyArchive(String url, String baseName) {
     final lower = url.toLowerCase();
     final isZip = lower.endsWith('.zip');
     final isTarball = lower.endsWith('.tar.gz') || lower.endsWith('.tgz');
@@ -96,10 +102,10 @@ class ArchiveExtractor {
     final archiveName = isZip
         ? '$baseName.zip'
         : isTarball
-            ? '$baseName.tar.gz'
-            : isTarXz
-                ? '$baseName.tar.xz'
-                : '$baseName.bin';
+        ? '$baseName.tar.gz'
+        : isTarXz
+        ? '$baseName.tar.xz'
+        : '$baseName.bin';
     return (
       isZip: isZip,
       isTarXz: isTarXz,

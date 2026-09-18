@@ -16,8 +16,10 @@ extension AppProviderAether on AppProvider {
     }
 
     if (fromAutoReconnect && userStoppedAether) {
-      processService.addLog('→ Aether auto-reconnect skipped (stopped by user)',
-          source: src);
+      processService.addLog(
+        '→ Aether auto-reconnect skipped (stopped by user)',
+        source: src,
+      );
       return;
     }
 
@@ -43,10 +45,7 @@ extension AppProviderAether on AppProvider {
         return;
       }
 
-      processService.addLog(
-        '✓ Aether binary found: $found',
-        source: src,
-      );
+      processService.addLog('✓ Aether binary found: $found', source: src);
     } catch (e) {
       processService.addLog('✗ Error checking Aether binary: $e', source: src);
     }
@@ -60,10 +59,7 @@ extension AppProviderAether on AppProvider {
         );
         for (final c in await AppDataService.aetherPtCandidates()) {
           final exists = await Directory(c).exists();
-          processService.addLog(
-            '   ${exists ? "✓" : "✗"} $c',
-            source: src,
-          );
+          processService.addLog('   ${exists ? "✓" : "✗"} $c', source: src);
         }
 
         final msg =
@@ -91,8 +87,10 @@ extension AppProviderAether on AppProvider {
       final msg =
           'Aether: Port $aetherPort is already in use by another application. Cannot start.';
       processService.setPortConflictMessage(msg);
-      processService.addLog('✗ Port $aetherPort is in use — Aether not started',
-          source: src);
+      processService.addLog(
+        '✗ Port $aetherPort is in use — Aether not started',
+        source: src,
+      );
       aetherStatus = 'Aether: Port $aetherPort in use';
       touch();
       return;

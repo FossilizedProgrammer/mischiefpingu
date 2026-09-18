@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../l10n/app_localizations.dart';
 import '../providers/app_provider.dart';
 import 'connection/connection_button_builder.dart';
@@ -41,8 +42,10 @@ class ConnectionButtons extends StatelessWidget {
             connected: aetherData.state.connected,
             onTap: () => provider.connectAether(),
             statusText: aetherData.state.statusText(aetherData.progress, l10n),
-            statusColor: aetherData.state
-                .statusColor(theme.colorScheme.primary, onSurface),
+            statusColor: aetherData.state.statusColor(
+              theme.colorScheme.primary,
+              onSurface,
+            ),
           ),
           CircleConnectButton(
             title: 'Psiphon',
@@ -52,10 +55,14 @@ class ConnectionButtons extends StatelessWidget {
             busy: psiphonData.state.busy,
             connected: psiphonData.state.connected,
             onTap: () => provider.connectPsiphon(),
-            statusText:
-                psiphonData.state.statusText(psiphonData.progress, l10n),
-            statusColor: psiphonData.state
-                .statusColor(theme.colorScheme.primary, onSurface),
+            statusText: psiphonData.state.statusText(
+              psiphonData.progress,
+              l10n,
+            ),
+            statusColor: psiphonData.state.statusColor(
+              theme.colorScheme.primary,
+              onSurface,
+            ),
           ),
           CircleConnectButton(
             title: 'Tor',
@@ -67,8 +74,10 @@ class ConnectionButtons extends StatelessWidget {
             onTap: () => provider.connectTor(),
             progress: torData.progress,
             statusText: torData.state.statusText(torData.progress, l10n),
-            statusColor:
-                torData.state.statusColor(theme.colorScheme.primary, onSurface),
+            statusColor: torData.state.statusColor(
+              theme.colorScheme.primary,
+              onSurface,
+            ),
           ),
           CircleConnectButton(
             title: 'SSTP',
@@ -79,8 +88,10 @@ class ConnectionButtons extends StatelessWidget {
             connected: sstpData.state.connected,
             onTap: () => provider.connectSstp(),
             statusText: sstpData.state.statusText(sstpData.progress, l10n),
-            statusColor: sstpData.state
-                .statusColor(theme.colorScheme.primary, onSurface),
+            statusColor: sstpData.state.statusColor(
+              theme.colorScheme.primary,
+              onSurface,
+            ),
           ),
         ],
       ),

@@ -28,7 +28,7 @@ class PsiphonFrontingBuilder {
     config["LimitTunnelProtocols"] = [
       "FRONTED-MEEK-CDN-OSSH",
       "FRONTED-MEEK-CDN-HTTP-OSSH",
-      "FRONTED-MEEK-CDN-QUIC-OSSH"
+      "FRONTED-MEEK-CDN-QUIC-OSSH",
     ];
 
     final dialAddresses = <String>{};
@@ -45,22 +45,30 @@ class PsiphonFrontingBuilder {
         "VerifyServerNames": [
           settings.tlsSni,
           settings.httpHost,
-          if (settings.ip.isNotEmpty) settings.ip
+          if (settings.ip.isNotEmpty) settings.ip,
         ],
         "ALPNProtocols": ["h2", "http/1.1"],
         "TLSProfile": "Chrome-83",
-      }
+      },
     ];
     config["FrontedMeekDialOverridesProbability"] = 1.0;
     config["FrontedMeekCDNScanUseBuiltInSpec"] = settings.autoFindIpAndSni;
 
-    processService.addLog('→ Fronting IP: ${settings.ip}',
-        source: LogSource.psiphon);
-    processService.addLog('→ TLS SNI: ${settings.tlsSni}',
-        source: LogSource.psiphon);
-    processService.addLog('→ HTTP Host: ${settings.httpHost}',
-        source: LogSource.psiphon);
-    processService.addLog('→ SunAndLion: ${settings.useSunAndLion}',
-        source: LogSource.psiphon);
+    processService.addLog(
+      '→ Fronting IP: ${settings.ip}',
+      source: LogSource.psiphon,
+    );
+    processService.addLog(
+      '→ TLS SNI: ${settings.tlsSni}',
+      source: LogSource.psiphon,
+    );
+    processService.addLog(
+      '→ HTTP Host: ${settings.httpHost}',
+      source: LogSource.psiphon,
+    );
+    processService.addLog(
+      '→ SunAndLion: ${settings.useSunAndLion}',
+      source: LogSource.psiphon,
+    );
   }
 }

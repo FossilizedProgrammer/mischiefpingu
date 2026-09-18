@@ -1,6 +1,7 @@
 library;
 
 import 'dart:io';
+
 import 'core_update/version_parsers.dart';
 import 'core_update/file_finder.dart';
 

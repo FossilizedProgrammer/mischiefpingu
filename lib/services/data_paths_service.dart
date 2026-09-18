@@ -1,6 +1,8 @@
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+
 import 'platform_info.dart';
 import 'ownership_service.dart';
 import 'tor_dir_manager.dart';
@@ -49,7 +51,8 @@ class DataPathsService {
       return _dataDir!;
     } catch (e) {
       _log(
-          'Failed to use dedicated data dir: $e. Falling back to system default.');
+        'Failed to use dedicated data dir: $e. Falling back to system default.',
+      );
       final supportDir = await getApplicationSupportDirectory();
       final fallback = p.join(supportDir.path, 'com.mischiefpingu.app');
       await Directory(fallback).create(recursive: true);

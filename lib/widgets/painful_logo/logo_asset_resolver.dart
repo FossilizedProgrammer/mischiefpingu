@@ -1,6 +1,7 @@
 library;
 
 import 'package:flutter/material.dart';
+
 import 'logo_mode.dart';
 
 class LogoAssets {

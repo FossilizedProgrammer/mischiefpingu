@@ -77,11 +77,7 @@ class AetherTestExecutor {
         forceFragmentH2: attempt.fragmentH2,
       );
 
-      final result = await runner.run(
-        attempt: attempt,
-        args: args,
-        port: port,
-      );
+      final result = await runner.run(attempt: attempt, args: args, port: port);
 
       if (result.isSuccess) {
         await store.saveSuccessState(
@@ -126,10 +122,7 @@ class AetherTestExecutor {
       if (!shouldContinue) break;
     }
 
-    processService.addLog(
-      '✗ All candidates failed',
-      source: LogSource.aether,
-    );
+    processService.addLog('✗ All candidates failed', source: LogSource.aether);
     return false;
   }
 }

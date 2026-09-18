@@ -1,7 +1,9 @@
 library;
 
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
+
 import '../platform_info.dart';
 
 class SharedFilesSeeder {
@@ -30,7 +32,8 @@ class SharedFilesSeeder {
           _log('Copied shared data file: $fileName');
         } else {
           _log(
-              'Shared data file already exists (preserving live updates): $fileName');
+            'Shared data file already exists (preserving live updates): $fileName',
+          );
         }
       } catch (e) {
         _log('Failed to copy shared file $fileName: $e');
@@ -38,20 +41,74 @@ class SharedFilesSeeder {
     }
   }
 
-  static Future<void> cleanupStaleServerList({
+  /// کپی خودکار فایل `server_list.dat` از کنار باینری (یا پوشه platform)
+  /// به پوشه داده. این فایل برای شروع کار Psiphon در محیط‌های فیلترشده
+  /// حیاتی است، چون Psiphon نمی‌تواند لیست را از اینترنت مستقیم بگیرد.
+  static Future<void> seedServerList({
     required String dataDir,
+    required String exeDir,
+    String? platformDir,
   }) async {
-    try {
-      final oldServerList = File(p.join(dataDir, 'server_list.dat'));
-      if (await oldServerList.exists()) {
-        final size = await oldServerList.length();
-        if (size < 5000) {
-          await oldServerList.delete();
-          _log(
-              '⚠ Removed stale server_list.dat (${size}B) — Psiphon will fetch fresh list');
-        } else {
-          _log('Kept server_list.dat (${size}B) — user-managed');
+    final dest = File(p.join(dataDir, 'server_list.dat'));
+
+    if (await dest.exists()) {
+      final size = await dest.length();
+      _log(
+        'server_list.dat already present in data dir (${size}B) — preserving',
+      );
+      return;
+    }
+
+    final candidates = <String>[
+      p.join(exeDir, 'server_list.dat'),
+      if (platformDir != null) p.join(platformDir, 'server_list.dat'),
+      p.join(exeDir, 'resources', 'server_list.dat'),
+      p.join(exeDir, 'data', 'server_list.dat'),
+    ];
+
+    for (final candidate in candidates) {
+      try {
+        final source = File(candidate);
+        if (!await source.exists()) continue;
+
+        final size = await source.length();
+        if (size == 0) {
+          _log('server_list.dat candidate is empty, skipping: $candidate');
+          continue;
         }
+
+        await source.copy(dest.path);
+        _log(
+          '★ Copied server_list.dat ($size bytes) from $candidate → ${dest.path}',
+        );
+        return;
+      } catch (e) {
+        _log('Failed to copy server_list.dat from $candidate: $e');
+      }
+    }
+
+    _log(
+      '⚠ server_list.dat not found in any known location. '
+      'Place it next to the app binary or in the data dir manually.',
+    );
+  }
+
+  /// پاک‌سازی فایل `server_list.dat` فقط اگر کاملاً خالی باشد (0 بایت).
+  ///
+  /// ⚠️ نسخه قبلی این تابع فایل‌های کوچک‌تر از 5KB را حذف می‌کرد.
+  /// این رفتار در محیط‌های فیلترشده مخرب بود، چون Psiphon نمی‌توانست
+  /// لیست را از شبکه مستقیم دریافت کند و در حلقه بی‌پایان گیر می‌کرد.
+  static Future<void> cleanupStaleServerList({required String dataDir}) async {
+    try {
+      final serverList = File(p.join(dataDir, 'server_list.dat'));
+      if (!await serverList.exists()) return;
+
+      final size = await serverList.length();
+      if (size == 0) {
+        await serverList.delete();
+        _log('⚠ Removed empty server_list.dat (0 bytes)');
+      } else {
+        _log('Kept server_list.dat ($size bytes) — will be used by Psiphon');
       }
     } catch (e) {
       _log('Failed to check server_list.dat: $e');

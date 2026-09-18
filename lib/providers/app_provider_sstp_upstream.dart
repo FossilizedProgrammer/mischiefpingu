@@ -4,9 +4,7 @@ part of 'app_provider.dart';
 ///  هندل upstream (Aether / Psiphon / Tor) برای SSTP
 /// ═══════════════════════════════════════════════════════════════
 extension AppProviderSstpUpstream on AppProvider {
-  Future<bool> resolveSstpUpstream({
-    required bool fromAutoReconnect,
-  }) async {
+  Future<bool> resolveSstpUpstream({required bool fromAutoReconnect}) async {
     const src = LogSource.sstp;
 
     if (settings.sstpUpstreamType == 2) {
@@ -42,13 +40,17 @@ extension AppProviderSstpUpstream on AppProvider {
 
       if (!ok && !processService.isAetherRunning) {
         sstpStatus = 'SSTP: Aether unavailable — SSTP not started';
-        processService.addLog('✗ Aether unavailable → SSTP not started',
-            source: src);
+        processService.addLog(
+          '✗ Aether unavailable → SSTP not started',
+          source: src,
+        );
         return false;
       }
 
-      processService.addLog('→ SSTP will use Aether as upstream proxy',
-          source: src);
+      processService.addLog(
+        '→ SSTP will use Aether as upstream proxy',
+        source: src,
+      );
       return true;
     }
 
@@ -83,20 +85,26 @@ extension AppProviderSstpUpstream on AppProvider {
 
       if (!processService.isPsiphonRunning) {
         sstpStatus = 'SSTP: Psiphon unavailable — SSTP not started';
-        processService.addLog('✗ Psiphon unavailable → SSTP not started',
-            source: src);
+        processService.addLog(
+          '✗ Psiphon unavailable → SSTP not started',
+          source: src,
+        );
         return false;
       }
 
-      processService.addLog('→ SSTP will use Psiphon as upstream proxy',
-          source: src);
+      processService.addLog(
+        '→ SSTP will use Psiphon as upstream proxy',
+        source: src,
+      );
       return true;
     }
 
     if (settings.sstpUpstreamType == 4) {
       if (processService.isTorRunning) {
-        processService.addLog('→ SSTP upstream: Tor already running',
-            source: src);
+        processService.addLog(
+          '→ SSTP upstream: Tor already running',
+          source: src,
+        );
         return true;
       }
 
@@ -122,13 +130,17 @@ extension AppProviderSstpUpstream on AppProvider {
 
       if (!processService.isTorRunning) {
         sstpStatus = 'SSTP: Tor unavailable — SSTP not started';
-        processService.addLog('✗ Tor unavailable → SSTP not started',
-            source: src);
+        processService.addLog(
+          '✗ Tor unavailable → SSTP not started',
+          source: src,
+        );
         return false;
       }
 
-      processService.addLog('→ SSTP will use Tor as upstream proxy',
-          source: src);
+      processService.addLog(
+        '→ SSTP will use Tor as upstream proxy',
+        source: src,
+      );
       return true;
     }
 

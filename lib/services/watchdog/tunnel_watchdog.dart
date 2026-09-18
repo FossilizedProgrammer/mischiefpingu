@@ -58,8 +58,10 @@ class TunnelWatchdog {
     if (_started) return;
     _started = true;
     _timer = Timer.periodic(interval, (_) => _check());
-    log('→ $name watchdog started (every ${interval.inSeconds}s)',
-        source: logSource);
+    log(
+      '→ $name watchdog started (every ${interval.inSeconds}s)',
+      source: logSource,
+    );
   }
 
   void stop() {
@@ -126,8 +128,10 @@ class TunnelWatchdog {
       if (result == ProbeResult.skipped) return;
 
       _failures++;
-      log('⚠ $name watchdog: probe failed ($_failures/$maxFailures)',
-          source: logSource);
+      log(
+        '⚠ $name watchdog: probe failed ($_failures/$maxFailures)',
+        source: logSource,
+      );
 
       if (_failures >= maxFailures) {
         _failures = 0;

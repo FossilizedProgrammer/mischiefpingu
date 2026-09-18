@@ -1,6 +1,7 @@
 library;
 
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
 
 import '../../app_data_service.dart';
@@ -13,10 +14,7 @@ class TorBundleDeferredApplier {
   final CoreUpdateProcessUtils processUtils;
   final void Function(String)? log;
 
-  TorBundleDeferredApplier({
-    required this.processUtils,
-    this.log,
-  });
+  TorBundleDeferredApplier({required this.processUtils, this.log});
 
   void _log(String m) => log?.call(m);
 
@@ -25,8 +23,10 @@ class TorBundleDeferredApplier {
   Future<void> apply(PendingCoreUpdate update) async {
     final torDir = await AppDataService.ensureTorDir();
     final stagingDir = p.dirname(update.stagingPath);
-    final stagingType =
-        await FileSystemEntity.type(stagingDir, followLinks: false);
+    final stagingType = await FileSystemEntity.type(
+      stagingDir,
+      followLinks: false,
+    );
 
     String? bundleRoot;
     if (stagingType == FileSystemEntityType.directory) {

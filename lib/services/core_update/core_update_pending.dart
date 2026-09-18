@@ -2,6 +2,7 @@ library;
 
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
 
 import '../app_data_service.dart';
@@ -15,11 +16,15 @@ class CoreUpdatePendingManager {
   final void Function(String)? log;
   final CoreUpdateProcessUtils processUtils;
 
-  late final TorBundleDeferredApplier _torApplier =
-      TorBundleDeferredApplier(processUtils: processUtils, log: log);
+  late final TorBundleDeferredApplier _torApplier = TorBundleDeferredApplier(
+    processUtils: processUtils,
+    log: log,
+  );
 
-  late final AetherPtDeferredApplier _aetherApplier =
-      AetherPtDeferredApplier(processUtils: processUtils, log: log);
+  late final AetherPtDeferredApplier _aetherApplier = AetherPtDeferredApplier(
+    processUtils: processUtils,
+    log: log,
+  );
 
   CoreUpdatePendingManager({this.log, required this.processUtils});
 
@@ -66,7 +71,8 @@ class CoreUpdatePendingManager {
     updates.add(update);
     await _saveAll(updates);
     _log(
-        '→ Pending update queued for ${update.coreId} (will apply on next startup)');
+      '→ Pending update queued for ${update.coreId} (will apply on next startup)',
+    );
   }
 
   Future<void> applyAll() async {
@@ -84,8 +90,9 @@ class CoreUpdatePendingManager {
         final destFile = File(update.destPath);
         bool canReplace = true;
         if (await destFile.exists()) {
-          final isRunning =
-              await processUtils.isProcessRunning(p.basename(update.destPath));
+          final isRunning = await processUtils.isProcessRunning(
+            p.basename(update.destPath),
+          );
           if (isRunning) {
             _log('→ ${update.coreId} still running, keeping pending');
             remaining.add(update);
@@ -100,11 +107,15 @@ class CoreUpdatePendingManager {
             await _aetherApplier.apply(update);
           } else {
             await processUtils.replaceBinary(
-                update.stagingPath, update.destPath);
+              update.stagingPath,
+              update.destPath,
+            );
           }
           _log('★ ${update.coreId} updated to ${update.version} (deferred)');
           await processUtils.updateExecutableDirBinary(
-              update.coreId, update.stagingPath);
+            update.coreId,
+            update.stagingPath,
+          );
         }
       } catch (e) {
         _log('✗ Failed to apply pending update for ${update.coreId}: $e');

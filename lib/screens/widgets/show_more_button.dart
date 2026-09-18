@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../l10n/app_localizations.dart';
 
 class ShowMoreButton extends StatelessWidget {
@@ -26,24 +27,29 @@ class ShowMoreButton extends StatelessWidget {
             gradient: LinearGradient(
               colors: showMore
                   ? [
-                      theme.colorScheme.secondaryContainer
-                          .withValues(alpha: 0.5),
-                      theme.colorScheme.tertiaryContainer
-                          .withValues(alpha: 0.3),
+                      theme.colorScheme.secondaryContainer.withValues(
+                        alpha: 0.5,
+                      ),
+                      theme.colorScheme.tertiaryContainer.withValues(
+                        alpha: 0.3,
+                      ),
                     ]
                   : [
-                      theme.colorScheme.primaryContainer
-                          .withValues(alpha: 0.45),
-                      theme.colorScheme.primaryContainer
-                          .withValues(alpha: 0.25),
+                      theme.colorScheme.primaryContainer.withValues(
+                        alpha: 0.45,
+                      ),
+                      theme.colorScheme.primaryContainer.withValues(
+                        alpha: 0.25,
+                      ),
                     ],
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: (showMore
-                      ? theme.colorScheme.secondary
-                      : theme.colorScheme.primary)
-                  .withValues(alpha: 0.25),
+              color:
+                  (showMore
+                          ? theme.colorScheme.secondary
+                          : theme.colorScheme.primary)
+                      .withValues(alpha: 0.25),
               width: 1,
             ),
           ),
@@ -52,10 +58,11 @@ class ShowMoreButton extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: (showMore
-                          ? theme.colorScheme.secondary
-                          : theme.colorScheme.primary)
-                      .withValues(alpha: 0.15),
+                  color:
+                      (showMore
+                              ? theme.colorScheme.secondary
+                              : theme.colorScheme.primary)
+                          .withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: AnimatedRotation(
@@ -77,16 +84,20 @@ class ShowMoreButton extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(showMore ? l10n.showLess : l10n.showMore,
-                        style: theme.textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: theme.colorScheme.onSurface)),
+                    Text(
+                      showMore ? l10n.showLess : l10n.showMore,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
                     const SizedBox(height: 2),
                     Text(
                       showMore ? l10n.showLessSubtitle : l10n.showMoreSubtitle,
                       style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                          fontSize: 11),
+                        color: theme.colorScheme.onSurfaceVariant,
+                        fontSize: 11,
+                      ),
                     ),
                   ],
                 ),

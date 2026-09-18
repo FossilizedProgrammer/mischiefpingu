@@ -37,10 +37,12 @@ class AetherProbeFallbacks {
     final logs = processService.fullLog;
     final tail = logs.length > 80 ? logs.sublist(logs.length - 80) : logs;
     final hasTunnel = tail.any((l) => l.contains('tunnel validated'));
-    final hasSocks = tail.any((l) =>
-        l.toLowerCase().contains('socks5') &&
-        l.contains('listening') &&
-        (l.contains(':$port') || l.contains('127.0.0.1:$port')));
+    final hasSocks = tail.any(
+      (l) =>
+          l.toLowerCase().contains('socks5') &&
+          l.contains('listening') &&
+          (l.contains(':$port') || l.contains('127.0.0.1:$port')),
+    );
     return hasTunnel && hasSocks;
   }
 }

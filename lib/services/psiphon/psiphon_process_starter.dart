@@ -49,8 +49,9 @@ extension ProcessServicePsiphonStarter on ProcessService {
       addLog('Using server_list.dat', source: src);
     } else {
       addLog(
-          'No server_list.dat — Psiphon will fetch a fresh list from the network',
-          source: src);
+        'No server_list.dat — Psiphon will fetch a fresh list from the network',
+        source: src,
+      );
     }
 
     psiphonProcess = await Process.start(
@@ -63,9 +64,7 @@ extension ProcessServicePsiphonStarter on ProcessService {
 
     bool exitedQuickly = false;
     try {
-      await psiphonProcess!.exitCode.timeout(
-        const Duration(milliseconds: 200),
-      );
+      await psiphonProcess!.exitCode.timeout(const Duration(milliseconds: 200));
       exitedQuickly = true;
     } catch (_) {
       exitedQuickly = false;
@@ -82,8 +81,10 @@ extension ProcessServicePsiphonStarter on ProcessService {
     isPsiphonRunning = true;
     lastPsiphonProtocol = null;
     currentPsiphonBinaryName = binaryName;
-    addLog('Psiphon started ($binaryName) [PID: ${psiphonProcess!.pid}]',
-        source: src);
+    addLog(
+      'Psiphon started ($binaryName) [PID: ${psiphonProcess!.pid}]',
+      source: src,
+    );
     touch();
 
     if (shareLan) {

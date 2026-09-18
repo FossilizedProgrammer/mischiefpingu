@@ -11,8 +11,10 @@ extension AppProviderParsers on AppProvider {
     if (rev == settings.psiphonBuildRev) return;
     settings.psiphonBuildRev = rev;
     saveSettings();
-    processService.addLog('→ Psiphon core build rev: $rev',
-        source: LogSource.psiphon);
+    processService.addLog(
+      '→ Psiphon core build rev: $rev',
+      source: LogSource.psiphon,
+    );
   }
 
   void tryParseFoundFronting(String line) {

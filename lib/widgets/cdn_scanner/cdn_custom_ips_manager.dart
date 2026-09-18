@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../l10n/app_localizations.dart';
 import '../../providers/cdn_scanner_provider.dart';
 import 'cdn_custom_ips_dialogs.dart';
@@ -19,9 +20,8 @@ class CdnCustomIpsManager extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final raw = inputCtrl.text.trim();
     if (raw.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.listIsEmpty)),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(l10n.listIsEmpty)));
       return;
     }
     final lines = raw
@@ -35,9 +35,7 @@ class CdnCustomIpsManager extends StatelessWidget {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          '${lines.length} → ${scan.customIps.length}',
-        ),
+        content: Text('${lines.length} → ${scan.customIps.length}'),
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),
@@ -61,10 +59,7 @@ class CdnCustomIpsManager extends StatelessWidget {
         children: [
           Text(
             '★',
-            style: TextStyle(
-              fontSize: 18,
-              color: theme.colorScheme.primary,
-            ),
+            style: TextStyle(fontSize: 18, color: theme.colorScheme.primary),
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -78,19 +73,14 @@ class CdnCustomIpsManager extends StatelessWidget {
           ),
           TextButton(
             onPressed: () => _saveCurrentAsCustom(context),
-            style: TextButton.styleFrom(
-              visualDensity: VisualDensity.compact,
-            ),
+            style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
             child: Text('💾  ${l10n.save}'),
           ),
           IconButton(
             tooltip: l10n.manageList,
             visualDensity: VisualDensity.compact,
             onPressed: () => CdnCustomIpsDialogs.showManage(context, scan),
-            icon: const Text(
-              '☰',
-              style: TextStyle(fontSize: 18),
-            ),
+            icon: const Text('☰', style: TextStyle(fontSize: 18)),
           ),
           IconButton(
             tooltip: l10n.clearAll,
@@ -109,8 +99,9 @@ class CdnCustomIpsManager extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color:
-                    count == 0 ? theme.disabledColor : theme.colorScheme.error,
+                color: count == 0
+                    ? theme.disabledColor
+                    : theme.colorScheme.error,
               ),
             ),
           ),

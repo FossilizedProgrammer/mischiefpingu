@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
 
 /// عملیات کپی فایل‌های Psiphon از دایرکتوری exe به data
@@ -27,7 +28,9 @@ class PsiphonDataSeeder {
 
     try {
       if (await Directory(dataPsiDir).exists()) {
-        log('Psiphon data directory already exists in data dir — skipping exe-dir seed');
+        log(
+          'Psiphon data directory already exists in data dir — skipping exe-dir seed',
+        );
         return;
       }
     } catch (_) {}
@@ -36,8 +39,9 @@ class PsiphonDataSeeder {
     try {
       await Directory(dataPsiDir).create(recursive: true);
       var count = 0;
-      await for (final entity
-          in Directory(exePsiDir).list(recursive: true, followLinks: false)) {
+      await for (final entity in Directory(
+        exePsiDir,
+      ).list(recursive: true, followLinks: false)) {
         final rel = p.relative(entity.path, from: exePsiDir);
         if (rel == '.' || rel.isEmpty) continue;
         final dest = p.join(dataPsiDir, rel);

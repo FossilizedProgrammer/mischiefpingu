@@ -1,8 +1,5 @@
 class DefaultLists {
-  static const List<String> ipList = [
-    '23.215.0.206',
-    '23.215.0.203',
-  ];
+  static const List<String> ipList = ['23.215.0.206', '23.215.0.203'];
 
   static const List<String> httpHostList = [
     'aparat.com',

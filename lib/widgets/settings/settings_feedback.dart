@@ -12,10 +12,7 @@ class SettingsActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: alignment,
-      children: children,
-    );
+    return Row(mainAxisAlignment: alignment, children: children);
   }
 }
 
@@ -47,10 +44,7 @@ class SettingsInfoCard extends StatelessWidget {
           Icon(icon, color: c, size: 20),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(
-              message,
-              style: TextStyle(fontSize: 12, color: c),
-            ),
+            child: Text(message, style: TextStyle(fontSize: 12, color: c)),
           ),
         ],
       ),

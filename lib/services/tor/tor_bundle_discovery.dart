@@ -45,16 +45,20 @@ class TorBundleDiscovery {
 
     versions.sort(TorBundleFallbacks.compareVersions);
     final sorted = versions.reversed.toList();
-    log('→ Will probe ${sorted.length} stable version(s), newest first: '
-        '${sorted.take(8).join(', ')}${sorted.length > 8 ? ' …' : ''}');
+    log(
+      '→ Will probe ${sorted.length} stable version(s), newest first: '
+      '${sorted.take(8).join(', ')}${sorted.length > 8 ? ' …' : ''}',
+    );
 
     for (final version in sorted.take(10)) {
       final url = await _probeVersion(version, archTag, isWin, proxy);
       if (url != null) return url;
     }
 
-    log('⚠ No expert bundle found via live probing, '
-        'trying hardcoded stable fallbacks …');
+    log(
+      '⚠ No expert bundle found via live probing, '
+      'trying hardcoded stable fallbacks …',
+    );
     return TorBundleFallbacks.tryStable(
       proxy: proxy,
       archTag: archTag,

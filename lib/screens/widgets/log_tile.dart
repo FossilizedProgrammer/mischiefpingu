@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 
@@ -32,8 +33,11 @@ class LogTile extends StatelessWidget {
                   color: theme.colorScheme.tertiary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(Icons.terminal,
-                    size: 18, color: theme.colorScheme.tertiary),
+                child: Icon(
+                  Icons.terminal,
+                  size: 18,
+                  color: theme.colorScheme.tertiary,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -44,8 +48,10 @@ class LogTile extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.tertiary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
@@ -111,8 +117,9 @@ class LogTile extends StatelessWidget {
                               itemBuilder: (context, i) {
                                 final line = logs[logs.length - 1 - i];
                                 return Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 1),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 1,
+                                  ),
                                   child: SelectableText(
                                     line,
                                     style: const TextStyle(

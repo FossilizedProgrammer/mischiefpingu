@@ -5,20 +5,9 @@ class TlsClientHelloBuilder {
 
   /// ساخت یک TLS 1.2 ClientHello حداقلی برای probe.
   static List<int> build() {
-    final record = <int>[
-      0x16,
-      0x03,
-      0x01,
-      0x00,
-      0x00,
-    ];
+    final record = <int>[0x16, 0x03, 0x01, 0x00, 0x00];
 
-    final handshake = <int>[
-      0x01,
-      0x00,
-      0x00,
-      0x00,
-    ];
+    final handshake = <int>[0x01, 0x00, 0x00, 0x00];
 
     final body = <int>[
       0x03,

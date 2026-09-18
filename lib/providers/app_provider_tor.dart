@@ -19,8 +19,10 @@ extension AppProviderTor on AppProvider {
     }
 
     if (fromAutoReconnect && userStoppedTor) {
-      processService.addLog('→ Tor auto-reconnect skipped (stopped by user)',
-          source: src);
+      processService.addLog(
+        '→ Tor auto-reconnect skipped (stopped by user)',
+        source: src,
+      );
       return;
     }
 
@@ -59,10 +61,7 @@ extension AppProviderTor on AppProvider {
         internalHttp = await _pickInternalPort(settings.torHttpPort);
       }
 
-      final assets = await resolveTorAssets(
-        dataDir: dataDir,
-        torDir: torDir,
-      );
+      final assets = await resolveTorAssets(dataDir: dataDir, torDir: torDir);
 
       final builder = TorConfigBuilder(
         settings: settings,
@@ -76,12 +75,15 @@ extension AppProviderTor on AppProvider {
         geoip6Path: assets.geoip6Path,
         lyrebirdPath: assets.lyrebirdPath,
         conjurePath: assets.conjurePath,
-        aetherSocks:
-            settings.torTransport == 'aether' ? settings.aetherLocalPort : null,
-        psiphonSocks:
-            settings.torTransport == 'psiphon' ? settings.socksPort : null,
-        sstpSocks:
-            settings.torTransport == 'sstp' ? settings.sstpSocksPort : null,
+        aetherSocks: settings.torTransport == 'aether'
+            ? settings.aetherLocalPort
+            : null,
+        psiphonSocks: settings.torTransport == 'psiphon'
+            ? settings.socksPort
+            : null,
+        sstpSocks: settings.torTransport == 'sstp'
+            ? settings.sstpSocksPort
+            : null,
       );
 
       final torrcPath = '$torDir/torrc';

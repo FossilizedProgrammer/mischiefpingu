@@ -47,9 +47,7 @@ class SettingsTextField extends StatelessWidget {
         alignLabelWithHint: maxLines > 1,
         isDense: true,
       ),
-      style: TextStyle(
-        fontFamily: maxLines > 1 ? 'monospace' : null,
-      ),
+      style: TextStyle(fontFamily: maxLines > 1 ? 'monospace' : null),
     );
   }
 }
@@ -111,10 +109,7 @@ class SettingsDropdown<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownButtonFormField<T>(
       initialValue: value,
-      decoration: InputDecoration(
-        labelText: labelText,
-        isDense: true,
-      ),
+      decoration: InputDecoration(labelText: labelText, isDense: true),
       items: items,
       onChanged: enabled ? onChanged : null,
     );

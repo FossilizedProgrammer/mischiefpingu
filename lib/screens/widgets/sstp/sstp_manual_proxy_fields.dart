@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../l10n/app_localizations.dart';
 
 class SstpManualProxyFields extends StatelessWidget {
@@ -34,10 +35,7 @@ class SstpManualProxyFields extends StatelessWidget {
       children: [
         DropdownButtonFormField<String>(
           initialValue: proxyType,
-          decoration: InputDecoration(
-            labelText: l10n.proxyType,
-            isDense: true,
-          ),
+          decoration: InputDecoration(labelText: l10n.proxyType, isDense: true),
           items: const [
             DropdownMenuItem(value: 'socks5', child: Text('SOCKS5')),
             DropdownMenuItem(value: 'socks5h', child: Text('SOCKS5h')),

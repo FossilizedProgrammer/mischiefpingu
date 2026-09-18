@@ -1,6 +1,7 @@
 library;
 
 import 'package:flutter/material.dart';
+
 import '../../l10n/app_localizations.dart';
 import '../../providers/cdn_scanner_provider.dart';
 
@@ -33,10 +34,7 @@ class CdnCustomIpsDialogs {
     return ok == true;
   }
 
-  static void showManage(
-    BuildContext context,
-    CdnScannerProvider scan,
-  ) {
+  static void showManage(BuildContext context, CdnScannerProvider scan) {
     final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
@@ -96,9 +94,7 @@ class CdnCustomIpsDialogs {
                     await scan.clearCustomIps();
                     if (ctx.mounted) Navigator.pop(ctx);
                   },
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.red,
-                  ),
+                  style: TextButton.styleFrom(foregroundColor: Colors.red),
                   child: Text('✕  ${l10n.clearAll}'),
                 ),
               ],

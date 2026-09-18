@@ -1,6 +1,7 @@
 library;
 
 import 'dart:async';
+
 import 'log_source.dart';
 
 class LogStore {

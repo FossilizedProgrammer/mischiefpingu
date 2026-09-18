@@ -14,7 +14,8 @@ extension ProcessServiceTorLauncher on ProcessService {
     const src = LogSource.tor;
 
     try {
-      final binaryPath = await AppDataService.findTorBinary() ??
+      final binaryPath =
+          await AppDataService.findTorBinary() ??
           await AppDataService.getTorBinaryPath();
       if (!await File(binaryPath).exists()) {
         final torDir = await AppDataService.getTorDir();

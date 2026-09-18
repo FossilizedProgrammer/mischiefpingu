@@ -53,12 +53,15 @@ class GithubReleaseInstaller {
     }
     if (!CoreUpdateUtils.isMissingVersion(installed) && !info.hasUpdate) {
       _log(
-          '★ ${spec.displayName} is already up to date ($installed) — skipped');
+        '★ ${spec.displayName} is already up to date ($installed) — skipped',
+      );
       return false;
     }
 
-    _log('→ Downloading ${spec.displayName} ${info.latestVersion} from '
-        '${info.downloadUrl.split('/').last} …');
+    _log(
+      '→ Downloading ${spec.displayName} ${info.latestVersion} from '
+      '${info.downloadUrl.split('/').last} …',
+    );
     final tmp = await Directory.systemTemp.createTemp(spec.tempPrefix);
     try {
       final cls = _extractor.classifyArchive(info.downloadUrl, spec.coreId);
@@ -102,10 +105,7 @@ class GithubReleaseInstaller {
         _log('→ Raw binary (not archive): $archive');
       }
 
-      found = await _extractor.safeCopyBinary(
-        source: found,
-        tmpPath: tmp.path,
-      );
+      found = await _extractor.safeCopyBinary(source: found, tmpPath: tmp.path);
 
       if (!await CoreUpdateUtils.isRealFile(found)) {
         throw StateError('Safe copy verification failed: $found');
@@ -135,9 +135,11 @@ class GithubReleaseInstaller {
       await processUtils.updateExecutableDirBinary(spec.coreId, found);
 
       onProgress?.call(100);
-      _log('★ ${spec.displayName} updated: $installed → ${info.latestVersion} '
-          '(${CoreUpdateUtils.formatBytes(oldSize)} → '
-          '${CoreUpdateUtils.formatBytes(newSize)})');
+      _log(
+        '★ ${spec.displayName} updated: $installed → ${info.latestVersion} '
+        '(${CoreUpdateUtils.formatBytes(oldSize)} → '
+        '${CoreUpdateUtils.formatBytes(newSize)})',
+      );
       _log('★ ${spec.displayName} binary saved at: $dest');
       return true;
     } finally {

@@ -2,6 +2,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../../l10n/app_localizations.dart';
 import '../../providers/cdn_scanner_provider.dart';
 
@@ -55,7 +56,8 @@ class CdnClipboardActions {
     buffer.writeln('ip,sni,latency_ms,reliability,score');
     for (final r in scan.good) {
       buffer.writeln(
-          '${r.ip},${r.sni},${r.latencyMs},${r.reliability},${r.score}');
+        '${r.ip},${r.sni},${r.latencyMs},${r.reliability},${r.score}',
+      );
     }
     await Clipboard.setData(ClipboardData(text: buffer.toString()));
     if (!context.mounted) return;

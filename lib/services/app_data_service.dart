@@ -53,8 +53,7 @@ class AppDataService {
   static Future<void> logBinaryCandidates(
     String name, {
     void Function(String)? log,
-  }) =>
-      DataPathsService.logBinaryCandidates(name, log: log);
+  }) => DataPathsService.logBinaryCandidates(name, log: log);
 
   static Future<String> getBinaryPathForWrite(String name) =>
       DataPathsService.getBinaryPathForWrite(name);
@@ -77,9 +76,7 @@ class AppDataService {
   static Future<List<String>> torBinaryCandidates() =>
       DataPathsService.torBinaryCandidates();
 
-  static Future<void> logTorBinaryCandidates({
-    void Function(String)? log,
-  }) =>
+  static Future<void> logTorBinaryCandidates({void Function(String)? log}) =>
       DataPathsService.logTorBinaryCandidates(log: log);
 
   static Future<String> ensureTorDir() => DataPathsService.ensureTorDir();

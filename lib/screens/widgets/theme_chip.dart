@@ -1,6 +1,7 @@
 library;
 
 import 'package:flutter/material.dart';
+
 import '../../theme/app_theme_info.dart';
 
 class ThemeChip extends StatelessWidget {
@@ -65,8 +66,9 @@ class ThemeChip extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color:
-                    isSelected ? info.seedColor : theme.colorScheme.onSurface,
+                color: isSelected
+                    ? info.seedColor
+                    : theme.colorScheme.onSurface,
               ),
             ),
           ],

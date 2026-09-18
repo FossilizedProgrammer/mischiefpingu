@@ -24,18 +24,33 @@ class SettingsValidation {
   static void _validateAether(AppSettings s) {
     if (s.aetherProfile != 'manual') {
       s.aetherProtocol = 'auto';
-    } else if (!['masque', 'wireguard', 'gool', 'mim']
-        .contains(s.aetherProtocol)) {
+    } else if (![
+      'masque',
+      'wireguard',
+      'gool',
+      'mim',
+    ].contains(s.aetherProtocol)) {
       s.aetherProtocol = 'masque';
     }
     if (s.masqueOption != 'HTTP-2') s.masqueOption = 'HTTP-3';
-    if (!['turbo', 'balanced', 'thorough', 'stealth', 'ironclad']
-        .contains(s.aetherScanMode)) {
+    if (![
+      'turbo',
+      'balanced',
+      'thorough',
+      'stealth',
+      'ironclad',
+    ].contains(s.aetherScanMode)) {
       s.aetherScanMode = 'turbo';
     }
     if (!['ipv4', 'ipv6', 'both'].contains(s.ipType)) s.ipType = 'ipv4';
-    if (!['off', 'light', 'firewall', 'balanced', 'gfw', 'aggressive']
-        .contains(s.obfuscation)) {
+    if (![
+      'off',
+      'light',
+      'firewall',
+      'balanced',
+      'gfw',
+      'aggressive',
+    ].contains(s.obfuscation)) {
       s.obfuscation = 'off';
     }
     if (s.aetherLocalPort < 1 || s.aetherLocalPort > 65535) {
@@ -51,8 +66,13 @@ class SettingsValidation {
   }
 
   static void _validateTor(AppSettings s) {
-    if (!['direct', 'bridge', 'aether', 'psiphon', 'sstp']
-        .contains(s.torTransport)) {
+    if (![
+      'direct',
+      'bridge',
+      'aether',
+      'psiphon',
+      'sstp',
+    ].contains(s.torTransport)) {
       s.torTransport = 'direct';
     }
     if (s.torSocksPort < 1 || s.torSocksPort > 65535) s.torSocksPort = 19050;

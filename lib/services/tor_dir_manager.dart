@@ -1,7 +1,9 @@
 library;
 
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
+
 import 'platform_info.dart';
 import 'tor_bundle_seeder.dart';
 

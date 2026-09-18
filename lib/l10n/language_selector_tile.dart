@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../widgets/settings_tile_base.dart';
 import 'app_localizations.dart';
 

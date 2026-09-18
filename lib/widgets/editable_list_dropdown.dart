@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../l10n/app_localizations.dart';
 import 'editable_list/editable_list_dialogs.dart';
 
@@ -98,24 +99,24 @@ class _EditableListDropdownState extends State<EditableListDropdown> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final effectiveValue =
-        _items.contains(_currentValue) ? _currentValue : null;
+    final effectiveValue = _items.contains(_currentValue)
+        ? _currentValue
+        : null;
     return Row(
       children: [
         Expanded(
           child: DropdownButtonFormField<String>(
             initialValue: effectiveValue,
             isExpanded: true,
-            decoration: InputDecoration(
-              labelText: widget.label,
-              isDense: true,
-            ),
+            decoration: InputDecoration(labelText: widget.label, isDense: true),
             hint: Text(l10n.select),
             items: _items
-                .map((item) => DropdownMenuItem(
-                      value: item,
-                      child: Text(item, overflow: TextOverflow.ellipsis),
-                    ))
+                .map(
+                  (item) => DropdownMenuItem(
+                    value: item,
+                    child: Text(item, overflow: TextOverflow.ellipsis),
+                  ),
+                )
                 .toList(),
             onChanged: (v) {
               if (v != null) {

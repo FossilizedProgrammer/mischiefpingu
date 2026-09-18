@@ -1,7 +1,9 @@
 library;
 
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
+
 import '../app_data_service.dart';
 import '../core_update_utils.dart';
 import 'tor_types.dart';
@@ -25,7 +27,7 @@ class TorBundleInstaller {
       'geoip6',
       'lyrebird',
       'lyrebird.exe',
-      'pluggable_transports'
+      'pluggable_transports',
     ]) {
       try {
         if (await File(p.join(dir, name)).exists()) return true;
@@ -81,7 +83,7 @@ class TorBundleInstaller {
         'lyrebird',
         'conjure-client',
         'tor-gencert',
-        'tor-resolve'
+        'tor-resolve',
       ]) {
         final f = await CoreUpdateUtils.findFile(Directory(torDir), name);
         if (f != null) {

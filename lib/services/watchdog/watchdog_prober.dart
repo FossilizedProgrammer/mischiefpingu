@@ -83,10 +83,14 @@ class WatchdogProber {
           final hostHeader = probePort == 80 || probePort == 443
               ? probeHost
               : '$probeHost:$probePort';
-          sock.add(utf8.encode('GET /generate_204 HTTP/1.0\r\n'
+          sock.add(
+            utf8.encode(
+              'GET /generate_204 HTTP/1.0\r\n'
               'Host: $hostHeader\r\n'
               'Connection: close\r\n'
-              '\r\n'));
+              '\r\n',
+            ),
+          );
           await sock.flush();
 
           final data = await sock.timeout(httpProbeTimeout).first;

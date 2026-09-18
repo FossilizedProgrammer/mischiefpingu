@@ -1,5 +1,7 @@
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
+
 import 'platform_info.dart';
 
 /// عملیات کپی و آماده‌سازی فایل‌های Tor bundle
@@ -53,8 +55,10 @@ class TorBundleSeeder {
     required Future<void> Function(String) fixOwnership,
   }) async {
     try {
-      final type =
-          await FileSystemEntity.type(platformTorDir, followLinks: false);
+      final type = await FileSystemEntity.type(
+        platformTorDir,
+        followLinks: false,
+      );
       if (type != FileSystemEntityType.directory) {
         log('No tor bundle directory in $platformTorDir — skipping seed');
         return;
@@ -66,7 +70,9 @@ class TorBundleSeeder {
     try {
       final existingTor = p.join(dataTorDir, 'tor${PlatformInfo.exeExt}');
       if (await File(existingTor).exists()) {
-        log('Tor bundle already installed in data dir — skipping platform-dir seed');
+        log(
+          'Tor bundle already installed in data dir — skipping platform-dir seed',
+        );
         return;
       }
     } catch (_) {}
@@ -75,8 +81,9 @@ class TorBundleSeeder {
     try {
       await Directory(dataTorDir).create(recursive: true);
       var count = 0;
-      await for (final entity in Directory(platformTorDir)
-          .list(recursive: true, followLinks: false)) {
+      await for (final entity in Directory(
+        platformTorDir,
+      ).list(recursive: true, followLinks: false)) {
         final rel = p.relative(entity.path, from: platformTorDir);
         if (rel == '.' || rel.isEmpty) continue;
         final first = rel.split(p.separator).first;
@@ -107,14 +114,16 @@ class TorBundleSeeder {
         'obfs4proxy',
       };
 
-      await for (final entity
-          in Directory(dataTorDir).list(recursive: true, followLinks: false)) {
+      await for (final entity in Directory(
+        dataTorDir,
+      ).list(recursive: true, followLinks: false)) {
         if (entity is File) {
           final base = p.basename(entity.path).toLowerCase();
           final baseNoExt = PlatformInfo.isWindows && base.endsWith('.exe')
               ? base.substring(0, base.length - 4)
               : base;
-          final shouldChmod = !PlatformInfo.isWindows &&
+          final shouldChmod =
+              !PlatformInfo.isWindows &&
               (executables.contains(baseNoExt) ||
                   entity.path.contains('pluggable_transports') ||
                   !base.contains('.'));

@@ -29,22 +29,26 @@ class GithubReleaseDeferred {
     required String binaryName,
     required String version,
   }) async {
-    final stagingDir =
-        await Directory.systemTemp.createTemp('${spec.tempPrefix}deferred_');
+    final stagingDir = await Directory.systemTemp.createTemp(
+      '${spec.tempPrefix}deferred_',
+    );
     final stagingPath = '${stagingDir.path}/$binaryName';
     await File(found).copy(stagingPath);
     if (!_isWin) {
       await Process.run('chmod', ['+x', stagingPath]);
     }
-    await pending.add(PendingCoreUpdate(
-      coreId: spec.coreId,
-      stagingPath: stagingPath,
-      destPath: dest,
-      version: version,
-      createdAt: DateTime.now(),
-    ));
+    await pending.add(
+      PendingCoreUpdate(
+        coreId: spec.coreId,
+        stagingPath: stagingPath,
+        destPath: dest,
+        version: version,
+        createdAt: DateTime.now(),
+      ),
+    );
     _log(
-        '★ ${spec.displayName} update downloaded ($version) — deferred, will apply on next startup');
+      '★ ${spec.displayName} update downloaded ($version) — deferred, will apply on next startup',
+    );
   }
 
   /// تأیید نصب موفق — فایل موجود است و اندازه‌اش صفر نیست.
@@ -53,8 +57,10 @@ class GithubReleaseDeferred {
     final size = await CoreUpdateUtils.fileSize(dest);
     _log('→ VERIFY: file exists at $dest = $exists (size: $size bytes)');
     if (!exists || size == 0) {
-      throw StateError('Update reported success but file not found at $dest. '
-          'Check dataDir permissions.');
+      throw StateError(
+        'Update reported success but file not found at $dest. '
+        'Check dataDir permissions.',
+      );
     }
   }
 }

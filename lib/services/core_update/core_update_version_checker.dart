@@ -1,6 +1,7 @@
 library;
 
 import 'dart:io';
+
 import '../app_data_service.dart';
 import '../core_update_utils.dart';
 
@@ -10,17 +11,21 @@ class CoreUpdateVersionChecker {
 
   void _log(String m) => log?.call(m);
 
-  Future<String> getInstalledVersion(String coreId,
-      {String psiphonRev = ''}) async {
+  Future<String> getInstalledVersion(
+    String coreId, {
+    String psiphonRev = '',
+  }) async {
     try {
       if (coreId == 'aether') {
-        final exe = await AppDataService.resolveBinaryPath('aether') ??
+        final exe =
+            await AppDataService.resolveBinaryPath('aether') ??
             await AppDataService.getBinaryPath('aether');
         final v = await _queryExeVersion(exe, ['--version']);
         return CoreUpdateUtils.parseAetherVersion(v) ?? 'unknown';
       }
       if (coreId == 'tor') {
-        final exe = await AppDataService.findTorBinary() ??
+        final exe =
+            await AppDataService.findTorBinary() ??
             await AppDataService.getTorBinaryPath();
         final v = await _queryExeVersion(exe, ['--version']);
         return CoreUpdateUtils.parseTorVersion(v) ?? 'not installed';
@@ -28,7 +33,7 @@ class CoreUpdateVersionChecker {
       if (coreId == 'psiphon') {
         final exe =
             await AppDataService.resolveBinaryPath('psiphon-tunnel-core') ??
-                await AppDataService.getBinaryPath('psiphon-tunnel-core');
+            await AppDataService.getBinaryPath('psiphon-tunnel-core');
         if (!await File(exe).exists()) return 'not installed';
         final v = await _queryExeVersion(exe, ['-v']);
         final parsed = CoreUpdateUtils.parsePsiphonVersion(v);
@@ -40,10 +45,13 @@ class CoreUpdateVersionChecker {
         return 'installed';
       }
       if (coreId == 'sunandlion') {
-        final exe = await AppDataService.resolveBinaryPath(
-                'psiphon-tunnel-core-sunandlion') ??
+        final exe =
+            await AppDataService.resolveBinaryPath(
+              'psiphon-tunnel-core-sunandlion',
+            ) ??
             await AppDataService.getBinaryPath(
-                'psiphon-tunnel-core-sunandlion');
+              'psiphon-tunnel-core-sunandlion',
+            );
         if (!await File(exe).exists()) return 'not installed';
         final v = await _queryExeVersion(exe, ['-v']);
         final parsed = CoreUpdateUtils.parsePsiphonVersion(v);
@@ -71,8 +79,10 @@ class CoreUpdateVersionChecker {
   Future<String?> _queryExeVersion(String exe, List<String> args) async {
     try {
       if (!await File(exe).exists()) return null;
-      final r =
-          await Process.run(exe, args).timeout(const Duration(seconds: 10));
+      final r = await Process.run(
+        exe,
+        args,
+      ).timeout(const Duration(seconds: 10));
       final out = '${r.stdout}${r.stderr}'.trim();
       return out.isEmpty ? null : out;
     } catch (_) {

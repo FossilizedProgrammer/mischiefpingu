@@ -57,24 +57,29 @@ class AetherAttemptPlanner {
         settings.isAetherProfileAutomatic ? 'auto' : settings.aetherProtocol,
         custom,
       );
-      final masque =
-          (proto == 'masque' || proto == 'mim') ? settings.masqueOption : '';
-      add(EndpointAttempt(
-        label: 'Custom Endpoint ($custom)',
-        protocol: proto,
-        masque: masque,
-        endpoint: custom,
-      ));
+      final masque = (proto == 'masque' || proto == 'mim')
+          ? settings.masqueOption
+          : '';
+      add(
+        EndpointAttempt(
+          label: 'Custom Endpoint ($custom)',
+          protocol: proto,
+          masque: masque,
+          endpoint: custom,
+        ),
+      );
       return list;
     }
 
     if (settings.aetherTryLastEndpointFirst && autoWinner != null) {
-      add(EndpointAttempt(
-        label: 'Last remembered (${autoWinner.key})',
-        protocol: autoWinner.key,
-        masque: autoWinner.value,
-        endpoint: '',
-      ));
+      add(
+        EndpointAttempt(
+          label: 'Last remembered (${autoWinner.key})',
+          protocol: autoWinner.key,
+          masque: autoWinner.value,
+          endpoint: '',
+        ),
+      );
     }
 
     if (settings.isAetherProfileAutomatic) {
@@ -82,56 +87,71 @@ class AetherAttemptPlanner {
       final candidates = profile?.candidates ?? const <ProfileCandidate>[];
 
       if (candidates.isEmpty) {
-        add(EndpointAttempt(
+        add(
+          EndpointAttempt(
             label: 'MASQUE/HTTP-3',
             protocol: 'masque',
             masque: 'HTTP-3',
-            endpoint: ''));
-        add(EndpointAttempt(
+            endpoint: '',
+          ),
+        );
+        add(
+          EndpointAttempt(
             label: 'MASQUE/HTTP-2',
             protocol: 'masque',
             masque: 'HTTP-2',
-            endpoint: ''));
-        add(EndpointAttempt(
+            endpoint: '',
+          ),
+        );
+        add(
+          EndpointAttempt(
             label: 'WIREGUARD',
             protocol: 'wireguard',
             masque: '',
-            endpoint: ''));
-        add(EndpointAttempt(
+            endpoint: '',
+          ),
+        );
+        add(
+          EndpointAttempt(
             label: 'GOOL (WARP-in-WARP)',
             protocol: 'gool',
             masque: '',
-            endpoint: ''));
+            endpoint: '',
+          ),
+        );
         return list;
       }
 
       for (final c in candidates) {
-        add(EndpointAttempt(
-          label: _labelFor(c),
-          protocol: c.protocol,
-          masque: c.masque,
-          endpoint: '',
-          fragmentH2: c.fragmentH2,
-        ));
+        add(
+          EndpointAttempt(
+            label: _labelFor(c),
+            protocol: c.protocol,
+            masque: c.masque,
+            endpoint: '',
+            fragmentH2: c.fragmentH2,
+          ),
+        );
       }
       return list;
     }
 
     final proto = settings.aetherProtocol;
-    final masque =
-        (proto == 'masque' || proto == 'mim') ? settings.masqueOption : '';
+    final masque = (proto == 'masque' || proto == 'mim')
+        ? settings.masqueOption
+        : '';
     final frag = settings.aetherProfile == 'strict' && masque == 'HTTP-2';
-    add(EndpointAttempt(
-      label: _labelFor(ProfileCandidate(
+    add(
+      EndpointAttempt(
+        label: _labelFor(
+          ProfileCandidate(protocol: proto, masque: masque, fragmentH2: frag),
+        ),
         protocol: proto,
         masque: masque,
+        endpoint: '',
         fragmentH2: frag,
-      )),
-      protocol: proto,
-      masque: masque,
-      endpoint: '',
-      fragmentH2: frag,
-    ));
+      ),
+    );
     return list;
   }
 
@@ -146,12 +166,11 @@ class AetherAttemptPlanner {
     required int port,
     String endpointOverride = '',
     bool forceFragmentH2 = false,
-  }) =>
-      _argsBuilder.build(
-        protocol: protocol,
-        masqueOption: masqueOption,
-        port: port,
-        endpointOverride: endpointOverride,
-        forceFragmentH2: forceFragmentH2,
-      );
+  }) => _argsBuilder.build(
+    protocol: protocol,
+    masqueOption: masqueOption,
+    port: port,
+    endpointOverride: endpointOverride,
+    forceFragmentH2: forceFragmentH2,
+  );
 }
