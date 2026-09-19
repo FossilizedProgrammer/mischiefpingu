@@ -86,9 +86,8 @@ class CoreUpdateDownloader {
       if (res.statusCode != 200) {
         throw HttpException('HTTP ${res.statusCode} downloading $url');
       }
-      final total = res.contentLength > 0
-          ? res.contentLength
-          : (totalHint ?? 0);
+      final total =
+          res.contentLength > 0 ? res.contentLength : (totalHint ?? 0);
       final file = File(dest).openWrite();
       var done = 0;
       await for (final chunk in res) {

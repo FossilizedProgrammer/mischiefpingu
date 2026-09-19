@@ -31,9 +31,7 @@ class TorSettingsTile extends StatelessWidget {
     'PL',
     'RO',
     'RS',
-    'SE',
     'SG',
-    'US',
   ];
 
   @override
@@ -97,6 +95,34 @@ class TorSettingsTile extends StatelessWidget {
           autoReconnectTor: s.autoReconnectTor,
           onAutoReconnectChanged: (v) {
             s.autoReconnectTor = v;
+            save();
+          },
+          torProxyType: s.torProxyType,
+          onProxyTypeChanged: (v) {
+            s.torProxyType = v;
+            save();
+          },
+          torProxyIp: s.torProxyIp,
+          onProxyIpChanged: (v) {
+            s.torProxyIp = v.trim();
+            save();
+          },
+          torProxyPort: s.torProxyPort,
+          onProxyPortChanged: (v) {
+            final p = int.tryParse(v.trim());
+            if (p != null && p > 0 && p < 65536) {
+              s.torProxyPort = p;
+              save();
+            }
+          },
+          torProxyUser: s.torProxyUser,
+          onProxyUserChanged: (v) {
+            s.torProxyUser = v.trim();
+            save();
+          },
+          torProxyPass: s.torProxyPass,
+          onProxyPassChanged: (v) {
+            s.torProxyPass = v;
             save();
           },
         ),

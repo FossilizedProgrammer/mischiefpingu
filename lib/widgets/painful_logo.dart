@@ -136,6 +136,7 @@ class _PainfulLogoState extends State<PainfulLogo> {
           cursor: SystemMouseCursors.click,
           child: GestureDetector(
             onTap: _onHurt,
+            onSecondaryTap: _onHurt,
             behavior: HitTestBehavior.opaque,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),

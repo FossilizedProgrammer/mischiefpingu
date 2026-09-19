@@ -53,7 +53,8 @@ class AppDataService {
   static Future<void> logBinaryCandidates(
     String name, {
     void Function(String)? log,
-  }) => DataPathsService.logBinaryCandidates(name, log: log);
+  }) =>
+      DataPathsService.logBinaryCandidates(name, log: log);
 
   static Future<String> getBinaryPathForWrite(String name) =>
       DataPathsService.getBinaryPathForWrite(name);

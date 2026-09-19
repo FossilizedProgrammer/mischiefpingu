@@ -37,7 +37,7 @@ const List<AetherProfile> aetherProfiles = [
     id: 'adaptive',
     label: 'Adaptive',
     description: 'تعادل سرعت و پوشش — مناسب اکثر شبکه‌ها',
-    scanMode: 'turbo',
+    scanMode: 'balanced',
     noize: 'off',
     candidates: [
       ProfileCandidate(protocol: 'masque', masque: 'HTTP-3'),
@@ -50,7 +50,7 @@ const List<AetherProfile> aetherProfiles = [
     id: 'patchy',
     label: 'Patchy signal',
     description: 'دیتای موبایل ناپایدار — جستجوی سخت‌تر و مقاوم‌تر',
-    scanMode: 'thorough',
+    scanMode: 'balanced',
     noize: 'balanced',
     candidates: [
       ProfileCandidate(protocol: 'masque', masque: 'HTTP-3'),
@@ -63,7 +63,8 @@ const List<AetherProfile> aetherProfiles = [
   AetherProfile(
     id: 'strict',
     label: 'Strict network',
-    description: 'وای‌فای محدود یا فیلتر سنگین — fragment + masque-in-masque + noize gfw',
+    description:
+        'وای‌فای محدود یا فیلتر سنگین — fragment + masque-in-masque + noize gfw',
     scanMode: 'stealth',
     noize: 'gfw',
     candidates: [

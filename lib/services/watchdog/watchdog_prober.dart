@@ -79,28 +79,7 @@ class WatchdogProber {
       if (resp[1] != 0x00) return ProbeResult.dead;
 
       if (doHttpProbe) {
-        try {
-          final hostHeader = probePort == 80 || probePort == 443
-              ? probeHost
-              : '$probeHost:$probePort';
-          sock.add(
-            utf8.encode(
-              'GET /generate_204 HTTP/1.0\r\n'
-              'Host: $hostHeader\r\n'
-              'Connection: close\r\n'
-              '\r\n',
-            ),
-          );
-          await sock.flush();
-
-          final data = await sock.timeout(httpProbeTimeout).first;
-          if (data.isEmpty) {
-            return ProbeResult.dead;
-          }
-          return ProbeResult.alive;
-        } catch (_) {
-          return ProbeResult.dead;
-        }
+        return await _probeHttpDataPlane(sock);
       }
 
       return ProbeResult.alive;
@@ -112,6 +91,78 @@ class WatchdogProber {
       try {
         sock?.destroy();
       } catch (_) {}
+    }
+  }
+
+  /// probe واقعی HTTP از طریق SOCKS.
+  Future<ProbeResult> _probeHttpDataPlane(Socket sock) async {
+    try {
+      final hostHeader = probePort == 80 || probePort == 443
+          ? probeHost
+          : '$probeHost:$probePort';
+
+      sock.add(
+        utf8.encode(
+          'GET /generate_204 HTTP/1.0\r\n'
+          'Host: $hostHeader\r\n'
+          'User-Agent: Mozilla/5.0\r\n'
+          'Connection: close\r\n'
+          '\r\n',
+        ),
+      );
+      await sock.flush();
+
+      final buffer = <int>[];
+      final stream = sock.timeout(httpProbeTimeout);
+
+      await for (final chunk in stream) {
+        buffer.addAll(chunk);
+        if (buffer.length >= 16) break;
+
+        if (buffer.length >= 12) break;
+      }
+
+      if (buffer.isEmpty) {
+        log(
+          '✗ probe: HTTP data-plane returned 0 bytes (tunnel dead)',
+          source: logSource,
+        );
+        return ProbeResult.dead;
+      }
+
+      final head = String.fromCharCodes(buffer.take(20));
+      final isHttpResponse = head.startsWith('HTTP/');
+
+      if (!isHttpResponse) {
+        log(
+          '✗ probe: non-HTTP response from tunnel: '
+          '${buffer.take(12).toList()}',
+          source: logSource,
+        );
+        return ProbeResult.dead;
+      }
+
+      final statusOk = head.contains(' 200 ') ||
+          head.contains(' 204 ') ||
+          head.contains(' 301 ') ||
+          head.contains(' 302 ') ||
+          head.contains(' 304 ');
+
+      if (!statusOk) {
+        log(
+          '✗ probe: HTTP status not OK: ${head.split("\r\n").first}',
+          source: logSource,
+        );
+        return ProbeResult.dead;
+      }
+
+      return ProbeResult.alive;
+    } catch (e) {
+      log(
+        '✗ probe: HTTP data-plane failed: $e',
+        source: logSource,
+      );
+      return ProbeResult.dead;
     }
   }
 

@@ -3,98 +3,112 @@ part of 'app_provider.dart';
 extension AppProviderWatchdogs on AppProvider {
   void ensureWatchdogs() {
     if (_watchdogManager != null) return;
+
+    Future<bool> internetAliveCheck() async {
+      final q = _qualityProvider;
+      if (q != null) {
+        try {
+          return await q.isInternetAlive();
+        } catch (e) {
+          processService.addLog(
+            '⚠ qualityProvider.isInternetAlive threw: $e — '
+            'falling back to ConnectivityProbe',
+            source: LogSource.app,
+          );
+        }
+      }
+      return _connectivityProbe.isInternetAlive();
+    }
+
+    Future<RecoveryLeaseResult> acquirePsiphonLease() async {
+      final lease = _recoveryCoordinator.tryAcquire(
+        tunnel: 'Psiphon',
+        action: RecoveryAction.watchdogRestart,
+        reason: 'watchdog detected dead tunnel',
+      );
+      if (lease == null) {
+        return const RecoveryLeaseResult.denied(
+          'another recovery is in progress',
+        );
+      }
+      return RecoveryLeaseResult(
+        granted: true,
+        lease: _LeaseHandleWrapper(lease, _recoveryCoordinator),
+      );
+    }
+
+    Future<RecoveryLeaseResult> acquireAetherLease() async {
+      final lease = _recoveryCoordinator.tryAcquire(
+        tunnel: 'Aether',
+        action: RecoveryAction.watchdogRestart,
+        reason: 'watchdog detected dead tunnel',
+      );
+      if (lease == null) {
+        return const RecoveryLeaseResult.denied(
+          'another recovery is in progress',
+        );
+      }
+      return RecoveryLeaseResult(
+        granted: true,
+        lease: _LeaseHandleWrapper(lease, _recoveryCoordinator),
+      );
+    }
+
+    Future<RecoveryLeaseResult> acquireTorLease() async {
+      final lease = _recoveryCoordinator.tryAcquire(
+        tunnel: 'Tor',
+        action: RecoveryAction.watchdogRestart,
+        reason: 'watchdog detected dead tunnel',
+      );
+      if (lease == null) {
+        return const RecoveryLeaseResult.denied(
+          'another recovery is in progress',
+        );
+      }
+      return RecoveryLeaseResult(
+        granted: true,
+        lease: _LeaseHandleWrapper(lease, _recoveryCoordinator),
+      );
+    }
+
+    Future<RecoveryLeaseResult> acquireSstpLease() async {
+      final lease = _recoveryCoordinator.tryAcquire(
+        tunnel: 'SSTP',
+        action: RecoveryAction.watchdogRestart,
+        reason: 'watchdog detected dead tunnel',
+      );
+      if (lease == null) {
+        return const RecoveryLeaseResult.denied(
+          'another recovery is in progress',
+        );
+      }
+      return RecoveryLeaseResult(
+        granted: true,
+        lease: _LeaseHandleWrapper(lease, _recoveryCoordinator),
+      );
+    }
+
     _watchdogManager = TunnelWatchdogFactory.build(
       provider: this,
       processService: processService,
-      restartPsiphon: () => watchdogRestartPsiphon(),
-      restartAether: () => watchdogRestartAether(),
-      restartTor: () => watchdogRestartTor(),
-      restartSstp: () => watchdogRestartSstp(),
+      isInternetAlive: internetAliveCheck,
+      acquirePsiphonLease: acquirePsiphonLease,
+      acquireAetherLease: acquireAetherLease,
+      acquireTorLease: acquireTorLease,
+      acquireSstpLease: acquireSstpLease,
+      restartPsiphon: () => restartPsiphonInternal(
+        reason: 'watchdog detected dead tunnel',
+      ),
+      restartAether: () => restartAetherInternal(
+        reason: 'watchdog detected dead tunnel',
+      ),
+      restartTor: () => restartTorInternal(
+        reason: 'watchdog detected dead tunnel',
+      ),
+      restartSstp: () => restartSstpInternal(
+        reason: 'watchdog detected dead tunnel',
+      ),
     );
-  }
-
-  Future<void> watchdogRestartPsiphon() async {
-    if (restartingPsiphon) return;
-    if (userStoppedPsiphon || isShuttingDown) return;
-    restartingPsiphon = true;
-    try {
-      processService.addLog(
-        '↻ Watchdog: restarting Psiphon',
-        source: LogSource.psiphon,
-      );
-      processService.setSadNotification('Psiphon');
-
-      await processService.stopPsiphon();
-      await Future.delayed(const Duration(seconds: 3));
-      if (!userStoppedPsiphon && !isShuttingDown) {
-        await connectPsiphon(fromAutoReconnect: true);
-      }
-    } finally {
-      restartingPsiphon = false;
-    }
-  }
-
-  Future<void> watchdogRestartAether() async {
-    if (restartingAether) return;
-    if (userStoppedAether || isShuttingDown) return;
-    restartingAether = true;
-    try {
-      processService.addLog(
-        '↻ Watchdog: restarting Aether',
-        source: LogSource.aether,
-      );
-      processService.setSadNotification('Aether');
-
-      await processService.stopAether();
-      await Future.delayed(const Duration(seconds: 3));
-      if (!userStoppedAether && !isShuttingDown) {
-        await connectAether(fromAutoReconnect: true);
-      }
-    } finally {
-      restartingAether = false;
-    }
-  }
-
-  Future<void> watchdogRestartTor() async {
-    if (restartingTor) return;
-    if (userStoppedTor || isShuttingDown) return;
-    restartingTor = true;
-    try {
-      processService.addLog(
-        '↻ Watchdog: restarting Tor',
-        source: LogSource.tor,
-      );
-      processService.setSadNotification('Tor');
-
-      await processService.stopTor();
-      await Future.delayed(const Duration(seconds: 3));
-      if (!userStoppedTor && !isShuttingDown) {
-        await connectTor(fromAutoReconnect: true);
-      }
-    } finally {
-      restartingTor = false;
-    }
-  }
-
-  Future<void> watchdogRestartSstp() async {
-    if (restartingSstp) return;
-    if (userStoppedSstp || isShuttingDown) return;
-    restartingSstp = true;
-    try {
-      processService.addLog(
-        '↻ Watchdog: restarting SSTP',
-        source: LogSource.sstp,
-      );
-      processService.setSadNotification('SSTP');
-
-      await processService.stopSstp();
-      await Future.delayed(const Duration(seconds: 3));
-      if (!userStoppedSstp && !isShuttingDown) {
-        await connectSstp(fromAutoReconnect: true);
-      }
-    } finally {
-      restartingSstp = false;
-    }
   }
 
   void syncWatchdogs() {
@@ -105,5 +119,18 @@ extension AppProviderWatchdogs on AppProvider {
       torConnected: processService.isTorConnected,
       sstpConnected: processService.isSstpConnected,
     );
+  }
+}
+
+/// wrapper ساده برای lease.
+class _LeaseHandleWrapper implements RecoveryLeaseHandle {
+  final RecoveryLease _lease;
+  final RecoveryCoordinator _coordinator;
+
+  _LeaseHandleWrapper(this._lease, this._coordinator);
+
+  @override
+  void release() {
+    _coordinator.release(_lease);
   }
 }

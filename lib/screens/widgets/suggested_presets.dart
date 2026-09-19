@@ -12,9 +12,8 @@ class SuggestedPresets extends StatelessWidget {
 
   int _currentGroup(AppSettings s) {
     if (s.useSunAndLion && s.isFronted && s.upstreamType == 0) return 1;
-    if (s.upstreamType == 2) return 2;
-    if (s.upstreamType == 3) return 3;
-    return 4;
+    if (s.upstreamType == 3) return 2;
+    return 3;
   }
 
   @override
@@ -44,16 +43,11 @@ class SuggestedPresets extends StatelessWidget {
               ),
               PresetRadioTile(
                 value: 2,
-                title: l10n.preset2Title,
-                subtitle: l10n.preset2Subtitle,
-              ),
-              PresetRadioTile(
-                value: 3,
                 title: l10n.preset3Title,
                 subtitle: l10n.preset3Subtitle,
               ),
               PresetRadioTile(
-                value: 4,
+                value: 3,
                 title: l10n.preset4Title,
                 subtitle: l10n.preset4Subtitle,
               ),

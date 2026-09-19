@@ -51,9 +51,8 @@ class PsiphonChecker {
               : 'Local binary matches the published one by size.';
         }
       }
-      final short = remote.sha.length > 7
-          ? remote.sha.substring(0, 7)
-          : remote.sha;
+      final short =
+          remote.sha.length > 7 ? remote.sha.substring(0, 7) : remote.sha;
       return CoreUpdateInfo(
         coreId: 'psiphon',
         displayName: 'Psiphon (official core)',

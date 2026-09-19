@@ -1,85 +1,107 @@
 part of 'app_provider.dart';
 
 extension AppProviderReconnect on AppProvider {
+  /// ⚠️ این متد فقط از `handleProcessServiceChange` صدا زده می‌شود،
+  /// و آن هم فقط وقتی state واقعی تغییر کرده باشد.
   void checkAutoReconnects() {
     if (!processService.isPsiphonRunning &&
+        !isPsiphonBusy &&
+        !isLoading &&
+        processService.psiphonPid == null &&
         !userStoppedPsiphon &&
         settings.autoReconnectPsiphon &&
-        !isPsiphonBusy &&
         !isAutoTesting &&
         !restartingPsiphon) {
       _reconnectManager.schedulePsiphonReconnect(
         shouldReconnect: () =>
             !processService.isPsiphonRunning &&
+            !isPsiphonBusy &&
+            !isLoading &&
+            processService.psiphonPid == null &&
             !userStoppedPsiphon &&
             settings.autoReconnectPsiphon &&
-            !isPsiphonBusy &&
             !isAutoTesting &&
             !restartingPsiphon &&
             !isShuttingDown,
         onReconnect: () => connectPsiphon(fromAutoReconnect: true),
         log: processService.addLog,
       );
+    } else if (processService.isPsiphonRunning ||
+        isPsiphonBusy ||
+        userStoppedPsiphon) {
+      _reconnectManager.cancelPsiphonTimer();
     }
 
     if (!processService.isAetherRunning &&
-        !userStoppedAether &&
         !isAutoTesting &&
+        processService.aetherPid == null &&
+        !userStoppedAether &&
         settings.autoReconnectAether &&
-        !isPsiphonBusy &&
         !restartingAether) {
       _reconnectManager.scheduleAetherReconnect(
         shouldReconnect: () =>
             !processService.isAetherRunning &&
+            !isAutoTesting &&
+            processService.aetherPid == null &&
             !userStoppedAether &&
             settings.autoReconnectAether &&
-            !isPsiphonBusy &&
-            !isAutoTesting &&
             !restartingAether &&
             !isShuttingDown,
         onReconnect: () => connectAether(fromAutoReconnect: true),
         log: processService.addLog,
       );
+    } else if (processService.isAetherRunning ||
+        isAutoTesting ||
+        userStoppedAether) {
+      _reconnectManager.cancelAetherTimer();
     }
 
     if (!processService.isTorRunning &&
+        !isTorBusy &&
+        processService.torPid == null &&
         !userStoppedTor &&
         settings.autoReconnectTor &&
-        !isTorBusy &&
         !isAutoTesting &&
         !restartingTor) {
       _reconnectManager.scheduleTorReconnect(
         shouldReconnect: () =>
             !processService.isTorRunning &&
+            !isTorBusy &&
+            processService.torPid == null &&
             !userStoppedTor &&
             settings.autoReconnectTor &&
-            !isTorBusy &&
             !isAutoTesting &&
             !restartingTor &&
             !isShuttingDown,
         onReconnect: () => connectTor(fromAutoReconnect: true),
         log: processService.addLog,
       );
+    } else if (processService.isTorRunning || isTorBusy || userStoppedTor) {
+      _reconnectManager.cancelTorTimer();
     }
 
     if (!processService.isSstpRunning &&
+        !isSstpBusy &&
+        processService.sstpPid == null &&
         !userStoppedSstp &&
         settings.autoReconnectSstp &&
-        !isSstpBusy &&
         !isAutoTesting &&
         !restartingSstp) {
       _reconnectManager.scheduleSstpReconnect(
         shouldReconnect: () =>
             !processService.isSstpRunning &&
+            !isSstpBusy &&
+            processService.sstpPid == null &&
             !userStoppedSstp &&
             settings.autoReconnectSstp &&
-            !isSstpBusy &&
             !isAutoTesting &&
             !restartingSstp &&
             !isShuttingDown,
         onReconnect: () => connectSstp(fromAutoReconnect: true),
         log: processService.addLog,
       );
+    } else if (processService.isSstpRunning || isSstpBusy || userStoppedSstp) {
+      _reconnectManager.cancelSstpTimer();
     }
   }
 

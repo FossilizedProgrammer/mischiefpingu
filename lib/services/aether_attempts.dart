@@ -57,9 +57,8 @@ class AetherAttemptPlanner {
         settings.isAetherProfileAutomatic ? 'auto' : settings.aetherProtocol,
         custom,
       );
-      final masque = (proto == 'masque' || proto == 'mim')
-          ? settings.masqueOption
-          : '';
+      final masque =
+          (proto == 'masque' || proto == 'mim') ? settings.masqueOption : '';
       add(
         EndpointAttempt(
           label: 'Custom Endpoint ($custom)',
@@ -137,9 +136,8 @@ class AetherAttemptPlanner {
     }
 
     final proto = settings.aetherProtocol;
-    final masque = (proto == 'masque' || proto == 'mim')
-        ? settings.masqueOption
-        : '';
+    final masque =
+        (proto == 'masque' || proto == 'mim') ? settings.masqueOption : '';
     final frag = settings.aetherProfile == 'strict' && masque == 'HTTP-2';
     add(
       EndpointAttempt(
@@ -166,11 +164,12 @@ class AetherAttemptPlanner {
     required int port,
     String endpointOverride = '',
     bool forceFragmentH2 = false,
-  }) => _argsBuilder.build(
-    protocol: protocol,
-    masqueOption: masqueOption,
-    port: port,
-    endpointOverride: endpointOverride,
-    forceFragmentH2: forceFragmentH2,
-  );
+  }) =>
+      _argsBuilder.build(
+        protocol: protocol,
+        masqueOption: masqueOption,
+        port: port,
+        endpointOverride: endpointOverride,
+        forceFragmentH2: forceFragmentH2,
+      );
 }

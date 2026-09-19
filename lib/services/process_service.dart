@@ -181,9 +181,8 @@ class ProcessService extends ChangeNotifier
   void setSstpNotification(String serverInfo, {String detail = ''}) {
     lastSstpServer = serverInfo;
     pendingSstpNotification = serverInfo;
-    pendingSstpTransportDetail = detail.isNotEmpty
-        ? detail
-        : 'Server: $serverInfo';
+    pendingSstpTransportDetail =
+        detail.isNotEmpty ? detail : 'Server: $serverInfo';
   }
 
   @override

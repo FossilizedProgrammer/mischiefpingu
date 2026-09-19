@@ -1,29 +1,63 @@
 part of 'app_provider.dart';
 
 extension AppProviderPsiphon on AppProvider {
+  /// ═══════════════════════════════════════════════════════════════
+  ///  connectPsiphon — entry point عمومی
+  /// ═══════════════════════════════════════════════════════════════
   Future<void> connectPsiphon({bool fromAutoReconnect = false}) async {
-    const src = LogSource.psiphon;
-
-    if (processService.isPsiphonRunning) {
-      userStoppedPsiphon = true;
-      _reconnectManager.cancelPsiphonTimer();
-      await processService.stopPsiphon();
-      await AppDataService.fixDataDirOwnership();
-      touch();
+    if (fromAutoReconnect) {
+      await _startPsiphonInternal(fromAutoReconnect: true);
       return;
     }
 
-    if (isPsiphonBusy) {
-      userStoppedPsiphon = true;
-      _aetherTestService.requestCancel();
-      _reconnectManager.cancelPsiphonTimer();
+    final isCurrentlyActive = processService.isPsiphonRunning || isPsiphonBusy;
+
+    if (isCurrentlyActive) {
+      await _stopPsiphonByUser();
+    } else {
+      await _startPsiphonInternal(fromAutoReconnect: false);
+    }
+  }
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  _stopPsiphonByUser — تنها جایی که userStoppedPsiphon=true می‌شود.
+  /// ═══════════════════════════════════════════════════════════════
+  Future<void> _stopPsiphonByUser() async {
+    const src = LogSource.psiphon;
+
+    userStoppedPsiphon = true;
+    _reconnectManager.cancelPsiphonTimer();
+    _reconnectManager.resetRetries('psiphon');
+    _aetherTestService.requestCancel();
+    _recoveryCoordinator.releaseLeaseByTunnel('Psiphon');
+
+    nextPsiphonGeneration();
+
+    try {
       await processService.stopPsiphon();
-      isPsiphonBusy = false;
-      isLoading = false;
-      processService.addLog('Psiphon start cancelled by user', source: src);
-      await AppDataService.fixDataDirOwnership();
-      touch();
-      return;
+    } catch (e) {
+      processService.addLog('⚠ Psiphon stop error: $e', source: src);
+    }
+
+    isPsiphonBusy = false;
+    isLoading = false;
+    watchdogManager?.psiphon.resetGracePeriod();
+    watchdogManager?.psiphon.resetCircuitBreaker();
+
+    await AppDataService.fixDataDirOwnership();
+    touch();
+  }
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  _startPsiphonInternal — start/reconnect داخلی.
+  /// ═══════════════════════════════════════════════════════════════
+  Future<void> _startPsiphonInternal({
+    required bool fromAutoReconnect,
+  }) async {
+    const src = LogSource.psiphon;
+
+    if (!fromAutoReconnect) {
+      _reconnectManager.cancelPsiphonTimer();
     }
 
     if (fromAutoReconnect && userStoppedPsiphon) {
@@ -34,13 +68,42 @@ extension AppProviderPsiphon on AppProvider {
       return;
     }
 
+    if (fromAutoReconnect && isPsiphonBusy) {
+      processService.addLog(
+        '→ Psiphon auto-reconnect skipped (already busy)',
+        source: src,
+      );
+      return;
+    }
+
+    if (!fromAutoReconnect && isPsiphonBusy) {
+      processService.addLog(
+        '→ Psiphon start ignored — already starting',
+        source: src,
+      );
+      return;
+    }
+
+    if (processService.isPsiphonRunning && !fromAutoReconnect) {
+      processService.addLog(
+        '→ Psiphon is already running — ignoring redundant start',
+        source: src,
+      );
+      return;
+    }
+
     if (!await checkPsiphonBinary()) return;
     if (!await checkPsiphonPorts()) return;
 
-    userStoppedPsiphon = false;
+    if (!fromAutoReconnect) {
+      userStoppedPsiphon = false;
+    }
+
     isPsiphonBusy = true;
     isLoading = true;
     touch();
+
+    final myGeneration = nextPsiphonGeneration();
 
     try {
       if (settings.upstreamType == 2) {
@@ -50,11 +113,13 @@ extension AppProviderPsiphon on AppProvider {
         } else {
           if (fromAutoReconnect && userStoppedAether) {
             processService.addLog(
-              '→ Psiphon auto-reconnect skipped (upstream Aether was stopped by user)',
+              '→ Psiphon auto-reconnect skipped '
+              '(upstream Aether was stopped by user)',
               source: src,
             );
             return;
           }
+
           aetherStatus = settings.aetherProtocol == 'auto'
               ? 'Aether: Auto-testing protocols…'
               : 'Aether: Testing ${settings.aetherProtocol.toUpperCase()}…';
@@ -72,20 +137,15 @@ extension AppProviderPsiphon on AppProvider {
             return;
           }
 
-          if (!ok) {
-            if (!processService.isAetherRunning) {
-              aetherStatus = 'Aether: not available — Psiphon not started';
-              processService.addLog(
-                '✗ Aether unavailable → Psiphon not started',
-                source: src,
-              );
-              return;
-            }
+          if (!ok && !processService.isAetherRunning) {
+            aetherStatus = 'Aether: not available — Psiphon not started';
             processService.addLog(
-              '✗ Aether unverified but running → starting Psiphon anyway',
+              '✗ Aether unavailable → Psiphon not started',
               source: src,
             );
+            return;
           }
+
           aetherStatus = 'Aether: Running (upstream)';
           touch();
         }
@@ -116,6 +176,13 @@ extension AppProviderPsiphon on AppProvider {
         socksPort: settings.socksPort,
         httpPort: settings.httpPort,
       );
+
+      if (myGeneration != _psiphonGeneration) {
+        processService.addLog(
+          '→ Psiphon start completed but a newer start superseded it',
+          source: src,
+        );
+      }
     } catch (e) {
       processService.addLog('✗ connectPsiphon error: $e', source: src);
     } finally {
@@ -123,6 +190,52 @@ extension AppProviderPsiphon on AppProvider {
       isLoading = false;
       await AppDataService.fixDataDirOwnership();
       touch();
+    }
+  }
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  restartPsiphonInternal — برای watchdog.
+  /// ═══════════════════════════════════════════════════════════════
+  Future<void> restartPsiphonInternal({required String reason}) async {
+    const src = LogSource.psiphon;
+
+    if (userStoppedPsiphon || isShuttingDown) {
+      processService.addLog(
+        '→ restartPsiphonInternal skipped '
+        '(userStopped=$userStoppedPsiphon, shutdown=$isShuttingDown)',
+        source: src,
+      );
+      return;
+    }
+
+    if (restartingPsiphon) {
+      processService.addLog(
+        '→ restartPsiphonInternal skipped (already restarting)',
+        source: src,
+      );
+      return;
+    }
+
+    restartingPsiphon = true;
+    try {
+      processService.addLog(
+        '↻ Restarting Psiphon — reason: $reason',
+        source: src,
+      );
+      processService.setSadNotification('Psiphon');
+
+      _reconnectManager.cancelPsiphonTimer();
+
+      nextPsiphonGeneration();
+
+      await processService.stopPsiphon();
+      await Future.delayed(const Duration(seconds: 3));
+
+      if (!userStoppedPsiphon && !isShuttingDown) {
+        await _startPsiphonInternal(fromAutoReconnect: true);
+      }
+    } finally {
+      restartingPsiphon = false;
     }
   }
 

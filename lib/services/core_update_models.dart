@@ -43,12 +43,12 @@ class PendingCoreUpdate {
   });
 
   Map<String, dynamic> toJson() => {
-    'coreId': coreId,
-    'stagingPath': stagingPath,
-    'destPath': destPath,
-    'version': version,
-    'createdAt': createdAt.toIso8601String(),
-  };
+        'coreId': coreId,
+        'stagingPath': stagingPath,
+        'destPath': destPath,
+        'version': version,
+        'createdAt': createdAt.toIso8601String(),
+      };
 
   factory PendingCoreUpdate.fromJson(Map<String, dynamic> json) =>
       PendingCoreUpdate(

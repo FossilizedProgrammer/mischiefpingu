@@ -45,11 +45,10 @@ class ShowMoreButton extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color:
-                  (showMore
-                          ? theme.colorScheme.secondary
-                          : theme.colorScheme.primary)
-                      .withValues(alpha: 0.25),
+              color: (showMore
+                      ? theme.colorScheme.secondary
+                      : theme.colorScheme.primary)
+                  .withValues(alpha: 0.25),
               width: 1,
             ),
           ),
@@ -58,11 +57,10 @@ class ShowMoreButton extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color:
-                      (showMore
-                              ? theme.colorScheme.secondary
-                              : theme.colorScheme.primary)
-                          .withValues(alpha: 0.15),
+                  color: (showMore
+                          ? theme.colorScheme.secondary
+                          : theme.colorScheme.primary)
+                      .withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: AnimatedRotation(

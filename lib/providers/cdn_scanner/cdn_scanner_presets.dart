@@ -22,10 +22,8 @@ extension CdnScannerPresets on CdnScannerProvider {
   }
 
   Future<void> saveCustomIps(List<String> ips) async {
-    customIpsInternal = ips
-        .map((e) => e.trim())
-        .where((e) => e.isNotEmpty)
-        .toList();
+    customIpsInternal =
+        ips.map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
     await persistCustomIps();
     if (selectedPresetId == 'custom') {
       customInput = customIps.join('\n');

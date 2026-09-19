@@ -33,6 +33,7 @@ class SettingsValidation {
       s.aetherProtocol = 'masque';
     }
     if (s.masqueOption != 'HTTP-2') s.masqueOption = 'HTTP-3';
+
     if (![
       'turbo',
       'balanced',
@@ -40,8 +41,13 @@ class SettingsValidation {
       'stealth',
       'ironclad',
     ].contains(s.aetherScanMode)) {
-      s.aetherScanMode = 'turbo';
+      s.aetherScanMode = 'balanced';
     }
+
+    if (s.aetherScanMode == 'turbo' && s.aetherProfile != 'manual') {
+      s.aetherScanMode = 'balanced';
+    }
+
     if (!['ipv4', 'ipv6', 'both'].contains(s.ipType)) s.ipType = 'ipv4';
     if (![
       'off',
@@ -60,6 +66,10 @@ class SettingsValidation {
 
   static void _validatePsiphon(AppSettings s) {
     if (!['socks5', 'http'].contains(s.proxyType)) s.proxyType = 'socks5';
+
+    if (s.upstreamType == 2) {
+      s.upstreamType = 0;
+    }
     if (s.upstreamType < 0 || s.upstreamType > 5) {
       s.upstreamType = 0;
     }
@@ -69,6 +79,7 @@ class SettingsValidation {
     if (![
       'direct',
       'bridge',
+      'manual',
       'aether',
       'psiphon',
       'sstp',
@@ -77,6 +88,13 @@ class SettingsValidation {
     }
     if (s.torSocksPort < 1 || s.torSocksPort > 65535) s.torSocksPort = 19050;
     if (s.torHttpPort < 1 || s.torHttpPort > 65535) s.torHttpPort = 18081;
+
+    if (!['socks5', 'socks5h', 'http'].contains(s.torProxyType)) {
+      s.torProxyType = 'socks5';
+    }
+    if (s.torProxyPort < 0 || s.torProxyPort > 65535) {
+      s.torProxyPort = 0;
+    }
   }
 
   static void _validateSstp(AppSettings s) {

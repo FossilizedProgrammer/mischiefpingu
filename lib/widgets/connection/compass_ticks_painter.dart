@@ -30,9 +30,8 @@ class CompassTicksPainter extends CustomPainter {
       final isMajor = i % (minorTicks ~/ majorTicks) == 0;
       final double tickLength = isMajor ? 5.0 : 2.5;
       final double strokeWidth = isMajor ? 2.0 : 1.1;
-      final opacity = active
-          ? (isMajor ? 0.85 : 0.45)
-          : (isMajor ? 0.35 : 0.18);
+      final opacity =
+          active ? (isMajor ? 0.85 : 0.45) : (isMajor ? 0.35 : 0.18);
 
       paint
         ..color = color.withValues(alpha: opacity)

@@ -1,48 +1,26 @@
 library;
 
-import 'dart:io';
-
 import 'process_service.dart';
+import 'aether_probe_fallbacks/curl_probe.dart';
+import 'aether_probe_fallbacks/log_ready_probe.dart';
+import 'aether_probe_fallbacks/data_plane_probe.dart';
 
+/// ═══════════════════════════════════════════════════════════════
+///  Facade — API عمومی AetherProbeFallbacks حفظ می‌شود.
+/// ═══════════════════════════════════════════════════════════════
 class AetherProbeFallbacks {
   final ProcessService processService;
 
-  const AetherProbeFallbacks({required this.processService});
+  late final CurlProbe _curl = CurlProbe();
+  late final LogReadyProbe _logReady =
+      LogReadyProbe(processService: processService);
+  late final DataPlaneProbe _dataPlane = DataPlaneProbe();
 
-  /// بررسی سلامت از طریق curl --socks5-hostname.
-  Future<bool> curlProbe(int port) async {
-    try {
-      final r = await Process.run('curl', [
-        '--socks5-hostname',
-        '127.0.0.1:$port',
-        '--connect-timeout',
-        '5',
-        '--max-time',
-        '8',
-        '-s',
-        '-o',
-        '/dev/null',
-        '-w',
-        '%{http_code}',
-        'https://1.1.1.1/cdn-cgi/trace',
-      ]).timeout(const Duration(seconds: 11));
-      return r.exitCode == 0 && r.stdout.toString().trim().startsWith('2');
-    } catch (_) {
-      return false;
-    }
-  }
+  AetherProbeFallbacks({required this.processService});
 
-  /// بررسی سلامت از روی لاگ‌های core.
-  bool coreSaysReady(int port) {
-    final logs = processService.fullLog;
-    final tail = logs.length > 80 ? logs.sublist(logs.length - 80) : logs;
-    final hasTunnel = tail.any((l) => l.contains('tunnel validated'));
-    final hasSocks = tail.any(
-      (l) =>
-          l.toLowerCase().contains('socks5') &&
-          l.contains('listening') &&
-          (l.contains(':$port') || l.contains('127.0.0.1:$port')),
-    );
-    return hasTunnel && hasSocks;
-  }
+  Future<bool> curlProbe(int port) => _curl.run(port);
+
+  bool coreSaysReady(int port) => _logReady.run(port);
+
+  Future<bool> realDataPlaneProbe(int port) => _dataPlane.run(port);
 }

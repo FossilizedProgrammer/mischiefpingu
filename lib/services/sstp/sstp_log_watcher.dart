@@ -6,7 +6,12 @@ class SstpLogWatcher {
 
   final List<DateTime> _recentFailures = [];
   static const Duration _window = Duration(minutes: 5);
-  static const int _windowThreshold = 25;
+
+  /// ⚠️ افزایش یافته از ۲۵ به ۵۰.
+  static const int _windowThreshold = 50;
+
+  int _consecutiveNoSuccess = 0;
+  static const int _maxConsecutiveNoSuccess = 15;
 
   SstpLogWatcher({required this.log});
 
@@ -26,12 +31,25 @@ class SstpLogWatcher {
       final now = DateTime.now();
       _recentFailures.add(now);
       _recentFailures.removeWhere((t) => now.difference(t) > _window);
+      _consecutiveNoSuccess++;
 
       if (_recentFailures.length >= _windowThreshold) {
         _recentFailures.clear();
+        _consecutiveNoSuccess = 0;
         log(
           '⚠ SSTP log watcher: $_windowThreshold قطعی در '
           '${_window.inMinutes} دقیقه',
+          source: _source,
+        );
+        return true;
+      }
+
+      if (_consecutiveNoSuccess >= _maxConsecutiveNoSuccess) {
+        _recentFailures.clear();
+        _consecutiveNoSuccess = 0;
+        log(
+          '⚠ SSTP log watcher: $_maxConsecutiveNoSuccess شکست متوالی '
+          'بدون هیچ اتصال موفق',
           source: _source,
         );
         return true;
@@ -40,6 +58,7 @@ class SstpLogWatcher {
 
     if (lower.contains('tunnel is up') || lower.contains('proxies ready')) {
       _recentFailures.clear();
+      _consecutiveNoSuccess = 0;
     }
 
     return false;
@@ -47,5 +66,6 @@ class SstpLogWatcher {
 
   void reset() {
     _recentFailures.clear();
+    _consecutiveNoSuccess = 0;
   }
 }

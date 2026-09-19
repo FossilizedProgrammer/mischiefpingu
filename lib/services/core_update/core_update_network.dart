@@ -25,12 +25,14 @@ class CoreUpdateNetwork {
     String? proxy, {
     String accept = '*/*',
     String userAgent = 'mischiefpingu-CoreUpdater/1.0',
-  }) => _http.getText(url, proxy, accept: accept, userAgent: userAgent);
+  }) =>
+      _http.getText(url, proxy, accept: accept, userAgent: userAgent);
   Future<({int status, int length})?> headRequest(
     String url,
     String? proxy, {
     int timeoutSec = 15,
-  }) => _http.headRequest(url, proxy, timeoutSec: timeoutSec);
+  }) =>
+      _http.headRequest(url, proxy, timeoutSec: timeoutSec);
 
   Future<String> detectArch() => CoreUpdateArch.detect();
 
@@ -43,14 +45,15 @@ class CoreUpdateNetwork {
     int base = 5,
     int span = 70,
     int? totalHint,
-  }) => _downloader.download(
-    url,
-    dest,
-    proxy: proxy,
-    onProgress: onProgress,
-    onCancelCheck: onCancelCheck,
-    base: base,
-    span: span,
-    totalHint: totalHint,
-  );
+  }) =>
+      _downloader.download(
+        url,
+        dest,
+        proxy: proxy,
+        onProgress: onProgress,
+        onCancelCheck: onCancelCheck,
+        base: base,
+        span: span,
+        totalHint: totalHint,
+      );
 }

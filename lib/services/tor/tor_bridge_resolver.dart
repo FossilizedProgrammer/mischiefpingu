@@ -34,7 +34,7 @@ class TorBridgeResolver {
   }) {
     final transport = settings.torTransport;
 
-    final rawBridges = (transport == 'direct')
+    final rawBridges = (transport == 'direct' || transport == 'manual')
         ? <String>[]
         : TorBridges.parseBridges(settings.torBridges);
 
@@ -45,6 +45,8 @@ class TorBridgeResolver {
       upstreamSocks = psiphonSocks;
     } else if (transport == 'sstp' && sstpSocks != null) {
       upstreamSocks = sstpSocks;
+    } else if (transport == 'manual' && settings.torProxyPort > 0) {
+      upstreamSocks = settings.torProxyPort;
     }
 
     final usePtProxy = upstreamSocks != null && rawBridges.isNotEmpty;

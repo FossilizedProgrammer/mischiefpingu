@@ -32,7 +32,14 @@ class TorConfigBuilder {
     final sb = StringBuffer();
     sb.writeln('SocksPort 127.0.0.1:$socksPort');
 
-    if (decision.upstreamSocks != null && decision.bridges.isEmpty) {
+    if (settings.torTransport == 'manual' &&
+        settings.torProxyIp.trim().isNotEmpty &&
+        settings.torProxyPort > 0) {
+      final proxyLine = _buildManualProxyLine();
+      if (proxyLine != null) {
+        sb.writeln(proxyLine);
+      }
+    } else if (decision.upstreamSocks != null) {
       sb.writeln('Socks5Proxy 127.0.0.1:${decision.upstreamSocks}');
     }
 
@@ -70,7 +77,8 @@ class TorConfigBuilder {
     }
 
     Map<String, String>? env;
-    if (decision.upstreamSocks != null) {
+    if (settings.torTransport == 'manual') {
+    } else if (decision.upstreamSocks != null) {
       env = {'TOR_PT_PROXY': 'socks5://127.0.0.1:${decision.upstreamSocks}'};
     }
 
@@ -83,6 +91,31 @@ class TorConfigBuilder {
       source: LogSource.tor,
     );
     return TorConfigResult(torrc: torrc, env: env);
+  }
+
+  /// ساخت خط پراکسی برای حالت manual.
+  ///
+  /// ⚠️ Tor فقط Socks5Proxy و HTTPSProxy را پشتیبانی می‌کند.
+  /// برای socks5 و socks5h از Socks5Proxy استفاده می‌کنیم.
+  /// برای http از HTTPSProxy استفاده می‌کنیم.
+  String? _buildManualProxyLine() {
+    final ip = settings.torProxyIp.trim();
+    final port = settings.torProxyPort;
+    final user = settings.torProxyUser.trim();
+    final pass = settings.torProxyPass;
+
+    if (ip.isEmpty || port <= 0) return null;
+
+    final type = settings.torProxyType;
+
+    if (type == 'http') {
+      if (user.isNotEmpty) {
+        return 'HTTPSProxy $user:$pass@$ip:$port';
+      }
+      return 'HTTPSProxy $ip:$port';
+    }
+
+    return 'Socks5Proxy $ip:$port';
   }
 
   static String _p(String path) => path.replaceAll('\\', '/');

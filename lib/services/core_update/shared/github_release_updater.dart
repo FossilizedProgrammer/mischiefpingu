@@ -48,11 +48,12 @@ class GithubReleaseUpdater {
     String? proxy,
     void Function(int percent)? onProgress,
     bool Function()? onCancelCheck,
-  }) => _installer.update(
-    info,
-    installed: installed,
-    proxy: proxy,
-    onProgress: onProgress,
-    onCancelCheck: onCancelCheck,
-  );
+  }) =>
+      _installer.update(
+        info,
+        installed: installed,
+        proxy: proxy,
+        onProgress: onProgress,
+        onCancelCheck: onCancelCheck,
+      );
 }

@@ -61,6 +61,12 @@ class AppSettings {
   int torHttpPort;
   bool torShareLan;
 
+  String torProxyType;
+  String torProxyIp;
+  int torProxyPort;
+  String torProxyUser;
+  String torProxyPass;
+
   String sstpServer;
   int sstpPort;
   String sstpUser;
@@ -107,7 +113,7 @@ class AppSettings {
     this.aetherProtocol = 'auto',
     this.masqueOption = 'HTTP-3',
     this.aetherLocalPort = 1819,
-    this.aetherScanMode = 'turbo',
+    this.aetherScanMode = 'balanced',
     this.ipType = 'ipv4',
     this.obfuscation = 'off',
     this.aetherShareLan = false,
@@ -125,6 +131,11 @@ class AppSettings {
     this.torSocksPort = 19050,
     this.torHttpPort = 18081,
     this.torShareLan = false,
+    this.torProxyType = 'socks5',
+    this.torProxyIp = '',
+    this.torProxyPort = 1080,
+    this.torProxyUser = '',
+    this.torProxyPass = '',
     this.sstpServer = '',
     this.sstpPort = 443,
     this.sstpUser = '',

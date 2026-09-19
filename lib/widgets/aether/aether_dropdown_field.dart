@@ -19,9 +19,8 @@ class AetherDropdownField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final safeValue = items.any((e) => e.key == value)
-        ? value
-        : items.first.key;
+    final safeValue =
+        items.any((e) => e.key == value) ? value : items.first.key;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

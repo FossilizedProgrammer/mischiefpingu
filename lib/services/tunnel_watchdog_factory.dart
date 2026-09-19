@@ -17,6 +17,11 @@ class TunnelWatchdogFactory {
     required Future<void> Function() restartAether,
     required Future<void> Function() restartTor,
     required Future<void> Function() restartSstp,
+    Future<bool> Function()? isInternetAlive,
+    Future<RecoveryLeaseResult> Function()? acquirePsiphonLease,
+    Future<RecoveryLeaseResult> Function()? acquireAetherLease,
+    Future<RecoveryLeaseResult> Function()? acquireTorLease,
+    Future<RecoveryLeaseResult> Function()? acquireSstpLease,
   }) {
     final log = processService.addLog;
 
@@ -35,6 +40,8 @@ class TunnelWatchdogFactory {
       onRestart: restartPsiphon,
       log: log,
       logSource: LogSource.psiphon,
+      isInternetAlive: isInternetAlive,
+      acquireRecoveryLease: acquirePsiphonLease,
     );
 
     final aether = TunnelWatchdog(
@@ -52,6 +59,8 @@ class TunnelWatchdogFactory {
       onRestart: restartAether,
       log: log,
       logSource: LogSource.aether,
+      isInternetAlive: isInternetAlive,
+      acquireRecoveryLease: acquireAetherLease,
     );
 
     final tor = TunnelWatchdog(
@@ -69,6 +78,8 @@ class TunnelWatchdogFactory {
       onRestart: restartTor,
       log: log,
       logSource: LogSource.tor,
+      isInternetAlive: isInternetAlive,
+      acquireRecoveryLease: acquireTorLease,
     );
 
     final sstp = TunnelWatchdog(
@@ -86,6 +97,8 @@ class TunnelWatchdogFactory {
       onRestart: restartSstp,
       log: log,
       logSource: LogSource.sstp,
+      isInternetAlive: isInternetAlive,
+      acquireRecoveryLease: acquireSstpLease,
     );
 
     return TunnelWatchdogManager(

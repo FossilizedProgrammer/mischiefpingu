@@ -13,6 +13,7 @@ import 'sstp_fetcher_section.dart';
 import 'core_update_tile.dart';
 import 'log_tile.dart';
 import '../../widgets/cdn_scanner_section.dart';
+import '../../widgets/internet_quality_tile.dart';
 
 class AdvancedSettingsColumn extends StatelessWidget {
   const AdvancedSettingsColumn({super.key});
@@ -21,6 +22,7 @@ class AdvancedSettingsColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Column(
       children: [
+        InternetQualityTile(),
         ThemeSelectorTile(),
         LanguageSelectorTile(),
         NotificationsSettingsTile(),

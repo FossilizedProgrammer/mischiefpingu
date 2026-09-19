@@ -2,13 +2,25 @@ library;
 
 import 'dart:async';
 
-import 'watchdog_config.dart';
+import 'watchdog_circuit_breaker.dart';
+import 'watchdog_internet_gate.dart';
 import 'watchdog_params.dart';
 import 'watchdog_prober.dart';
+import 'watchdog_restart_decider.dart';
+import 'watchdog_types.dart';
 
-/// نتیجهٔ یک probe.
-enum ProbeResult { alive, dead, skipped }
+export 'watchdog_types.dart'
+    show ProbeResult, RecoveryLeaseResult, RecoveryLeaseHandle;
 
+/// ═══════════════════════════════════════════════════════════════
+///  TunnelWatchdog — حلقهٔ اصلی probe + تصمیم restart.
+///
+///  منطق پیچیده در فایل‌های جدا:
+///    • WatchdogRestartDecider → تصمیم نهایی restart
+///    • WatchdogInternetGate   → چک اینترنت پایه
+///    • WatchdogCircuitBreaker → circuit breaker
+///    • WatchdogProber         → probe واقعی
+/// ═══════════════════════════════════════════════════════════════
 class TunnelWatchdog {
   final WatchdogParams params;
   final bool Function() isConnected;
@@ -18,14 +30,15 @@ class TunnelWatchdog {
   final void Function(String message, {String source}) log;
   final String logSource;
 
+  final Future<bool> Function()? isInternetAlive;
+  final Future<RecoveryLeaseResult> Function()? acquireRecoveryLease;
+
   Timer? _timer;
   int _failures = 0;
   bool _checkRunning = false;
   bool _disposed = false;
   bool _started = false;
-
-  /// ⚠️ زمان آخرین restart برای grace period.
-  DateTime? _lastRestartAt;
+  bool _restartInProgress = false;
 
   late final WatchdogProber _prober = WatchdogProber(
     socksPort: params.socksPort,
@@ -39,6 +52,33 @@ class TunnelWatchdog {
     logSource: logSource,
   );
 
+  late final WatchdogCircuitBreaker _circuit = WatchdogCircuitBreaker(
+    log: log,
+    logSource: logSource,
+  );
+
+  late final WatchdogInternetGate _internetGate = WatchdogInternetGate(
+    isInternetAlive: isInternetAlive,
+    log: log,
+    logSource: logSource,
+  );
+
+  late final WatchdogRestartDecider _decider = WatchdogRestartDecider(
+    params: params,
+    onRestart: onRestart,
+    isUserStopped: isUserStopped,
+    isInternetAlive: isInternetAlive,
+    acquireRecoveryLease: acquireRecoveryLease,
+    circuit: _circuit,
+    internetGate: _internetGate,
+    log: log,
+    logSource: logSource,
+    isRestartInProgress: () => _restartInProgress,
+    setRestartInProgress: (v) => _restartInProgress = v,
+    resetFailures: () => _failures = 0,
+    holdFailuresAtThreshold: () => _failures = params.maxFailures - 1,
+  );
+
   TunnelWatchdog({
     required this.params,
     required this.isConnected,
@@ -47,6 +87,8 @@ class TunnelWatchdog {
     required this.log,
     required this.logSource,
     this.isBusy,
+    this.isInternetAlive,
+    this.acquireRecoveryLease,
   });
 
   String get name => params.name;
@@ -81,21 +123,46 @@ class TunnelWatchdog {
     _failures = 0;
   }
 
-  Future<void> _check() async {
-    if (_disposed || _checkRunning) return;
+  void resetGracePeriod() {
+    _decider.resetGracePeriod();
+  }
 
-    final lastRestart = _lastRestartAt;
-    if (lastRestart != null) {
-      final elapsed = DateTime.now().difference(lastRestart);
-      if (elapsed < WatchdogConfig.restartGracePeriod) {
-        final remaining = WatchdogConfig.restartGracePeriod - elapsed;
-        log(
-          '→ $name watchdog: in grace period, ${remaining.inSeconds}s remaining',
-          source: logSource,
-        );
-        return;
-      }
-      _lastRestartAt = null;
+  void resetCircuitBreaker() {
+    _circuit.reset();
+    log(
+      '→ $name watchdog: circuit breaker reset',
+      source: logSource,
+    );
+  }
+
+  Future<void> _check() async {
+    if (_disposed || _checkRunning || _restartInProgress) return;
+
+    if (_circuit.isOpen()) {
+      final remaining = _circuit.timeUntilClose();
+      log(
+        '→ $name watchdog: circuit OPEN, '
+        '${remaining.inSeconds}s remaining — skipping probe',
+        source: logSource,
+      );
+      return;
+    }
+
+    if (_circuit.wasJustClosed()) {
+      log(
+        '★ $name watchdog: circuit CLOSED — resuming probes',
+        source: logSource,
+      );
+    }
+
+    if (_decider.isInGracePeriod()) {
+      final remaining = _decider.graceTimeRemaining();
+      log(
+        '→ $name watchdog: in grace period, '
+        '${remaining.inSeconds}s remaining',
+        source: logSource,
+      );
+      return;
     }
 
     if (!isConnected()) {
@@ -107,6 +174,10 @@ class TunnelWatchdog {
       return;
     }
     if (isBusy?.call() ?? false) {
+      log(
+        '→ $name watchdog: busy, skipping probe',
+        source: logSource,
+      );
       return;
     }
 
@@ -134,17 +205,7 @@ class TunnelWatchdog {
       );
 
       if (_failures >= maxFailures) {
-        _failures = 0;
-        log(
-          '↻ $name watchdog: tunnel dead after $maxFailures consecutive failures — restarting',
-          source: logSource,
-        );
-        _lastRestartAt = DateTime.now();
-        try {
-          await onRestart();
-        } catch (e) {
-          log('⚠ $name watchdog: onRestart error: $e', source: logSource);
-        }
+        await _decider.attemptRestart();
       }
     } catch (e) {
       log('⚠ $name watchdog error: $e', source: logSource);

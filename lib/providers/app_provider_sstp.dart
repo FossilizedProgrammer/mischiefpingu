@@ -1,23 +1,84 @@
 part of 'app_provider.dart';
 
 extension AppProviderSstp on AppProvider {
+  /// ═══════════════════════════════════════════════════════════════
+  ///  connectSstp — entry point عمومی
+  /// ═══════════════════════════════════════════════════════════════
   Future<void> connectSstp({bool fromAutoReconnect = false}) async {
+    if (fromAutoReconnect) {
+      await _startSstpInternal(fromAutoReconnect: true);
+      return;
+    }
+
+    final isCurrentlyActive = processService.isSstpRunning || isSstpBusy;
+
+    if (isCurrentlyActive) {
+      await _stopSstpByUser();
+    } else {
+      await _startSstpInternal(fromAutoReconnect: false);
+    }
+  }
+
+  Future<void> _stopSstpByUser() async {
     const src = LogSource.sstp;
 
-    if (processService.isSstpRunning || isSstpBusy) {
-      userStoppedSstp = true;
-      _reconnectManager.cancelSstpTimer();
-      _aetherTestService.requestCancel();
+    userStoppedSstp = true;
+    _reconnectManager.cancelSstpTimer();
+    _reconnectManager.resetRetries('sstp');
+    _aetherTestService.requestCancel();
+    _recoveryCoordinator.releaseLeaseByTunnel('SSTP');
+
+    nextSstpGeneration();
+
+    try {
       await processService.stopSstp();
-      sstpStatus = 'SSTP: Stopped';
-      await AppDataService.fixDataDirOwnership();
-      touch();
-      return;
+    } catch (e) {
+      processService.addLog('⚠ SSTP stop error: $e', source: src);
+    }
+
+    isSstpBusy = false;
+    sstpStatus = 'SSTP: Stopped';
+    watchdogManager?.sstp.resetGracePeriod();
+    watchdogManager?.sstp.resetCircuitBreaker();
+
+    await AppDataService.fixDataDirOwnership();
+    touch();
+  }
+
+  Future<void> _startSstpInternal({required bool fromAutoReconnect}) async {
+    const src = LogSource.sstp;
+
+    if (!fromAutoReconnect) {
+      _reconnectManager.cancelSstpTimer();
     }
 
     if (fromAutoReconnect && userStoppedSstp) {
       processService.addLog(
         '→ SSTP auto-reconnect skipped (stopped by user)',
+        source: src,
+      );
+      return;
+    }
+
+    if (fromAutoReconnect && isSstpBusy) {
+      processService.addLog(
+        '→ SSTP auto-reconnect skipped (already busy)',
+        source: src,
+      );
+      return;
+    }
+
+    if (!fromAutoReconnect && isSstpBusy) {
+      processService.addLog(
+        '→ SSTP start ignored — already starting',
+        source: src,
+      );
+      return;
+    }
+
+    if (processService.isSstpRunning && !fromAutoReconnect) {
+      processService.addLog(
+        '→ SSTP is already running — ignoring redundant start',
         source: src,
       );
       return;
@@ -35,8 +96,8 @@ extension AppProviderSstp on AppProvider {
           log: (line) => processService.addLog(line, source: src),
         );
 
-        final msg =
-            'SSTP binary not found. Place "sstp-proxy${AppDataService.exeExt}" '
+        final msg = 'SSTP binary not found. Place '
+            '"sstp-proxy${AppDataService.exeExt}" '
             'in the data folder, next to the app binary, or inside the '
             '"${AppDataService.osFolder}" folder. You can also download it '
             'from "Core Updates".';
@@ -88,10 +149,15 @@ extension AppProviderSstp on AppProvider {
       return;
     }
 
-    userStoppedSstp = false;
+    if (!fromAutoReconnect) {
+      userStoppedSstp = false;
+    }
+
     isSstpBusy = true;
     sstpStatus = 'SSTP: Starting…';
     touch();
+
+    final myGeneration = nextSstpGeneration();
 
     try {
       final upstreamOk = await resolveSstpUpstream(
@@ -118,7 +184,10 @@ extension AppProviderSstp on AppProvider {
       }
 
       final serverInfo = '${settings.sstpServer}:${settings.sstpPort}';
-      processService.prepareSstpNotification(serverInfo, 'Server: $serverInfo');
+      processService.prepareSstpNotification(
+        serverInfo,
+        'Server: $serverInfo',
+      );
 
       final ok = await processService.startSstp(
         args: args,
@@ -128,6 +197,13 @@ extension AppProviderSstp on AppProvider {
       );
 
       sstpStatus = ok ? 'SSTP: Connected' : 'SSTP: Failed to start';
+
+      if (myGeneration != _sstpGeneration) {
+        processService.addLog(
+          '→ SSTP start completed but a newer start superseded it',
+          source: src,
+        );
+      }
     } catch (e) {
       processService.addLog('✗ connectSstp error: $e', source: src);
       sstpStatus = 'SSTP: Error';
@@ -135,6 +211,49 @@ extension AppProviderSstp on AppProvider {
       isSstpBusy = false;
       await AppDataService.fixDataDirOwnership();
       touch();
+    }
+  }
+
+  Future<void> restartSstpInternal({required String reason}) async {
+    const src = LogSource.sstp;
+
+    if (userStoppedSstp || isShuttingDown) {
+      processService.addLog(
+        '→ restartSstpInternal skipped '
+        '(userStopped=$userStoppedSstp, shutdown=$isShuttingDown)',
+        source: src,
+      );
+      return;
+    }
+
+    if (restartingSstp) {
+      processService.addLog(
+        '→ restartSstpInternal skipped (already restarting)',
+        source: src,
+      );
+      return;
+    }
+
+    restartingSstp = true;
+    try {
+      processService.addLog(
+        '↻ Restarting SSTP — reason: $reason',
+        source: src,
+      );
+      processService.setSadNotification('SSTP');
+
+      _reconnectManager.cancelSstpTimer();
+
+      nextSstpGeneration();
+
+      await processService.stopSstp();
+      await Future.delayed(const Duration(seconds: 3));
+
+      if (!userStoppedSstp && !isShuttingDown) {
+        await _startSstpInternal(fromAutoReconnect: true);
+      }
+    } finally {
+      restartingSstp = false;
     }
   }
 }

@@ -1,253 +1,70 @@
 library;
 
-import 'dart:io';
-
-import 'package:path/path.dart' as p;
-
-import '../app_data_service.dart';
-import '../core_update_utils.dart';
+import 'core_update_process/binary_replacer.dart';
+import 'core_update_process/directory_copier.dart';
+import 'core_update_process/platform_binary_sync.dart';
+import 'core_update_process/process_controller.dart';
 import 'core_update_archive_extractor.dart';
 
+/// ═══════════════════════════════════════════════════════════════
+///  Facade — API عمومی CoreUpdateProcessUtils حفظ می‌شود،
+///  پیاده‌سازی به زیرسرویس‌ها delegate شده است.
+/// ═══════════════════════════════════════════════════════════════
 class CoreUpdateProcessUtils {
   final void Function(String)? log;
-  CoreUpdateProcessUtils({this.log});
 
-  late final CoreUpdateArchiveExtractor _archive = CoreUpdateArchiveExtractor(
+  late final CoreUpdateArchiveExtractor _archive =
+      CoreUpdateArchiveExtractor(log: log);
+  late final ProcessController _process = ProcessController(log: log);
+  late final BinaryReplacer _replacer = BinaryReplacer(log: log);
+  late final DirectoryCopier _copier = DirectoryCopier(log: log);
+  late final PlatformBinarySync _platformSync = PlatformBinarySync(
     log: log,
+    replacer: _replacer,
+    binaryNameForCore: binaryNameForCore,
   );
 
-  void _log(String m) => log?.call(m);
-  bool get _isWin => AppDataService.isWindows;
+  CoreUpdateProcessUtils({this.log});
 
   Future<void> extractArchive(String archive, String destDir) =>
       _archive.extract(archive, destDir);
 
   String binaryNameForCore(String coreId) => _archive.binaryNameForCore(coreId);
 
-  Future<bool> isProcessRunning(String binaryName) async {
-    try {
-      if (_isWin) {
-        final r = await Process.run('tasklist', [
-          '/FI',
-          'IMAGENAME eq $binaryName',
-        ]);
-        if (r.exitCode == 0) {
-          return (r.stdout as String).contains(binaryName);
-        }
-      } else {
-        final pattern = '(^|/)${RegExp.escape(binaryName)}\$';
-        final r = await Process.run('pgrep', ['-f', pattern]);
-        if (r.exitCode == 0 && (r.stdout as String).trim().isNotEmpty) {
-          return true;
-        }
-      }
-    } catch (_) {}
-    return false;
-  }
+  Future<bool> isProcessRunning(String binaryName) =>
+      _process.isProcessRunning(binaryName);
 
-  Future<void> stopProcess(String binaryName, String label) async {
-    try {
-      final running = await isProcessRunning(binaryName);
-      if (running) {
-        _log('→ $label is running — stopping it for replacement …');
-        if (_isWin) {
-          await Process.run('taskkill', ['/F', '/IM', binaryName]);
-        } else {
-          await Process.run('pkill', [
-            '-f',
-            '(^|/)${RegExp.escape(binaryName)}\$',
-          ]);
-        }
-        await Future.delayed(const Duration(milliseconds: 600));
-      }
-    } catch (_) {}
-  }
+  Future<void> stopProcess(String binaryName, String label) =>
+      _process.stopProcess(binaryName, label);
 
-  Future<int> replaceBinary(String src, String dest) async {
-    if (!await CoreUpdateUtils.isRealFile(src)) {
-      throw StateError('Source file does not exist or is invalid: $src');
-    }
-    final srcFile = File(src);
-    final srcSize = await srcFile.length();
-    if (srcSize == 0) {
-      throw StateError('Source file is empty: $src');
-    }
-    _log('→ replaceBinary: src=$src ($srcSize bytes) → dest=$dest');
-
-    final destDir = p.dirname(dest);
-    try {
-      await Directory(destDir).create(recursive: true);
-    } catch (e) {
-      throw StateError('Cannot create destination directory $destDir: $e');
-    }
-
-    final staging = '$dest.new';
-    try {
-      await srcFile.copy(staging);
-    } catch (e) {
-      try {
-        await File(staging).delete();
-      } catch (_) {}
-      throw StateError('Failed to copy $src → $staging: $e');
-    }
-
-    if (!_isWin) {
-      final r = await Process.run('chmod', ['+x', staging]);
-      if (r.exitCode != 0) {
-        _log('⚠ chmod +x failed: ${r.stderr}');
-      }
-    }
-
-    try {
-      if (await File(dest).exists()) {
-        await File(dest).delete();
-      }
-    } catch (e) {
-      _log('⚠ Could not delete old binary $dest: $e');
-    }
-
-    try {
-      await File(staging).rename(dest);
-    } catch (e) {
-      _log('⚠ rename failed, trying direct copy: $e');
-      try {
-        await File(staging).copy(dest);
-        await File(staging).delete();
-      } catch (e2) {
-        throw StateError('Failed to finalize $dest: $e2');
-      }
-    }
-
-    await AppDataService.fixDataDirOwnership();
-    final finalSize = await CoreUpdateUtils.fileSize(dest);
-    _log('→ replaceBinary done: $dest ($finalSize bytes)');
-    return finalSize;
-  }
+  Future<int> replaceBinary(String src, String dest) =>
+      _replacer.replaceBinary(src, dest);
 
   Future<int> copyDirectoryTree({
     required String src,
     required String dest,
     bool skipIfExists = false,
-  }) async {
-    final srcDir = Directory(src);
-    if (!await srcDir.exists()) {
-      _log('→ copyDirectoryTree: source does not exist → $src');
-      return 0;
-    }
-
-    await Directory(dest).create(recursive: true);
-    var count = 0;
-
-    await for (final entity in srcDir.list(
-      recursive: true,
-      followLinks: false,
-    )) {
-      final rel = p.relative(entity.path, from: src);
-      if (rel == '.' || rel.isEmpty) continue;
-
-      final destPath = p.join(dest, rel);
-
-      if (entity is Directory) {
-        await Directory(destPath).create(recursive: true);
-      } else if (entity is File) {
-        if (skipIfExists && await File(destPath).exists()) continue;
-        await Directory(p.dirname(destPath)).create(recursive: true);
-        await entity.copy(destPath);
-
-        if (!_isWin) {
-          final base = p.basename(destPath).toLowerCase();
-          final relParts = p.split(rel);
-          final isInsidePt = relParts.contains('pt');
-          final shouldChmod =
-              base == 'aether' ||
-              base == 'aether.exe' ||
-              !base.contains('.') ||
-              isInsidePt;
-          if (shouldChmod) {
-            try {
-              await Process.run('chmod', ['+x', destPath]);
-            } catch (_) {}
-          }
-        }
-        count++;
-      }
-    }
-
-    _log('→ copyDirectoryTree: $count file(s) copied → $dest');
-    return count;
-  }
+  }) =>
+      _copier.copyDirectoryTree(
+        src: src,
+        dest: dest,
+        skipIfExists: skipIfExists,
+      );
 
   Future<void> installAetherPtDirectory({
     required String dataDir,
     String? stagingSource,
     String? fallbackSource,
-  }) async {
-    final destPt = p.join(dataDir, 'pt');
-
-    String? srcPt;
-
-    if (stagingSource != null) {
-      final candidate = p.join(stagingSource, 'pt');
-      if (await Directory(candidate).exists()) {
-        srcPt = candidate;
-      }
-    }
-
-    if (srcPt == null && fallbackSource != null) {
-      final candidate = p.join(fallbackSource, 'pt');
-      if (await Directory(candidate).exists()) {
-        srcPt = candidate;
-      }
-    }
-
-    if (srcPt == null) {
-      _log(
-        '→ installAetherPtDirectory: no `pt` directory found '
-        '(staging=$stagingSource, fallback=$fallbackSource)',
+  }) =>
+      _copier.installAetherPtDirectory(
+        dataDir: dataDir,
+        stagingSource: stagingSource,
+        fallbackSource: fallbackSource,
       );
-      return;
-    }
-
-    final destPtDir = Directory(destPt);
-    if (await destPtDir.exists()) {
-      try {
-        await destPtDir.delete(recursive: true);
-        _log('→ Removed old `pt` directory before install');
-      } catch (e) {
-        _log('⚠ Could not remove old `pt`: $e — will overwrite in place');
-      }
-    }
-
-    _log('→ Installing Aether `pt` directory: $srcPt → $destPt');
-    final count = await copyDirectoryTree(src: srcPt, dest: destPt);
-    _log('★ Aether `pt` directory installed ($count files) → $destPt');
-  }
 
   Future<void> updateExecutableDirBinary(
     String coreId,
     String stagingPath,
-  ) async {
-    if (coreId == 'tor') {
-      _log('→ Tor kept in data dir only (no exe-dir copy)');
-      return;
-    }
-    if (AppDataService.isRunningInAppImage) {
-      _log(
-        '→ AppImage mode: $coreId kept in data dir only (exe dir is read-only)',
-      );
-      return;
-    }
-    try {
-      final exeDir = p.dirname(Platform.resolvedExecutable);
-      final platformDir = p.join(exeDir, AppDataService.osFolder);
-      final destPath = p.join(platformDir, binaryNameForCore(coreId));
-      final destFile = File(destPath);
-      if (await destFile.exists()) {
-        await replaceBinary(stagingPath, destPath);
-        _log('→ Also updated $coreId in platform directory');
-      }
-    } catch (e) {
-      _log('⚠ Failed to update platform directory binary for $coreId: $e');
-    }
-  }
+  ) =>
+      _platformSync.updateExecutableDirBinary(coreId, stagingPath);
 }

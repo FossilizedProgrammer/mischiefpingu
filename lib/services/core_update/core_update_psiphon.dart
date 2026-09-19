@@ -16,13 +16,13 @@ class PsiphonUpdater {
     required CoreUpdatePendingManager pending,
     required CoreUpdateProcessUtils processUtils,
     void Function(String)? log,
-  }) : _checker = PsiphonChecker(network: network, log: log),
-       _installer = PsiphonInstaller(
-         network: network,
-         pending: pending,
-         processUtils: processUtils,
-         log: log,
-       );
+  })  : _checker = PsiphonChecker(network: network, log: log),
+        _installer = PsiphonInstaller(
+          network: network,
+          pending: pending,
+          processUtils: processUtils,
+          log: log,
+        );
 
   Future<CoreUpdateInfo> check(
     String? proxy, {
@@ -38,12 +38,13 @@ class PsiphonUpdater {
     required String psiphonBinSha,
     void Function(int percent)? onProgress,
     bool Function()? onCancelCheck,
-  }) => _installer.update(
-    info,
-    installed: installed,
-    proxy: proxy,
-    psiphonBinSha: psiphonBinSha,
-    onProgress: onProgress,
-    onCancelCheck: onCancelCheck,
-  );
+  }) =>
+      _installer.update(
+        info,
+        installed: installed,
+        proxy: proxy,
+        psiphonBinSha: psiphonBinSha,
+        onProgress: onProgress,
+        onCancelCheck: onCancelCheck,
+      );
 }

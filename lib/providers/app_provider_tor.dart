@@ -4,18 +4,55 @@ extension AppProviderTor on AppProvider {
   Future<int> _pickInternalPort(int publicPort) =>
       PortManager.internalFor(publicPort: publicPort);
 
+  /// ═══════════════════════════════════════════════════════════════
+  ///  connectTor — entry point عمومی
+  /// ═══════════════════════════════════════════════════════════════
   Future<void> connectTor({bool fromAutoReconnect = false}) async {
+    if (fromAutoReconnect) {
+      await _startTorInternal(fromAutoReconnect: true);
+      return;
+    }
+
+    final isCurrentlyActive = processService.isTorRunning || isTorBusy;
+
+    if (isCurrentlyActive) {
+      await _stopTorByUser();
+    } else {
+      await _startTorInternal(fromAutoReconnect: false);
+    }
+  }
+
+  Future<void> _stopTorByUser() async {
     const src = LogSource.tor;
 
-    if (processService.isTorRunning || isTorBusy) {
-      userStoppedTor = true;
-      _reconnectManager.cancelTorTimer();
-      _aetherTestService.requestCancel();
+    userStoppedTor = true;
+    _reconnectManager.cancelTorTimer();
+    _reconnectManager.resetRetries('tor');
+    _aetherTestService.requestCancel();
+    _recoveryCoordinator.releaseLeaseByTunnel('Tor');
+
+    nextTorGeneration();
+
+    try {
       await processService.stopTor();
-      torStatus = 'Tor: Stopped';
-      await AppDataService.fixDataDirOwnership();
-      touch();
-      return;
+    } catch (e) {
+      processService.addLog('⚠ Tor stop error: $e', source: src);
+    }
+
+    isTorBusy = false;
+    torStatus = 'Tor: Stopped';
+    watchdogManager?.tor.resetGracePeriod();
+    watchdogManager?.tor.resetCircuitBreaker();
+
+    await AppDataService.fixDataDirOwnership();
+    touch();
+  }
+
+  Future<void> _startTorInternal({required bool fromAutoReconnect}) async {
+    const src = LogSource.tor;
+
+    if (!fromAutoReconnect) {
+      _reconnectManager.cancelTorTimer();
     }
 
     if (fromAutoReconnect && userStoppedTor) {
@@ -26,13 +63,42 @@ extension AppProviderTor on AppProvider {
       return;
     }
 
+    if (fromAutoReconnect && isTorBusy) {
+      processService.addLog(
+        '→ Tor auto-reconnect skipped (already busy)',
+        source: src,
+      );
+      return;
+    }
+
+    if (!fromAutoReconnect && isTorBusy) {
+      processService.addLog(
+        '→ Tor start ignored — already starting',
+        source: src,
+      );
+      return;
+    }
+
+    if (processService.isTorRunning && !fromAutoReconnect) {
+      processService.addLog(
+        '→ Tor is already running — ignoring redundant start',
+        source: src,
+      );
+      return;
+    }
+
     if (!await checkTorBinary()) return;
     if (!await checkTorPorts()) return;
 
-    userStoppedTor = false;
+    if (!fromAutoReconnect) {
+      userStoppedTor = false;
+    }
+
     isTorBusy = true;
     torStatus = 'Tor: Starting…';
     touch();
+
+    final myGeneration = nextTorGeneration();
 
     try {
       final upstream = await resolveTorUpstream(
@@ -75,15 +141,12 @@ extension AppProviderTor on AppProvider {
         geoip6Path: assets.geoip6Path,
         lyrebirdPath: assets.lyrebirdPath,
         conjurePath: assets.conjurePath,
-        aetherSocks: settings.torTransport == 'aether'
-            ? settings.aetherLocalPort
-            : null,
-        psiphonSocks: settings.torTransport == 'psiphon'
-            ? settings.socksPort
-            : null,
-        sstpSocks: settings.torTransport == 'sstp'
-            ? settings.sstpSocksPort
-            : null,
+        aetherSocks:
+            settings.torTransport == 'aether' ? settings.aetherLocalPort : null,
+        psiphonSocks:
+            settings.torTransport == 'psiphon' ? settings.socksPort : null,
+        sstpSocks:
+            settings.torTransport == 'sstp' ? settings.sstpSocksPort : null,
       );
 
       final torrcPath = '$torDir/torrc';
@@ -115,7 +178,15 @@ extension AppProviderTor on AppProvider {
       torStatus = ok ? 'Tor: Bootstrapping…' : 'Tor: Failed to start';
       if (!ok) {
         processService.addLog(
-          '✗ Tor failed to start — is `tor` installed? (Core Updates can fetch it)',
+          '✗ Tor failed to start — is `tor` installed? '
+          '(Core Updates can fetch it)',
+          source: src,
+        );
+      }
+
+      if (myGeneration != _torGeneration) {
+        processService.addLog(
+          '→ Tor start completed but a newer start superseded it',
           source: src,
         );
       }
@@ -126,6 +197,49 @@ extension AppProviderTor on AppProvider {
       isTorBusy = false;
       await AppDataService.fixDataDirOwnership();
       touch();
+    }
+  }
+
+  Future<void> restartTorInternal({required String reason}) async {
+    const src = LogSource.tor;
+
+    if (userStoppedTor || isShuttingDown) {
+      processService.addLog(
+        '→ restartTorInternal skipped '
+        '(userStopped=$userStoppedTor, shutdown=$isShuttingDown)',
+        source: src,
+      );
+      return;
+    }
+
+    if (restartingTor) {
+      processService.addLog(
+        '→ restartTorInternal skipped (already restarting)',
+        source: src,
+      );
+      return;
+    }
+
+    restartingTor = true;
+    try {
+      processService.addLog(
+        '↻ Restarting Tor — reason: $reason',
+        source: src,
+      );
+      processService.setSadNotification('Tor');
+
+      _reconnectManager.cancelTorTimer();
+
+      nextTorGeneration();
+
+      await processService.stopTor();
+      await Future.delayed(const Duration(seconds: 3));
+
+      if (!userStoppedTor && !isShuttingDown) {
+        await _startTorInternal(fromAutoReconnect: true);
+      }
+    } finally {
+      restartingTor = false;
     }
   }
 }

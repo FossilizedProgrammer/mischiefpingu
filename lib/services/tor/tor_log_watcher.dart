@@ -6,7 +6,13 @@ class TorLogWatcher {
 
   final List<DateTime> _recentFailures = [];
   static const Duration _window = Duration(minutes: 5);
-  static const int _windowThreshold = 30;
+
+  /// ⚠️ افزایش یافته از ۳۰ به ۶۰.
+  static const int _windowThreshold = 60;
+
+  /// ⚠️ جدید: شکست‌های متوالی بدون هیچ پیشرفتی.
+  int _consecutiveNoSuccess = 0;
+  static const int _maxConsecutiveNoSuccess = 20;
 
   TorLogWatcher({required this.log});
 
@@ -27,12 +33,25 @@ class TorLogWatcher {
       final now = DateTime.now();
       _recentFailures.add(now);
       _recentFailures.removeWhere((t) => now.difference(t) > _window);
+      _consecutiveNoSuccess++;
 
       if (_recentFailures.length >= _windowThreshold) {
         _recentFailures.clear();
+        _consecutiveNoSuccess = 0;
         log(
           '⚠ Tor log watcher: $_windowThreshold قطعی در '
           '${_window.inMinutes} دقیقه',
+          source: _source,
+        );
+        return true;
+      }
+
+      if (_consecutiveNoSuccess >= _maxConsecutiveNoSuccess) {
+        _recentFailures.clear();
+        _consecutiveNoSuccess = 0;
+        log(
+          '⚠ Tor log watcher: $_maxConsecutiveNoSuccess شکست متوالی '
+          'بدون هیچ پیشرفتی',
           source: _source,
         );
         return true;
@@ -42,6 +61,7 @@ class TorLogWatcher {
     if (lower.contains('bootstrapped 100%') ||
         lower.contains('circuit established')) {
       _recentFailures.clear();
+      _consecutiveNoSuccess = 0;
     }
 
     return false;
@@ -49,5 +69,6 @@ class TorLogWatcher {
 
   void reset() {
     _recentFailures.clear();
+    _consecutiveNoSuccess = 0;
   }
 }

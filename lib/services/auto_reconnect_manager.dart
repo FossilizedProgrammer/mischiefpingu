@@ -1,103 +1,117 @@
+library;
+
 import 'dart:async';
 
 import 'process_service.dart';
+import 'reconnect/reconnect_backoff.dart';
+import 'reconnect/reconnect_scheduler.dart';
 
+export 'reconnect/reconnect_scheduler.dart' show ReconnectLogFn;
+
+/// ═══════════════════════════════════════════════════════════════
+///  AutoReconnectManager — timerها و retry tracking.
+///
+///  منطق backoff در `ReconnectBackoff` جدا شده.
+///  منطق scheduling در `ReconnectScheduler` جدا شده.
+/// ═══════════════════════════════════════════════════════════════
 class AutoReconnectManager {
-  Timer? _psiphonTimer;
-  Timer? _aetherTimer;
-  Timer? _torTimer;
-  Timer? _sstpTimer;
+  static const Duration defaultDelay = Duration(seconds: 60);
+  static const Duration slowTunnelDelay = Duration(seconds: 120);
 
-  /// ⚠️ افزایش از 5 به 15 ثانیه — برای اینترنت ناپایدار.
-  static const Duration defaultDelay = Duration(seconds: 15);
+  final ReconnectBackoff _backoff = ReconnectBackoff();
+  final ReconnectScheduler _scheduler = ReconnectScheduler();
 
-  /// برای تونل‌هایی که کند boot می‌شوند (مثل Tor).
-  static const Duration slowTunnelDelay = Duration(seconds: 30);
+  Future<bool> Function(String tunnel)? acquireLease;
+  void Function(String tunnel)? releaseLease;
 
   void schedulePsiphonReconnect({
     Duration delay = defaultDelay,
     required bool Function() shouldReconnect,
     required void Function() onReconnect,
-    required void Function(String, {String source}) log,
+    required ReconnectLogFn log,
   }) {
-    _psiphonTimer?.cancel();
-    _psiphonTimer = Timer(delay, () {
-      if (shouldReconnect()) {
-        log('↻ Auto-reconnecting Psiphon...', source: LogSource.psiphon);
-        onReconnect();
-      }
-    });
+    _scheduler.schedule(
+      key: 'psiphon',
+      baseDelay: delay,
+      shouldReconnect: shouldReconnect,
+      onReconnect: onReconnect,
+      log: log,
+      logSource: LogSource.psiphon,
+      backoff: _backoff,
+      acquireLease: acquireLease,
+      releaseLease: releaseLease,
+    );
   }
 
   void scheduleAetherReconnect({
     Duration delay = defaultDelay,
     required bool Function() shouldReconnect,
     required void Function() onReconnect,
-    required void Function(String, {String source}) log,
+    required ReconnectLogFn log,
   }) {
-    _aetherTimer?.cancel();
-    _aetherTimer = Timer(delay, () {
-      if (shouldReconnect()) {
-        log('↻ Auto-reconnecting Aether...', source: LogSource.aether);
-        onReconnect();
-      }
-    });
+    _scheduler.schedule(
+      key: 'aether',
+      baseDelay: delay,
+      shouldReconnect: shouldReconnect,
+      onReconnect: onReconnect,
+      log: log,
+      logSource: LogSource.aether,
+      backoff: _backoff,
+      acquireLease: acquireLease,
+      releaseLease: releaseLease,
+    );
   }
 
   void scheduleTorReconnect({
     Duration delay = slowTunnelDelay,
     required bool Function() shouldReconnect,
     required void Function() onReconnect,
-    required void Function(String, {String source}) log,
+    required ReconnectLogFn log,
   }) {
-    _torTimer?.cancel();
-    _torTimer = Timer(delay, () {
-      if (shouldReconnect()) {
-        log('↻ Auto-reconnecting Tor...', source: LogSource.tor);
-        onReconnect();
-      }
-    });
+    _scheduler.schedule(
+      key: 'tor',
+      baseDelay: delay,
+      shouldReconnect: shouldReconnect,
+      onReconnect: onReconnect,
+      log: log,
+      logSource: LogSource.tor,
+      backoff: _backoff,
+      acquireLease: acquireLease,
+      releaseLease: releaseLease,
+    );
   }
 
   void scheduleSstpReconnect({
     Duration delay = defaultDelay,
     required bool Function() shouldReconnect,
     required void Function() onReconnect,
-    required void Function(String, {String source}) log,
+    required ReconnectLogFn log,
   }) {
-    _sstpTimer?.cancel();
-    _sstpTimer = Timer(delay, () {
-      if (shouldReconnect()) {
-        log('↻ Auto-reconnecting SSTP...', source: LogSource.sstp);
-        onReconnect();
-      }
-    });
+    _scheduler.schedule(
+      key: 'sstp',
+      baseDelay: delay,
+      shouldReconnect: shouldReconnect,
+      onReconnect: onReconnect,
+      log: log,
+      logSource: LogSource.sstp,
+      backoff: _backoff,
+      acquireLease: acquireLease,
+      releaseLease: releaseLease,
+    );
   }
 
-  void cancelPsiphonTimer() {
-    _psiphonTimer?.cancel();
-    _psiphonTimer = null;
-  }
+  void cancelPsiphonTimer() => _scheduler.cancel('psiphon');
+  void cancelAetherTimer() => _scheduler.cancel('aether');
+  void cancelTorTimer() => _scheduler.cancel('tor');
+  void cancelSstpTimer() => _scheduler.cancel('sstp');
 
-  void cancelAetherTimer() {
-    _aetherTimer?.cancel();
-    _aetherTimer = null;
-  }
+  void cancelAll() => _scheduler.cancelAll();
 
-  void cancelTorTimer() {
-    _torTimer?.cancel();
-    _torTimer = null;
-  }
+  void resetRetries(String tunnel) => _backoff.resetRetries(tunnel);
 
-  void cancelSstpTimer() {
-    _sstpTimer?.cancel();
-    _sstpTimer = null;
-  }
+  void resetAllRetries() => _backoff.resetAll();
 
-  void cancelAll() {
-    cancelPsiphonTimer();
-    cancelAetherTimer();
-    cancelTorTimer();
-    cancelSstpTimer();
-  }
+  int retryCountFor(String tunnel) => _backoff.retryCountFor(tunnel);
+
+  void dispose() => _scheduler.dispose();
 }

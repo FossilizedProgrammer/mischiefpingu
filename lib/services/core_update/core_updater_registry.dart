@@ -18,12 +18,12 @@ class CoreUpdaterRegistry {
     required SunAndLionUpdater sunAndLion,
     required SstpProxyUpdater sstp,
   }) : _updaters = {
-         'aether': aetherAdapter(aether),
-         'tor': torAdapter(tor),
-         'psiphon': psiphonAdapter(psiphon),
-         'sunandlion': sunAndLionAdapter(sunAndLion),
-         'sstp': sstpAdapter(sstp),
-       };
+          'aether': aetherAdapter(aether),
+          'tor': torAdapter(tor),
+          'psiphon': psiphonAdapter(psiphon),
+          'sunandlion': sunAndLionAdapter(sunAndLion),
+          'sstp': sstpAdapter(sstp),
+        };
 
   CoreUpdater? byId(String coreId) => _updaters[coreId];
 }

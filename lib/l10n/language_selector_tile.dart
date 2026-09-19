@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../widgets/settings_tile_base.dart';
 import 'app_localizations.dart';
+import 'locale_provider.dart';
 
 class LanguageSelectorTile extends StatelessWidget {
   const LanguageSelectorTile({super.key});

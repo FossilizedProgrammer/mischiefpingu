@@ -1,12 +1,72 @@
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 
-import 'translations.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart' as intl;
 
-class AppLocalizations {
-  final Locale locale;
+import 'app_localizations_en.dart';
+import 'app_localizations_fa.dart';
+import 'app_localizations_ru.dart';
 
-  AppLocalizations(this.locale);
+// ignore_for_file: type=lint
+
+/// Callers can lookup localized strings with an instance of AppLocalizations
+/// returned by `AppLocalizations.of(context)`.
+///
+/// Applications need to include `AppLocalizations.delegate()` in their app's
+/// `localizationDelegates` list, and the locales they support in the app's
+/// `supportedLocales` list. For example:
+///
+/// ```dart
+/// import 'l10n/app_localizations.dart';
+///
+/// return MaterialApp(
+///   localizationsDelegates: AppLocalizations.localizationsDelegates,
+///   supportedLocales: AppLocalizations.supportedLocales,
+///   home: MyApplicationHome(),
+/// );
+/// ```
+///
+/// ## Update pubspec.yaml
+///
+/// Please make sure to update your pubspec.yaml to include the following
+/// packages:
+///
+/// ```yaml
+/// dependencies:
+///   # Internationalization support.
+///   flutter_localizations:
+///     sdk: flutter
+///   intl: any # Use the pinned version from flutter_localizations
+///
+///   # Rest of dependencies
+/// ```
+///
+/// ## iOS Applications
+///
+/// iOS applications define key application metadata, including supported
+/// locales, in an Info.plist file that is built into the application bundle.
+/// To configure the locales supported by your app, you’ll need to edit this
+/// file.
+///
+/// First, open your project’s ios/Runner.xcworkspace Xcode workspace file.
+/// Then, in the Project Navigator, open the Info.plist file under the Runner
+/// project’s Runner folder.
+///
+/// Next, select the Information Property List item, select Add Item from the
+/// Editor menu, then select Localizations from the pop-up menu.
+///
+/// Select and expand the newly-created Localizations item then, for each
+/// locale your application supports, add a new item and select the locale
+/// you wish to add from the pop-up menu in the Value field. This list should
+/// be consistent with the languages listed in the AppLocalizations.supportedLocales
+/// property.
+abstract class AppLocalizations {
+  AppLocalizations(String locale)
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+
+  final String localeName;
 
   static AppLocalizations of(BuildContext context) {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
@@ -15,239 +75,1422 @@ class AppLocalizations {
   static const LocalizationsDelegate<AppLocalizations> delegate =
       _AppLocalizationsDelegate();
 
-  static const List<Locale> supportedLocales = [
-    Locale('en'),
-    Locale('fa'),
-    Locale('ru'),
+  /// A list of this localizations delegate along with the default localizations
+  /// delegates.
+  ///
+  /// Returns a list of localizations delegates containing this delegate along with
+  /// GlobalMaterialLocalizations.delegate, GlobalCupertinoLocalizations.delegate,
+  /// and GlobalWidgetsLocalizations.delegate.
+  ///
+  /// Additional delegates can be added by appending to this list in
+  /// MaterialApp. This list does not have to be used at all if a custom list
+  /// of delegates is preferred or required.
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
   ];
 
-  static const String prefsKey = 'appLocale';
+  /// A list of this localizations delegate's supported locales.
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('fa'),
+    Locale('ru')
+  ];
 
-  String _t(String key) {
-    final lang = locale.languageCode;
-    final map = kTranslations[lang] ?? kTranslations['en']!;
-    return map[key] ?? kTranslations['en']![key] ?? key;
-  }
+  /// No description provided for @add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
 
-  String get start => _t('start');
-  String get stop => _t('stop');
-  String get cancel => _t('cancel');
-  String get connected => _t('connected');
-  String get connecting => _t('connecting');
-  String get disconnected => _t('disconnected');
+  /// No description provided for @addNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new'**
+  String get addNew;
 
-  String get appTitle => _t('appTitle');
-  String get appSubtitle => _t('appSubtitle');
+  /// No description provided for @aetherConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Aether Connected'**
+  String get aetherConnected;
 
-  String get psiphonConnectionMode => _t('psiphonConnectionMode');
-  String get preset1Title => _t('preset1Title');
-  String get preset1Subtitle => _t('preset1Subtitle');
-  String get preset2Title => _t('preset2Title');
-  String get preset2Subtitle => _t('preset2Subtitle');
-  String get preset3Title => _t('preset3Title');
-  String get preset3Subtitle => _t('preset3Subtitle');
-  String get preset4Title => _t('preset4Title');
-  String get preset4Subtitle => _t('preset4Subtitle');
+  /// No description provided for @aetherSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Aether Settings'**
+  String get aetherSettings;
 
-  String get showMore => _t('showMore');
-  String get showLess => _t('showLess');
-  String get showMoreSubtitle => _t('showMoreSubtitle');
-  String get showLessSubtitle => _t('showLessSubtitle');
+  /// No description provided for @aetherSocksUpstream.
+  ///
+  /// In en, this message translates to:
+  /// **'Aether (SOCKS upstream)'**
+  String get aetherSocksUpstream;
 
-  String get appearance => _t('appearance');
-  String get colorTheme => _t('colorTheme');
-  String get colorThemeSubtitle => _t('colorThemeSubtitle');
-  String get notifications => _t('notifications');
-  String get muteSounds => _t('muteSounds');
-  String get muteSoundsSubtitle => _t('muteSoundsSubtitle');
-  String get aetherSettings => _t('aetherSettings');
-  String get psiphonSettings => _t('psiphonSettings');
-  String get torSettings => _t('torSettings');
-  String get sstpSettings => _t('sstpSettings');
-  String get cdnScanner => _t('cdnScanner');
-  String get vpngateServers => _t('vpngateServers');
-  String get coreUpdates => _t('coreUpdates');
-  String get log => _t('log');
+  /// No description provided for @aetherUpstream.
+  ///
+  /// In en, this message translates to:
+  /// **'Aether (SOCKS upstream)'**
+  String get aetherUpstream;
 
-  String get profile => _t('profile');
-  String get protocol => _t('protocol');
-  String get ipType => _t('ipType');
-  String get scanMode => _t('scanMode');
-  String get obfuscation => _t('obfuscation');
-  String get localSocksPort => _t('localSocksPort');
-  String get connectionMode => _t('connectionMode');
-  String get customEndpoint => _t('customEndpoint');
-  String get customEndpointHint => _t('customEndpointHint');
-  String get tryLastEndpointFirst => _t('tryLastEndpointFirst');
-  String get tryLastEndpointFirstSubtitle => _t('tryLastEndpointFirstSubtitle');
-  String get shareOnLan => _t('shareOnLan');
-  String get autoReconnectAether => _t('autoReconnectAether');
+  /// No description provided for @allServers.
+  ///
+  /// In en, this message translates to:
+  /// **'All servers'**
+  String get allServers;
 
-  String get socksPort => _t('socksPort');
-  String get httpPort => _t('httpPort');
-  String get egressRegion => _t('egressRegion');
-  String get any => _t('any');
-  String get shareOnLanPsiphon => _t('shareOnLanPsiphon');
-  String get shareOnLanPsiphonSubtitle => _t('shareOnLanPsiphonSubtitle');
-  String get ipv4Only => _t('ipv4Only');
-  String get useFronting => _t('useFronting');
-  String get tunnelCore => _t('tunnelCore');
-  String get officialCore => _t('officialCore');
-  String get sunandlionCore => _t('sunandlionCore');
-  String get frontingIp => _t('frontingIp');
-  String get httpHostHeader => _t('httpHostHeader');
-  String get tlsSni => _t('tlsSni');
-  String get autoFindIpSni => _t('autoFindIpSni');
-  String get saveFoundIpsSni => _t('saveFoundIpsSni');
-  String get upstream => _t('upstream');
-  String get directNoUpstream => _t('directNoUpstream');
-  String get manualProxy => _t('manualProxy');
-  String get aetherSocksUpstream => _t('aetherSocksUpstream');
-  String get conduitWebrtc => _t('conduitWebrtc');
-  String get torSocksUpstream => _t('torSocksUpstream');
-  String get sstpSocksUpstream => _t('sstpSocksUpstream');
-  String get autoReconnectPsiphon => _t('autoReconnectPsiphon');
-  String get proxyType => _t('proxyType');
-  String get proxyIp => _t('proxyIp');
-  String get port => _t('port');
-  String get userOptional => _t('userOptional');
-  String get passwordOptional => _t('passwordOptional');
+  /// No description provided for @any.
+  ///
+  /// In en, this message translates to:
+  /// **'Any'**
+  String get any;
 
-  String get torConnection => _t('torConnection');
-  String get torDirect => _t('torDirect');
-  String get torBridge => _t('torBridge');
-  String get torViaAether => _t('torViaAether');
-  String get torViaPsiphon => _t('torViaPsiphon');
-  String get torViaSstp => _t('torViaSstp');
-  String get exitCountry => _t('exitCountry');
-  String get exitCountryAny => _t('exitCountryAny');
-  String get bridgePresets => _t('bridgePresets');
-  String get bridges => _t('bridges');
-  String get bridgesHint => _t('bridgesHint');
-  String get clear => _t('clear');
-  String get autoReconnectTor => _t('autoReconnectTor');
+  /// No description provided for @appSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unofficial Psiphon client, Aether client, Tor client, SSTP client'**
+  String get appSubtitle;
 
-  String get server => _t('server');
-  String get serverAddress => _t('serverAddress');
-  String get authenticationOptional => _t('authenticationOptional');
-  String get username => _t('username');
-  String get password => _t('password');
-  String get localProxyPorts => _t('localProxyPorts');
-  String get upstreamType => _t('upstreamType');
-  String get noUpstreamDirect => _t('noUpstreamDirect');
-  String get manualProxyOption => _t('manualProxyOption');
-  String get aetherUpstream => _t('aetherUpstream');
-  String get psiphonUpstream => _t('psiphonUpstream');
-  String get torUpstream => _t('torUpstream');
-  String get frontingAdvanced => _t('frontingAdvanced');
-  String get sni => _t('sni');
-  String get fingerprint => _t('fingerprint');
-  String get autoReconnectSstp => _t('autoReconnectSstp');
-  String get verboseLogging => _t('verboseLogging');
-  String get verboseLoggingSubtitle => _t('verboseLoggingSubtitle');
+  /// No description provided for @appTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mischief Pingu'**
+  String get appTitle;
 
-  String get cdnPreset => _t('cdnPreset');
-  String get ipsCidrRanges => _t('ipsCidrRanges');
-  String get sniList => _t('sniList');
-  String get threads => _t('threads');
-  String get startScan => _t('startScan');
-  String get stopScan => _t('stopScan');
-  String get usableIps => _t('usableIps');
-  String get applyTop5 => _t('applyTop5');
-  String get applyTop20 => _t('applyTop20');
-  String get customIps => _t('customIps');
-  String get save => _t('save');
-  String get copy => _t('copy');
-  String get clearAll => _t('clearAll');
-  String get noCustomIpsSaved => _t('noCustomIpsSaved');
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
 
-  String get fetchVia => _t('fetchVia');
-  String get autoFirstRunningProxy => _t('autoFirstRunningProxy');
-  String get directNoProxy => _t('directNoProxy');
-  String get autoRefresh15Min => _t('autoRefresh15Min');
-  String get autoRefreshSubtitle => _t('autoRefreshSubtitle');
-  String get fetch => _t('fetch');
-  String get fetching => _t('fetching');
-  String get checkHealth => _t('checkHealth');
-  String get stopHealthCheck => _t('stopHealthCheck');
-  String get allServers => _t('allServers');
-  String get copyAllIpPort => _t('copyAllIpPort');
-  String get copyAllCsv => _t('copyAllCsv');
+  /// No description provided for @appliedTop20Ips.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied Top 20 IPs'**
+  String get appliedTop20Ips;
 
-  String get downloadVia => _t('downloadVia');
-  String get downloadViaSubtitle => _t('downloadViaSubtitle');
-  String get autoFirstProxy => _t('autoFirstProxy');
-  String get directNoProxyOption => _t('directNoProxyOption');
-  String get check => _t('check');
-  String get checking => _t('checking');
-  String get update => _t('update');
-  String get download => _t('download');
-  String get working => _t('working');
-  String get notInstalled => _t('notInstalled');
-  String get installed => _t('installed');
-  String get latest => _t('latest');
+  /// No description provided for @appliedTop5Ips.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied Top 5 IPs + SNI'**
+  String get appliedTop5Ips;
 
-  String get enableLogging => _t('enableLogging');
-  String get enableLoggingSubtitle => _t('enableLoggingSubtitle');
-  String get clearLog => _t('clearLog');
-  String get copyLog => _t('copyLog');
-  String get noLogsYet => _t('noLogsYet');
-  String get lines => _t('lines');
+  /// No description provided for @applyTop20.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Top 20'**
+  String get applyTop20;
 
-  String get manageList => _t('manageList');
-  String get addNew => _t('addNew');
-  String get select => _t('select');
-  String get listIsEmpty => _t('listIsEmpty');
-  String get cancelBtn => _t('cancelBtn');
-  String get add => _t('add');
-  String get close => _t('close');
-  String get delete => _t('delete');
+  /// No description provided for @applyTop5.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Top 5'**
+  String get applyTop5;
 
-  String get profileAdaptive => _t('profileAdaptive');
-  String get profileAdaptiveDesc => _t('profileAdaptiveDesc');
-  String get profilePatchy => _t('profilePatchy');
-  String get profilePatchyDesc => _t('profilePatchyDesc');
-  String get profileStrict => _t('profileStrict');
-  String get profileStrictDesc => _t('profileStrictDesc');
-  String get profileManual => _t('profileManual');
-  String get profileManualDesc => _t('profileManualDesc');
+  /// No description provided for @authenticationOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication (optional)'**
+  String get authenticationOptional;
 
-  String get protoMasque => _t('protoMasque');
-  String get protoMim => _t('protoMim');
-  String get protoWireguard => _t('protoWireguard');
-  String get protoGool => _t('protoGool');
+  /// No description provided for @autoFindIpSni.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-find IP & SNI'**
+  String get autoFindIpSni;
 
-  String get scanTurbo => _t('scanTurbo');
-  String get scanBalanced => _t('scanBalanced');
-  String get scanThorough => _t('scanThorough');
-  String get scanStealth => _t('scanStealth');
-  String get scanIronclad => _t('scanIronclad');
+  /// No description provided for @autoFirstProxy.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto (first running proxy)'**
+  String get autoFirstProxy;
 
-  String get obfOff => _t('obfOff');
-  String get obfLight => _t('obfLight');
-  String get obfFirewall => _t('obfFirewall');
-  String get obfBalanced => _t('obfBalanced');
-  String get obfGfw => _t('obfGfw');
-  String get obfAggressive => _t('obfAggressive');
+  /// No description provided for @autoFirstRunningProxy.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto (first running proxy)'**
+  String get autoFirstRunningProxy;
 
-  String get ipv4 => _t('ipv4');
-  String get ipv6 => _t('ipv6');
-  String get both => _t('both');
+  /// No description provided for @autoReconnectAether.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-reconnect Aether'**
+  String get autoReconnectAether;
 
-  String get language => _t('language');
-  String get languageEnglish => _t('languageEnglish');
-  String get languageFarsi => _t('languageFarsi');
-  String get languageRussian => _t('languageRussian');
+  /// No description provided for @autoReconnectPsiphon.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-reconnect Psiphon'**
+  String get autoReconnectPsiphon;
 
-  String get copiedToClipboard => _t('copiedToClipboard');
-  String get psiphonConnectedVia => _t('psiphonConnectedVia');
-  String get aetherConnected => _t('aetherConnected');
-  String get torConnected => _t('torConnected');
-  String get sstpConnected => _t('sstpConnected');
-  String get disconnectingTunnels => _t('disconnectingTunnels');
-  String get binaryNotFound => _t('binaryNotFound');
-  String get appliedTop5Ips => _t('appliedTop5Ips');
-  String get appliedTop20Ips => _t('appliedTop20Ips');
+  /// No description provided for @autoReconnectSstp.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-reconnect SSTP'**
+  String get autoReconnectSstp;
+
+  /// No description provided for @autoReconnectTor.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-reconnect Tor'**
+  String get autoReconnectTor;
+
+  /// No description provided for @autoRefresh15Min.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-refresh every 15 minutes'**
+  String get autoRefresh15Min;
+
+  /// No description provided for @autoRefreshSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetches new servers and re-checks health automatically'**
+  String get autoRefreshSubtitle;
+
+  /// No description provided for @binaryNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Binary Not Found'**
+  String get binaryNotFound;
+
+  /// No description provided for @both.
+  ///
+  /// In en, this message translates to:
+  /// **'Both'**
+  String get both;
+
+  /// No description provided for @bridgePresets.
+  ///
+  /// In en, this message translates to:
+  /// **'Bridge presets (optional)'**
+  String get bridgePresets;
+
+  /// No description provided for @bridges.
+  ///
+  /// In en, this message translates to:
+  /// **'Bridges (one per line, custom supported — incl. webtunnel)'**
+  String get bridges;
+
+  /// No description provided for @bridgesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0'**
+  String get bridgesHint;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @cancelBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelBtn;
+
+  /// No description provided for @cdnPreset.
+  ///
+  /// In en, this message translates to:
+  /// **'CDN Preset'**
+  String get cdnPreset;
+
+  /// No description provided for @cdnScanner.
+  ///
+  /// In en, this message translates to:
+  /// **'CDN IP Scanner'**
+  String get cdnScanner;
+
+  /// No description provided for @check.
+  ///
+  /// In en, this message translates to:
+  /// **'Check'**
+  String get check;
+
+  /// No description provided for @checkHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Check health'**
+  String get checkHealth;
+
+  /// No description provided for @checking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking…'**
+  String get checking;
+
+  /// No description provided for @clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// No description provided for @clearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all'**
+  String get clearAll;
+
+  /// No description provided for @clearLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clearLog;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @colorTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Color Theme'**
+  String get colorTheme;
+
+  /// No description provided for @colorThemeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a color scheme for the entire app.'**
+  String get colorThemeSubtitle;
+
+  /// No description provided for @conduitWebrtc.
+  ///
+  /// In en, this message translates to:
+  /// **'Conduit (WebRTC Inproxy)'**
+  String get conduitWebrtc;
+
+  /// No description provided for @connected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get connected;
+
+  /// No description provided for @connecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting…'**
+  String get connecting;
+
+  /// No description provided for @connectionMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection Mode'**
+  String get connectionMode;
+
+  /// No description provided for @copiedToClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get copiedToClipboard;
+
+  /// No description provided for @copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copy;
+
+  /// No description provided for @copyAllCsv.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy all (CSV with details)'**
+  String get copyAllCsv;
+
+  /// No description provided for @copyAllIpPort.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy all (ip:port)'**
+  String get copyAllIpPort;
+
+  /// No description provided for @copyLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copyLog;
+
+  /// No description provided for @coreUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Core Updates'**
+  String get coreUpdates;
+
+  /// No description provided for @customEndpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Endpoint (optional)'**
+  String get customEndpoint;
+
+  /// No description provided for @customEndpointHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty for auto-scan'**
+  String get customEndpointHint;
+
+  /// No description provided for @customIps.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom IPs'**
+  String get customIps;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @directNoProxy.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct (no proxy)'**
+  String get directNoProxy;
+
+  /// No description provided for @directNoProxyOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct (no proxy)'**
+  String get directNoProxyOption;
+
+  /// No description provided for @directNoUpstream.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct (no upstream)'**
+  String get directNoUpstream;
+
+  /// No description provided for @disconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnected'**
+  String get disconnected;
+
+  /// No description provided for @disconnectingTunnels.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnecting active tunnels…'**
+  String get disconnectingTunnels;
+
+  /// No description provided for @download.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get download;
+
+  /// No description provided for @downloadVia.
+  ///
+  /// In en, this message translates to:
+  /// **'Download via'**
+  String get downloadVia;
+
+  /// No description provided for @downloadViaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Checks and downloads ride the selected proxy when direct access is filtered.'**
+  String get downloadViaSubtitle;
+
+  /// No description provided for @egressRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Egress region'**
+  String get egressRegion;
+
+  /// No description provided for @enableLogging.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable logging'**
+  String get enableLogging;
+
+  /// No description provided for @enableLoggingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When off, no new logs are collected'**
+  String get enableLoggingSubtitle;
+
+  /// No description provided for @exitCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit country'**
+  String get exitCountry;
+
+  /// No description provided for @exitCountryAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Any (random)'**
+  String get exitCountryAny;
+
+  /// No description provided for @fetch.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetch'**
+  String get fetch;
+
+  /// No description provided for @fetchVia.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetch via'**
+  String get fetchVia;
+
+  /// No description provided for @fetching.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetching…'**
+  String get fetching;
+
+  /// No description provided for @fingerprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint'**
+  String get fingerprint;
+
+  /// No description provided for @frontingAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Fronting (advanced, optional)'**
+  String get frontingAdvanced;
+
+  /// No description provided for @frontingIp.
+  ///
+  /// In en, this message translates to:
+  /// **'Fronting IP'**
+  String get frontingIp;
+
+  /// No description provided for @httpHostHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTP Host Header (e.g. aparat.com, snapp.ir)'**
+  String get httpHostHeader;
+
+  /// No description provided for @httpPort.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTP port'**
+  String get httpPort;
+
+  /// No description provided for @installed.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get installed;
+
+  /// No description provided for @internetQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Internet Quality'**
+  String get internetQuality;
+
+  /// No description provided for @internetQualityAvg.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg'**
+  String get internetQualityAvg;
+
+  /// No description provided for @internetQualityDeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep (5m)'**
+  String get internetQualityDeep;
+
+  /// No description provided for @internetQualityDegraded.
+  ///
+  /// In en, this message translates to:
+  /// **'Degraded'**
+  String get internetQualityDegraded;
+
+  /// No description provided for @internetQualityDirectDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct quality details'**
+  String get internetQualityDirectDetails;
+
+  /// No description provided for @internetQualityDns.
+  ///
+  /// In en, this message translates to:
+  /// **'DNS'**
+  String get internetQualityDns;
+
+  /// No description provided for @internetQualityDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Down'**
+  String get internetQualityDown;
+
+  /// No description provided for @internetQualityExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get internetQualityExcellent;
+
+  /// No description provided for @internetQualityGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get internetQualityGood;
+
+  /// No description provided for @internetQualityHttps.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTPS'**
+  String get internetQualityHttps;
+
+  /// No description provided for @internetQualityJitter.
+  ///
+  /// In en, this message translates to:
+  /// **'Jitter'**
+  String get internetQualityJitter;
+
+  /// No description provided for @internetQualityLastCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Last check'**
+  String get internetQualityLastCheck;
+
+  /// No description provided for @internetQualityLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light (15s)'**
+  String get internetQualityLight;
+
+  /// No description provided for @internetQualityMax.
+  ///
+  /// In en, this message translates to:
+  /// **'Max'**
+  String get internetQualityMax;
+
+  /// No description provided for @internetQualityMed.
+  ///
+  /// In en, this message translates to:
+  /// **'Med'**
+  String get internetQualityMed;
+
+  /// No description provided for @internetQualityMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Min'**
+  String get internetQualityMin;
+
+  /// No description provided for @internetQualityMonitoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Background monitoring'**
+  String get internetQualityMonitoring;
+
+  /// No description provided for @internetQualityNoResult.
+  ///
+  /// In en, this message translates to:
+  /// **'No result'**
+  String get internetQualityNoResult;
+
+  /// No description provided for @internetQualityNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal (2m)'**
+  String get internetQualityNormal;
+
+  /// No description provided for @internetQualityNotTested.
+  ///
+  /// In en, this message translates to:
+  /// **'Not tested'**
+  String get internetQualityNotTested;
+
+  /// No description provided for @internetQualityOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get internetQualityOff;
+
+  /// No description provided for @internetQualityP95.
+  ///
+  /// In en, this message translates to:
+  /// **'P95'**
+  String get internetQualityP95;
+
+  /// No description provided for @internetQualityQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Quality'**
+  String get internetQualityQuality;
+
+  /// No description provided for @internetQualitySnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Internet:'**
+  String get internetQualitySnackbar;
+
+  /// No description provided for @internetQualityStatusFailing.
+  ///
+  /// In en, this message translates to:
+  /// **'Failing'**
+  String get internetQualityStatusFailing;
+
+  /// No description provided for @internetQualityStatusOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get internetQualityStatusOk;
+
+  /// No description provided for @internetQualityStatusPartial.
+  ///
+  /// In en, this message translates to:
+  /// **'Partial'**
+  String get internetQualityStatusPartial;
+
+  /// No description provided for @internetQualityStatusSlow.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow'**
+  String get internetQualityStatusSlow;
+
+  /// No description provided for @internetQualityStatusUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get internetQualityStatusUnknown;
+
+  /// No description provided for @internetQualityTcp.
+  ///
+  /// In en, this message translates to:
+  /// **'TCP'**
+  String get internetQualityTcp;
+
+  /// No description provided for @internetQualityTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Test'**
+  String get internetQualityTest;
+
+  /// No description provided for @internetQualityUnstable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unstable'**
+  String get internetQualityUnstable;
+
+  /// No description provided for @ipType.
+  ///
+  /// In en, this message translates to:
+  /// **'IP Type'**
+  String get ipType;
+
+  /// No description provided for @ipsCidrRanges.
+  ///
+  /// In en, this message translates to:
+  /// **'IPs / CIDR / Ranges'**
+  String get ipsCidrRanges;
+
+  /// No description provided for @ipv4.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv4'**
+  String get ipv4;
+
+  /// No description provided for @ipv4Only.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv4 only'**
+  String get ipv4Only;
+
+  /// No description provided for @ipv6.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv6'**
+  String get ipv6;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @languageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// No description provided for @languageFarsi.
+  ///
+  /// In en, this message translates to:
+  /// **'فارسی'**
+  String get languageFarsi;
+
+  /// No description provided for @languageRussian.
+  ///
+  /// In en, this message translates to:
+  /// **'Русский'**
+  String get languageRussian;
+
+  /// No description provided for @latest.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest'**
+  String get latest;
+
+  /// No description provided for @lines.
+  ///
+  /// In en, this message translates to:
+  /// **'lines'**
+  String get lines;
+
+  /// No description provided for @listIsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'List is empty'**
+  String get listIsEmpty;
+
+  /// No description provided for @localProxyPorts.
+  ///
+  /// In en, this message translates to:
+  /// **'Local proxy ports'**
+  String get localProxyPorts;
+
+  /// No description provided for @localSocksPort.
+  ///
+  /// In en, this message translates to:
+  /// **'Local SOCKS port'**
+  String get localSocksPort;
+
+  /// No description provided for @log.
+  ///
+  /// In en, this message translates to:
+  /// **'Log'**
+  String get log;
+
+  /// No description provided for @manageList.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage list (Add / Delete)'**
+  String get manageList;
+
+  /// No description provided for @manualProxy.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual proxy'**
+  String get manualProxy;
+
+  /// No description provided for @manualProxyOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual proxy'**
+  String get manualProxyOption;
+
+  /// No description provided for @muteSounds.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute sounds'**
+  String get muteSounds;
+
+  /// No description provided for @muteSoundsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable all penguin sounds (ouch / sigh / happy). The visual reactions still play.'**
+  String get muteSoundsSubtitle;
+
+  /// No description provided for @noCustomIpsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'No custom IPs saved yet'**
+  String get noCustomIpsSaved;
+
+  /// No description provided for @noLogsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No logs yet'**
+  String get noLogsYet;
+
+  /// No description provided for @noUpstreamDirect.
+  ///
+  /// In en, this message translates to:
+  /// **'No upstream (direct)'**
+  String get noUpstreamDirect;
+
+  /// No description provided for @notInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Not installed'**
+  String get notInstalled;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @obfAggressive.
+  ///
+  /// In en, this message translates to:
+  /// **'Aggressive'**
+  String get obfAggressive;
+
+  /// No description provided for @obfBalanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced'**
+  String get obfBalanced;
+
+  /// No description provided for @obfFirewall.
+  ///
+  /// In en, this message translates to:
+  /// **'Firewall'**
+  String get obfFirewall;
+
+  /// No description provided for @obfGfw.
+  ///
+  /// In en, this message translates to:
+  /// **'GFW'**
+  String get obfGfw;
+
+  /// No description provided for @obfLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get obfLight;
+
+  /// No description provided for @obfOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get obfOff;
+
+  /// No description provided for @obfuscation.
+  ///
+  /// In en, this message translates to:
+  /// **'Obfuscation (--noize)'**
+  String get obfuscation;
+
+  /// No description provided for @officialCore.
+  ///
+  /// In en, this message translates to:
+  /// **'official psiphon tunnel core'**
+  String get officialCore;
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @passwordOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Password (optional)'**
+  String get passwordOptional;
+
+  /// No description provided for @port.
+  ///
+  /// In en, this message translates to:
+  /// **'Port'**
+  String get port;
+
+  /// No description provided for @preset1Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Uses the SunAndLion Psiphon Tunnel Core (Unofficial fork of Psiphon tunnel core).'**
+  String get preset1Subtitle;
+
+  /// No description provided for @preset1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'1 · Fronting (CDN). Best for heavy censorship.'**
+  String get preset1Title;
+
+  /// No description provided for @preset2Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Uses official Psiphon Tunnel Core with Aether upstream.'**
+  String get preset2Subtitle;
+
+  /// No description provided for @preset2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'2 · Aether traffic as upstream. Suitable when Aether works.'**
+  String get preset2Title;
+
+  /// No description provided for @preset3Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Uses Psiphon INPROXY-WEBRTC protocols via volunteer stations.'**
+  String get preset3Subtitle;
+
+  /// No description provided for @preset3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'3 · Conduit (WebRTC Inproxy). Decentralized peer relays.'**
+  String get preset3Title;
+
+  /// No description provided for @preset4Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Uses the official Psiphon Tunnel Core directly.'**
+  String get preset4Subtitle;
+
+  /// No description provided for @preset4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'4 · Direct connection. Suitable for mild censorship.'**
+  String get preset4Title;
+
+  /// No description provided for @profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profile;
+
+  /// No description provided for @profileAdaptive.
+  ///
+  /// In en, this message translates to:
+  /// **'Adaptive'**
+  String get profileAdaptive;
+
+  /// No description provided for @profileAdaptiveDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance of speed and coverage — suitable for most networks'**
+  String get profileAdaptiveDesc;
+
+  /// No description provided for @profileManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual'**
+  String get profileManual;
+
+  /// No description provided for @profileManualDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'All options manual — for advanced users'**
+  String get profileManualDesc;
+
+  /// No description provided for @profilePatchy.
+  ///
+  /// In en, this message translates to:
+  /// **'Patchy signal'**
+  String get profilePatchy;
+
+  /// No description provided for @profilePatchyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Unstable mobile data — harder and more resilient search'**
+  String get profilePatchyDesc;
+
+  /// No description provided for @profileStrict.
+  ///
+  /// In en, this message translates to:
+  /// **'Strict network'**
+  String get profileStrict;
+
+  /// No description provided for @profileStrictDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Restricted Wi-Fi or heavy filtering — fragment + masque-in-masque + noize gfw'**
+  String get profileStrictDesc;
+
+  /// No description provided for @protoGool.
+  ///
+  /// In en, this message translates to:
+  /// **'Gool (WARP-in-WARP)'**
+  String get protoGool;
+
+  /// No description provided for @protoMasque.
+  ///
+  /// In en, this message translates to:
+  /// **'MASQUE (HTTP/3 or HTTP/2)'**
+  String get protoMasque;
+
+  /// No description provided for @protoMim.
+  ///
+  /// In en, this message translates to:
+  /// **'MIM (masque-in-masque)'**
+  String get protoMim;
+
+  /// No description provided for @protoWireguard.
+  ///
+  /// In en, this message translates to:
+  /// **'WireGuard'**
+  String get protoWireguard;
+
+  /// No description provided for @protocol.
+  ///
+  /// In en, this message translates to:
+  /// **'Protocol'**
+  String get protocol;
+
+  /// No description provided for @proxyIp.
+  ///
+  /// In en, this message translates to:
+  /// **'Proxy IP'**
+  String get proxyIp;
+
+  /// No description provided for @proxyType.
+  ///
+  /// In en, this message translates to:
+  /// **'Proxy type'**
+  String get proxyType;
+
+  /// No description provided for @psiphonConnectedVia.
+  ///
+  /// In en, this message translates to:
+  /// **'Psiphon Connected via'**
+  String get psiphonConnectedVia;
+
+  /// No description provided for @psiphonConnectionMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Psiphon connection mode'**
+  String get psiphonConnectionMode;
+
+  /// No description provided for @psiphonSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Psiphon Settings'**
+  String get psiphonSettings;
+
+  /// No description provided for @psiphonUpstream.
+  ///
+  /// In en, this message translates to:
+  /// **'Psiphon (SOCKS upstream)'**
+  String get psiphonUpstream;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @saveFoundIpsSni.
+  ///
+  /// In en, this message translates to:
+  /// **'Save found IPs & SNI automatically'**
+  String get saveFoundIpsSni;
+
+  /// No description provided for @scanBalanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced'**
+  String get scanBalanced;
+
+  /// No description provided for @scanIronclad.
+  ///
+  /// In en, this message translates to:
+  /// **'Ironclad'**
+  String get scanIronclad;
+
+  /// No description provided for @scanMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan mode'**
+  String get scanMode;
+
+  /// No description provided for @scanStealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Stealth'**
+  String get scanStealth;
+
+  /// No description provided for @scanThorough.
+  ///
+  /// In en, this message translates to:
+  /// **'Thorough'**
+  String get scanThorough;
+
+  /// No description provided for @scanTurbo.
+  ///
+  /// In en, this message translates to:
+  /// **'Turbo'**
+  String get scanTurbo;
+
+  /// No description provided for @select.
+  ///
+  /// In en, this message translates to:
+  /// **'Select...'**
+  String get select;
+
+  /// No description provided for @server.
+  ///
+  /// In en, this message translates to:
+  /// **'Server'**
+  String get server;
+
+  /// No description provided for @serverAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Server address'**
+  String get serverAddress;
+
+  /// No description provided for @shareOnLan.
+  ///
+  /// In en, this message translates to:
+  /// **'Share on LAN (bind 0.0.0.0)'**
+  String get shareOnLan;
+
+  /// No description provided for @shareOnLanPsiphon.
+  ///
+  /// In en, this message translates to:
+  /// **'Share on LAN (bind 0.0.0.0)'**
+  String get shareOnLanPsiphon;
+
+  /// No description provided for @shareOnLanPsiphonSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Forward SOCKS & HTTP ports on all interfaces via Dart'**
+  String get shareOnLanPsiphonSubtitle;
+
+  /// No description provided for @showLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get showLess;
+
+  /// No description provided for @showLessSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide advanced settings & logs'**
+  String get showLessSubtitle;
+
+  /// No description provided for @showMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get showMore;
+
+  /// No description provided for @showMoreSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance, Aether, Psiphon, Tor, Scanner, Updates, Log'**
+  String get showMoreSubtitle;
+
+  /// No description provided for @sni.
+  ///
+  /// In en, this message translates to:
+  /// **'SNI'**
+  String get sni;
+
+  /// No description provided for @sniList.
+  ///
+  /// In en, this message translates to:
+  /// **'SNI list (one per line, order = priority)'**
+  String get sniList;
+
+  /// No description provided for @socksPort.
+  ///
+  /// In en, this message translates to:
+  /// **'SOCKS port'**
+  String get socksPort;
+
+  /// No description provided for @sstpConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'SSTP Connected'**
+  String get sstpConnected;
+
+  /// No description provided for @sstpSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'SSTP Settings'**
+  String get sstpSettings;
+
+  /// No description provided for @sstpSocksUpstream.
+  ///
+  /// In en, this message translates to:
+  /// **'SSTP (SOCKS upstream)'**
+  String get sstpSocksUpstream;
+
+  /// No description provided for @start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get start;
+
+  /// No description provided for @startScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Scan'**
+  String get startScan;
+
+  /// No description provided for @stop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get stop;
+
+  /// No description provided for @stopHealthCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get stopHealthCheck;
+
+  /// No description provided for @stopScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get stopScan;
+
+  /// No description provided for @sunandlionCore.
+  ///
+  /// In en, this message translates to:
+  /// **'sunandlion psiphon tunnel core'**
+  String get sunandlionCore;
+
+  /// No description provided for @threads.
+  ///
+  /// In en, this message translates to:
+  /// **'Threads'**
+  String get threads;
+
+  /// No description provided for @tlsSni.
+  ///
+  /// In en, this message translates to:
+  /// **'TLS SNI (e.g. a248.e.akamai.net)'**
+  String get tlsSni;
+
+  /// No description provided for @torBridge.
+  ///
+  /// In en, this message translates to:
+  /// **'Bridge (obfs4 / snowflake / custom)'**
+  String get torBridge;
+
+  /// No description provided for @torConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Tor Connected'**
+  String get torConnected;
+
+  /// No description provided for @torConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Tor connection'**
+  String get torConnection;
+
+  /// No description provided for @torDirect.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct (no bridge, no upstream) — default'**
+  String get torDirect;
+
+  /// No description provided for @torManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual proxy'**
+  String get torManual;
+
+  /// No description provided for @torSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Tor Settings'**
+  String get torSettings;
+
+  /// No description provided for @torSocksUpstream.
+  ///
+  /// In en, this message translates to:
+  /// **'Tor (SOCKS upstream)'**
+  String get torSocksUpstream;
+
+  /// No description provided for @torUpstream.
+  ///
+  /// In en, this message translates to:
+  /// **'Tor (SOCKS upstream)'**
+  String get torUpstream;
+
+  /// No description provided for @torViaAether.
+  ///
+  /// In en, this message translates to:
+  /// **'Via Aether (Tor-over-Aether)'**
+  String get torViaAether;
+
+  /// No description provided for @torViaPsiphon.
+  ///
+  /// In en, this message translates to:
+  /// **'Via Psiphon (Tor-over-Psiphon)'**
+  String get torViaPsiphon;
+
+  /// No description provided for @torViaSstp.
+  ///
+  /// In en, this message translates to:
+  /// **'Via SSTP (Tor-over-SSTP)'**
+  String get torViaSstp;
+
+  /// No description provided for @tryLastEndpointFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Try last successful endpoint first'**
+  String get tryLastEndpointFirst;
+
+  /// No description provided for @tryLastEndpointFirstSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'If enabled, will try the last working endpoint before scanning'**
+  String get tryLastEndpointFirstSubtitle;
+
+  /// No description provided for @tunnelCore.
+  ///
+  /// In en, this message translates to:
+  /// **'Tunnel core'**
+  String get tunnelCore;
+
+  /// No description provided for @update.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get update;
+
+  /// No description provided for @upstream.
+  ///
+  /// In en, this message translates to:
+  /// **'Upstream'**
+  String get upstream;
+
+  /// No description provided for @upstreamType.
+  ///
+  /// In en, this message translates to:
+  /// **'Upstream type'**
+  String get upstreamType;
+
+  /// No description provided for @usableIps.
+  ///
+  /// In en, this message translates to:
+  /// **'Usable IPs (sorted by score)'**
+  String get usableIps;
+
+  /// No description provided for @useFronting.
+  ///
+  /// In en, this message translates to:
+  /// **'Use fronting (CDN)'**
+  String get useFronting;
+
+  /// No description provided for @userOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'User (optional)'**
+  String get userOptional;
+
+  /// No description provided for @username.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get username;
+
+  /// No description provided for @verboseLogging.
+  ///
+  /// In en, this message translates to:
+  /// **'Verbose logging'**
+  String get verboseLogging;
+
+  /// No description provided for @verboseLoggingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable detailed debug output from sstp-proxy'**
+  String get verboseLoggingSubtitle;
+
+  /// No description provided for @vpngateServers.
+  ///
+  /// In en, this message translates to:
+  /// **'VPN Gate SSTP Servers'**
+  String get vpngateServers;
+
+  /// No description provided for @working.
+  ///
+  /// In en, this message translates to:
+  /// **'Working'**
+  String get working;
 }
 
 class _AppLocalizationsDelegate
@@ -255,38 +1498,32 @@ class _AppLocalizationsDelegate
   const _AppLocalizationsDelegate();
 
   @override
-  bool isSupported(Locale locale) =>
-      ['en', 'fa', 'ru'].contains(locale.languageCode);
+  Future<AppLocalizations> load(Locale locale) {
+    return SynchronousFuture<AppLocalizations>(lookupAppLocalizations(locale));
+  }
 
   @override
-  Future<AppLocalizations> load(Locale locale) async =>
-      AppLocalizations(locale);
+  bool isSupported(Locale locale) =>
+      <String>['en', 'fa', 'ru'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
-class LocaleProvider extends ChangeNotifier {
-  Locale _locale = const Locale('en');
-
-  Locale get locale => _locale;
-
-  bool get isRtl => _locale.languageCode == 'fa';
-
-  Future<void> load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final code = prefs.getString(AppLocalizations.prefsKey) ?? 'en';
-    _locale = Locale(code);
-    notifyListeners();
+AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when only language code is specified.
+  switch (locale.languageCode) {
+    case 'en':
+      return AppLocalizationsEn();
+    case 'fa':
+      return AppLocalizationsFa();
+    case 'ru':
+      return AppLocalizationsRu();
   }
 
-  Future<void> setLocale(String code) async {
-    if (_locale.languageCode == code) return;
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(AppLocalizations.prefsKey, code);
-
-    _locale = Locale(code);
-    notifyListeners();
-  }
+  throw FlutterError(
+      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }

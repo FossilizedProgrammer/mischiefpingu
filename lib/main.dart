@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'l10n/app_localizations.dart';
+import 'l10n/locale_provider.dart';
 import 'providers/app_provider.dart';
 import 'providers/cdn_scanner_provider.dart';
+import 'providers/internet_quality_provider.dart';
 import 'providers/sstp_fetcher_provider.dart';
 import 'screens/main_screen.dart';
 import 'theme/theme_builder.dart';
@@ -43,15 +44,22 @@ void main() async {
   final localeProvider = LocaleProvider();
   await localeProvider.load();
 
+  final appProvider = AppProvider();
+  final qualityProvider = InternetQualityProvider(
+    processService: appProvider.processService,
+  );
+  appProvider.attachQualityProvider(qualityProvider);
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: localeProvider),
-        ChangeNotifierProvider(create: (_) => AppProvider()),
+        ChangeNotifierProvider.value(value: appProvider),
+        ChangeNotifierProvider.value(value: qualityProvider),
         ChangeNotifierProvider(create: (_) => CdnScannerProvider()),
         ChangeNotifierProvider(
-          create: (ctx) => SstpFetcherProvider(
-            processService: ctx.read<AppProvider>().processService,
+          create: (_) => SstpFetcherProvider(
+            processService: appProvider.processService,
           ),
         ),
       ],
@@ -78,12 +86,7 @@ class MyApp extends StatelessWidget {
       darkTheme: buildAppTheme(themeId, Brightness.dark),
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
       home: const MainScreen(),
     );
   }

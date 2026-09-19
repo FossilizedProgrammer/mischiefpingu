@@ -22,9 +22,8 @@ ThemeData buildAppTheme(String themeId, Brightness brightness) {
       surface: isDark ? const Color(0xFF0F172A) : Colors.white,
       onSurface: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF1F2937),
     ),
-    scaffoldBackgroundColor: isDark
-        ? const Color(0xFF020617)
-        : const Color(0xFFF8FAFC),
+    scaffoldBackgroundColor:
+        isDark ? const Color(0xFF020617) : const Color(0xFFF8FAFC),
     cardTheme: CardThemeData(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -45,9 +44,8 @@ ThemeData buildAppTheme(String themeId, Brightness brightness) {
       backgroundColor: isDark
           ? const Color(0xFF0F172A).withValues(alpha: 0.8)
           : Colors.white.withValues(alpha: 0.8),
-      foregroundColor: isDark
-          ? const Color(0xFFF1F5F9)
-          : const Color(0xFF1F2937),
+      foregroundColor:
+          isDark ? const Color(0xFFF1F5F9) : const Color(0xFF1F2937),
       surfaceTintColor: Colors.transparent,
       titleTextStyle: TextStyle(
         fontSize: 20,
@@ -93,9 +91,8 @@ ThemeData buildAppTheme(String themeId, Brightness brightness) {
       thickness: 1,
     ),
     chipTheme: ChipThemeData(
-      backgroundColor: isDark
-          ? const Color(0xFF1E293B)
-          : const Color(0xFFF1F5F9),
+      backgroundColor:
+          isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
       selectedColor: primaryColor.withValues(alpha: isDark ? 0.3 : 0.25),
       labelStyle: TextStyle(
         fontSize: 13,

@@ -19,39 +19,47 @@ class PortManager {
   ];
 
   /// بررسی می‌کند که آیا پورت [port] روی 127.0.0.1 آزاد است.
-  /// از دو روش استفاده می‌کند:
-  ///   1. تلاش برای bind کردن — اگر موفق شد، آزاد است
-  ///   2. اگر bind شکست خورد، یعنی چیزی آن را اشغال کرده
+  ///
+  /// ⚠️ این متد هم برای checkPorts و هم برای findFree استفاده
+  /// میشود تا مطمئن شویم منطق یکسان است.
   static Future<bool> isFree(int port) async {
+    if (port < 1 || port > 65535) return false;
+    ServerSocket? s;
     try {
-      final s = await ServerSocket.bind(InternetAddress.loopbackIPv4, port);
-      await s.close();
+      s = await ServerSocket.bind(
+        InternetAddress.loopbackIPv4,
+        port,
+        shared: false,
+      );
       return true;
     } catch (_) {
       return false;
+    } finally {
+      try {
+        await s?.close();
+      } catch (_) {}
     }
   }
 
   /// بررسی می‌کند که آیا چیزی روی پورت [port] گوش می‌دهد.
-  /// (معادل `ProcessService.isPortInUse` ولی مستقل)
+  ///
+  /// ⚠️ تغییر مهم: قبلاً از Socket.connect استفاده می‌شد که
+  /// وقتی پروسه روی 0.0.0.0 گوش میداد ولی loopback مسدود بود،
+  /// false negative میداد.
+  ///
+  /// حالا از ServerSocket.bind با try استفاده میکنیم:
+  /// اگر bind شکست بخورد یعنی چیزی روی آن پورت گوش میدهد.
+  ///
+  /// ⚠️ نکته: این متد از این به بعد "isInUse" را از منظر
+  /// "قابل bind بودن روی loopback" تعریف میکند، که دقیقاً
+  /// همان چیزی است که برای راه‌اندازی تونل نیاز داریم.
   static Future<bool> isInUse(int port) async {
-    try {
-      final s = await Socket.connect(
-        '127.0.0.1',
-        port,
-        timeout: const Duration(milliseconds: 400),
-      );
-      s.destroy();
-      return true;
-    } catch (_) {
-      return false;
-    }
+    final free = await isFree(port);
+    return !free;
   }
 
   /// اولین پورت آزاد از لیست ترجیحی را برمی‌گرداند،
   /// در غیر این صورت یک پورت تصادفی آزاد.
-  ///
-  /// اگر [preferred] خالی باشد، مستقیماً سراغ پورت تصادفی می‌رود.
   static Future<int> findFree({List<int>? preferred}) async {
     final candidates = preferred ?? preferredAetherPorts;
 
@@ -65,17 +73,20 @@ class PortManager {
       if (await isFree(port)) return port;
     }
 
-    final s = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
-    final port = s.port;
-    await s.close();
-    return port;
+    ServerSocket? s;
+    try {
+      s = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
+      final port = s.port;
+      return port;
+    } finally {
+      try {
+        await s?.close();
+      } catch (_) {}
+    }
   }
 
   /// اگر [publicPort] + offset آزاد باشد آن را برمی‌گرداند،
   /// در غیر این صورت یک پورت آزاد دیگر.
-  ///
-  /// برای حالت Share-on-LAN استفاده می‌شود: باینری روی پورت داخلی
-  /// گوش می‌دهد و forwarder Dart روی پورت عمومی.
   static Future<int> internalFor({
     required int publicPort,
     int offset = 10000,

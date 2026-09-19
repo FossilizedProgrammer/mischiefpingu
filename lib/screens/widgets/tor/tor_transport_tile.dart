@@ -6,6 +6,7 @@ import 'tor_ports_section.dart';
 import 'tor_exit_country_section.dart';
 import 'tor_bridges_section.dart';
 import 'tor_switches_section.dart';
+import 'tor_manual_proxy_section.dart';
 
 class TorTransportTile extends StatelessWidget {
   final ThemeData theme;
@@ -26,6 +27,17 @@ class TorTransportTile extends StatelessWidget {
   final bool autoReconnectTor;
   final ValueChanged<bool> onAutoReconnectChanged;
 
+  final String torProxyType;
+  final ValueChanged<String> onProxyTypeChanged;
+  final String torProxyIp;
+  final ValueChanged<String> onProxyIpChanged;
+  final int torProxyPort;
+  final ValueChanged<String> onProxyPortChanged;
+  final String torProxyUser;
+  final ValueChanged<String> onProxyUserChanged;
+  final String torProxyPass;
+  final ValueChanged<String> onProxyPassChanged;
+
   const TorTransportTile({
     super.key,
     required this.theme,
@@ -45,6 +57,16 @@ class TorTransportTile extends StatelessWidget {
     required this.onShareLanChanged,
     required this.autoReconnectTor,
     required this.onAutoReconnectChanged,
+    required this.torProxyType,
+    required this.onProxyTypeChanged,
+    required this.torProxyIp,
+    required this.onProxyIpChanged,
+    required this.torProxyPort,
+    required this.onProxyPortChanged,
+    required this.torProxyUser,
+    required this.onProxyUserChanged,
+    required this.torProxyPass,
+    required this.onProxyPassChanged,
   });
 
   @override
@@ -79,7 +101,20 @@ class TorTransportTile extends StatelessWidget {
           onAutoReconnectChanged: onAutoReconnectChanged,
         ),
         const Divider(height: 28),
-        if (torTransport != 'direct') ...[
+        if (torTransport == 'manual') ...[
+          TorManualProxySection(
+            proxyType: torProxyType,
+            onProxyTypeChanged: onProxyTypeChanged,
+            proxyIp: torProxyIp,
+            onProxyIpChanged: onProxyIpChanged,
+            proxyPort: torProxyPort,
+            onProxyPortChanged: onProxyPortChanged,
+            proxyUser: torProxyUser,
+            onProxyUserChanged: onProxyUserChanged,
+            proxyPass: torProxyPass,
+            onProxyPassChanged: onProxyPassChanged,
+          ),
+        ] else if (torTransport != 'direct') ...[
           TorBridgesSection(
             theme: theme,
             torTransport: torTransport,
