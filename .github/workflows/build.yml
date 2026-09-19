@@ -35,6 +35,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Fetch Git LFS files
+        run: git lfs pull
 
       - name: Install Linux dependencies
         run: |
@@ -85,9 +90,6 @@ jobs:
       - name: Build Linux release
         run: flutter build linux --release
 
-      # ──────────────────────────────────────────────
-      # کپی باینری‌ها و فایل‌های جانبی از پوشه bundled
-      # ──────────────────────────────────────────────
       - name: Copy bundled binaries & data (Linux)
         run: |
           BUNDLE_DIR="build/linux/x64/release/bundle"
@@ -102,7 +104,6 @@ jobs:
             echo "⚠ Warning: bundled/linux not found — skipping platform binaries"
           fi
 
-          # فایل‌های مشترک که باید کنار اجرایی اصلی باشند
           for f in server_list.dat geoip geoip6; do
             if [ -f "bundled/linux/$f" ]; then
               cp -f "bundled/linux/$f" "$BUNDLE_DIR/"
@@ -112,6 +113,10 @@ jobs:
               echo "→ Copied $f next to binary (from bundled/)"
             fi
           done
+
+          echo "── Sizes of key files ──"
+          ls -lh "$PLATFORM_DIR"/aether "$PLATFORM_DIR"/psiphon-tunnel-core "$PLATFORM_DIR"/sstp-proxy 2>/dev/null || true
+          ls -lh "$BUNDLE_DIR"/server_list.dat 2>/dev/null || true
 
           echo "── Contents of bundle after copy ──"
           ls -la "$BUNDLE_DIR"
@@ -139,6 +144,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Fetch Git LFS files
+        shell: pwsh
+        run: git lfs pull
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -159,9 +170,6 @@ jobs:
       - name: Build Windows release
         run: flutter build windows --release
 
-      # ──────────────────────────────────────────────
-      # کپی باینری‌ها و فایل‌های جانبی از پوشه bundled
-      # ──────────────────────────────────────────────
       - name: Copy bundled binaries & data (Windows)
         shell: pwsh
         run: |
@@ -177,7 +185,6 @@ jobs:
             Write-Host "⚠ Warning: bundled/windows not found — skipping platform binaries"
           }
 
-          # فایل‌های مشترک کنار اجرایی اصلی
           $sharedFiles = @("server_list.dat", "geoip", "geoip6")
           foreach ($f in $sharedFiles) {
             $src1 = "bundled/windows/$f"
@@ -189,6 +196,12 @@ jobs:
               Copy-Item -Path $src2 -Destination $ReleaseDir -Force
               Write-Host "→ Copied $f next to binary (from bundled/)"
             }
+          }
+
+          Write-Host "── Sizes of key files ──"
+          Get-ChildItem $PlatformDir -File | Select-Object Name, Length | Format-Table -AutoSize
+          if (Test-Path (Join-Path $ReleaseDir "server_list.dat")) {
+            Get-Item (Join-Path $ReleaseDir "server_list.dat") | Select-Object Name, Length
           }
 
           Write-Host "── Contents of Release after copy ──"
