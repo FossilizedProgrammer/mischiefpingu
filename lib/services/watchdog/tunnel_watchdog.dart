@@ -3,23 +3,35 @@ library;
 import 'dart:async';
 
 import 'watchdog_circuit_breaker.dart';
+import 'watchdog_config.dart';
 import 'watchdog_internet_gate.dart';
 import 'watchdog_params.dart';
 import 'watchdog_prober.dart';
+import 'watchdog_quality_metrics.dart';
+import 'watchdog_quality_tracker.dart';
 import 'watchdog_restart_decider.dart';
 import 'watchdog_types.dart';
 
 export 'watchdog_types.dart'
     show ProbeResult, RecoveryLeaseResult, RecoveryLeaseHandle;
 
+part 'tunnel_watchdog/check_runner.dart';
+
 /// ═══════════════════════════════════════════════════════════════
 ///  TunnelWatchdog — حلقهٔ اصلی probe + تصمیم restart.
+///
+///  فاز ۵: حالا علاوه بر "alive/dead"، کیفیت probe را هم
+///  رصد می‌کند و در صورت افت شدید کیفیت (چند بار متوالی
+///  latency بالا یا خطای HTTP)، restart می‌کند.
 ///
 ///  منطق پیچیده در فایل‌های جدا:
 ///    • WatchdogRestartDecider → تصمیم نهایی restart
 ///    • WatchdogInternetGate   → چک اینترنت پایه
 ///    • WatchdogCircuitBreaker → circuit breaker
-///    • WatchdogProber         → probe واقعی
+///    • WatchdogProber         → probe با metric
+///    • WatchdogQualityTracker → ردیابی افت کیفیت
+///
+///  منطق `_check()` در `tunnel_watchdog/check_runner.dart`.
 /// ═══════════════════════════════════════════════════════════════
 class TunnelWatchdog {
   final WatchdogParams params;
@@ -34,11 +46,15 @@ class TunnelWatchdog {
   final Future<RecoveryLeaseResult> Function()? acquireRecoveryLease;
 
   Timer? _timer;
-  int _failures = 0;
-  bool _checkRunning = false;
-  bool _disposed = false;
+
+  // ⚠️ این فیلدها public شدن تا partها دسترسی داشته باشن
+  //    و getter/setter اضافی لازم نباشه (رفع lint).
+  int failures = 0;
+  bool checkRunning = false;
+  bool disposed = false;
+  bool restartInProgress = false;
+
   bool _started = false;
-  bool _restartInProgress = false;
 
   late final WatchdogProber _prober = WatchdogProber(
     socksPort: params.socksPort,
@@ -63,6 +79,8 @@ class TunnelWatchdog {
     logSource: logSource,
   );
 
+  late final WatchdogQualityTracker _qualityTracker = WatchdogQualityTracker();
+
   late final WatchdogRestartDecider _decider = WatchdogRestartDecider(
     params: params,
     onRestart: onRestart,
@@ -73,10 +91,13 @@ class TunnelWatchdog {
     internetGate: _internetGate,
     log: log,
     logSource: logSource,
-    isRestartInProgress: () => _restartInProgress,
-    setRestartInProgress: (v) => _restartInProgress = v,
-    resetFailures: () => _failures = 0,
-    holdFailuresAtThreshold: () => _failures = params.maxFailures - 1,
+    isRestartInProgress: () => restartInProgress,
+    setRestartInProgress: (v) => restartInProgress = v,
+    resetFailures: () {
+      failures = 0;
+      _qualityTracker.reset();
+    },
+    holdFailuresAtThreshold: () => failures = params.maxFailures - 1,
   );
 
   TunnelWatchdog({
@@ -95,11 +116,17 @@ class TunnelWatchdog {
   Duration get interval => params.interval;
   int get maxFailures => params.maxFailures;
 
+  WatchdogProber get prober => _prober;
+  WatchdogCircuitBreaker get circuit => _circuit;
+  WatchdogInternetGate get internetGate => _internetGate;
+  WatchdogQualityTracker get qualityTracker => _qualityTracker;
+  WatchdogRestartDecider get decider => _decider;
+
   void start() {
-    if (_disposed) return;
+    if (disposed) return;
     if (_started) return;
     _started = true;
-    _timer = Timer.periodic(interval, (_) => _check());
+    _timer = Timer.periodic(interval, (_) => runCheck());
     log(
       '→ $name watchdog started (every ${interval.inSeconds}s)',
       source: logSource,
@@ -111,16 +138,18 @@ class TunnelWatchdog {
     _started = false;
     _timer?.cancel();
     _timer = null;
-    _failures = 0;
+    failures = 0;
+    _qualityTracker.reset();
   }
 
   void dispose() {
-    _disposed = true;
+    disposed = true;
     stop();
   }
 
   void resetFailures() {
-    _failures = 0;
+    failures = 0;
+    _qualityTracker.reset();
   }
 
   void resetGracePeriod() {
@@ -129,88 +158,6 @@ class TunnelWatchdog {
 
   void resetCircuitBreaker() {
     _circuit.reset();
-    log(
-      '→ $name watchdog: circuit breaker reset',
-      source: logSource,
-    );
-  }
-
-  Future<void> _check() async {
-    if (_disposed || _checkRunning || _restartInProgress) return;
-
-    if (_circuit.isOpen()) {
-      final remaining = _circuit.timeUntilClose();
-      log(
-        '→ $name watchdog: circuit OPEN, '
-        '${remaining.inSeconds}s remaining — skipping probe',
-        source: logSource,
-      );
-      return;
-    }
-
-    if (_circuit.wasJustClosed()) {
-      log(
-        '★ $name watchdog: circuit CLOSED — resuming probes',
-        source: logSource,
-      );
-    }
-
-    if (_decider.isInGracePeriod()) {
-      final remaining = _decider.graceTimeRemaining();
-      log(
-        '→ $name watchdog: in grace period, '
-        '${remaining.inSeconds}s remaining',
-        source: logSource,
-      );
-      return;
-    }
-
-    if (!isConnected()) {
-      _failures = 0;
-      return;
-    }
-    if (isUserStopped()) {
-      _failures = 0;
-      return;
-    }
-    if (isBusy?.call() ?? false) {
-      log(
-        '→ $name watchdog: busy, skipping probe',
-        source: logSource,
-      );
-      return;
-    }
-
-    _checkRunning = true;
-    try {
-      final result = await _prober.probe();
-      if (_disposed) return;
-
-      if (result == ProbeResult.alive) {
-        if (_failures > 0) {
-          log(
-            '★ $name watchdog: tunnel recovered (was $_failures/$maxFailures)',
-            source: logSource,
-          );
-        }
-        _failures = 0;
-        return;
-      }
-      if (result == ProbeResult.skipped) return;
-
-      _failures++;
-      log(
-        '⚠ $name watchdog: probe failed ($_failures/$maxFailures)',
-        source: logSource,
-      );
-
-      if (_failures >= maxFailures) {
-        await _decider.attemptRestart();
-      }
-    } catch (e) {
-      log('⚠ $name watchdog error: $e', source: logSource);
-    } finally {
-      _checkRunning = false;
-    }
+    log('→ $name watchdog: circuit breaker reset', source: logSource);
   }
 }

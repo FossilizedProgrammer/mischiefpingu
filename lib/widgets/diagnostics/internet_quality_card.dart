@@ -54,10 +54,7 @@ class InternetQualityCard extends StatelessWidget {
             ),
             if (r != null && r.probableCause.isNotEmpty) ...[
               const SizedBox(height: 12),
-              QualityCauseBanner(
-                cause: r.probableCause,
-                color: color,
-              ),
+              QualityCauseBanner(cause: r.probableCause, color: color),
             ],
             if (r != null) ...[
               const SizedBox(height: 16),

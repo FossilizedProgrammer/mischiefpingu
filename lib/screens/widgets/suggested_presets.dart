@@ -11,9 +11,15 @@ class SuggestedPresets extends StatelessWidget {
   const SuggestedPresets({super.key});
 
   int _currentGroup(AppSettings s) {
+    // ⬅ چهار حالت:
+    //   1 = Fronting (SunAndLion + isFronted + upstreamType=0)
+    //   2 = Aether upstream (upstreamType=2)
+    //   3 = Conduit (upstreamType=3)
+    //   4 = Direct (upstreamType=4 یا هر چیز دیگر)
     if (s.useSunAndLion && s.isFronted && s.upstreamType == 0) return 1;
-    if (s.upstreamType == 3) return 2;
-    return 3;
+    if (s.upstreamType == 2) return 2;
+    if (s.upstreamType == 3) return 3;
+    return 4;
   }
 
   @override
@@ -43,11 +49,16 @@ class SuggestedPresets extends StatelessWidget {
               ),
               PresetRadioTile(
                 value: 2,
+                title: l10n.preset2Title,
+                subtitle: l10n.preset2Subtitle,
+              ),
+              PresetRadioTile(
+                value: 3,
                 title: l10n.preset3Title,
                 subtitle: l10n.preset3Subtitle,
               ),
               PresetRadioTile(
-                value: 3,
+                value: 4,
                 title: l10n.preset4Title,
                 subtitle: l10n.preset4Subtitle,
               ),

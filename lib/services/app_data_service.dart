@@ -87,4 +87,9 @@ class AppDataService {
 
   static Future<String?> findAetherPtDir() =>
       DataPathsService.findAetherPtDir();
+
+  static Future<String> getGatewayHistoryDbPath() async {
+    final dir = await getDataDir();
+    return '$dir/gateway_history.db';
+  }
 }

@@ -97,8 +97,11 @@ class AetherSettingsTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // ─── پیکربندی پروتکل ───
                     const AetherProtocolCard(),
+
                     const SizedBox(height: 12),
+
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
                       dense: true,

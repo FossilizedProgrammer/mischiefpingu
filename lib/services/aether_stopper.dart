@@ -4,6 +4,8 @@ extension ProcessServiceAetherStopper on ProcessService {
   Future<void> stopAether() async {
     const src = LogSource.aether;
 
+    suppressSadNotification = true;
+
     try {
       await _aetherSocksForwarder?.close();
     } catch (_) {}
@@ -31,6 +33,12 @@ extension ProcessServiceAetherStopper on ProcessService {
     }
 
     isAetherRunning = false;
+
+    // ═══════════════════════════════════════════════════════════
+    //  ⚠️ ریست isAetherTunnelReady
+    // ═══════════════════════════════════════════════════════════
+    isAetherTunnelReady = false;
+
     addLog('Aether stopped', source: src);
     touch();
   }

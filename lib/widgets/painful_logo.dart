@@ -40,7 +40,6 @@ class _PainfulLogoState extends State<PainfulLogo> {
 
   LogoNotificationBridge? _bridge;
 
-  /// ⚠️ flag برای جلوگیری از ساخت bridge تکراری
   bool _bridgeAttached = false;
 
   @override
@@ -140,22 +139,34 @@ class _PainfulLogoState extends State<PainfulLogo> {
             behavior: HitTestBehavior.opaque,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 180),
-                switchInCurve: Curves.easeOutBack,
-                switchOutCurve: Curves.easeIn,
-                transitionBuilder: (child, animation) {
-                  return ScaleTransition(
-                    scale: Tween<double>(begin: 0.85, end: 1.0).animate(
-                      CurvedAnimation(
-                        parent: animation,
-                        curve: Curves.easeOutBack,
+              child: SizedBox(
+                width: widget.size,
+                height: widget.size,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 180),
+                  // ⚠️ تغییر: easeOutBack → easeOut
+                  // easeOutBack مقادیر > 1 برمی‌گرداند و
+                  // AnimatedSwitcher را کرش می‌کند.
+                  switchInCurve: Curves.easeOut,
+                  switchOutCurve: Curves.easeIn,
+                  transitionBuilder: (child, animation) {
+                    // ⚠️ کلمپ کردن مقدار برای اطمینان
+                    final safeAnim = CurvedAnimation(
+                      parent: animation,
+                      curve: const Interval(0.0, 1.0, curve: Curves.easeOut),
+                    );
+                    return ScaleTransition(
+                      scale: Tween<double>(begin: 0.85, end: 1.0).animate(
+                        safeAnim,
                       ),
-                    ),
-                    child: FadeTransition(opacity: animation, child: child),
-                  );
-                },
-                child: _assetResolver.resolve(_mode, theme),
+                      child: FadeTransition(
+                        opacity: safeAnim,
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: _assetResolver.resolve(_mode, theme),
+                ),
               ),
             ),
           ),

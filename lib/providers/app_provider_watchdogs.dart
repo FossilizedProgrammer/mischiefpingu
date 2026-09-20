@@ -96,18 +96,14 @@ extension AppProviderWatchdogs on AppProvider {
       acquireAetherLease: acquireAetherLease,
       acquireTorLease: acquireTorLease,
       acquireSstpLease: acquireSstpLease,
-      restartPsiphon: () => restartPsiphonInternal(
-        reason: 'watchdog detected dead tunnel',
-      ),
-      restartAether: () => restartAetherInternal(
-        reason: 'watchdog detected dead tunnel',
-      ),
-      restartTor: () => restartTorInternal(
-        reason: 'watchdog detected dead tunnel',
-      ),
-      restartSstp: () => restartSstpInternal(
-        reason: 'watchdog detected dead tunnel',
-      ),
+      restartPsiphon: () =>
+          restartPsiphonInternal(reason: 'watchdog detected dead tunnel'),
+      restartAether: () =>
+          restartAetherInternal(reason: 'watchdog detected dead tunnel'),
+      restartTor: () =>
+          restartTorInternal(reason: 'watchdog detected dead tunnel'),
+      restartSstp: () =>
+          restartSstpInternal(reason: 'watchdog detected dead tunnel'),
     );
   }
 

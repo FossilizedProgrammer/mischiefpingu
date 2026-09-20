@@ -37,17 +37,15 @@ class TorManualProxySection extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           l10n.manualProxyOption,
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: Theme.of(context)
+              .textTheme
+              .titleSmall
+              ?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           initialValue: proxyType,
-          decoration: InputDecoration(
-            labelText: l10n.proxyType,
-            isDense: true,
-          ),
+          decoration: InputDecoration(labelText: l10n.proxyType, isDense: true),
           items: const [
             DropdownMenuItem(value: 'socks5', child: Text('SOCKS5')),
             DropdownMenuItem(value: 'socks5h', child: Text('SOCKS5h')),

@@ -55,9 +55,7 @@ class DataPathsService {
       TorPathsService.getTorBinaryPath();
   static Future<String?> findTorBinary() => TorPathsService.findTorBinary();
 
-  static Future<void> logTorBinaryCandidates({
-    void Function(String)? log,
-  }) =>
+  static Future<void> logTorBinaryCandidates({void Function(String)? log}) =>
       TorPathsService.logTorBinaryCandidates(log: log);
 
   static Future<String> ensureTorDir() => TorPathsService.ensureTorDir();

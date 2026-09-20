@@ -7,7 +7,7 @@ import '../providers/app_provider.dart';
 import 'aether/aether_dropdown_field.dart';
 import 'aether/aether_masque_section.dart';
 import 'aether/aether_connection_mode_section.dart';
-import 'aether/aether_profile_selector.dart';
+import 'aether/aether_quick_profile_selector.dart';
 
 class AetherProtocolCard extends StatelessWidget {
   const AetherProtocolCard({super.key});
@@ -87,7 +87,7 @@ class AetherProtocolCard extends StatelessWidget {
               ],
             ),
             const Divider(height: 24),
-            AetherProfileSelector(isRunning: isRunning),
+            AetherQuickProfileSelector(isRunning: isRunning),
             const Divider(height: 24),
             AetherDropdownField(
               label: l10n.protocol,

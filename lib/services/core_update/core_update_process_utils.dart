@@ -13,8 +13,9 @@ import 'core_update_archive_extractor.dart';
 class CoreUpdateProcessUtils {
   final void Function(String)? log;
 
-  late final CoreUpdateArchiveExtractor _archive =
-      CoreUpdateArchiveExtractor(log: log);
+  late final CoreUpdateArchiveExtractor _archive = CoreUpdateArchiveExtractor(
+    log: log,
+  );
   late final ProcessController _process = ProcessController(log: log);
   late final BinaryReplacer _replacer = BinaryReplacer(log: log);
   late final DirectoryCopier _copier = DirectoryCopier(log: log);
@@ -62,9 +63,6 @@ class CoreUpdateProcessUtils {
         fallbackSource: fallbackSource,
       );
 
-  Future<void> updateExecutableDirBinary(
-    String coreId,
-    String stagingPath,
-  ) =>
+  Future<void> updateExecutableDirBinary(String coreId, String stagingPath) =>
       _platformSync.updateExecutableDirBinary(coreId, stagingPath);
 }

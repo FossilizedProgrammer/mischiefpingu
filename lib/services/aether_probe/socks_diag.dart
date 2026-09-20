@@ -7,6 +7,9 @@ enum SocksDiag {
   connectTimeout,
   notSocks,
   tunnelDead,
+
+  /// ⚠️ SOCKS زنده است ولی هدف‌های probe همه fail دادن.
+  allTargetsFailed,
 }
 
 class SocksDiagText {
@@ -15,7 +18,7 @@ class SocksDiagText {
   static String forDiag(SocksDiag d, int port) {
     switch (d) {
       case SocksDiag.healthy:
-        return '✓ DIAG: TCP + SOCKS5 + data-plane all OK';
+        return '✓ DIAG: TCP + SOCKS5 + HTTPS data-plane all OK';
       case SocksDiag.appListenerBaselineFailed:
         return '✗ DIAG: even our own loopback listener test failed';
       case SocksDiag.connectRefused:
@@ -26,6 +29,9 @@ class SocksDiagText {
         return '✗ DIAG: port accepts TCP but does NOT answer SOCKS5';
       case SocksDiag.tunnelDead:
         return '✗ DIAG: SOCKS5 greeting OK but data-plane DEAD';
+      case SocksDiag.allTargetsFailed:
+        return '⚠ DIAG: SOCKS5 alive but all HTTPS probe targets failed '
+            '(likely ISP-level block)';
     }
   }
 }

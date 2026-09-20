@@ -3,6 +3,12 @@ part of 'process_service.dart';
 extension ProcessServiceSstpStopper on ProcessService {
   Future<void> stopSstp() async {
     const src = LogSource.sstp;
+
+    // ═══════════════════════════════════════════════════════════
+    //  ⚠️ سرکوب sad notification چون کاربر دستی stop کرده
+    // ═══════════════════════════════════════════════════════════
+    suppressSadNotification = true;
+
     final proc = sstpProcess;
     if (proc != null) {
       try {

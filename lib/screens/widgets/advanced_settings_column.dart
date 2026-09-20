@@ -11,9 +11,11 @@ import 'tor_settings_tile.dart';
 import 'sstp_settings_tile.dart';
 import 'sstp_fetcher_section.dart';
 import 'core_update_tile.dart';
+import 'app_update_tile.dart';
 import 'log_tile.dart';
 import '../../widgets/cdn_scanner_section.dart';
 import '../../widgets/internet_quality_tile.dart';
+import '../../widgets/diagnostics/connection_health_section.dart';
 
 class AdvancedSettingsColumn extends StatelessWidget {
   const AdvancedSettingsColumn({super.key});
@@ -23,6 +25,7 @@ class AdvancedSettingsColumn extends StatelessWidget {
     return const Column(
       children: [
         InternetQualityTile(),
+        ConnectionHealthSection(), // ← جدید
         ThemeSelectorTile(),
         LanguageSelectorTile(),
         NotificationsSettingsTile(),
@@ -33,6 +36,7 @@ class AdvancedSettingsColumn extends StatelessWidget {
         CdnScannerSection(),
         SstpFetcherSection(),
         CoreUpdateTile(),
+        AppUpdateTile(),
         LogTile(),
       ],
     );

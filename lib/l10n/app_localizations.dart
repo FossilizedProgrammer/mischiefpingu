@@ -100,6 +100,18 @@ abstract class AppLocalizations {
     Locale('ru')
   ];
 
+  /// No description provided for @appTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mischief Pingu'**
+  String get appTitle;
+
+  /// No description provided for @appSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unofficial Psiphon client, Aether client, Tor client, SSTP client'**
+  String get appSubtitle;
+
   /// No description provided for @add.
   ///
   /// In en, this message translates to:
@@ -147,18 +159,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Any'**
   String get any;
-
-  /// No description provided for @appSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Unofficial Psiphon client, Aether client, Tor client, SSTP client'**
-  String get appSubtitle;
-
-  /// No description provided for @appTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Mischief Pingu'**
-  String get appTitle;
 
   /// No description provided for @appearance.
   ///
@@ -573,198 +573,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Installed'**
   String get installed;
-
-  /// No description provided for @internetQuality.
-  ///
-  /// In en, this message translates to:
-  /// **'Internet Quality'**
-  String get internetQuality;
-
-  /// No description provided for @internetQualityAvg.
-  ///
-  /// In en, this message translates to:
-  /// **'Avg'**
-  String get internetQualityAvg;
-
-  /// No description provided for @internetQualityDeep.
-  ///
-  /// In en, this message translates to:
-  /// **'Deep (5m)'**
-  String get internetQualityDeep;
-
-  /// No description provided for @internetQualityDegraded.
-  ///
-  /// In en, this message translates to:
-  /// **'Degraded'**
-  String get internetQualityDegraded;
-
-  /// No description provided for @internetQualityDirectDetails.
-  ///
-  /// In en, this message translates to:
-  /// **'Direct quality details'**
-  String get internetQualityDirectDetails;
-
-  /// No description provided for @internetQualityDns.
-  ///
-  /// In en, this message translates to:
-  /// **'DNS'**
-  String get internetQualityDns;
-
-  /// No description provided for @internetQualityDown.
-  ///
-  /// In en, this message translates to:
-  /// **'Down'**
-  String get internetQualityDown;
-
-  /// No description provided for @internetQualityExcellent.
-  ///
-  /// In en, this message translates to:
-  /// **'Excellent'**
-  String get internetQualityExcellent;
-
-  /// No description provided for @internetQualityGood.
-  ///
-  /// In en, this message translates to:
-  /// **'Good'**
-  String get internetQualityGood;
-
-  /// No description provided for @internetQualityHttps.
-  ///
-  /// In en, this message translates to:
-  /// **'HTTPS'**
-  String get internetQualityHttps;
-
-  /// No description provided for @internetQualityJitter.
-  ///
-  /// In en, this message translates to:
-  /// **'Jitter'**
-  String get internetQualityJitter;
-
-  /// No description provided for @internetQualityLastCheck.
-  ///
-  /// In en, this message translates to:
-  /// **'Last check'**
-  String get internetQualityLastCheck;
-
-  /// No description provided for @internetQualityLight.
-  ///
-  /// In en, this message translates to:
-  /// **'Light (15s)'**
-  String get internetQualityLight;
-
-  /// No description provided for @internetQualityMax.
-  ///
-  /// In en, this message translates to:
-  /// **'Max'**
-  String get internetQualityMax;
-
-  /// No description provided for @internetQualityMed.
-  ///
-  /// In en, this message translates to:
-  /// **'Med'**
-  String get internetQualityMed;
-
-  /// No description provided for @internetQualityMin.
-  ///
-  /// In en, this message translates to:
-  /// **'Min'**
-  String get internetQualityMin;
-
-  /// No description provided for @internetQualityMonitoring.
-  ///
-  /// In en, this message translates to:
-  /// **'Background monitoring'**
-  String get internetQualityMonitoring;
-
-  /// No description provided for @internetQualityNoResult.
-  ///
-  /// In en, this message translates to:
-  /// **'No result'**
-  String get internetQualityNoResult;
-
-  /// No description provided for @internetQualityNormal.
-  ///
-  /// In en, this message translates to:
-  /// **'Normal (2m)'**
-  String get internetQualityNormal;
-
-  /// No description provided for @internetQualityNotTested.
-  ///
-  /// In en, this message translates to:
-  /// **'Not tested'**
-  String get internetQualityNotTested;
-
-  /// No description provided for @internetQualityOff.
-  ///
-  /// In en, this message translates to:
-  /// **'Off'**
-  String get internetQualityOff;
-
-  /// No description provided for @internetQualityP95.
-  ///
-  /// In en, this message translates to:
-  /// **'P95'**
-  String get internetQualityP95;
-
-  /// No description provided for @internetQualityQuality.
-  ///
-  /// In en, this message translates to:
-  /// **'Quality'**
-  String get internetQualityQuality;
-
-  /// No description provided for @internetQualitySnackbar.
-  ///
-  /// In en, this message translates to:
-  /// **'Internet:'**
-  String get internetQualitySnackbar;
-
-  /// No description provided for @internetQualityStatusFailing.
-  ///
-  /// In en, this message translates to:
-  /// **'Failing'**
-  String get internetQualityStatusFailing;
-
-  /// No description provided for @internetQualityStatusOk.
-  ///
-  /// In en, this message translates to:
-  /// **'OK'**
-  String get internetQualityStatusOk;
-
-  /// No description provided for @internetQualityStatusPartial.
-  ///
-  /// In en, this message translates to:
-  /// **'Partial'**
-  String get internetQualityStatusPartial;
-
-  /// No description provided for @internetQualityStatusSlow.
-  ///
-  /// In en, this message translates to:
-  /// **'Slow'**
-  String get internetQualityStatusSlow;
-
-  /// No description provided for @internetQualityStatusUnknown.
-  ///
-  /// In en, this message translates to:
-  /// **'Unknown'**
-  String get internetQualityStatusUnknown;
-
-  /// No description provided for @internetQualityTcp.
-  ///
-  /// In en, this message translates to:
-  /// **'TCP'**
-  String get internetQualityTcp;
-
-  /// No description provided for @internetQualityTest.
-  ///
-  /// In en, this message translates to:
-  /// **'Test'**
-  String get internetQualityTest;
-
-  /// No description provided for @internetQualityUnstable.
-  ///
-  /// In en, this message translates to:
-  /// **'Unstable'**
-  String get internetQualityUnstable;
 
   /// No description provided for @ipType.
   ///
@@ -1491,6 +1299,450 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Working'**
   String get working;
+
+  /// No description provided for @appUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'App Update'**
+  String get appUpdate;
+
+  /// No description provided for @appUpdateChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking for updates...'**
+  String get appUpdateChecking;
+
+  /// No description provided for @appUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Update check failed'**
+  String get appUpdateFailed;
+
+  /// No description provided for @appUpdateSaveDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select where to save the update'**
+  String get appUpdateSaveDialogTitle;
+
+  /// No description provided for @appUpdateDownloading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading update...'**
+  String get appUpdateDownloading;
+
+  /// No description provided for @appUpdateDownloaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Update downloaded successfully'**
+  String get appUpdateDownloaded;
+
+  /// No description provided for @appUpdateOpenFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Folder'**
+  String get appUpdateOpenFolder;
+
+  /// No description provided for @appUpdateAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Available'**
+  String get appUpdateAvailable;
+
+  /// No description provided for @appUpdateCurrentVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Version'**
+  String get appUpdateCurrentVersion;
+
+  /// No description provided for @appUpdateLatestVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest Version'**
+  String get appUpdateLatestVersion;
+
+  /// No description provided for @appUpdateReleaseNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Release Notes'**
+  String get appUpdateReleaseNotes;
+
+  /// No description provided for @appUpdateCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for Updates'**
+  String get appUpdateCheck;
+
+  /// No description provided for @appUpdateDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Update'**
+  String get appUpdateDownload;
+
+  /// No description provided for @appUpdateUpToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'You are up to date'**
+  String get appUpdateUpToDate;
+
+  /// No description provided for @internetQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Internet Quality'**
+  String get internetQuality;
+
+  /// No description provided for @internetQualityAvg.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg'**
+  String get internetQualityAvg;
+
+  /// No description provided for @internetQualityDeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep (5m)'**
+  String get internetQualityDeep;
+
+  /// No description provided for @internetQualityDegraded.
+  ///
+  /// In en, this message translates to:
+  /// **'Degraded'**
+  String get internetQualityDegraded;
+
+  /// No description provided for @internetQualityDirectDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct quality details'**
+  String get internetQualityDirectDetails;
+
+  /// No description provided for @internetQualityDns.
+  ///
+  /// In en, this message translates to:
+  /// **'DNS'**
+  String get internetQualityDns;
+
+  /// No description provided for @internetQualityDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Down'**
+  String get internetQualityDown;
+
+  /// No description provided for @internetQualityExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get internetQualityExcellent;
+
+  /// No description provided for @internetQualityGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get internetQualityGood;
+
+  /// No description provided for @internetQualityHttps.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTPS'**
+  String get internetQualityHttps;
+
+  /// No description provided for @internetQualityJitter.
+  ///
+  /// In en, this message translates to:
+  /// **'Jitter'**
+  String get internetQualityJitter;
+
+  /// No description provided for @internetQualityLastCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Last check'**
+  String get internetQualityLastCheck;
+
+  /// No description provided for @internetQualityLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light (15s)'**
+  String get internetQualityLight;
+
+  /// No description provided for @internetQualityMax.
+  ///
+  /// In en, this message translates to:
+  /// **'Max'**
+  String get internetQualityMax;
+
+  /// No description provided for @internetQualityMed.
+  ///
+  /// In en, this message translates to:
+  /// **'Med'**
+  String get internetQualityMed;
+
+  /// No description provided for @internetQualityMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Min'**
+  String get internetQualityMin;
+
+  /// No description provided for @internetQualityMonitoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Background monitoring'**
+  String get internetQualityMonitoring;
+
+  /// No description provided for @internetQualityNoResult.
+  ///
+  /// In en, this message translates to:
+  /// **'No result'**
+  String get internetQualityNoResult;
+
+  /// No description provided for @internetQualityNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal (2m)'**
+  String get internetQualityNormal;
+
+  /// No description provided for @internetQualityNotTested.
+  ///
+  /// In en, this message translates to:
+  /// **'Not tested'**
+  String get internetQualityNotTested;
+
+  /// No description provided for @internetQualityOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get internetQualityOff;
+
+  /// No description provided for @internetQualityP95.
+  ///
+  /// In en, this message translates to:
+  /// **'P95'**
+  String get internetQualityP95;
+
+  /// No description provided for @internetQualityQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Quality'**
+  String get internetQualityQuality;
+
+  /// No description provided for @internetQualitySnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Internet:'**
+  String get internetQualitySnackbar;
+
+  /// No description provided for @internetQualityStatusFailing.
+  ///
+  /// In en, this message translates to:
+  /// **'Failing'**
+  String get internetQualityStatusFailing;
+
+  /// No description provided for @internetQualityStatusOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get internetQualityStatusOk;
+
+  /// No description provided for @internetQualityStatusPartial.
+  ///
+  /// In en, this message translates to:
+  /// **'Partial'**
+  String get internetQualityStatusPartial;
+
+  /// No description provided for @internetQualityStatusSlow.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow'**
+  String get internetQualityStatusSlow;
+
+  /// No description provided for @internetQualityStatusUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get internetQualityStatusUnknown;
+
+  /// No description provided for @internetQualityTcp.
+  ///
+  /// In en, this message translates to:
+  /// **'TCP'**
+  String get internetQualityTcp;
+
+  /// No description provided for @internetQualityTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Test'**
+  String get internetQualityTest;
+
+  /// No description provided for @internetQualityUnstable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unstable'**
+  String get internetQualityUnstable;
+
+  /// No description provided for @tunnelHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Tunnel Health'**
+  String get tunnelHealth;
+
+  /// No description provided for @tunnelHealthProbeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Test all'**
+  String get tunnelHealthProbeAll;
+
+  /// No description provided for @tunnelHealthProbeAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Retest'**
+  String get tunnelHealthProbeAgain;
+
+  /// No description provided for @tunnelHealthNotRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'{tunnel} is not running'**
+  String tunnelHealthNotRunning(String tunnel);
+
+  /// No description provided for @tunnelHealthNoTunnelRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'No tunnel is running'**
+  String get tunnelHealthNoTunnelRunning;
+
+  /// No description provided for @tunnelHealthStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped'**
+  String get tunnelHealthStopped;
+
+  /// No description provided for @tunnelHealthReachable.
+  ///
+  /// In en, this message translates to:
+  /// **'Reachable (probe OK)'**
+  String get tunnelHealthReachable;
+
+  /// No description provided for @tunnelHealthMeasuring.
+  ///
+  /// In en, this message translates to:
+  /// **'Measuring…'**
+  String get tunnelHealthMeasuring;
+
+  /// No description provided for @tunnelHealthExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get tunnelHealthExcellent;
+
+  /// No description provided for @tunnelHealthGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get tunnelHealthGood;
+
+  /// No description provided for @tunnelHealthFair.
+  ///
+  /// In en, this message translates to:
+  /// **'Fair'**
+  String get tunnelHealthFair;
+
+  /// No description provided for @tunnelHealthDegraded.
+  ///
+  /// In en, this message translates to:
+  /// **'Degraded'**
+  String get tunnelHealthDegraded;
+
+  /// No description provided for @tunnelHealthFailing.
+  ///
+  /// In en, this message translates to:
+  /// **'Failing'**
+  String get tunnelHealthFailing;
+
+  /// No description provided for @tunnelHealthLatency.
+  ///
+  /// In en, this message translates to:
+  /// **'Latency'**
+  String get tunnelHealthLatency;
+
+  /// No description provided for @tunnelHealthLoss.
+  ///
+  /// In en, this message translates to:
+  /// **'Loss'**
+  String get tunnelHealthLoss;
+
+  /// No description provided for @tunnelHealthJitter.
+  ///
+  /// In en, this message translates to:
+  /// **'Jitter'**
+  String get tunnelHealthJitter;
+
+  /// No description provided for @tunnelHealthUptime.
+  ///
+  /// In en, this message translates to:
+  /// **'Uptime'**
+  String get tunnelHealthUptime;
+
+  /// No description provided for @tunnelHealthReconnects.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnects'**
+  String get tunnelHealthReconnects;
+
+  /// No description provided for @tunnelHealthTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Trend'**
+  String get tunnelHealthTrend;
+
+  /// No description provided for @tunnelHealthProtocol.
+  ///
+  /// In en, this message translates to:
+  /// **'Protocol'**
+  String get tunnelHealthProtocol;
+
+  /// No description provided for @tunnelHealthThroughput.
+  ///
+  /// In en, this message translates to:
+  /// **'Throughput'**
+  String get tunnelHealthThroughput;
+
+  /// No description provided for @tunnelHealthCircuits.
+  ///
+  /// In en, this message translates to:
+  /// **'Circuits'**
+  String get tunnelHealthCircuits;
+
+  /// No description provided for @tunnelHealthIp.
+  ///
+  /// In en, this message translates to:
+  /// **'IP'**
+  String get tunnelHealthIp;
+
+  /// No description provided for @tunnelHealthLastProbeOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Last probe: {latency}ms — OK'**
+  String tunnelHealthLastProbeOk(int latency);
+
+  /// No description provided for @tunnelHealthLastProbeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Last probe failed: {error}'**
+  String tunnelHealthLastProbeFailed(String error);
+
+  /// No description provided for @tunnelHealthNoDataWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Tunnel is up but no data is flowing'**
+  String get tunnelHealthNoDataWarning;
+
+  /// No description provided for @tunnelHealthMeasuringHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Measuring health…'**
+  String get tunnelHealthMeasuringHealth;
+
+  /// No description provided for @tunnelHealthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{tunnel} Health'**
+  String tunnelHealthTitle(String tunnel);
 }
 
 class _AppLocalizationsDelegate

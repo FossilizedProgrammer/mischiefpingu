@@ -69,11 +69,7 @@ class RecoveryCoordinator {
       return null;
     }
 
-    final lease = RecoveryLease(
-      tunnel: tunnel,
-      action: action,
-      reason: reason,
-    );
+    final lease = RecoveryLease(tunnel: tunnel, action: action, reason: reason);
 
     _activeLeases[tunnel] = lease;
     _globalLease ??= lease;

@@ -5,23 +5,10 @@ library;
 /// ═══════════════════════════════════════════════════════════════
 
 /// کیفیت کلی اینترنت.
-enum InternetQuality {
-  excellent,
-  good,
-  degraded,
-  unstable,
-  dead,
-  unknown,
-}
+enum InternetQuality { excellent, good, degraded, unstable, dead, unknown }
 
 /// وضعیت یک metric تکی (DNS/TCP/HTTPS/...).
-enum MetricStatus {
-  ok,
-  slow,
-  partial,
-  failing,
-  unknown,
-}
+enum MetricStatus { ok, slow, partial, failing, unknown }
 
 /// نتیجه‌ی یک بخش از diagnostic (مثلاً DNS).
 class DiagnosticMetric {
@@ -140,9 +127,4 @@ class ProbeSample {
 }
 
 /// سطح مانیتورینگ پس‌زمینه.
-enum MonitoringLevel {
-  idle,
-  light,
-  normal,
-  deep,
-}
+enum MonitoringLevel { idle, light, normal, deep }

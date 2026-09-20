@@ -21,11 +21,7 @@ class ConnectivityProbe {
   ConnectivityProbe({required this.log});
 
   /// IPهای پایدار برای probe — بدون DNS.
-  static const List<String> _stableTargets = [
-    '1.1.1.1',
-    '8.8.8.8',
-    '9.9.9.9',
-  ];
+  static const List<String> _stableTargets = ['1.1.1.1', '8.8.8.8', '9.9.9.9'];
 
   static const int _targetPort = 443;
   static const Duration _probeTimeout = Duration(seconds: 3);
@@ -60,11 +56,7 @@ class ConnectivityProbe {
   Future<bool> _probeOne(String ip) async {
     Socket? sock;
     try {
-      sock = await Socket.connect(
-        ip,
-        _targetPort,
-        timeout: _probeTimeout,
-      );
+      sock = await Socket.connect(ip, _targetPort, timeout: _probeTimeout);
       return true;
     } catch (_) {
       return false;

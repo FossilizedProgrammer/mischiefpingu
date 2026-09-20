@@ -3,6 +3,7 @@ library;
 import '../aether_attempt_runner.dart';
 import '../aether_attempts.dart';
 import '../aether_cache_manager.dart';
+import '../database/gateway_history_store.dart';
 import '../process_service.dart';
 import 'aether_test_helpers.dart';
 
@@ -11,20 +12,16 @@ class AetherFailureHandler {
   final AetherCacheManager cacheManager;
   final AetherTestHelpers helpers;
 
-  const AetherFailureHandler({
+  /// اختیاری: برای ثبت شکست‌ها در دیتابیس (فاز ۳).
+  GatewayHistoryStore? historyStore;
+
+  AetherFailureHandler({
     required this.processService,
     required this.cacheManager,
     required this.helpers,
+    this.historyStore,
   });
 
-  /// پردازش شکست یک attempt.
-  ///
-  /// خروجی:
-  ///   - true  → candidate بعدی را امتحان کن
-  ///   - false → حلقه را متوقف کن
-  ///
-  /// ⚠️ نکته: در نسخهٔ قبلی منطق continue معکوس بود؛ این نسخه
-  /// قرارداد را صریح می‌کند.
   Future<bool> handle({
     required AttemptResult result,
     required EndpointAttempt attempt,
@@ -34,6 +31,19 @@ class AetherFailureHandler {
     required void Function() onPortSwapTried,
     required bool Function() isCancelRequested,
   }) async {
+    if (attempt.fromHistory && historyStore != null) {
+      try {
+        await historyStore!.recordFailure(
+          ip: attempt.endpoint.isNotEmpty
+              ? attempt.endpoint.split(':').first
+              : 'unknown',
+          port: port,
+          protocol: attempt.protocol,
+          masqueOption: attempt.masque,
+        );
+      } catch (_) {}
+    }
+
     switch (result.outcome) {
       case AttemptOutcome.refused:
         processService.addLog(
@@ -41,7 +51,8 @@ class AetherFailureHandler {
           source: LogSource.aether,
         );
         await processService.stopAether();
-        await Future.delayed(const Duration(milliseconds: 400));
+        // ⚠️ کاهش از 400ms به 250ms
+        await Future.delayed(const Duration(milliseconds: 250));
         return true;
 
       case AttemptOutcome.tunnelDead:
@@ -50,7 +61,8 @@ class AetherFailureHandler {
           source: LogSource.aether,
         );
         await processService.stopAether();
-        await Future.delayed(const Duration(milliseconds: 800));
+        // ⚠️ کاهش از 800ms به 400ms
+        await Future.delayed(const Duration(milliseconds: 400));
         await helpers.safe<void>(
           () => cacheManager.clearCachedGateway(
             specificProtocol: attempt.protocol,
@@ -58,12 +70,22 @@ class AetherFailureHandler {
         );
         return true;
 
+      case AttemptOutcome.allTargetsFailed:
+        processService.addLog(
+          '⚠ ${attempt.label} — SOCKS is up but HTTP probes all failed. '
+          'Treating as "likely alive" and NOT clearing cache. '
+          'Network may be blocking probe targets.',
+          source: LogSource.aether,
+        );
+        return false;
+
       case AttemptOutcome.timeout:
       case AttemptOutcome.startFailed:
         final hasListener = await ProcessService.isPortInUse(port);
         if (!portSwapTried && !isCancelRequested() && !hasListener) {
           await processService.stopAether();
-          await Future.delayed(const Duration(milliseconds: 800));
+          // ⚠️ کاهش از 800ms به 400ms
+          await Future.delayed(const Duration(milliseconds: 400));
           final np = await helpers.swapPort(
             currentPort: port,
             onPortChanged: (newPort) {
@@ -80,11 +102,22 @@ class AetherFailureHandler {
           }
         }
         await processService.stopAether();
-        await Future.delayed(const Duration(milliseconds: 600));
+        // ⚠️ کاهش از 600ms به 300ms
+        await Future.delayed(const Duration(milliseconds: 300));
         return true;
 
       case AttemptOutcome.success:
         return false;
     }
+  }
+
+  static (String ip, int port)? parseEndpoint(String endpoint) {
+    if (endpoint.isEmpty) return null;
+    final idx = endpoint.lastIndexOf(':');
+    if (idx <= 0) return null;
+    final ip = endpoint.substring(0, idx);
+    final port = int.tryParse(endpoint.substring(idx + 1));
+    if (port == null) return null;
+    return (ip, port);
   }
 }

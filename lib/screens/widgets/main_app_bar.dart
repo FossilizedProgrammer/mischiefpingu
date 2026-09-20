@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../../services/app_version_service.dart';
 import '../../widgets/painful_logo.dart';
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -13,6 +14,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
+
     return AppBar(
       title: Row(
         children: [
@@ -21,9 +23,16 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  l10n.appTitle,
-                  style: const TextStyle(fontWeight: FontWeight.w800),
+                // ─── ردیف اول: عنوان + بج نسخه ───
+                Row(
+                  children: [
+                    Text(
+                      l10n.appTitle,
+                      style: const TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                    const SizedBox(width: 8),
+                    _VersionBadge(theme: theme),
+                  ],
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -44,6 +53,40 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       toolbarHeight: 70,
+    );
+  }
+}
+
+/// بج کوچک نمایش نسخه — از pubspec.yaml خوانده می‌شود.
+class _VersionBadge extends StatelessWidget {
+  final ThemeData theme;
+
+  const _VersionBadge({required this.theme});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<String>(
+      future: AppVersionService.getVersion(),
+      builder: (context, snapshot) {
+        final v = snapshot.data ?? '';
+        if (v.isEmpty) return const SizedBox.shrink();
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.primary.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Text(
+            'v$v',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+        );
+      },
     );
   }
 }

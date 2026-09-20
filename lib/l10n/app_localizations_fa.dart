@@ -9,6 +9,12 @@ class AppLocalizationsFa extends AppLocalizations {
   AppLocalizationsFa([String locale = 'fa']) : super(locale);
 
   @override
+  String get appTitle => 'پینگوی شیطون';
+
+  @override
+  String get appSubtitle => 'کلاینت غیررسمی سایفون، اتر، تور و اس‌اس‌تی‌پی';
+
+  @override
   String get add => 'افزودن';
 
   @override
@@ -31,12 +37,6 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get any => 'هرکدام';
-
-  @override
-  String get appSubtitle => 'کلاینت غیررسمی سایفون، اتر، تور و اس‌اس‌تی‌پی';
-
-  @override
-  String get appTitle => 'پینگوی شیطون';
 
   @override
   String get appearance => 'ظاهر';
@@ -247,102 +247,6 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get installed => 'نصب‌شده';
-
-  @override
-  String get internetQuality => 'کیفیت اینترنت';
-
-  @override
-  String get internetQualityAvg => 'میانگین';
-
-  @override
-  String get internetQualityDeep => 'عمیق (۵ دقیقه)';
-
-  @override
-  String get internetQualityDegraded => 'افت‌کرده';
-
-  @override
-  String get internetQualityDirectDetails => 'جزئیات کیفیت مستقیم';
-
-  @override
-  String get internetQualityDns => 'DNS';
-
-  @override
-  String get internetQualityDown => 'قطع';
-
-  @override
-  String get internetQualityExcellent => 'عالی';
-
-  @override
-  String get internetQualityGood => 'خوب';
-
-  @override
-  String get internetQualityHttps => 'HTTPS';
-
-  @override
-  String get internetQualityJitter => 'نوسان';
-
-  @override
-  String get internetQualityLastCheck => 'آخرین بررسی';
-
-  @override
-  String get internetQualityLight => 'سبک (۱۵ ثانیه)';
-
-  @override
-  String get internetQualityMax => 'بیشترین';
-
-  @override
-  String get internetQualityMed => 'میانه';
-
-  @override
-  String get internetQualityMin => 'کمترین';
-
-  @override
-  String get internetQualityMonitoring => 'پایش پس‌زمینه';
-
-  @override
-  String get internetQualityNoResult => 'نتیجه‌ای نیست';
-
-  @override
-  String get internetQualityNormal => 'معمولی (۲ دقیقه)';
-
-  @override
-  String get internetQualityNotTested => 'تست نشده';
-
-  @override
-  String get internetQualityOff => 'خاموش';
-
-  @override
-  String get internetQualityP95 => 'P95';
-
-  @override
-  String get internetQualityQuality => 'کیفیت';
-
-  @override
-  String get internetQualitySnackbar => 'اینترنت:';
-
-  @override
-  String get internetQualityStatusFailing => 'ناموفق';
-
-  @override
-  String get internetQualityStatusOk => 'سالم';
-
-  @override
-  String get internetQualityStatusPartial => 'ناقص';
-
-  @override
-  String get internetQualityStatusSlow => 'کند';
-
-  @override
-  String get internetQualityStatusUnknown => 'نامعلوم';
-
-  @override
-  String get internetQualityTcp => 'TCP';
-
-  @override
-  String get internetQualityTest => 'تست';
-
-  @override
-  String get internetQualityUnstable => 'ناپایدار';
 
   @override
   String get ipType => 'نوع IP';
@@ -718,4 +622,235 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get working => 'در حال کار';
+
+  @override
+  String get appUpdate => 'بروزرسانی برنامه';
+
+  @override
+  String get appUpdateChecking => 'در حال بررسی برای بروزرسانی...';
+
+  @override
+  String get appUpdateFailed => 'بررسی بروزرسانی ناموفق بود';
+
+  @override
+  String get appUpdateSaveDialogTitle => 'محل ذخیره بروزرسانی را انتخاب کنید';
+
+  @override
+  String get appUpdateDownloading => 'در حال دانلود بروزرسانی...';
+
+  @override
+  String get appUpdateDownloaded => 'بروزرسانی با موفقیت دانلود شد';
+
+  @override
+  String get appUpdateOpenFolder => 'باز کردن پوشه';
+
+  @override
+  String get appUpdateAvailable => 'بروزرسانی موجود است';
+
+  @override
+  String get appUpdateCurrentVersion => 'نسخه فعلی';
+
+  @override
+  String get appUpdateLatestVersion => 'آخرین نسخه';
+
+  @override
+  String get appUpdateReleaseNotes => 'یادداشت‌های انتشار';
+
+  @override
+  String get appUpdateCheck => 'بررسی بروزرسانی';
+
+  @override
+  String get appUpdateDownload => 'دانلود بروزرسانی';
+
+  @override
+  String get appUpdateUpToDate => 'شما بروز هستید';
+
+  @override
+  String get internetQuality => 'کیفیت اینترنت';
+
+  @override
+  String get internetQualityAvg => 'میانگین';
+
+  @override
+  String get internetQualityDeep => 'عمیق (۵ دقیقه)';
+
+  @override
+  String get internetQualityDegraded => 'افت‌کرده';
+
+  @override
+  String get internetQualityDirectDetails => 'جزئیات کیفیت مستقیم';
+
+  @override
+  String get internetQualityDns => 'DNS';
+
+  @override
+  String get internetQualityDown => 'قطع';
+
+  @override
+  String get internetQualityExcellent => 'عالی';
+
+  @override
+  String get internetQualityGood => 'خوب';
+
+  @override
+  String get internetQualityHttps => 'HTTPS';
+
+  @override
+  String get internetQualityJitter => 'نوسان';
+
+  @override
+  String get internetQualityLastCheck => 'آخرین بررسی';
+
+  @override
+  String get internetQualityLight => 'سبک (۱۵ ثانیه)';
+
+  @override
+  String get internetQualityMax => 'بیشترین';
+
+  @override
+  String get internetQualityMed => 'میانه';
+
+  @override
+  String get internetQualityMin => 'کمترین';
+
+  @override
+  String get internetQualityMonitoring => 'پایش پس‌زمینه';
+
+  @override
+  String get internetQualityNoResult => 'نتیجه‌ای نیست';
+
+  @override
+  String get internetQualityNormal => 'معمولی (۲ دقیقه)';
+
+  @override
+  String get internetQualityNotTested => 'تست نشده';
+
+  @override
+  String get internetQualityOff => 'خاموش';
+
+  @override
+  String get internetQualityP95 => 'P95';
+
+  @override
+  String get internetQualityQuality => 'کیفیت';
+
+  @override
+  String get internetQualitySnackbar => 'اینترنت:';
+
+  @override
+  String get internetQualityStatusFailing => 'ناموفق';
+
+  @override
+  String get internetQualityStatusOk => 'سالم';
+
+  @override
+  String get internetQualityStatusPartial => 'ناقص';
+
+  @override
+  String get internetQualityStatusSlow => 'کند';
+
+  @override
+  String get internetQualityStatusUnknown => 'نامعلوم';
+
+  @override
+  String get internetQualityTcp => 'TCP';
+
+  @override
+  String get internetQualityTest => 'تست';
+
+  @override
+  String get internetQualityUnstable => 'ناپایدار';
+
+  @override
+  String get tunnelHealth => 'سلامت تونل';
+
+  @override
+  String get tunnelHealthProbeAll => 'تست همه';
+
+  @override
+  String get tunnelHealthProbeAgain => 'تست مجدد';
+
+  @override
+  String tunnelHealthNotRunning(String tunnel) {
+    return '$tunnel در حال اجرا نیست';
+  }
+
+  @override
+  String get tunnelHealthNoTunnelRunning => 'هیچ تونلی در حال اجرا نیست';
+
+  @override
+  String get tunnelHealthStopped => 'متوقف';
+
+  @override
+  String get tunnelHealthReachable => 'قابل دسترس (تست موفق)';
+
+  @override
+  String get tunnelHealthMeasuring => 'در حال اندازه‌گیری…';
+
+  @override
+  String get tunnelHealthExcellent => 'عالی';
+
+  @override
+  String get tunnelHealthGood => 'خوب';
+
+  @override
+  String get tunnelHealthFair => 'متوسط';
+
+  @override
+  String get tunnelHealthDegraded => 'ضعیف';
+
+  @override
+  String get tunnelHealthFailing => 'خراب';
+
+  @override
+  String get tunnelHealthLatency => 'تأخیر';
+
+  @override
+  String get tunnelHealthLoss => 'افت';
+
+  @override
+  String get tunnelHealthJitter => 'نوسان';
+
+  @override
+  String get tunnelHealthUptime => 'زمان اتصال';
+
+  @override
+  String get tunnelHealthReconnects => 'اتصال مجدد';
+
+  @override
+  String get tunnelHealthTrend => 'روند';
+
+  @override
+  String get tunnelHealthProtocol => 'پروتکل';
+
+  @override
+  String get tunnelHealthThroughput => 'توان عبور';
+
+  @override
+  String get tunnelHealthCircuits => 'مدارها';
+
+  @override
+  String get tunnelHealthIp => 'آی‌پی';
+
+  @override
+  String tunnelHealthLastProbeOk(int latency) {
+    return 'آخرین تست: ${latency}ms — موفق';
+  }
+
+  @override
+  String tunnelHealthLastProbeFailed(String error) {
+    return 'آخرین تست ناموفق: $error';
+  }
+
+  @override
+  String get tunnelHealthNoDataWarning =>
+      'تونل فعال است ولی داده‌ای عبور نمی‌کند';
+
+  @override
+  String get tunnelHealthMeasuringHealth => 'در حال اندازه‌گیری سلامت…';
+
+  @override
+  String tunnelHealthTitle(String tunnel) {
+    return 'سلامت $tunnel';
+  }
 }

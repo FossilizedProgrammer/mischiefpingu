@@ -12,8 +12,9 @@ class AetherProbeFallbacks {
   final ProcessService processService;
 
   late final CurlProbe _curl = CurlProbe();
-  late final LogReadyProbe _logReady =
-      LogReadyProbe(processService: processService);
+  late final LogReadyProbe _logReady = LogReadyProbe(
+    processService: processService,
+  );
   late final DataPlaneProbe _dataPlane = DataPlaneProbe();
 
   AetherProbeFallbacks({required this.processService});

@@ -9,6 +9,12 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
+  String get appTitle => 'Озорной Пингу';
+
+  @override
+  String get appSubtitle => 'Неофициальный клиент Psiphon, Aether, Tor, SSTP';
+
+  @override
   String get add => 'Добавить';
 
   @override
@@ -31,12 +37,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get any => 'Любой';
-
-  @override
-  String get appSubtitle => 'Неофициальный клиент Psiphon, Aether, Tor, SSTP';
-
-  @override
-  String get appTitle => 'Озорной Пингу';
 
   @override
   String get appearance => 'Внешний вид';
@@ -249,102 +249,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get installed => 'Установлено';
-
-  @override
-  String get internetQuality => 'Качество интернета';
-
-  @override
-  String get internetQualityAvg => 'Сред';
-
-  @override
-  String get internetQualityDeep => 'Глубокий (5м)';
-
-  @override
-  String get internetQualityDegraded => 'Ухудшено';
-
-  @override
-  String get internetQualityDirectDetails => 'Детали прямого качества';
-
-  @override
-  String get internetQualityDns => 'DNS';
-
-  @override
-  String get internetQualityDown => 'Отключено';
-
-  @override
-  String get internetQualityExcellent => 'Отлично';
-
-  @override
-  String get internetQualityGood => 'Хорошо';
-
-  @override
-  String get internetQualityHttps => 'HTTPS';
-
-  @override
-  String get internetQualityJitter => 'Джиттер';
-
-  @override
-  String get internetQualityLastCheck => 'Последняя проверка';
-
-  @override
-  String get internetQualityLight => 'Лёгкий (15с)';
-
-  @override
-  String get internetQualityMax => 'Макс';
-
-  @override
-  String get internetQualityMed => 'Медиана';
-
-  @override
-  String get internetQualityMin => 'Мин';
-
-  @override
-  String get internetQualityMonitoring => 'Фоновый мониторинг';
-
-  @override
-  String get internetQualityNoResult => 'Нет результата';
-
-  @override
-  String get internetQualityNormal => 'Обычный (2м)';
-
-  @override
-  String get internetQualityNotTested => 'Не тестировано';
-
-  @override
-  String get internetQualityOff => 'Выкл';
-
-  @override
-  String get internetQualityP95 => 'P95';
-
-  @override
-  String get internetQualityQuality => 'Качество';
-
-  @override
-  String get internetQualitySnackbar => 'Интернет:';
-
-  @override
-  String get internetQualityStatusFailing => 'Сбой';
-
-  @override
-  String get internetQualityStatusOk => 'ОК';
-
-  @override
-  String get internetQualityStatusPartial => 'Частично';
-
-  @override
-  String get internetQualityStatusSlow => 'Медленно';
-
-  @override
-  String get internetQualityStatusUnknown => 'Неизвестно';
-
-  @override
-  String get internetQualityTcp => 'TCP';
-
-  @override
-  String get internetQualityTest => 'Тест';
-
-  @override
-  String get internetQualityUnstable => 'Нестабильно';
 
   @override
   String get ipType => 'Тип IP';
@@ -723,4 +627,236 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get working => 'Работа';
+
+  @override
+  String get appUpdate => 'Обновление приложения';
+
+  @override
+  String get appUpdateChecking => 'Проверка обновлений...';
+
+  @override
+  String get appUpdateFailed => 'Ошибка проверки обновлений';
+
+  @override
+  String get appUpdateSaveDialogTitle =>
+      'Выберите папку для сохранения обновления';
+
+  @override
+  String get appUpdateDownloading => 'Загрузка обновления...';
+
+  @override
+  String get appUpdateDownloaded => 'Обновление успешно загружено';
+
+  @override
+  String get appUpdateOpenFolder => 'Открыть папку';
+
+  @override
+  String get appUpdateAvailable => 'Доступно обновление';
+
+  @override
+  String get appUpdateCurrentVersion => 'Текущая версия';
+
+  @override
+  String get appUpdateLatestVersion => 'Последняя версия';
+
+  @override
+  String get appUpdateReleaseNotes => 'Примечания к выпуску';
+
+  @override
+  String get appUpdateCheck => 'Проверить обновления';
+
+  @override
+  String get appUpdateDownload => 'Скачать обновление';
+
+  @override
+  String get appUpdateUpToDate => 'У вас последняя версия';
+
+  @override
+  String get internetQuality => 'Качество интернета';
+
+  @override
+  String get internetQualityAvg => 'Сред';
+
+  @override
+  String get internetQualityDeep => 'Глубокий (5м)';
+
+  @override
+  String get internetQualityDegraded => 'Ухудшено';
+
+  @override
+  String get internetQualityDirectDetails => 'Детали прямого качества';
+
+  @override
+  String get internetQualityDns => 'DNS';
+
+  @override
+  String get internetQualityDown => 'Отключено';
+
+  @override
+  String get internetQualityExcellent => 'Отлично';
+
+  @override
+  String get internetQualityGood => 'Хорошо';
+
+  @override
+  String get internetQualityHttps => 'HTTPS';
+
+  @override
+  String get internetQualityJitter => 'Джиттер';
+
+  @override
+  String get internetQualityLastCheck => 'Последняя проверка';
+
+  @override
+  String get internetQualityLight => 'Лёгкий (15с)';
+
+  @override
+  String get internetQualityMax => 'Макс';
+
+  @override
+  String get internetQualityMed => 'Медиана';
+
+  @override
+  String get internetQualityMin => 'Мин';
+
+  @override
+  String get internetQualityMonitoring => 'Фоновый мониторинг';
+
+  @override
+  String get internetQualityNoResult => 'Нет результата';
+
+  @override
+  String get internetQualityNormal => 'Обычный (2м)';
+
+  @override
+  String get internetQualityNotTested => 'Не тестировано';
+
+  @override
+  String get internetQualityOff => 'Выкл';
+
+  @override
+  String get internetQualityP95 => 'P95';
+
+  @override
+  String get internetQualityQuality => 'Качество';
+
+  @override
+  String get internetQualitySnackbar => 'Интернет:';
+
+  @override
+  String get internetQualityStatusFailing => 'Сбой';
+
+  @override
+  String get internetQualityStatusOk => 'ОК';
+
+  @override
+  String get internetQualityStatusPartial => 'Частично';
+
+  @override
+  String get internetQualityStatusSlow => 'Медленно';
+
+  @override
+  String get internetQualityStatusUnknown => 'Неизвестно';
+
+  @override
+  String get internetQualityTcp => 'TCP';
+
+  @override
+  String get internetQualityTest => 'Тест';
+
+  @override
+  String get internetQualityUnstable => 'Нестабильно';
+
+  @override
+  String get tunnelHealth => 'Состояние туннеля';
+
+  @override
+  String get tunnelHealthProbeAll => 'Проверить все';
+
+  @override
+  String get tunnelHealthProbeAgain => 'Повторить';
+
+  @override
+  String tunnelHealthNotRunning(String tunnel) {
+    return '$tunnel не запущен';
+  }
+
+  @override
+  String get tunnelHealthNoTunnelRunning => 'Ни один туннель не запущен';
+
+  @override
+  String get tunnelHealthStopped => 'Остановлен';
+
+  @override
+  String get tunnelHealthReachable => 'Доступен (проверка ОК)';
+
+  @override
+  String get tunnelHealthMeasuring => 'Измерение…';
+
+  @override
+  String get tunnelHealthExcellent => 'Отлично';
+
+  @override
+  String get tunnelHealthGood => 'Хорошо';
+
+  @override
+  String get tunnelHealthFair => 'Средне';
+
+  @override
+  String get tunnelHealthDegraded => 'Ухудшено';
+
+  @override
+  String get tunnelHealthFailing => 'Сбой';
+
+  @override
+  String get tunnelHealthLatency => 'Задержка';
+
+  @override
+  String get tunnelHealthLoss => 'Потери';
+
+  @override
+  String get tunnelHealthJitter => 'Джиттер';
+
+  @override
+  String get tunnelHealthUptime => 'Время работы';
+
+  @override
+  String get tunnelHealthReconnects => 'Переподключения';
+
+  @override
+  String get tunnelHealthTrend => 'Тренд';
+
+  @override
+  String get tunnelHealthProtocol => 'Протокол';
+
+  @override
+  String get tunnelHealthThroughput => 'Пропускная способность';
+
+  @override
+  String get tunnelHealthCircuits => 'Цепи';
+
+  @override
+  String get tunnelHealthIp => 'IP';
+
+  @override
+  String tunnelHealthLastProbeOk(int latency) {
+    return 'Последняя проверка: ${latency}ms — ОК';
+  }
+
+  @override
+  String tunnelHealthLastProbeFailed(String error) {
+    return 'Последняя проверка не удалась: $error';
+  }
+
+  @override
+  String get tunnelHealthNoDataWarning =>
+      'Туннель поднят, но данные не проходят';
+
+  @override
+  String get tunnelHealthMeasuringHealth => 'Измерение состояния…';
+
+  @override
+  String tunnelHealthTitle(String tunnel) {
+    return 'Состояние $tunnel';
+  }
 }

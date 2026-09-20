@@ -67,7 +67,6 @@ class CoreUpdateContent extends StatelessWidget {
           progress: state.progress,
           onCheck: () => controller.check(spec.kind),
           onUpdate: () => controller.update(spec.kind),
-          updateLabel: state.missing ? spec.updateLabelWhenMissing : null,
           note: spec.note,
           downloadUrl: state.downloadUrl,
           checkMessage: state.checkMessage,

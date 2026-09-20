@@ -47,6 +47,13 @@ extension ProcessServiceAetherStarter on ProcessService {
 
       aetherProcess = proc;
       isAetherRunning = true;
+
+      // ═══════════════════════════════════════════════════════════
+      //  ⚠️ ریست کردن isAetherTunnelReady — تا وقتی Aether خودش
+      //  خط "socks5 server listening" را چاپ نکند، false می‌ماند.
+      // ═══════════════════════════════════════════════════════════
+      isAetherTunnelReady = false;
+
       addLog('Aether is running (PID: ${proc.pid})', source: src);
 
       if (bindInfo.shareLan &&
@@ -64,6 +71,7 @@ extension ProcessServiceAetherStarter on ProcessService {
           await killProcessSafely(proc, graceMs: 500);
           aetherProcess = null;
           isAetherRunning = false;
+          isAetherTunnelReady = false;
           touch();
           return false;
         }
@@ -76,16 +84,23 @@ extension ProcessServiceAetherStarter on ProcessService {
         );
       } else if (prepared.internalPort != null) {
         addLog(
-          '→ Aether SOCKS listening on 127.0.0.1:${prepared.internalPort}',
+          '→ Aether SOCKS starting on 127.0.0.1:${prepared.internalPort} (waiting for tunnel validation)',
           source: src,
         );
       }
       touch();
 
+      // ═══════════════════════════════════════════════════════════
+      //  ⚠️ listener مخصوص برای تشخیص آماده شدن tunnel
+      // ═══════════════════════════════════════════════════════════
       attachProcessListeners(
         process: proc,
         handleLine: (line) {
-          if (line.isNotEmpty) addLog(line, source: src);
+          if (line.isEmpty) return;
+          addLog(line, source: src);
+
+          // ─── تشخیص آماده شدن واقعی tunnel ───
+          _checkAetherTunnelReady(line);
         },
       );
 
@@ -96,6 +111,7 @@ extension ProcessServiceAetherStarter on ProcessService {
         _aetherSocksForwarder = null;
         final wasRunning = isAetherRunning;
         isAetherRunning = false;
+        isAetherTunnelReady = false;
         aetherProcess = null;
 
         checkHappyTransition(
@@ -103,6 +119,15 @@ extension ProcessServiceAetherStarter on ProcessService {
           wasConnected: wasRunning,
           isConnected: false,
         );
+
+        if (wasRunning && !suppressSadNotification) {
+          addLog(
+            '⚠ Aether exited unexpectedly (code=$code)',
+            source: src,
+          );
+          setSadNotification('Aether');
+        }
+        suppressSadNotification = false;
 
         addLog('Aether exited with code $code', source: src);
         touch();
@@ -117,9 +142,50 @@ extension ProcessServiceAetherStarter on ProcessService {
       await killProcessSafely(aetherProcess);
       aetherProcess = null;
       isAetherRunning = false;
+      isAetherTunnelReady = false;
       addLog('Failed to start Aether: $e', source: src);
       touch();
       return false;
+    }
+  }
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  _checkAetherTunnelReady — تشخیص خطوطی که نشان می‌دهند
+  ///  Aether واقعاً tunnel را validate کرده و SOCKS آماده است.
+  ///
+  ///  خطوطی که Aether چاپ می‌کند:
+  ///    [+] wireguard tunnel validated (end-to-end data confirmed); exposing socks5
+  ///    [+] socks5 server listening on 127.0.0.1:1819
+  ///    [*] ... validated ... exposing socks5
+  ///
+  ///  در این لحظه است که SOCKS **واقعاً** قابل استفاده است.
+  /// ═══════════════════════════════════════════════════════════════
+  void _checkAetherTunnelReady(String line) {
+    if (isAetherTunnelReady) return; // قبلاً set شده
+
+    final lower = line.toLowerCase();
+
+    // ─── علامت اصلی: socks5 server listening ───
+    // این خط فقط بعد از validate شدن tunnel چاپ می‌شود.
+    if (lower.contains('socks5 server listening')) {
+      isAetherTunnelReady = true;
+      addLog(
+        '★ Aether tunnel ready — SOCKS is now available',
+        source: LogSource.aether,
+      );
+      touch();
+      return;
+    }
+
+    // ─── علامت دوم: exposing socks5 ───
+    if (lower.contains('exposing socks5')) {
+      isAetherTunnelReady = true;
+      addLog(
+        '★ Aether tunnel ready — exposing socks5',
+        source: LogSource.aether,
+      );
+      touch();
+      return;
     }
   }
 }

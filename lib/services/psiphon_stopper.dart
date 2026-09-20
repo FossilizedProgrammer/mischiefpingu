@@ -4,6 +4,10 @@ extension ProcessServicePsiphonStopper on ProcessService {
   /// توقف کامل Psiphon + بستن forwarderها + پاک‌سازی state
   Future<void> shutdownPsiphonProcess() async {
     const src = LogSource.psiphon;
+    // ═══════════════════════════════════════════════════════════
+    //  ⚠️ سرکوب sad notification چون کاربر دستی stop کرده
+    // ═══════════════════════════════════════════════════════════
+    suppressSadNotification = true;
 
     try {
       await psiphonSocksForwarder?.close();

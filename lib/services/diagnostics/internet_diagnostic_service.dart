@@ -16,8 +16,10 @@ class InternetDiagnosticService {
   late final DnsMeasurer _dns = DnsMeasurer(log: _logSimple);
   late final TcpMeasurer _tcp = TcpMeasurer(log: _logSimple);
   late final HttpsMeasurer _https = HttpsMeasurer(log: _logSimple);
-  late final DirectQualityMeasurer _direct =
-      DirectQualityMeasurer(tcp: _tcp, log: _logSimple);
+  late final DirectQualityMeasurer _direct = DirectQualityMeasurer(
+    tcp: _tcp,
+    log: _logSimple,
+  );
   late final ProbableCauseAnalyzer _cause = ProbableCauseAnalyzer();
 
   InternetDiagnosticService({this.log});
@@ -56,10 +58,7 @@ class InternetDiagnosticService {
     final overall = QualityCalculator.classify(result);
     final cause = _cause.analyze(result, overall);
 
-    result = result.copyWith(
-      overall: overall,
-      probableCause: cause,
-    );
+    result = result.copyWith(overall: overall, probableCause: cause);
 
     _logSimple(
       '★ Diagnostic done in ${sw.elapsedMilliseconds}ms — '

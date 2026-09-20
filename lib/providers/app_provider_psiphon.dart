@@ -6,23 +6,23 @@ extension AppProviderPsiphon on AppProvider {
   /// ═══════════════════════════════════════════════════════════════
   Future<void> connectPsiphon({bool fromAutoReconnect = false}) async {
     if (fromAutoReconnect) {
-      await _startPsiphonInternal(fromAutoReconnect: true);
+      await startPsiphonInternal(fromAutoReconnect: true);
       return;
     }
 
     final isCurrentlyActive = processService.isPsiphonRunning || isPsiphonBusy;
 
     if (isCurrentlyActive) {
-      await _stopPsiphonByUser();
+      await stopPsiphonByUser();
     } else {
-      await _startPsiphonInternal(fromAutoReconnect: false);
+      await startPsiphonInternal(fromAutoReconnect: false);
     }
   }
 
   /// ═══════════════════════════════════════════════════════════════
-  ///  _stopPsiphonByUser — تنها جایی که userStoppedPsiphon=true می‌شود.
+  ///  stopPsiphonByUser — تنها جایی که userStoppedPsiphon=true می‌شود.
   /// ═══════════════════════════════════════════════════════════════
-  Future<void> _stopPsiphonByUser() async {
+  Future<void> stopPsiphonByUser() async {
     const src = LogSource.psiphon;
 
     userStoppedPsiphon = true;
@@ -49,152 +49,10 @@ extension AppProviderPsiphon on AppProvider {
   }
 
   /// ═══════════════════════════════════════════════════════════════
-  ///  _startPsiphonInternal — start/reconnect داخلی.
-  /// ═══════════════════════════════════════════════════════════════
-  Future<void> _startPsiphonInternal({
-    required bool fromAutoReconnect,
-  }) async {
-    const src = LogSource.psiphon;
-
-    if (!fromAutoReconnect) {
-      _reconnectManager.cancelPsiphonTimer();
-    }
-
-    if (fromAutoReconnect && userStoppedPsiphon) {
-      processService.addLog(
-        '→ Psiphon auto-reconnect skipped (stopped by user)',
-        source: src,
-      );
-      return;
-    }
-
-    if (fromAutoReconnect && isPsiphonBusy) {
-      processService.addLog(
-        '→ Psiphon auto-reconnect skipped (already busy)',
-        source: src,
-      );
-      return;
-    }
-
-    if (!fromAutoReconnect && isPsiphonBusy) {
-      processService.addLog(
-        '→ Psiphon start ignored — already starting',
-        source: src,
-      );
-      return;
-    }
-
-    if (processService.isPsiphonRunning && !fromAutoReconnect) {
-      processService.addLog(
-        '→ Psiphon is already running — ignoring redundant start',
-        source: src,
-      );
-      return;
-    }
-
-    if (!await checkPsiphonBinary()) return;
-    if (!await checkPsiphonPorts()) return;
-
-    if (!fromAutoReconnect) {
-      userStoppedPsiphon = false;
-    }
-
-    isPsiphonBusy = true;
-    isLoading = true;
-    touch();
-
-    final myGeneration = nextPsiphonGeneration();
-
-    try {
-      if (settings.upstreamType == 2) {
-        if (processService.isAetherRunning) {
-          aetherStatus = 'Aether: Running (upstream)';
-          touch();
-        } else {
-          if (fromAutoReconnect && userStoppedAether) {
-            processService.addLog(
-              '→ Psiphon auto-reconnect skipped '
-              '(upstream Aether was stopped by user)',
-              source: src,
-            );
-            return;
-          }
-
-          aetherStatus = settings.aetherProtocol == 'auto'
-              ? 'Aether: Auto-testing protocols…'
-              : 'Aether: Testing ${settings.aetherProtocol.toUpperCase()}…';
-          touch();
-
-          isAutoTesting = true;
-          final ok = await _aetherTestService.ensureHealthy(showUi: false);
-          isAutoTesting = false;
-
-          if (userStoppedPsiphon || _aetherTestService.isCancelRequested) {
-            processService.addLog(
-              'Psiphon start cancelled by user',
-              source: src,
-            );
-            return;
-          }
-
-          if (!ok && !processService.isAetherRunning) {
-            aetherStatus = 'Aether: not available — Psiphon not started';
-            processService.addLog(
-              '✗ Aether unavailable → Psiphon not started',
-              source: src,
-            );
-            return;
-          }
-
-          aetherStatus = 'Aether: Running (upstream)';
-          touch();
-        }
-      }
-
-      if (userStoppedPsiphon) {
-        processService.addLog('Psiphon start cancelled by user', source: src);
-        return;
-      }
-
-      await saveSettings();
-      final config = buildPsiphonConfig();
-      final useSunAndLion = settings.effectiveUseSunAndLion;
-      processService.addLog(
-        '→ Tunnel core: ${useSunAndLion ? 'SunAndLion (fronting)' : 'official'}',
-        source: src,
-      );
-
-      if (userStoppedPsiphon) {
-        processService.addLog('Psiphon start cancelled by user', source: src);
-        return;
-      }
-
-      await processService.startPsiphon(
-        configJson: config,
-        useSunAndLion: useSunAndLion,
-        shareLan: settings.psiphonShareLan,
-        socksPort: settings.socksPort,
-        httpPort: settings.httpPort,
-      );
-
-      if (myGeneration != _psiphonGeneration) {
-        processService.addLog(
-          '→ Psiphon start completed but a newer start superseded it',
-          source: src,
-        );
-      }
-    } catch (e) {
-      processService.addLog('✗ connectPsiphon error: $e', source: src);
-    } finally {
-      isPsiphonBusy = false;
-      isLoading = false;
-      await AppDataService.fixDataDirOwnership();
-      touch();
-    }
-  }
-
-  /// ═══════════════════════════════════════════════════════════════
-  ///  restartPsiphonInternal — برای watchdog.
+  ///  restartPsiphonInternal — برای watchdog و health degradation.
+  ///
+  ///  ⚠️ در این نسخه reconnect در TunnelHealthRegistry ثبت می‌شود
+  ///  تا Health Score penalty بگیرد.
   /// ═══════════════════════════════════════════════════════════════
   Future<void> restartPsiphonInternal({required String reason}) async {
     const src = LogSource.psiphon;
@@ -224,6 +82,16 @@ extension AppProviderPsiphon on AppProvider {
       );
       processService.setSadNotification('Psiphon');
 
+      // ═══════════════════════════════════════════════════════════
+      //  ثبت reconnect در Health Registry
+      //
+      //  این باعث می‌شه:
+      //    • reconnectCount در health report افزایش پیدا کنه
+      //    • امتیاز health penalty بگیره
+      //    • trend احتمالاً به degrading بره
+      // ═══════════════════════════════════════════════════════════
+      recordTunnelReconnect(TunnelKind.psiphon);
+
       _reconnectManager.cancelPsiphonTimer();
 
       nextPsiphonGeneration();
@@ -232,7 +100,7 @@ extension AppProviderPsiphon on AppProvider {
       await Future.delayed(const Duration(seconds: 3));
 
       if (!userStoppedPsiphon && !isShuttingDown) {
-        await _startPsiphonInternal(fromAutoReconnect: true);
+        await startPsiphonInternal(fromAutoReconnect: true);
       }
     } finally {
       restartingPsiphon = false;

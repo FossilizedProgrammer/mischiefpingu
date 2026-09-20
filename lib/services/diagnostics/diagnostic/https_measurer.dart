@@ -23,13 +23,15 @@ class HttpsMeasurer {
     for (var round = 0; round < DiagnosticConfig.samplesPerMetric; round++) {
       for (final host in DiagnosticConfig.httpsTargets) {
         final r = await probeOne(host);
-        samples.add(ProbeSample(
-          index: idx++,
-          success: r.success,
-          latencyMs: r.latencyMs,
-          target: host,
-          timestamp: DateTime.now(),
-        ));
+        samples.add(
+          ProbeSample(
+            index: idx++,
+            success: r.success,
+            latencyMs: r.latencyMs,
+            target: host,
+            timestamp: DateTime.now(),
+          ),
+        );
         await Future.delayed(DiagnosticConfig.sampleInterval);
       }
     }
@@ -56,9 +58,8 @@ class HttpsMeasurer {
 
       final uri = Uri.https(host, '/');
 
-      final req = await client.getUrl(uri).timeout(
-            DiagnosticConfig.httpsTimeout,
-          );
+      final req =
+          await client.getUrl(uri).timeout(DiagnosticConfig.httpsTimeout);
       req.headers.set('User-Agent', DiagnosticConfig.httpsUserAgent);
       req.headers.set('Accept', 'text/html,application/xhtml+xml,*/*');
       req.headers.set('Accept-Language', 'en-US,en;q=0.9');

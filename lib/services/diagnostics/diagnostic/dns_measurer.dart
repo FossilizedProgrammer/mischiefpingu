@@ -32,13 +32,15 @@ class DnsMeasurer {
           ok = false;
         }
         sw.stop();
-        samples.add(ProbeSample(
-          index: idx++,
-          success: ok,
-          latencyMs: sw.elapsedMilliseconds,
-          target: host,
-          timestamp: DateTime.now(),
-        ));
+        samples.add(
+          ProbeSample(
+            index: idx++,
+            success: ok,
+            latencyMs: sw.elapsedMilliseconds,
+            target: host,
+            timestamp: DateTime.now(),
+          ),
+        );
         await Future.delayed(DiagnosticConfig.sampleInterval);
       }
     }

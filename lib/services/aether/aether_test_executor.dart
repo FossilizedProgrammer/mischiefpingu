@@ -7,10 +7,25 @@ import '../aether_attempt_runner.dart';
 import '../aether_attempts.dart';
 import '../aether_cache_manager.dart';
 import '../aether_endpoint_store.dart';
+import '../aether_logger.dart';
+import '../database/gateway_history_store.dart';
+import '../database/profile_performance_store.dart';
 import '../process_service.dart';
 import 'aether_failure_handler.dart';
 import 'aether_test_helpers.dart';
+import 'decision/aether_decision_engine.dart';
+import 'gateway_performance_tracker.dart';
 
+part 'test_executor/executor_runner.dart';
+part 'test_executor/tracker_starter.dart';
+
+/// ═══════════════════════════════════════════════════════════════
+///  AetherTestExecutor — اجرای چرخهٔ تست candidateها.
+///
+///  بخش‌های داخلی در `test_executor/` جدا شده‌اند:
+///    • ExecutorRunner   → منطق اصلی run()
+///    • TrackerStarter   → شروع performance tracker
+/// ═══════════════════════════════════════════════════════════════
 class AetherTestExecutor {
   final ProcessService processService;
   final AppSettings settings;
@@ -20,14 +35,22 @@ class AetherTestExecutor {
   final AetherCacheManager cacheManager;
   final AetherTestHelpers helpers;
 
-  late final AetherFailureHandler _failureHandler = AetherFailureHandler(
-    processService: processService,
-    cacheManager: cacheManager,
-    helpers: helpers,
-  );
+  final GatewayHistoryStore? historyStore;
+  GatewayPerformanceTracker? performanceTracker;
+  ProfilePerformanceStore? profilePerformanceStore;
+  AetherLogger? logger;
 
-  bool _cancelRequested = false;
-  bool _portSwapTried = false;
+  /// ═══════════════════════════════════════════════════════════════
+  ///  فاز v4: DecisionEngine برای ثبت نتیجه.
+  /// ═══════════════════════════════════════════════════════════════
+  final AetherDecisionEngine? decisionEngine;
+
+  late final AetherFailureHandler _failureHandler;
+
+  // ⚠️ این دو فیلد public می‌شن تا partها دسترسی داشته باشن
+  //    و getter/setter اضافی لازم نباشه (رفع lint).
+  bool cancelRequested = false;
+  bool portSwapTried = false;
 
   AetherTestExecutor({
     required this.processService,
@@ -37,92 +60,27 @@ class AetherTestExecutor {
     required this.runner,
     required this.cacheManager,
     required this.helpers,
-  });
+    this.historyStore,
+    this.performanceTracker,
+    this.profilePerformanceStore,
+    this.logger,
+    this.decisionEngine,
+  }) {
+    _failureHandler = AetherFailureHandler(
+      processService: processService,
+      cacheManager: cacheManager,
+      helpers: helpers,
+      historyStore: historyStore,
+    );
+  }
 
-  bool get isCancelRequested => _cancelRequested;
-  void requestCancel() => _cancelRequested = true;
+  bool get isCancelRequested => cancelRequested;
+  void requestCancel() => cancelRequested = true;
 
   void reset() {
-    _cancelRequested = false;
-    _portSwapTried = false;
+    cancelRequested = false;
+    portSwapTried = false;
   }
 
-  Future<bool> run({required bool isAuto}) async {
-    var port = settings.aetherLocalPort;
-
-    final wasRunningBefore = processService.isAetherRunning;
-
-    MapEntry<String, String>? autoWinner;
-    if (isAuto) {
-      autoWinner = await helpers.safe<MapEntry<String, String>?>(
-        store.loadAutoWinner,
-      );
-    }
-
-    final candidates = planner.buildCandidates(autoWinner: autoWinner);
-
-    for (final attempt in candidates) {
-      if (_cancelRequested) break;
-
-      processService.addLog(
-        '↻ Trying ${attempt.label}',
-        source: LogSource.aether,
-      );
-
-      final args = planner.argsFor(
-        protocol: attempt.protocol,
-        masqueOption: attempt.masque,
-        port: port,
-        endpointOverride: attempt.endpoint,
-        forceFragmentH2: attempt.fragmentH2,
-      );
-
-      final result = await runner.run(attempt: attempt, args: args, port: port);
-
-      if (result.isSuccess) {
-        await store.saveSuccessState(
-          protocol: attempt.protocol,
-          masque: attempt.masque,
-          endpoint: attempt.endpoint,
-        );
-        processService.setAetherProtocolNotification(attempt.protocol);
-
-        if (!wasRunningBefore) {
-          processService.checkHappyTransition(
-            tunnelName: 'Aether',
-            wasConnected: false,
-            isConnected: true,
-          );
-        } else {
-          processService.addLog(
-            '★ ${attempt.label} connected (already running — no happy notification)',
-            source: LogSource.aether,
-          );
-        }
-
-        processService.addLog(
-          '★ ${attempt.label} connected successfully',
-          source: LogSource.aether,
-        );
-        return true;
-      }
-
-      final shouldContinue = await _failureHandler.handle(
-        result: result,
-        attempt: attempt,
-        port: port,
-        portSwapTried: _portSwapTried,
-        isCancelRequested: () => _cancelRequested,
-        onPortSwapped: (newPort) {
-          settings.aetherLocalPort = newPort;
-          port = newPort;
-        },
-        onPortSwapTried: () => _portSwapTried = true,
-      );
-      if (!shouldContinue) break;
-    }
-
-    processService.addLog('✗ All candidates failed', source: LogSource.aether);
-    return false;
-  }
+  AetherFailureHandler get failureHandler => _failureHandler;
 }

@@ -45,11 +45,41 @@ class ProcessService extends ChangeNotifier
         ProcessTunnelState,
         ProcessProtocolState,
         ProcessNotificationMessages {
+  // ═══════════════════════════════════════════════════════════════
+  //  Tunnel running flags
+  // ═══════════════════════════════════════════════════════════════
+
   @override
   bool isPsiphonRunning = false;
 
   @override
   bool isAetherRunning = false;
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  ⚠️ isAetherTunnelReady — آیا tunnel Aether واقعاً آماده است؟
+  ///
+  ///  تفاوت با isAetherRunning:
+  ///    • isAetherRunning     = پروسه Aether spawn شده (فقط همین)
+  ///    • isAetherTunnelReady = Aether خط "socks5 server listening"
+  ///      را چاپ کرده (tunnel واقعاً validate شده)
+  ///
+  ///  بین این دو معمولاً ۵–۱۰ ثانیه فاصله است.
+  ///
+  ///  چه زمانی true می‌شود:
+  ///    • لاگ Aether شامل "socks5 server listening"
+  ///    • لاگ Aether شامل "exposing socks5"
+  ///
+  ///  چه زمانی false می‌شود:
+  ///    • stopAether() صدا زده شود
+  ///    • startAether() صدا زده شود (شروع تازه)
+  ///    • exitCode listener فعال شود
+  ///
+  ///  ⚠️ auto-probe و health check باید به این flag اعتماد کنند،
+  ///  نه isAetherRunning — وگرنه probe قبل از آماده شدن SOCKS
+  ///  اجرا می‌شود و "Connection refused" می‌دهد.
+  /// ═══════════════════════════════════════════════════════════════
+  @override
+  bool isAetherTunnelReady = false;
 
   @override
   bool isTorRunning = false;
@@ -75,6 +105,22 @@ class ProcessService extends ChangeNotifier
   @override
   int torBootstrapProgress = 0;
 
+  /// ═══════════════════════════════════════════════════════════════
+  ///  فلگ سرکوب sad notification هنگام exit پروسه.
+  ///
+  ///  وقتی کاربر دستی stop می‌کند، این فلگ true می‌شود تا
+  ///  exitCode listener نوتیف sad نفرستد. بعد از اینکه
+  ///  listener اجرا شد، دوباره false می‌شود.
+  ///
+  ///  این برای جلوگیری از sad اشتباه است وقتی کاربر خودش
+  ///  تونل را متوقف کرده و پروسه با exitCode برمی‌گردد.
+  /// ═══════════════════════════════════════════════════════════════
+  bool suppressSadNotification = false;
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Psiphon protocol state
+  // ═══════════════════════════════════════════════════════════════
+
   @override
   String? lastPsiphonProtocol;
 
@@ -93,6 +139,10 @@ class ProcessService extends ChangeNotifier
     pendingProtocolBinary = null;
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  //  Aether protocol state
+  // ═══════════════════════════════════════════════════════════════
+
   @override
   String? lastAetherProtocol;
 
@@ -109,6 +159,10 @@ class ProcessService extends ChangeNotifier
     lastAetherProtocol = protocol;
     pendingAetherProtocolNotification = protocol;
   }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Tor protocol state
+  // ═══════════════════════════════════════════════════════════════
 
   @override
   String? lastTorTransport;
@@ -152,6 +206,10 @@ class ProcessService extends ChangeNotifier
     lastTorTransport = null;
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  //  SSTP protocol state
+  // ═══════════════════════════════════════════════════════════════
+
   @override
   String? lastSstpServer;
 
@@ -185,6 +243,10 @@ class ProcessService extends ChangeNotifier
         detail.isNotEmpty ? detail : 'Server: $serverInfo';
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  //  Port conflict message
+  // ═══════════════════════════════════════════════════════════════
+
   @override
   String? pendingPortConflictMessage;
 
@@ -199,6 +261,10 @@ class ProcessService extends ChangeNotifier
     pendingPortConflictMessage = null;
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  //  Binary missing message
+  // ═══════════════════════════════════════════════════════════════
+
   @override
   String? pendingBinaryMissingMessage;
 
@@ -212,6 +278,10 @@ class ProcessService extends ChangeNotifier
   void clearBinaryMissingMessage() {
     pendingBinaryMissingMessage = null;
   }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Sad notification
+  // ═══════════════════════════════════════════════════════════════
 
   @override
   String? pendingSadNotification;
@@ -232,6 +302,10 @@ class ProcessService extends ChangeNotifier
     pendingSadTimestamp = null;
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  //  Happy notification
+  // ═══════════════════════════════════════════════════════════════
+
   @override
   String? pendingHappyNotification;
 
@@ -251,21 +325,37 @@ class ProcessService extends ChangeNotifier
     pendingHappyTimestamp = null;
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  //  Process handles
+  // ═══════════════════════════════════════════════════════════════
+
   Process? psiphonProcess;
   Process? aetherProcess;
   Process? torProcess;
   Process? sstpProcess;
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Forwarder sockets
+  // ═══════════════════════════════════════════════════════════════
 
   ServerSocket? psiphonSocksForwarder;
   ServerSocket? psiphonHttpForwarder;
   ServerSocket? torSocksForwarder;
   ServerSocket? torHttpForwarder;
 
+  // ═══════════════════════════════════════════════════════════════
+  //  Log store
+  // ═══════════════════════════════════════════════════════════════
+
   final LogStore _logStore = LogStore();
   Stream<String> get logStream => _logStore.stream;
   List<String> get fullLog => _logStore.fullLog;
 
   bool _initialized = false;
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Forwarder + happy detector
+  // ═══════════════════════════════════════════════════════════════
 
   late final ProcessForwarder forwarder = ProcessForwarder(
     addLog: (message, {source = LogSource.empty}) =>
@@ -292,10 +382,18 @@ class ProcessService extends ChangeNotifier
     );
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  //  PID getters
+  // ═══════════════════════════════════════════════════════════════
+
   int? get aetherPid => aetherProcess?.pid;
   int? get psiphonPid => psiphonProcess?.pid;
   int? get torPid => torProcess?.pid;
   int? get sstpPid => sstpProcess?.pid;
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Lifecycle
+  // ═══════════════════════════════════════════════════════════════
 
   void touch() => notifyListeners();
 
@@ -307,6 +405,10 @@ class ProcessService extends ChangeNotifier
     }
     _initialized = true;
   }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Logging
+  // ═══════════════════════════════════════════════════════════════
 
   void addLog(String message, {String source = LogSource.empty}) {
     _logStore.add(message, source: source);
@@ -324,11 +426,19 @@ class ProcessService extends ChangeNotifier
     notifyListeners();
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  //  Port utilities
+  // ═══════════════════════════════════════════════════════════════
+
   static Future<bool> isPortInUse(int port) async {
     return PortManager.isInUse(port);
   }
 
   Future<int> findFreePort() => PortManager.findFree(preferred: const []);
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Dispose
+  // ═══════════════════════════════════════════════════════════════
 
   @override
   void dispose() {

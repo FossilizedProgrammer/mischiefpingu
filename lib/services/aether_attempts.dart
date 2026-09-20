@@ -1,14 +1,30 @@
 library;
 
+import '../models/gateway_record.dart';
 import '../models/settings_model.dart';
 import 'aether/aether_args_builder.dart';
+import 'aether/decision/aether_decision_engine.dart';
+import 'aether/decision/ranked_candidate.dart';
+import 'database/gateway_history_store.dart';
+import 'database/profile_performance_store.dart';
 
+part 'aether_attempts/attempt_planner_legacy.dart';
+
+/// ═══════════════════════════════════════════════════════════════
+///  EndpointAttempt — یک کاندید اتصال به Aether.
+/// ═══════════════════════════════════════════════════════════════
 class EndpointAttempt {
   final String label;
   final String protocol;
   final String masque;
   final String endpoint;
   final bool fragmentH2;
+  final double? historicalScore;
+  final bool fromHistory;
+  final bool fromProfileCache;
+
+  /// فاز v4: کاندید اصلی (اگر از DecisionEngine آمده باشد).
+  final RankedCandidate? rankedSource;
 
   EndpointAttempt({
     required this.label,
@@ -16,14 +32,85 @@ class EndpointAttempt {
     required this.masque,
     required this.endpoint,
     this.fragmentH2 = false,
+    this.historicalScore,
+    this.fromHistory = false,
+    this.fromProfileCache = false,
+    this.rankedSource,
   });
+
+  String get dedupeKey => '$protocol|$masque|$endpoint|$fragmentH2';
+
+  String get cacheTag {
+    if (fromProfileCache) return 'profile cache';
+    if (fromHistory) return 'history';
+    return 'default';
+  }
+
+  @override
+  String toString() =>
+      'EndpointAttempt($label, score=${historicalScore?.toStringAsFixed(1) ?? "-"}, '
+      'fromHistory=$fromHistory, fromProfileCache=$fromProfileCache)';
 }
 
+/// ═══════════════════════════════════════════════════════════════
+///  AetherAttemptPlanner — ساخت لیست کاندیدها.
+///
+///  فاز v4: به DecisionEngine واگذار می‌کند.
+///  Fallback: منطق legacy در `aether_attempts/attempt_planner_legacy.dart`.
+/// ═══════════════════════════════════════════════════════════════
 class AetherAttemptPlanner {
   final AppSettings settings;
+  final GatewayHistoryStore? historyStore;
+  final ProfilePerformanceStore? profileStore;
+  final AetherDecisionEngine? decisionEngine;
+
   late final AetherArgsBuilder _argsBuilder = AetherArgsBuilder(settings);
 
-  AetherAttemptPlanner(this.settings);
+  AetherAttemptPlanner(
+    this.settings, {
+    this.historyStore,
+    this.profileStore,
+    this.decisionEngine,
+  });
+
+  Future<List<EndpointAttempt>> buildCandidates({
+    MapEntry<String, String>? autoWinner,
+  }) async {
+    // ─── مسیر جدید: DecisionEngine ───
+    final engine = decisionEngine;
+    if (engine != null) {
+      final ranked = await engine.buildRankedCandidates(
+        autoWinner: autoWinner,
+      );
+      return ranked.map(_fromRanked).toList();
+    }
+
+    // ─── Fallback: منطق legacy ───
+    return legacyBuild(autoWinner);
+  }
+
+  EndpointAttempt _fromRanked(RankedCandidate c) => EndpointAttempt(
+        label: c.label,
+        protocol: c.protocol,
+        masque: c.masque,
+        endpoint: c.endpoint,
+        fragmentH2: c.fragmentH2,
+        historicalScore: c.score,
+        fromHistory: c.source == CandidateSource.history ||
+            c.source == CandidateSource.lastRemembered,
+        fromProfileCache: c.source == CandidateSource.cache,
+        rankedSource: c,
+      );
+
+  // ─── Public static helpers (برای دسترسی از part) ───
+  static String labelFor(ProfileCandidate c) => _labelFor(c);
+  static String labelForGateway(GatewayRecord r) => _labelForGateway(r);
+  static String labelForProfilePerf({
+    required String protocol,
+    required String masque,
+    required double rate,
+  }) =>
+      _labelForProfilePerf(protocol: protocol, masque: masque, rate: rate);
 
   static String _labelFor(ProfileCandidate c) {
     switch (c.protocol) {
@@ -40,117 +127,22 @@ class AetherAttemptPlanner {
     }
   }
 
-  List<EndpointAttempt> buildCandidates({
-    MapEntry<String, String>? autoWinner,
+  static String _labelForGateway(GatewayRecord r) {
+    final proto = r.protocol.toUpperCase();
+    final masque = r.masqueOption.isNotEmpty ? '/${r.masqueOption}' : '';
+    final score = r.score.toStringAsFixed(0);
+    return '$proto$masque (history score=$score)';
+  }
+
+  static String _labelForProfilePerf({
+    required String protocol,
+    required String masque,
+    required double rate,
   }) {
-    final list = <EndpointAttempt>[];
-    final seen = <String>{};
-
-    void add(EndpointAttempt a) {
-      final key = '${a.protocol}|${a.masque}|${a.endpoint}|${a.fragmentH2}';
-      if (seen.add(key)) list.add(a);
-    }
-
-    final custom = settings.aetherCustomEndpoint.trim();
-    if (custom.isNotEmpty) {
-      final proto = resolveProtocolForEndpoint(
-        settings.isAetherProfileAutomatic ? 'auto' : settings.aetherProtocol,
-        custom,
-      );
-      final masque =
-          (proto == 'masque' || proto == 'mim') ? settings.masqueOption : '';
-      add(
-        EndpointAttempt(
-          label: 'Custom Endpoint ($custom)',
-          protocol: proto,
-          masque: masque,
-          endpoint: custom,
-        ),
-      );
-      return list;
-    }
-
-    if (settings.aetherTryLastEndpointFirst && autoWinner != null) {
-      add(
-        EndpointAttempt(
-          label: 'Last remembered (${autoWinner.key})',
-          protocol: autoWinner.key,
-          masque: autoWinner.value,
-          endpoint: '',
-        ),
-      );
-    }
-
-    if (settings.isAetherProfileAutomatic) {
-      final profile = settings.activeAetherProfile;
-      final candidates = profile?.candidates ?? const <ProfileCandidate>[];
-
-      if (candidates.isEmpty) {
-        add(
-          EndpointAttempt(
-            label: 'MASQUE/HTTP-3',
-            protocol: 'masque',
-            masque: 'HTTP-3',
-            endpoint: '',
-          ),
-        );
-        add(
-          EndpointAttempt(
-            label: 'MASQUE/HTTP-2',
-            protocol: 'masque',
-            masque: 'HTTP-2',
-            endpoint: '',
-          ),
-        );
-        add(
-          EndpointAttempt(
-            label: 'WIREGUARD',
-            protocol: 'wireguard',
-            masque: '',
-            endpoint: '',
-          ),
-        );
-        add(
-          EndpointAttempt(
-            label: 'GOOL (WARP-in-WARP)',
-            protocol: 'gool',
-            masque: '',
-            endpoint: '',
-          ),
-        );
-        return list;
-      }
-
-      for (final c in candidates) {
-        add(
-          EndpointAttempt(
-            label: _labelFor(c),
-            protocol: c.protocol,
-            masque: c.masque,
-            endpoint: '',
-            fragmentH2: c.fragmentH2,
-          ),
-        );
-      }
-      return list;
-    }
-
-    final proto = settings.aetherProtocol;
-    final masque =
-        (proto == 'masque' || proto == 'mim') ? settings.masqueOption : '';
-    final frag = settings.aetherProfile == 'strict' && masque == 'HTTP-2';
-    add(
-      EndpointAttempt(
-        label: _labelFor(
-          ProfileCandidate(protocol: proto, masque: masque, fragmentH2: frag),
-        ),
-        protocol: proto,
-        masque: masque,
-        endpoint: '',
-        fragmentH2: frag,
-      ),
-    );
-    return list;
+    final proto = protocol.toUpperCase();
+    final m = masque.isNotEmpty ? '/$masque' : '';
+    final pct = (rate * 100).toStringAsFixed(0);
+    return '$proto$m (profile rate=$pct%)';
   }
 
   String resolveProtocolForEndpoint(String userChoice, String endpoint) {

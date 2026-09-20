@@ -33,10 +33,7 @@ class WatchdogInternetGate {
     try {
       ok = await check();
     } catch (e) {
-      log(
-        '⚠ isInternetAlive threw: $e — assuming OK',
-        source: logSource,
-      );
+      log('⚠ isInternetAlive threw: $e — assuming OK', source: logSource);
       return true;
     }
 

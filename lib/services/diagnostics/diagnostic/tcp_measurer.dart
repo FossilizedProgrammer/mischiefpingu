@@ -23,13 +23,15 @@ class TcpMeasurer {
     for (var round = 0; round < DiagnosticConfig.samplesPerMetric; round++) {
       for (final target in DiagnosticConfig.tcpTargets) {
         final r = await probeOne(target.ip, target.port);
-        samples.add(ProbeSample(
-          index: idx++,
-          success: r.success,
-          latencyMs: r.latencyMs,
-          target: '${target.ip}:${target.port}',
-          timestamp: DateTime.now(),
-        ));
+        samples.add(
+          ProbeSample(
+            index: idx++,
+            success: r.success,
+            latencyMs: r.latencyMs,
+            target: '${target.ip}:${target.port}',
+            timestamp: DateTime.now(),
+          ),
+        );
         await Future.delayed(DiagnosticConfig.sampleInterval);
       }
     }
@@ -54,10 +56,7 @@ class TcpMeasurer {
     return false;
   }
 
-  Future<({bool success, int latencyMs})> probeOne(
-    String ip,
-    int port,
-  ) async {
+  Future<({bool success, int latencyMs})> probeOne(String ip, int port) async {
     final sw = Stopwatch()..start();
     Socket? sock;
     try {

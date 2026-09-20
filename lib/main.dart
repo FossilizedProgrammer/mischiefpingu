@@ -9,6 +9,7 @@ import 'providers/cdn_scanner_provider.dart';
 import 'providers/internet_quality_provider.dart';
 import 'providers/sstp_fetcher_provider.dart';
 import 'screens/main_screen.dart';
+import 'services/database/database_initializer.dart';
 import 'theme/theme_builder.dart';
 
 export 'theme/app_theme_info.dart' show AppThemeInfo, appThemes, getThemeInfo;
@@ -16,6 +17,9 @@ export 'theme/app_theme_info.dart' show AppThemeInfo, appThemes, getThemeInfo;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
+
+  // ─── دیتابیس ───
+  DatabaseInitializer.ensureInitialized();
 
   await windowManager.setSize(const Size(780, 462));
   await windowManager.setMinimumSize(const Size(680, 420));
@@ -50,6 +54,15 @@ void main() async {
   );
   appProvider.attachQualityProvider(qualityProvider);
 
+  // ─── بستن دیتابیس هنگام خروج ───
+  // (شutdownAll خودش این را صدا می‌زند، ولی برای اطمینان اینجا هم هست)
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    // no-op — برای keep-alive import
+    if (!DatabaseInitializer.isInitialized) {
+      DatabaseInitializer.ensureInitialized();
+    }
+  });
+
   runApp(
     MultiProvider(
       providers: [
@@ -58,9 +71,8 @@ void main() async {
         ChangeNotifierProvider.value(value: qualityProvider),
         ChangeNotifierProvider(create: (_) => CdnScannerProvider()),
         ChangeNotifierProvider(
-          create: (_) => SstpFetcherProvider(
-            processService: appProvider.processService,
-          ),
+          create: (_) =>
+              SstpFetcherProvider(processService: appProvider.processService),
         ),
       ],
       child: const MyApp(),

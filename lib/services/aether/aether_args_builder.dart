@@ -33,7 +33,13 @@ class AetherArgsBuilder {
 
     final isMasqueFamily = protocol == 'masque' || protocol == 'mim';
     final isH2 = isMasqueFamily && masqueOption == 'HTTP-2';
-    final fragmentActive = isH2 && forceFragmentH2;
+
+    // ═══════════════════════════════════════════════════════════
+    //  ⚠️ تغییر: fragment در strict profile همیشه فعال باشه،
+    //  نه فقط وقتی forceFragmentH2 پاس داده بشه.
+    // ═══════════════════════════════════════════════════════════
+    final fragmentActive =
+        isH2 && (forceFragmentH2 || settings.aetherProfile == 'strict');
 
     final args = <String>[
       '--bind',

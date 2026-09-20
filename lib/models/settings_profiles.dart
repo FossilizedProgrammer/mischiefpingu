@@ -33,17 +33,28 @@ class AetherProfile {
 }
 
 const List<AetherProfile> aetherProfiles = [
+  // ═══════════════════════════════════════════════════════════════
+  //  ⚠️ تغییرات:
+  //    • adaptive: noize از 'off' به 'balanced'
+  //    • adaptive: ترتیب candidates — MIM قبل از WireGuard
+  //      (چون WireGuard در ایران خیلی راحت DPI می‌شه)
+  //    • patchy: fragmentH2 برای HTTP-2
+  //    • strict: بدون تغییر (خوبه)
+  // ═══════════════════════════════════════════════════════════════
   AetherProfile(
     id: 'adaptive',
     label: 'Adaptive',
     description: 'تعادل سرعت و پوشش — مناسب اکثر شبکه‌ها',
     scanMode: 'balanced',
-    noize: 'off',
+    // ⚠️ قبلاً 'off' بود — در شبکه‌های فیلترشده شکست می‌خورد
+    noize: 'balanced',
     candidates: [
       ProfileCandidate(protocol: 'masque', masque: 'HTTP-3'),
+      ProfileCandidate(protocol: 'mim', masque: 'HTTP-3'),
       ProfileCandidate(protocol: 'masque', masque: 'HTTP-2'),
-      ProfileCandidate(protocol: 'wireguard'),
+      ProfileCandidate(protocol: 'mim', masque: 'HTTP-2'),
       ProfileCandidate(protocol: 'gool'),
+      ProfileCandidate(protocol: 'wireguard'),
     ],
   ),
   AetherProfile(
@@ -53,11 +64,12 @@ const List<AetherProfile> aetherProfiles = [
     scanMode: 'balanced',
     noize: 'balanced',
     candidates: [
-      ProfileCandidate(protocol: 'masque', masque: 'HTTP-3'),
-      ProfileCandidate(protocol: 'masque', masque: 'HTTP-2'),
-      ProfileCandidate(protocol: 'wireguard'),
-      ProfileCandidate(protocol: 'gool'),
       ProfileCandidate(protocol: 'mim', masque: 'HTTP-3'),
+      ProfileCandidate(protocol: 'masque', masque: 'HTTP-3'),
+      ProfileCandidate(protocol: 'mim', masque: 'HTTP-2', fragmentH2: true),
+      ProfileCandidate(protocol: 'masque', masque: 'HTTP-2', fragmentH2: true),
+      ProfileCandidate(protocol: 'gool'),
+      ProfileCandidate(protocol: 'wireguard'),
     ],
   ),
   AetherProfile(
@@ -72,7 +84,7 @@ const List<AetherProfile> aetherProfiles = [
       ProfileCandidate(protocol: 'masque', masque: 'HTTP-2', fragmentH2: true),
       ProfileCandidate(protocol: 'mim', masque: 'HTTP-3'),
       ProfileCandidate(protocol: 'masque', masque: 'HTTP-3'),
-      ProfileCandidate(protocol: 'wireguard'),
+      ProfileCandidate(protocol: 'gool'),
     ],
   ),
   AetherProfile(
@@ -100,7 +112,24 @@ extension AppSettingsAetherProfile on AppSettings {
     if (p == null) return;
     aetherProfile = id;
 
-    if (id == 'manual') return;
+    // ═══════════════════════════════════════════════════════════════
+    //  ⚠️ Manual mode:
+    //    • پروتکل 'auto' بی‌معنیه — به 'masque' پیش‌فرض می‌ره
+    //    • scanMode / obfuscation / masqueOption دست نمی‌خورن
+    //      (چون user خودش می‌خواد تنظیم کنه)
+    // ═══════════════════════════════════════════════════════════════
+    if (id == 'manual') {
+      if (aetherProtocol == 'auto' || aetherProtocol.isEmpty) {
+        aetherProtocol = 'masque';
+      }
+      return;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  ⚠️ برگشت از manual به preset:
+    //    • پروتکل دوباره 'auto' می‌شه (چون preset خودش تصمیم می‌گیره)
+    // ═══════════════════════════════════════════════════════════════
+    aetherProtocol = 'auto';
 
     final hasCustomEndpoint = aetherCustomEndpoint.trim().isNotEmpty;
     if (!hasCustomEndpoint) {

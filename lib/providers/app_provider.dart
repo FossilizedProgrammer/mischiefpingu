@@ -9,6 +9,8 @@ import '../services/process_service.dart';
 import '../services/privilege_service.dart';
 import '../services/app_data_service.dart';
 import '../services/aether_auto_test_service.dart';
+import '../services/aether/gateway_reconnect_orchestrator.dart';
+import '../services/aether_logger.dart';
 import '../services/psiphon_config_builder.dart';
 import '../services/tor_config_builder.dart';
 import '../services/sstp_config_builder.dart';
@@ -25,14 +27,33 @@ import '../services/sstp/sstp_log_watcher.dart';
 import '../services/recovery/recovery_coordinator.dart';
 import '../services/diagnostics/connectivity_probe.dart';
 import '../services/watchdog/tunnel_watchdog.dart';
+import '../services/database/database_initializer.dart';
+import '../services/database/gateway_database.dart';
+import '../services/database/gateway_history_store.dart';
+import '../services/database/aether_event_store.dart';
+import '../services/database/profile_performance_store.dart';
+import '../services/aether/decision/aether_decision_engine.dart';
+import '../services/aether/decision/ranked_candidate.dart';
+import '../services/aether/connection_health.dart';
+import '../services/aether/connection_health_monitor.dart';
+import '../services/aether/quality_degradation_detector.dart';
+import '../services/aether/quality_statistics_service.dart';
+import '../services/health/tunnel_health_models.dart';
+import '../services/health/tunnel_health_registry.dart';
 import '../constants/default_lists.dart';
 import 'internet_quality_provider.dart';
 
+part 'app_provider_snapshot.dart';
+part 'sstp/sstp_launch.dart';
+part 'sstp/sstp_preflight.dart';
+part 'tor/tor_launch.dart';
 part 'app_provider_lifecycle.dart';
 part 'app_provider_lifecycle_persistence.dart';
 part 'app_provider_parsers.dart';
 part 'app_provider_psiphon.dart';
 part 'app_provider_psiphon_preflight.dart';
+part 'aether/aether_smart_reconnect.dart';
+part 'psiphon/psiphon_launch.dart';
 part 'app_provider_aether.dart';
 part 'app_provider_aether_internal.dart';
 part 'app_provider_aether_preflight.dart';
@@ -70,11 +91,88 @@ class AppProvider extends ChangeNotifier {
   ConnectivityProbe get connectivityProbe => _connectivityProbe;
 
   /// ═══════════════════════════════════════════════════════════════
-  ///  InternetQualityProvider — کیفیت کامل اینترنت (اختیاری)
+  ///  GatewayHistoryStore — تاریخچه Gatewayها (فاز ۱)
+  /// ═══════════════════════════════════════════════════════════════
+  late final GatewayHistoryStore _gatewayHistoryStore;
+  GatewayHistoryStore get gatewayHistoryStore => _gatewayHistoryStore;
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  AetherEventStore — Structured Logging (فاز v2)
+  /// ═══════════════════════════════════════════════════════════════
+  late final AetherEventStore _aetherEventStore;
+  AetherEventStore get aetherEventStore => _aetherEventStore;
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  AetherLogger — Logger مرکزی برای رویدادهای Aether
+  /// ═══════════════════════════════════════════════════════════════
+  late final AetherLogger _aetherLogger;
+  AetherLogger get aetherLogger => _aetherLogger;
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  ProfilePerformanceStore — Smart Cache (فاز v3)
+  /// ═══════════════════════════════════════════════════════════════
+  late final ProfilePerformanceStore _profilePerformanceStore;
+  ProfilePerformanceStore get profilePerformanceStore =>
+      _profilePerformanceStore;
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  فاز v4: DecisionEngine — لایهٔ مرکزی تصمیم‌گیری
+  /// ═══════════════════════════════════════════════════════════════
+  late final AetherDecisionEngine _decisionEngine;
+  AetherDecisionEngine get decisionEngine => _decisionEngine;
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  فاز v4: ConnectionHealthMonitor — Health Score زنده
+  /// ═══════════════════════════════════════════════════════════════
+  late final ConnectionHealthMonitor _healthMonitor;
+  ConnectionHealth? _currentHealth;
+  ConnectionHealth? get currentHealth => _currentHealth;
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  فاز v4: QualityDegradationDetector — تشخیص افت کیفیت + escalation
+  /// ═══════════════════════════════════════════════════════════════
+  late final QualityDegradationDetector _degradationDetector;
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  فاز v4: QualityStatisticsService — گزارش آماری
+  /// ═══════════════════════════════════════════════════════════════
+  late final QualityStatisticsService _statsService;
+  QualityStatisticsService get statsService => _statsService;
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  TunnelHealthRegistry — health مشترک بین همهٔ تونل‌ها.
   ///
-  ///  از طریق main.dart inject می‌شود تا watchdog به کیفیت
-  ///  دقیق‌تر دسترسی داشته باشد. اگر null باشد، از
-  ///  ConnectivityProbe ساده استفاده می‌شود.
+  ///  این registry:
+  ///    • monitor اختصاصی هر تونل رو نگه می‌داره
+  ///    • adapterهای لاگ رو مدیریت می‌کنه
+  ///    • degradation رو تشخیص می‌ده و callback می‌زنه
+  ///
+  ///  ⚠️ Aether از این registry استفاده نمی‌کنه چون:
+  ///    • monitor اختصاصی خودش (ConnectionHealthMonitor) رو داره
+  ///    • escalation logic خودش رو داره
+  ///
+  ///  برای بقیهٔ تونل‌ها (Psiphon/Tor/SSTP) این registry
+  ///  تنها منبع health است.
+  /// ═══════════════════════════════════════════════════════════════
+  late final TunnelHealthRegistry _healthRegistry;
+  TunnelHealthRegistry get healthRegistry => _healthRegistry;
+
+  /// کاندید فعال فعلی (برای ثبت session end).
+  RankedCandidate? _currentActiveCandidate;
+  RankedCandidate? get currentActiveCandidate => _currentActiveCandidate;
+
+  /// Timer برای poll کردن lastReport و ingest در healthMonitor.
+  Timer? _healthPollTimer;
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  GatewayReconnectOrchestrator — reconnect هوشمند (فاز ۴)
+  /// ═══════════════════════════════════════════════════════════════
+  GatewayReconnectOrchestrator? _gatewayReconnectOrchestrator;
+  GatewayReconnectOrchestrator? get gatewayReconnectOrchestrator =>
+      _gatewayReconnectOrchestrator;
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  InternetQualityProvider — کیفیت کامل اینترنت (اختیاری)
   /// ═══════════════════════════════════════════════════════════════
   InternetQualityProvider? _qualityProvider;
   InternetQualityProvider? get qualityProvider => _qualityProvider;
@@ -152,6 +250,31 @@ class AppProvider extends ChangeNotifier {
   bool restartingTor = false;
   bool restartingSstp = false;
 
+  // ═══════════════════════════════════════════════════════════════
+  //  Aether session state (فاز ۶) — برای UI status card
+  // ═══════════════════════════════════════════════════════════════
+
+  /// آخرین پروتکل موفقی که Aether به آن وصل شد.
+  String? lastAetherConnectedProtocol;
+
+  /// آخرین Gateway موفقی که Aether به آن وصل شد (uniqueKey).
+  String? lastAetherConnectedGatewayKey;
+
+  /// زمان آخرین اتصال موفق Aether.
+  DateTime? lastAetherConnectedAt;
+
+  /// تعداد reconnectهای Aether در این session.
+  int aetherReconnectCount = 0;
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  ⚠️ auto-escalation state
+  ///
+  ///  وقتی تونل زنده‌ست ولی داده عبور نمی‌کنه، profile رو
+  ///  خودکار escalate می‌کنیم. این flag جلوگیری می‌کنه از
+  ///  escalation پشت سر هم در یک session.
+  /// ═══════════════════════════════════════════════════════════════
+  bool _escalationInProgress = false;
+
   String cleanIp(String ip) => ip.replaceAll(r'\', '').trim();
   List<String> cleanIpList(List<String> list) =>
       list.map(cleanIp).where((e) => e.isNotEmpty).toSet().toList();
@@ -171,13 +294,212 @@ class AppProvider extends ChangeNotifier {
       },
     );
 
+    _recoveryCoordinator = RecoveryCoordinator(log: processService.addLog);
+    _connectivityProbe = ConnectivityProbe(log: processService.addLog);
+
+    // ─── Gateway History Store (فاز ۱) ───
+    _gatewayHistoryStore = GatewayHistoryStore(
+      log: (msg, {source = LogSource.empty}) =>
+          processService.addLog(msg, source: source),
+    );
+
+    // ─── Structured Logging (فاز v2) ───
+    _aetherEventStore = AetherEventStore(log: processService.addLog);
+    _aetherLogger = AetherLogger(
+      store: _aetherEventStore,
+      log: processService.addLog,
+    );
+
+    // ─── Smart Cache (فاز v3) ───
+    _profilePerformanceStore = ProfilePerformanceStore(
+      log: processService.addLog,
+    );
+
     _aetherTestService = AetherAutoTestService(
       processService: processService,
       settings: settings,
     );
 
-    _recoveryCoordinator = RecoveryCoordinator(log: processService.addLog);
-    _connectivityProbe = ConnectivityProbe(log: processService.addLog);
+    // ═══════════════════════════════════════════════════════════════
+    //  فاز v4: DecisionEngine — باید قبل از attachAllStores ساخته شود
+    // ═══════════════════════════════════════════════════════════════
+    _decisionEngine = AetherDecisionEngine(
+      settings: settings,
+      historyStore: _gatewayHistoryStore,
+      profileStore: _profilePerformanceStore,
+      logger: _aetherLogger,
+      log: processService.addLog,
+    );
+
+    // ─── تزریق همهٔ Storeها با یک rebuild واحد ───
+    _aetherTestService.attachAllStores(
+      historyStore: _gatewayHistoryStore,
+      profileStore: _profilePerformanceStore,
+      logger: _aetherLogger,
+      decisionEngine: _decisionEngine,
+    );
+
+    // ═══════════════════════════════════════════════════════════════
+    //  فاز v4: HealthMonitor + DegradationDetector + Stats
+    // ═══════════════════════════════════════════════════════════════
+    _healthMonitor = ConnectionHealthMonitor(
+      onUpdate: (h) {
+        _currentHealth = h;
+        if (!isShuttingDown) touch();
+      },
+      log: processService.addLog,
+    );
+
+    // ═══════════════════════════════════════════════════════════════
+    //  ⚠️ تغییرات در DegradationDetector:
+    //    • onEscalateProfile اضافه شد
+    //    • وقتی packet loss 100% هست، به جای restart کردن،
+    //      profile رو به profile سخت‌گیرتر escalate می‌کنه
+    // ═══════════════════════════════════════════════════════════════
+    _degradationDetector = QualityDegradationDetector(
+      onDegradationDetected: (reason) {
+        if (userStoppedAether || isShuttingDown) return;
+        processService.addLog(
+          '↻ Preemptive Aether restart triggered: $reason',
+          source: LogSource.aether,
+        );
+        // fire-and-forget
+        // ignore: discarded_futures
+        restartAetherInternal(reason: 'quality degradation: $reason');
+      },
+      onEscalateProfile: (reason) {
+        if (userStoppedAether || isShuttingDown) return;
+        if (_escalationInProgress) {
+          processService.addLog(
+            '→ Escalation skipped (already in progress)',
+            source: LogSource.aether,
+          );
+          return;
+        }
+
+        final current = settings.aetherProfile;
+        final next = _nextProfile(current);
+
+        if (next == null) {
+          processService.addLog(
+            '⚠ Cannot escalate profile: already at strict. '
+            'Reason: $reason',
+            source: LogSource.aether,
+          );
+          // آخرین راه‌حل: restart کن
+          // ignore: discarded_futures
+          restartAetherInternal(reason: 'no profile left: $reason');
+          return;
+        }
+
+        _escalationInProgress = true;
+        processService.addLog(
+          '↻ Auto-escalating Aether profile: '
+          '$current → $next (reason: $reason)',
+          source: LogSource.aether,
+        );
+
+        settings.applyAetherProfile(next);
+        saveSettings();
+
+        // fire-and-forget
+        // ignore: discarded_futures
+        _performEscalationRestart(reason: reason);
+      },
+      log: processService.addLog,
+    );
+
+    _statsService = QualityStatisticsService(
+      eventStore: _aetherEventStore,
+      log: processService.addLog,
+    );
+
+    // ═══════════════════════════════════════════════════════════════
+    //  TunnelHealthRegistry — health مشترک Psiphon/Tor/SSTP
+    //
+    //  این registry:
+    //    • برای هر تونل یک monitor می‌سازه
+    //    • لاگ‌ها رو به adapter اختصاصی هر تونل feed می‌کنه
+    //    • degradation رو تشخیص می‌ده و restart می‌کنه
+    //
+    //  ⚠️ Aether در registry ثبت می‌شه ولی از monitor خودش
+    //  استفاده می‌کنه. یعنی Aether report جداگانه نمی‌ده.
+    // ═══════════════════════════════════════════════════════════════
+    _healthRegistry = TunnelHealthRegistry(
+      log: processService.addLog,
+      onReport: (kind, report) {
+        // Aether مسیر خودش رو داره (healthMonitor جدا)
+        if (kind == TunnelKind.aether) return;
+        if (isShuttingDown) return;
+        touch();
+      },
+      onDegradationDetected: (kind, reason) {
+        if (isShuttingDown) return;
+
+        // Aether مسیر خودش رو داره (degradationDetector جدا)
+        if (kind == TunnelKind.aether) return;
+
+        // اگه کاربر دستی stop کرده، دخالت نکن
+        switch (kind) {
+          case TunnelKind.psiphon:
+            if (userStoppedPsiphon) return;
+            break;
+          case TunnelKind.tor:
+            if (userStoppedTor) return;
+            break;
+          case TunnelKind.sstp:
+            if (userStoppedSstp) return;
+            break;
+          case TunnelKind.aether:
+            return;
+        }
+
+        processService.addLog(
+          '↻ ${kind.displayName} preemptive restart '
+          'triggered: $reason',
+          source: LogSource.app,
+        );
+
+        // fire-and-forget
+        switch (kind) {
+          case TunnelKind.psiphon:
+            // ignore: discarded_futures
+            restartPsiphonInternal(
+              reason: 'health degradation: $reason',
+            );
+            break;
+          case TunnelKind.tor:
+            // ignore: discarded_futures
+            restartTorInternal(
+              reason: 'health degradation: $reason',
+            );
+            break;
+          case TunnelKind.sstp:
+            // ignore: discarded_futures
+            restartSstpInternal(
+              reason: 'health degradation: $reason',
+            );
+            break;
+          case TunnelKind.aether:
+            break;
+        }
+      },
+      onEscalateProfile: (kind, reason) {
+        // فقط Aether escalate داره — این callback عملاً
+        // صدا زده نمی‌شه چون registry برای Aether escalate نمی‌کنه
+        if (kind != TunnelKind.aether) return;
+      },
+    );
+    _healthRegistry.initialize();
+
+    // ─── Orquestrator برای reconnect هوشمند (فاز ۴ + v4) ───
+    _gatewayReconnectOrchestrator = GatewayReconnectOrchestrator(
+      processService: processService,
+      historyStore: _gatewayHistoryStore,
+      runner: _aetherTestService.internalRunner,
+      performanceTracker: _aetherTestService.performanceTracker,
+      decisionEngine: _decisionEngine,
+    );
 
     _reconnectManager.acquireLease = (tunnel) async {
       final tunnelName = _tunnelDisplayName(tunnel);
@@ -194,7 +516,168 @@ class AppProvider extends ChangeNotifier {
       _recoveryCoordinator.releaseLeaseByTunnel(tunnelName);
     };
 
+    // ═══════════════════════════════════════════════════════════════
+    //  فاز v4: Health poll timer
+    // ═══════════════════════════════════════════════════════════════
+    _startHealthPollTimer();
+
     Future.microtask(initializeProvider);
+  }
+
+  /// پروفایل بعدی در زنجیرهٔ escalation.
+  ///
+  /// ترتیب: adaptive → patchy → strict → null
+  /// manual → null (به manual دست نمی‌زنیم)
+  String? _nextProfile(String current) {
+    switch (current) {
+      case 'adaptive':
+        return 'patchy';
+      case 'patchy':
+        return 'strict';
+      case 'strict':
+        return null;
+      case 'manual':
+        return null;
+      default:
+        return 'strict';
+    }
+  }
+
+  /// اجرای restart پس از escalation.
+  ///
+  /// این متد تضمین می‌کنه که flag `_escalationInProgress` پس از
+  /// اتمام restart ریست بشه، حتی اگه خطا رخ بده.
+  Future<void> _performEscalationRestart({required String reason}) async {
+    try {
+      // چند لحظه صبر کن تا Aether فعلی کاملاً stop بشه
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      if (userStoppedAether || isShuttingDown) {
+        processService.addLog(
+          '→ Escalation restart skipped (user stopped or shutting down)',
+          source: LogSource.aether,
+        );
+        return;
+      }
+
+      await restartAetherInternal(reason: 'profile escalation: $reason');
+    } catch (e) {
+      processService.addLog(
+        '⚠ Escalation restart failed: $e',
+        source: LogSource.aether,
+      );
+    } finally {
+      // cooldown کوتاه برای جلوگیری از escalation پشت سر هم
+      await Future.delayed(const Duration(seconds: 30));
+      _escalationInProgress = false;
+    }
+  }
+
+  /// شروع timer poll برای Health.
+  void _startHealthPollTimer() {
+    _healthPollTimer?.cancel();
+    _healthPollTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (isShuttingDown) return;
+      if (!processService.isAetherRunning) return;
+
+      final tracker = _aetherTestService.performanceTracker;
+      final report = tracker?.lastReport;
+      if (report == null || !report.isValid) return;
+
+      _healthMonitor.ingestReport(report);
+
+      final health = _currentHealth;
+      if (health != null && health.isValid) {
+        _degradationDetector.ingest(health);
+      }
+    });
+  }
+
+  /// به‌روزرسانی کاندید فعال (توسط AetherAutoTestService).
+  void setCurrentActiveCandidate(RankedCandidate? candidate) {
+    _currentActiveCandidate = candidate;
+  }
+
+  /// پاک‌کردن کاندید فعال.
+  void clearCurrentActiveCandidate() {
+    _currentActiveCandidate = null;
+  }
+
+  /// گرفتن آمار 24 ساعت اخیر.
+  Future<ProtocolStats> computeStats24h() => _statsService.computeLast24h();
+
+  /// گرفتن آمار 7 روز اخیر.
+  Future<ProtocolStats> computeStats7d() => _statsService.computeLast7d();
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Health API — برای UI مشترک
+  // ═══════════════════════════════════════════════════════════════
+
+  /// گرفتن health report یک تونل به صورت یکپارچه.
+  ///
+  /// برای Aether: از ConnectionHealth داخلی نگاشت می‌شه.
+  /// برای بقیه: از TunnelHealthRegistry گرفته می‌شه.
+  TunnelHealthReport? healthReportFor(TunnelKind kind) {
+    if (kind == TunnelKind.aether) {
+      final h = _currentHealth;
+      if (h == null || !h.isValid) return null;
+      return TunnelHealthReport(
+        kind: TunnelKind.aether,
+        timestamp: DateTime.now(),
+        score: h.score,
+        latencyMs: h.latencyMs,
+        jitterMs: h.jitterMs,
+        packetLossPct: h.packetLossPct,
+        uptime: h.uptime,
+        reconnectCount: h.reconnectCount,
+        errorCount: h.errorCount,
+        trend: h.trend,
+        successCount: 1,
+        totalSamples: 1,
+        extra: const {},
+      );
+    }
+    return _healthRegistry.reportFor(kind);
+  }
+
+  /// گرفتن snapshot از همهٔ تونل‌ها.
+  HealthSnapshot healthSnapshot() {
+    final reports = <TunnelKind, TunnelHealthReport>{};
+
+    // Aether
+    final aetherReport = healthReportFor(TunnelKind.aether);
+    if (aetherReport != null) {
+      reports[TunnelKind.aether] = aetherReport;
+    }
+
+    // بقیه از registry
+    for (final kind in [
+      TunnelKind.psiphon,
+      TunnelKind.tor,
+      TunnelKind.sstp,
+    ]) {
+      final r = _healthRegistry.reportFor(kind);
+      if (r != null) reports[kind] = r;
+    }
+
+    return HealthSnapshot(
+      reports: reports,
+      timestamp: DateTime.now(),
+    );
+  }
+
+  /// ثبت reconnect برای یک تونل غیر-Aether.
+  ///
+  /// برای Psiphon/Tor/SSTP صدا زده می‌شه از restartXInternal.
+  void recordTunnelReconnect(TunnelKind kind) {
+    if (kind == TunnelKind.aether) return;
+    _healthRegistry.recordReconnect(kind);
+  }
+
+  /// ثبت error برای یک تونل غیر-Aether.
+  void recordTunnelError(TunnelKind kind) {
+    if (kind == TunnelKind.aether) return;
+    _healthRegistry.recordError(kind);
   }
 
   String _tunnelDisplayName(String key) {
@@ -264,6 +747,23 @@ class AppProvider extends ChangeNotifier {
   void dispose() {
     isShuttingDown = true;
 
+    // ═══════════════════════════════════════════════════════════════
+    //  فاز v4: cleanup
+    // ═══════════════════════════════════════════════════════════════
+    _healthPollTimer?.cancel();
+    _healthPollTimer = null;
+
+    _healthMonitor.dispose();
+    _degradationDetector.reset();
+    _currentActiveCandidate = null;
+    _currentHealth = null;
+    _escalationInProgress = false;
+
+    // ═══════════════════════════════════════════════════════════════
+    //  TunnelHealthRegistry cleanup
+    // ═══════════════════════════════════════════════════════════════
+    _healthRegistry.dispose();
+
     _watchdogManager?.disposeAll();
     _recoveryCoordinator.dispose();
 
@@ -275,53 +775,4 @@ class AppProvider extends ChangeNotifier {
     processService.removeListener(handleProcessServiceChange);
     super.dispose();
   }
-}
-
-/// snapshot از state تونل‌ها برای تشخیص تغییر واقعی.
-class _TunnelStateSnapshot {
-  final bool psiphonRunning;
-  final bool psiphonConnected;
-  final bool aetherRunning;
-  final bool torRunning;
-  final bool torConnected;
-  final int torBootstrapProgress;
-  final bool sstpRunning;
-  final bool sstpConnected;
-
-  const _TunnelStateSnapshot({
-    required this.psiphonRunning,
-    required this.psiphonConnected,
-    required this.aetherRunning,
-    required this.torRunning,
-    required this.torConnected,
-    required this.torBootstrapProgress,
-    required this.sstpRunning,
-    required this.sstpConnected,
-  });
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is _TunnelStateSnapshot &&
-        other.psiphonRunning == psiphonRunning &&
-        other.psiphonConnected == psiphonConnected &&
-        other.aetherRunning == aetherRunning &&
-        other.torRunning == torRunning &&
-        other.torConnected == torConnected &&
-        other.torBootstrapProgress == torBootstrapProgress &&
-        other.sstpRunning == sstpRunning &&
-        other.sstpConnected == sstpConnected;
-  }
-
-  @override
-  int get hashCode => Object.hash(
-        psiphonRunning,
-        psiphonConnected,
-        aetherRunning,
-        torRunning,
-        torConnected,
-        torBootstrapProgress,
-        sstpRunning,
-        sstpConnected,
-      );
 }

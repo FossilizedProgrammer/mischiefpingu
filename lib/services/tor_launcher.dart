@@ -148,6 +148,18 @@ extension ProcessServiceTorLauncher on ProcessService {
         isConnected: false,
       );
 
+      // ═══════════════════════════════════════════════════════════
+      //  ⚠️ sad notification هنگام خروج غیرمنتظره
+      // ═══════════════════════════════════════════════════════════
+      if (wasConnected && !suppressSadNotification) {
+        addLog(
+          '⚠ Tor exited unexpectedly (code=$code)',
+          source: src,
+        );
+        setSadNotification('Tor');
+      }
+      suppressSadNotification = false;
+
       addLog('Tor exited with code $code', source: src);
       touch();
     });

@@ -1,47 +1,51 @@
 library;
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import '../aether_probe_fallbacks.dart';
 import '../process_service.dart';
 import 'socks_diag.dart';
 
-/// یک diagnose کامل روی پورت SOCKS.
+part 'socks/https_probe.dart';
+
+/// ═══════════════════════════════════════════════════════════════
+///  diagnose کامل روی پورت SOCKS.
+///
+///  ⚠️ نسخهٔ نهایی — دقیقاً مثل `curl --socks5-hostname`:
+///    • SOCKS CONNECT با hostname (ATYP=0x03)، نه IP خام
+///    • DNS از طریق خود SOCKS resolve می‌شه (socks5h)
+///    • TLS handshake با SNI همون hostname
+///    • پورت ۴۴۳ (HTTPS)، نه ۸۰
+///
+///  منطق probe یک هدف در `socks/https_probe.dart`.
+/// ═══════════════════════════════════════════════════════════════
 class SocksDiagnoser {
   final ProcessService processService;
   final AetherProbeFallbacks fallbacks;
 
-  const SocksDiagnoser({
-    required this.processService,
-    required this.fallbacks,
-  });
+  const SocksDiagnoser({required this.processService, required this.fallbacks});
+
+  /// هدف‌های probe — hostname + پورت ۴۴۳.
+  static const List<({String host, int port})> probeTargets = [
+    (host: 'www.cloudflare.com', port: 443),
+    (host: 'www.google.com', port: 443),
+    (host: 'www.microsoft.com', port: 443),
+    (host: 'www.wikipedia.org', port: 443),
+    (host: 'www.apple.com', port: 443),
+  ];
+
+  static const Duration socksConnectTimeout = Duration(seconds: 10);
+  static const Duration tlsTimeout = Duration(seconds: 12);
+  static const Duration httpReadTimeout = Duration(seconds: 10);
+  static const int minTargetsOk = 1;
 
   Future<SocksDiag> diagnose(int port) async {
-    var baselineOk = true;
-    ServerSocket? base;
+    // ─── چک اولیه: SOCKS greeting ───
+    Socket? testSock;
     try {
-      base = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
-      final c = await Socket.connect(
-        '127.0.0.1',
-        base.port,
-        timeout: const Duration(seconds: 2),
-      );
-      c.destroy();
-    } catch (_) {
-      baselineOk = false;
-      processService.addLog(
-        '⚠ DIAG baseline: loopback listener test failed.',
-      );
-    } finally {
-      try {
-        await base?.close();
-      } catch (_) {}
-    }
-
-    Socket? sock;
-    try {
-      sock = await Socket.connect(
+      testSock = await Socket.connect(
         '127.0.0.1',
         port,
         timeout: const Duration(seconds: 4),
@@ -55,8 +59,8 @@ class SocksDiagnoser {
     }
 
     try {
-      sock.add([0x05, 0x01, 0x00]);
-      final greet = await sock.timeout(const Duration(seconds: 8)).first;
+      testSock.add([0x05, 0x01, 0x00]);
+      final greet = await testSock.timeout(const Duration(seconds: 8)).first;
       if (greet.isEmpty) return SocksDiag.notSocks;
       if (greet[0] != 0x05) {
         processService.addLog(
@@ -64,163 +68,42 @@ class SocksDiagnoser {
         );
         return SocksDiag.notSocks;
       }
-
-      try {
-        sock.add(<int>[0x05, 0x01, 0x00, 0x01, 1, 1, 1, 1, 0x00, 0x50]);
-        final resp = await sock.timeout(const Duration(seconds: 10)).first;
-        if (resp.length < 2 || resp[1] != 0x00) {
-          processService.addLog(
-            '→ probe: tunnel CONNECT :80 refused by proxy '
-            '(code=${resp.length >= 2 ? resp[1] : "?"})',
-          );
-          return SocksDiag.tunnelDead;
-        }
-      } catch (e) {
-        processService.addLog(
-          '→ probe: tunnel CONNECT :80 failed: $e',
-        );
-        return SocksDiag.tunnelDead;
+      if (greet.length >= 2 && greet[1] != 0x00) {
+        return SocksDiag.notSocks;
       }
-
-      final dataOk = await _probeDataPlane(sock);
-      if (!dataOk) return SocksDiag.tunnelDead;
-
-      if (!baselineOk) {
-        processService.addLog(
-          '★ DIAG: SOCKS5 greeting OK despite blocked app loopback',
-        );
-      }
-      return SocksDiag.healthy;
-    } on TimeoutException {
-      return SocksDiag.notSocks;
-    } catch (_) {
-      return SocksDiag.notSocks;
     } finally {
       try {
-        sock.destroy();
+        testSock.destroy();
       } catch (_) {}
     }
-  }
 
-  Future<bool> _probeDataPlane(Socket sock) async {
-    try {
-      sock.add(
-        <int>[
-          0x47,
-          0x45,
-          0x54,
-          0x20,
-          0x2F,
-          0x63,
-          0x64,
-          0x6E,
-          0x2D,
-          0x63,
-          0x67,
-          0x69,
-          0x2F,
-          0x74,
-          0x72,
-          0x61,
-          0x63,
-          0x65,
-          0x20,
-          0x48,
-          0x54,
-          0x54,
-          0x50,
-          0x2F,
-          0x31,
-          0x2E,
-          0x30,
-          0x0D,
-          0x0A,
-          0x48,
-          0x6F,
-          0x73,
-          0x74,
-          0x3A,
-          0x20,
-          0x31,
-          0x2E,
-          0x31,
-          0x2E,
-          0x31,
-          0x2E,
-          0x31,
-          0x0D,
-          0x0A,
-          0x43,
-          0x6F,
-          0x6E,
-          0x6E,
-          0x65,
-          0x63,
-          0x74,
-          0x69,
-          0x6F,
-          0x6E,
-          0x3A,
-          0x20,
-          0x63,
-          0x6C,
-          0x6F,
-          0x73,
-          0x65,
-          0x0D,
-          0x0A,
-          0x0D,
-          0x0A,
-        ],
-      );
-      await sock.flush();
+    // ─── امتحان چند هدف HTTPS ───
+    var targetsAttempted = 0;
+    var targetsOk = 0;
+    final failures = <String>[];
 
-      final buffer = <int>[];
-      await for (final chunk in sock.timeout(const Duration(seconds: 6))) {
-        buffer.addAll(chunk);
-        if (buffer.length >= 16) break;
-        if (buffer.length >= 12) break;
+    for (final target in probeTargets) {
+      targetsAttempted++;
+      final ok = await probeOneHttpsTarget(port, target);
+      if (ok) {
+        targetsOk++;
+        if (targetsOk >= minTargetsOk) break;
+      } else {
+        failures.add(target.host);
       }
-
-      if (buffer.isEmpty) {
-        processService.addLog(
-          '✗ probe: data-plane returned 0 bytes — tunnel DEAD',
-        );
-        return false;
-      }
-
-      final head = String.fromCharCodes(buffer.take(20));
-      if (!head.startsWith('HTTP/')) {
-        processService.addLog(
-          '✗ probe: non-HTTP response — tunnel DEAD '
-          '(${buffer.take(12).toList()})',
-        );
-        return false;
-      }
-
-      final statusOk = head.contains(' 200 ') ||
-          head.contains(' 204 ') ||
-          head.contains(' 301 ') ||
-          head.contains(' 302 ') ||
-          head.contains(' 304 ');
-
-      if (!statusOk) {
-        processService.addLog(
-          '✗ probe: HTTP status not OK — tunnel DEAD '
-          '(${head.split("\r\n").first})',
-        );
-        return false;
-      }
-
-      processService.addLog(
-        '→ probe: tunnel data-plane CONFIRMED alive',
-      );
-      return true;
-    } catch (e) {
-      processService.addLog(
-        '✗ probe: data-plane exception — tunnel DEAD: $e',
-      );
-      return false;
     }
+
+    if (targetsOk >= minTargetsOk) {
+      processService.addLog(
+        '→ DIAG: $targetsOk/$targetsAttempted HTTPS probes succeeded',
+      );
+      return SocksDiag.healthy;
+    }
+
+    processService.addLog(
+      '⚠ DIAG: SOCKS5 alive but all $targetsAttempted HTTPS targets '
+      'failed (${failures.join(", ")}) — suspecting network block',
+    );
+    return SocksDiag.allTargetsFailed;
   }
 }

@@ -9,6 +9,13 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get appTitle => 'Mischief Pingu';
+
+  @override
+  String get appSubtitle =>
+      'Unofficial Psiphon client, Aether client, Tor client, SSTP client';
+
+  @override
   String get add => 'Add';
 
   @override
@@ -31,13 +38,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get any => 'Any';
-
-  @override
-  String get appSubtitle =>
-      'Unofficial Psiphon client, Aether client, Tor client, SSTP client';
-
-  @override
-  String get appTitle => 'Mischief Pingu';
 
   @override
   String get appearance => 'Appearance';
@@ -248,102 +248,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get installed => 'Installed';
-
-  @override
-  String get internetQuality => 'Internet Quality';
-
-  @override
-  String get internetQualityAvg => 'Avg';
-
-  @override
-  String get internetQualityDeep => 'Deep (5m)';
-
-  @override
-  String get internetQualityDegraded => 'Degraded';
-
-  @override
-  String get internetQualityDirectDetails => 'Direct quality details';
-
-  @override
-  String get internetQualityDns => 'DNS';
-
-  @override
-  String get internetQualityDown => 'Down';
-
-  @override
-  String get internetQualityExcellent => 'Excellent';
-
-  @override
-  String get internetQualityGood => 'Good';
-
-  @override
-  String get internetQualityHttps => 'HTTPS';
-
-  @override
-  String get internetQualityJitter => 'Jitter';
-
-  @override
-  String get internetQualityLastCheck => 'Last check';
-
-  @override
-  String get internetQualityLight => 'Light (15s)';
-
-  @override
-  String get internetQualityMax => 'Max';
-
-  @override
-  String get internetQualityMed => 'Med';
-
-  @override
-  String get internetQualityMin => 'Min';
-
-  @override
-  String get internetQualityMonitoring => 'Background monitoring';
-
-  @override
-  String get internetQualityNoResult => 'No result';
-
-  @override
-  String get internetQualityNormal => 'Normal (2m)';
-
-  @override
-  String get internetQualityNotTested => 'Not tested';
-
-  @override
-  String get internetQualityOff => 'Off';
-
-  @override
-  String get internetQualityP95 => 'P95';
-
-  @override
-  String get internetQualityQuality => 'Quality';
-
-  @override
-  String get internetQualitySnackbar => 'Internet:';
-
-  @override
-  String get internetQualityStatusFailing => 'Failing';
-
-  @override
-  String get internetQualityStatusOk => 'OK';
-
-  @override
-  String get internetQualityStatusPartial => 'Partial';
-
-  @override
-  String get internetQualityStatusSlow => 'Slow';
-
-  @override
-  String get internetQualityStatusUnknown => 'Unknown';
-
-  @override
-  String get internetQualityTcp => 'TCP';
-
-  @override
-  String get internetQualityTest => 'Test';
-
-  @override
-  String get internetQualityUnstable => 'Unstable';
 
   @override
   String get ipType => 'IP Type';
@@ -722,4 +626,234 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get working => 'Working';
+
+  @override
+  String get appUpdate => 'App Update';
+
+  @override
+  String get appUpdateChecking => 'Checking for updates...';
+
+  @override
+  String get appUpdateFailed => 'Update check failed';
+
+  @override
+  String get appUpdateSaveDialogTitle => 'Select where to save the update';
+
+  @override
+  String get appUpdateDownloading => 'Downloading update...';
+
+  @override
+  String get appUpdateDownloaded => 'Update downloaded successfully';
+
+  @override
+  String get appUpdateOpenFolder => 'Open Folder';
+
+  @override
+  String get appUpdateAvailable => 'Update Available';
+
+  @override
+  String get appUpdateCurrentVersion => 'Current Version';
+
+  @override
+  String get appUpdateLatestVersion => 'Latest Version';
+
+  @override
+  String get appUpdateReleaseNotes => 'Release Notes';
+
+  @override
+  String get appUpdateCheck => 'Check for Updates';
+
+  @override
+  String get appUpdateDownload => 'Download Update';
+
+  @override
+  String get appUpdateUpToDate => 'You are up to date';
+
+  @override
+  String get internetQuality => 'Internet Quality';
+
+  @override
+  String get internetQualityAvg => 'Avg';
+
+  @override
+  String get internetQualityDeep => 'Deep (5m)';
+
+  @override
+  String get internetQualityDegraded => 'Degraded';
+
+  @override
+  String get internetQualityDirectDetails => 'Direct quality details';
+
+  @override
+  String get internetQualityDns => 'DNS';
+
+  @override
+  String get internetQualityDown => 'Down';
+
+  @override
+  String get internetQualityExcellent => 'Excellent';
+
+  @override
+  String get internetQualityGood => 'Good';
+
+  @override
+  String get internetQualityHttps => 'HTTPS';
+
+  @override
+  String get internetQualityJitter => 'Jitter';
+
+  @override
+  String get internetQualityLastCheck => 'Last check';
+
+  @override
+  String get internetQualityLight => 'Light (15s)';
+
+  @override
+  String get internetQualityMax => 'Max';
+
+  @override
+  String get internetQualityMed => 'Med';
+
+  @override
+  String get internetQualityMin => 'Min';
+
+  @override
+  String get internetQualityMonitoring => 'Background monitoring';
+
+  @override
+  String get internetQualityNoResult => 'No result';
+
+  @override
+  String get internetQualityNormal => 'Normal (2m)';
+
+  @override
+  String get internetQualityNotTested => 'Not tested';
+
+  @override
+  String get internetQualityOff => 'Off';
+
+  @override
+  String get internetQualityP95 => 'P95';
+
+  @override
+  String get internetQualityQuality => 'Quality';
+
+  @override
+  String get internetQualitySnackbar => 'Internet:';
+
+  @override
+  String get internetQualityStatusFailing => 'Failing';
+
+  @override
+  String get internetQualityStatusOk => 'OK';
+
+  @override
+  String get internetQualityStatusPartial => 'Partial';
+
+  @override
+  String get internetQualityStatusSlow => 'Slow';
+
+  @override
+  String get internetQualityStatusUnknown => 'Unknown';
+
+  @override
+  String get internetQualityTcp => 'TCP';
+
+  @override
+  String get internetQualityTest => 'Test';
+
+  @override
+  String get internetQualityUnstable => 'Unstable';
+
+  @override
+  String get tunnelHealth => 'Tunnel Health';
+
+  @override
+  String get tunnelHealthProbeAll => 'Test all';
+
+  @override
+  String get tunnelHealthProbeAgain => 'Retest';
+
+  @override
+  String tunnelHealthNotRunning(String tunnel) {
+    return '$tunnel is not running';
+  }
+
+  @override
+  String get tunnelHealthNoTunnelRunning => 'No tunnel is running';
+
+  @override
+  String get tunnelHealthStopped => 'Stopped';
+
+  @override
+  String get tunnelHealthReachable => 'Reachable (probe OK)';
+
+  @override
+  String get tunnelHealthMeasuring => 'Measuring…';
+
+  @override
+  String get tunnelHealthExcellent => 'Excellent';
+
+  @override
+  String get tunnelHealthGood => 'Good';
+
+  @override
+  String get tunnelHealthFair => 'Fair';
+
+  @override
+  String get tunnelHealthDegraded => 'Degraded';
+
+  @override
+  String get tunnelHealthFailing => 'Failing';
+
+  @override
+  String get tunnelHealthLatency => 'Latency';
+
+  @override
+  String get tunnelHealthLoss => 'Loss';
+
+  @override
+  String get tunnelHealthJitter => 'Jitter';
+
+  @override
+  String get tunnelHealthUptime => 'Uptime';
+
+  @override
+  String get tunnelHealthReconnects => 'Reconnects';
+
+  @override
+  String get tunnelHealthTrend => 'Trend';
+
+  @override
+  String get tunnelHealthProtocol => 'Protocol';
+
+  @override
+  String get tunnelHealthThroughput => 'Throughput';
+
+  @override
+  String get tunnelHealthCircuits => 'Circuits';
+
+  @override
+  String get tunnelHealthIp => 'IP';
+
+  @override
+  String tunnelHealthLastProbeOk(int latency) {
+    return 'Last probe: ${latency}ms — OK';
+  }
+
+  @override
+  String tunnelHealthLastProbeFailed(String error) {
+    return 'Last probe failed: $error';
+  }
+
+  @override
+  String get tunnelHealthNoDataWarning => 'Tunnel is up but no data is flowing';
+
+  @override
+  String get tunnelHealthMeasuringHealth => 'Measuring health…';
+
+  @override
+  String tunnelHealthTitle(String tunnel) {
+    return '$tunnel Health';
+  }
 }

@@ -29,10 +29,7 @@ extension AppProviderAetherPreflight on AppProvider {
       processService.addLog('✓ Aether binary found: $found', source: src);
       return true;
     } catch (e) {
-      processService.addLog(
-        '✗ Error checking Aether binary: $e',
-        source: src,
-      );
+      processService.addLog('✗ Error checking Aether binary: $e', source: src);
       return false;
     }
   }

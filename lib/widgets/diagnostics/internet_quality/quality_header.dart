@@ -48,16 +48,9 @@ class QualityHeader extends StatelessWidget {
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: color.withValues(alpha: 0.4),
-              width: 1.5,
-            ),
+            border: Border.all(color: color.withValues(alpha: 0.4), width: 1.5),
           ),
-          child: Icon(
-            _iconForOverall(overall),
-            color: color,
-            size: 22,
-          ),
+          child: Icon(_iconForOverall(overall), color: color, size: 22),
         ),
         const SizedBox(width: 12),
         Expanded(

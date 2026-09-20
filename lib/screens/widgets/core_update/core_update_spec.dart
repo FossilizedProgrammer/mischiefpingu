@@ -23,18 +23,15 @@ const List<CoreUpdateSpec> coreUpdateSpecs = [
     kind: CoreKind.psiphon,
     displayName: 'Psiphon (official)',
     note: 'Official binary from Psiphon-Labs.',
-    updateLabelWhenMissing: 'Download',
   ),
   CoreUpdateSpec(
     kind: CoreKind.sunandlion,
     displayName: 'SunAndLion Psiphon Core',
     note: 'Unofficial Psiphon fork by ssmirr — required for fronting mode.',
-    updateLabelWhenMissing: 'Download',
   ),
   CoreUpdateSpec(
     kind: CoreKind.sstp,
     displayName: 'SSTP Proxy',
     note: 'SSTP client from FossilizedProgrammer/sstp-proxy.',
-    updateLabelWhenMissing: 'Download',
   ),
 ];

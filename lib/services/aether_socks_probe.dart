@@ -44,9 +44,6 @@ class SocksProber {
 
   String diagText(SocksDiag d, int port) => SocksDiagText.forDiag(d, port);
 
-  Future<SocksDiag> waitForHealthy(
-    int port, {
-    required Duration timeout,
-  }) =>
+  Future<SocksDiag> waitForHealthy(int port, {required Duration timeout}) =>
       _waitLoop.run(port, timeout: timeout);
 }

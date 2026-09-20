@@ -4,8 +4,21 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'tunnel_watchdog.dart' show ProbeResult;
+import 'watchdog_quality_metrics.dart';
 
+part 'prober/metrics_builder.dart';
+part 'prober/https_probe.dart';
+
+/// ═══════════════════════════════════════════════════════════════
+///  WatchdogProber — probe SOCKS + HTTPS با metric کیفی.
+///
+///  ⚠️ نسخهٔ نهایی: hostname + HTTPS 443 + SNI معتبر.
+///  ⚠️ از StreamIterator برای جلوگیری از "already listened" استفاده می‌شود.
+///
+///  بخش‌های داخلی در `prober/` جدا شده‌اند:
+///    • ProberMetricsBuilder → ساخت WatchdogQualityMetrics
+///    • ProberHttpsProbe     → probe HTTPS (روی secure socket آماده)
+/// ═══════════════════════════════════════════════════════════════
 class WatchdogProber {
   final int socksPort;
   final String probeHost;
@@ -17,7 +30,9 @@ class WatchdogProber {
   final void Function(String message, {String source}) log;
   final String logSource;
 
-  const WatchdogProber({
+  int lastLatencyMs = 0;
+
+  WatchdogProber({
     required this.socksPort,
     required this.probeHost,
     required this.probePort,
@@ -29,152 +44,192 @@ class WatchdogProber {
     required this.logSource,
   });
 
-  Future<ProbeResult> probe() async {
-    Socket? sock;
-    try {
-      sock = await Socket.connect(
-        '127.0.0.1',
-        socksPort,
-        timeout: connectTimeout,
-      );
+  /// hostname برای probe (نه IP خام).
+  static const String probeHostname = 'www.cloudflare.com';
+  static const int probeHttpsPort = 443;
 
+  Future<WatchdogQualityMetrics> probeWithMetrics() async {
+    final sw = Stopwatch()..start();
+
+    Socket? sock;
+    SecureSocket? secure;
+    StreamIterator<List<int>>? iter;
+
+    bool tcpOk = false;
+    bool greetOk = false;
+    bool connectOk = false;
+    bool httpRespOk = false;
+    bool httpStatusOk = false;
+
+    try {
+      // ─── مرحله 1: TCP به SOCKS ───
+      try {
+        sock = await Socket.connect(
+          '127.0.0.1',
+          socksPort,
+          timeout: connectTimeout,
+        );
+        tcpOk = true;
+      } on SocketException {
+        sw.stop();
+        return buildMetrics(
+          latencyMs: sw.elapsedMilliseconds,
+          tcpOk: false,
+          greetOk: false,
+          connectOk: false,
+          httpRespOk: false,
+          httpStatusOk: false,
+        );
+      }
+
+      iter = StreamIterator<List<int>>(sock.timeout(socksTimeout));
+
+      // ─── مرحله 2: SOCKS5 greeting ───
       sock.add([0x05, 0x01, 0x00]);
       await sock.flush();
-      final greet = await sock.timeout(socksTimeout).first;
+
+      if (!await iter.moveNext()) {
+        sw.stop();
+        return buildMetrics(
+          latencyMs: sw.elapsedMilliseconds,
+          tcpOk: tcpOk,
+          greetOk: false,
+          connectOk: false,
+          httpRespOk: false,
+          httpStatusOk: false,
+        );
+      }
+      final greet = iter.current;
       if (greet.isEmpty || greet[0] != 0x05) {
-        return ProbeResult.dead;
+        sw.stop();
+        return buildMetrics(
+          latencyMs: sw.elapsedMilliseconds,
+          tcpOk: tcpOk,
+          greetOk: false,
+          connectOk: false,
+          httpRespOk: false,
+          httpStatusOk: false,
+        );
       }
       if (greet.length >= 2 && greet[1] != 0x00) {
-        return ProbeResult.dead;
+        sw.stop();
+        return buildMetrics(
+          latencyMs: sw.elapsedMilliseconds,
+          tcpOk: tcpOk,
+          greetOk: false,
+          connectOk: false,
+          httpRespOk: false,
+          httpStatusOk: false,
+        );
       }
+      greetOk = true;
 
-      final ipBytes = _hostToBytes(probeHost);
-      if (ipBytes == null) {
-        final hostBytes = probeHost.codeUnits;
-        sock.add(<int>[
-          0x05,
-          0x01,
-          0x00,
-          0x03,
-          hostBytes.length,
-          ...hostBytes,
-          (probePort >> 8) & 0xFF,
-          probePort & 0xFF,
-        ]);
-      } else {
-        sock.add(<int>[
-          0x05,
-          0x01,
-          0x00,
-          0x01,
-          ...ipBytes,
-          (probePort >> 8) & 0xFF,
-          probePort & 0xFF,
-        ]);
-      }
+      // ─── مرحله 3: SOCKS5 CONNECT با hostname ───
+      final hostBytes = utf8.encode(probeHostname);
+      sock.add(<int>[
+        0x05,
+        0x01,
+        0x00,
+        0x03,
+        hostBytes.length,
+        ...hostBytes,
+        (probeHttpsPort >> 8) & 0xFF,
+        probeHttpsPort & 0xFF,
+      ]);
       await sock.flush();
 
-      final resp = await sock.timeout(socksTimeout).first;
-      if (resp.length < 2) return ProbeResult.dead;
-      if (resp[1] != 0x00) return ProbeResult.dead;
+      if (!await iter.moveNext()) {
+        sw.stop();
+        return buildMetrics(
+          latencyMs: sw.elapsedMilliseconds,
+          tcpOk: tcpOk,
+          greetOk: greetOk,
+          connectOk: false,
+          httpRespOk: false,
+          httpStatusOk: false,
+        );
+      }
+      final resp = iter.current;
+      if (resp.length < 2 || resp[1] != 0x00) {
+        sw.stop();
+        return buildMetrics(
+          latencyMs: sw.elapsedMilliseconds,
+          tcpOk: tcpOk,
+          greetOk: greetOk,
+          connectOk: false,
+          httpRespOk: false,
+          httpStatusOk: false,
+        );
+      }
+      connectOk = true;
 
+      // ─── مرحله 4: TLS handshake ───
       if (doHttpProbe) {
-        return await _probeHttpDataPlane(sock);
+        await iter.cancel();
+        iter = null;
+
+        try {
+          secure = await SecureSocket.secure(
+            sock,
+            host: probeHostname,
+            onBadCertificate: (_) => true,
+          ).timeout(httpProbeTimeout);
+        } catch (e) {
+          log('✗ probe: TLS handshake failed: $e', source: logSource);
+          sw.stop();
+          return buildMetrics(
+            latencyMs: sw.elapsedMilliseconds,
+            tcpOk: tcpOk,
+            greetOk: greetOk,
+            connectOk: connectOk,
+            httpRespOk: false,
+            httpStatusOk: false,
+          );
+        }
+
+        final httpResult = await probeHttps(secure);
+        httpRespOk = httpResult.responseOk;
+        httpStatusOk = httpResult.statusOk;
+      } else {
+        httpRespOk = true;
+        httpStatusOk = true;
       }
 
-      return ProbeResult.alive;
-    } on SocketException {
-      return ProbeResult.dead;
-    } catch (_) {
-      return ProbeResult.dead;
+      sw.stop();
+      return buildMetrics(
+        latencyMs: sw.elapsedMilliseconds,
+        tcpOk: tcpOk,
+        greetOk: greetOk,
+        connectOk: connectOk,
+        httpRespOk: httpRespOk,
+        httpStatusOk: httpStatusOk,
+      );
+    } catch (e) {
+      sw.stop();
+      log('⚠ probe error: $e', source: logSource);
+      return buildMetrics(
+        latencyMs: sw.elapsedMilliseconds,
+        tcpOk: tcpOk,
+        greetOk: greetOk,
+        connectOk: connectOk,
+        httpRespOk: httpRespOk,
+        httpStatusOk: httpStatusOk,
+      );
     } finally {
+      try {
+        await iter?.cancel();
+      } catch (_) {}
+      try {
+        await secure?.close();
+      } catch (_) {}
       try {
         sock?.destroy();
       } catch (_) {}
     }
   }
 
-  /// probe واقعی HTTP از طریق SOCKS.
-  Future<ProbeResult> _probeHttpDataPlane(Socket sock) async {
-    try {
-      final hostHeader = probePort == 80 || probePort == 443
-          ? probeHost
-          : '$probeHost:$probePort';
-
-      sock.add(
-        utf8.encode(
-          'GET /generate_204 HTTP/1.0\r\n'
-          'Host: $hostHeader\r\n'
-          'User-Agent: Mozilla/5.0\r\n'
-          'Connection: close\r\n'
-          '\r\n',
-        ),
-      );
-      await sock.flush();
-
-      final buffer = <int>[];
-      final stream = sock.timeout(httpProbeTimeout);
-
-      await for (final chunk in stream) {
-        buffer.addAll(chunk);
-        if (buffer.length >= 16) break;
-
-        if (buffer.length >= 12) break;
-      }
-
-      if (buffer.isEmpty) {
-        log(
-          '✗ probe: HTTP data-plane returned 0 bytes (tunnel dead)',
-          source: logSource,
-        );
-        return ProbeResult.dead;
-      }
-
-      final head = String.fromCharCodes(buffer.take(20));
-      final isHttpResponse = head.startsWith('HTTP/');
-
-      if (!isHttpResponse) {
-        log(
-          '✗ probe: non-HTTP response from tunnel: '
-          '${buffer.take(12).toList()}',
-          source: logSource,
-        );
-        return ProbeResult.dead;
-      }
-
-      final statusOk = head.contains(' 200 ') ||
-          head.contains(' 204 ') ||
-          head.contains(' 301 ') ||
-          head.contains(' 302 ') ||
-          head.contains(' 304 ');
-
-      if (!statusOk) {
-        log(
-          '✗ probe: HTTP status not OK: ${head.split("\r\n").first}',
-          source: logSource,
-        );
-        return ProbeResult.dead;
-      }
-
-      return ProbeResult.alive;
-    } catch (e) {
-      log(
-        '✗ probe: HTTP data-plane failed: $e',
-        source: logSource,
-      );
-      return ProbeResult.dead;
-    }
-  }
-
-  List<int>? _hostToBytes(String host) {
-    final parts = host.split('.');
-    if (parts.length != 4) return null;
-    final out = <int>[];
-    for (final p in parts) {
-      final n = int.tryParse(p);
-      if (n == null || n < 0 || n > 255) return null;
-      out.add(n);
-    }
-    return out;
+  Future<bool> probeAlive() async {
+    final m = await probeWithMetrics();
+    return m.isFullyAlive;
   }
 }

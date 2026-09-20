@@ -129,6 +129,18 @@ extension ProcessServiceSstpLauncher on ProcessService {
         isConnected: false,
       );
 
+      // ═══════════════════════════════════════════════════════════
+      //  ⚠️ sad notification هنگام خروج غیرمنتظره
+      // ═══════════════════════════════════════════════════════════
+      if (wasConnected && !suppressSadNotification) {
+        addLog(
+          '⚠ SSTP exited unexpectedly (code=$code)',
+          source: src,
+        );
+        setSadNotification('SSTP');
+      }
+      suppressSadNotification = false;
+
       addLog('SSTP exited with code $code', source: src);
       touch();
     });

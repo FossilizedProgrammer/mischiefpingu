@@ -72,10 +72,7 @@ class WatchdogRestartDecider {
   /// تلاش برای restart با تمام چک‌ها.
   Future<void> attemptRestart() async {
     if (isRestartInProgress()) {
-      log(
-        '→ restart already in progress — skipping',
-        source: logSource,
-      );
+      log('→ restart already in progress — skipping', source: logSource);
       return;
     }
 

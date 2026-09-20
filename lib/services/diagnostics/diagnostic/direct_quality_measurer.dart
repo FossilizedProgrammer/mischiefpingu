@@ -20,13 +20,15 @@ class DirectQualityMeasurer {
       final target = DiagnosticConfig
           .tcpTargets[round % DiagnosticConfig.tcpTargets.length];
       final r = await tcp.probeOne(target.ip, target.port);
-      samples.add(ProbeSample(
-        index: idx++,
-        success: r.success,
-        latencyMs: r.latencyMs,
-        target: '${target.ip}:${target.port}',
-        timestamp: DateTime.now(),
-      ));
+      samples.add(
+        ProbeSample(
+          index: idx++,
+          success: r.success,
+          latencyMs: r.latencyMs,
+          target: '${target.ip}:${target.port}',
+          timestamp: DateTime.now(),
+        ),
+      );
       await Future.delayed(DiagnosticConfig.sampleInterval);
     }
 

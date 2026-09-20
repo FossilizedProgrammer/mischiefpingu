@@ -30,6 +30,23 @@ extension AppProviderAether on AppProvider {
     _aetherTestService.requestCancel();
     _recoveryCoordinator.releaseLeaseByTunnel('Aether');
 
+    // ─── Cancel tracker ───
+    try {
+      await _aetherTestService.performanceTracker?.cancel();
+    } catch (_) {}
+
+    // ─── ثبت connection_lost (Structured Logging) ───
+    if (lastAetherConnectedAt != null) {
+      _aetherLogger.connectionLost(
+        settings: settings,
+        protocol: lastAetherConnectedProtocol ?? 'unknown',
+        masque: settings.masqueOption,
+        uptime: DateTime.now().difference(lastAetherConnectedAt!),
+        reason: 'user_stop',
+        reconnectCount: aetherReconnectCount,
+      );
+    }
+
     try {
       await processService.stopAether();
     } catch (e) {
@@ -39,6 +56,12 @@ extension AppProviderAether on AppProvider {
     aetherStatus = 'Aether: Stopped';
     watchdogManager?.aether.resetGracePeriod();
     watchdogManager?.aether.resetCircuitBreaker();
+
+    // ─── فاز ۶: reset session state ───
+    lastAetherConnectedProtocol = null;
+    lastAetherConnectedGatewayKey = null;
+    lastAetherConnectedAt = null;
+    aetherReconnectCount = 0;
 
     await AppDataService.fixDataDirOwnership();
     touch();

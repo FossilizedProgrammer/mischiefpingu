@@ -88,7 +88,7 @@ class CoreUpdateSection extends StatelessWidget {
               child: Text(
                 updating
                     ? '${l10n.working} $progress%'
-                    : (updateLabel ?? (missing ? l10n.download : l10n.update)),
+                    : (updateLabel ?? l10n.update),
               ),
             ),
           ],

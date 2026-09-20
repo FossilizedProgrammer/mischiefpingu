@@ -3,6 +3,10 @@ part of 'process_service.dart';
 extension ProcessServiceTorStopper on ProcessService {
   Future<void> stopTor() async {
     const src = LogSource.tor;
+    // ═══════════════════════════════════════════════════════════
+    //  ⚠️ سرکوب sad notification چون کاربر دستی stop کرده
+    // ═══════════════════════════════════════════════════════════
+    suppressSadNotification = true;
 
     try {
       await torSocksForwarder?.close();

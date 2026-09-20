@@ -6,9 +6,32 @@ extension AppProviderLogWatchers on AppProvider {
   /// ⚠️ اصلاح مهم:
   /// قبل از تصمیم به restart، یک probe واقعی روی SOCKS انجام می‌شود
   /// تا مطمئن شویم tunnel واقعاً مرده است.
+  ///
+  /// ⚠️ اضافه‌شده در این نسخه:
+  /// هر خط لاگ به `TunnelHealthRegistry` هم feed می‌شود تا adapter
+  /// هر تونل (Psiphon/Tor/SSTP) بتونه metric استخراج کنه.
   void feedLogWatchers(String line) {
     if (isShuttingDown) return;
 
+    // ═══════════════════════════════════════════════════════════════
+    //  Health registry feed — قبل از log watcherهای قدیمی
+    //
+    //  این کار باعث می‌شه adapterهای Psiphon/Tor/SSTP metric
+    //  رو از خط لاگ استخراج کنن (JSON parsing، circuit tracking، ...).
+    //
+    //  ⚠️ wrapped در try/catch چون feedLog نباید هیچ‌وقت
+    //  روی log stream تأثیر بذاره.
+    // ═══════════════════════════════════════════════════════════════
+    try {
+      _healthRegistry.feedLog(line);
+    } catch (e) {
+      processService.addLog(
+        '⚠ health registry feed failed: $e',
+        source: LogSource.app,
+      );
+    }
+
+    // ─── Psiphon ───
     if (processService.isPsiphonConnected && !restartingPsiphon) {
       final dead = psiphonLog.feed(line);
       if (dead && !userStoppedPsiphon && !isShuttingDown) {
@@ -18,6 +41,7 @@ extension AppProviderLogWatchers on AppProvider {
       psiphonLog.reset();
     }
 
+    // ─── Tor ───
     if (processService.isTorRunning && !restartingTor) {
       final dead = torLog.feed(line);
       if (dead && !userStoppedTor && !isShuttingDown) {
@@ -27,6 +51,7 @@ extension AppProviderLogWatchers on AppProvider {
       torLog.reset();
     }
 
+    // ─── SSTP ───
     if (processService.isSstpRunning && !restartingSstp) {
       final dead = sstpLog.feed(line);
       if (dead && !userStoppedSstp && !isShuttingDown) {
@@ -37,7 +62,7 @@ extension AppProviderLogWatchers on AppProvider {
     }
   }
 
-  /// ⚠️ جدید: قبل از restart، SOCKS probe بزن.
+  /// ⚠️ قبل از restart، SOCKS probe بزن.
   /// اگر tunnel واقعاً زنده است، watcher را ریست کن.
   Future<void> _verifyAndRestartPsiphon() async {
     const src = LogSource.psiphon;
