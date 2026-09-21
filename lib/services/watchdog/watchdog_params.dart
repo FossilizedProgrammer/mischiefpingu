@@ -1,6 +1,7 @@
 library;
 
-import 'watchdog_config.dart';
+import 'watchdog_network_profile.dart';
+import 'watchdog_profile_params.dart';
 
 class WatchdogParams {
   final String name;
@@ -10,20 +11,37 @@ class WatchdogParams {
   final Duration connectTimeout;
   final Duration socksTimeout;
   final Duration httpProbeTimeout;
-  final String probeHost;
-  final int probePort;
-  final bool doHttpProbe;
+
+  /// پروفایل شبکه‌ای که این watchdog بر اساس آن ساخته شده.
+  final WatchdogNetworkProfile networkProfile;
 
   const WatchdogParams({
     required this.name,
     required this.socksPort,
-    this.interval = WatchdogConfig.psiphonInterval,
-    this.maxFailures = WatchdogConfig.maxFailures,
-    this.connectTimeout = WatchdogConfig.connectTimeout,
-    this.socksTimeout = WatchdogConfig.socksTimeout,
-    this.httpProbeTimeout = WatchdogConfig.httpProbeTimeout,
-    this.probeHost = '8.8.8.8',
-    this.probePort = 80,
-    this.doHttpProbe = false,
+    required this.interval,
+    required this.maxFailures,
+    required this.connectTimeout,
+    required this.socksTimeout,
+    required this.httpProbeTimeout,
+    required this.networkProfile,
   });
+
+  /// سازنده از پروفایل.
+  factory WatchdogParams.fromProfile({
+    required String name,
+    required int socksPort,
+    required WatchdogNetworkProfile profile,
+  }) {
+    final p = WatchdogProfileParams.forProfile(profile);
+    return WatchdogParams(
+      name: name,
+      socksPort: socksPort,
+      interval: p.intervalFor(name),
+      maxFailures: p.maxFailures,
+      connectTimeout: p.connectTimeout,
+      socksTimeout: p.socksTimeout,
+      httpProbeTimeout: p.httpProbeTimeout,
+      networkProfile: profile,
+    );
+  }
 }

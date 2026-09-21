@@ -230,7 +230,15 @@
   "appUpdateCheck": "بررسی بروزرسانی",
   "appUpdateDownload": "دانلود بروزرسانی",
   "appUpdateUpToDate": "شما بروز هستید",
-
+  "watchdogNetworkProfile": "پروفایل شبکه",
+  "watchdogNetworkProfileSubtitle": "شدت بررسی واچ‌داگ را تنظیم می‌کند. بر اساس شرایط شبکه انتخاب کنید.",
+  "watchdogProfileStable": "پایدار",
+  "watchdogProfileStableDesc": "کیفیت اینترنت خوب — بررسی سخت‌گیرانه، تشخیص سریع‌تر قطعی.",
+  "watchdogProfileNormal": "معمولی",
+  "watchdogProfileNormalDesc": "تنظیمات متعادل برای اکثر شبکه‌ها (پیش‌فرض).",
+  "watchdogProfileHarsh": "فیلترینگ شدید",
+  "watchdogProfileHarshDesc": "فیلترینگ سنگین یا شبکه ناپایدار — بررسی آسان‌گیر، restart بی‌مورد کمتر.",
+  
   "internetQuality": "کیفیت اینترنت",
   "internetQualityAvg": "میانگین",
   "internetQualityDeep": "عمیق (۵ دقیقه)",

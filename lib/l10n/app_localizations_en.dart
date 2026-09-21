@@ -672,6 +672,34 @@ class AppLocalizationsEn extends AppLocalizations {
       'Manual mode: Protocol, obfuscation, scan mode, and custom endpoint are fully under your control below.';
 
   @override
+  String get watchdogNetworkProfile => 'Network Profile';
+
+  @override
+  String get watchdogNetworkProfileSubtitle =>
+      'Adjusts how aggressively the watchdog probes. Choose based on your network conditions.';
+
+  @override
+  String get watchdogProfileStable => 'Stable';
+
+  @override
+  String get watchdogProfileStableDesc =>
+      'Good internet quality — strict probing, faster detection of failures.';
+
+  @override
+  String get watchdogProfileNormal => 'Normal';
+
+  @override
+  String get watchdogProfileNormalDesc =>
+      'Balanced settings for most networks (default).';
+
+  @override
+  String get watchdogProfileHarsh => 'Harsh filtering';
+
+  @override
+  String get watchdogProfileHarshDesc =>
+      'Heavy filtering or unstable network — lenient probing, fewer false restarts.';
+
+  @override
   String get appUpdate => 'App Update';
 
   @override

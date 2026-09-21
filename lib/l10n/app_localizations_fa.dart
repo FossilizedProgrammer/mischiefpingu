@@ -668,6 +668,34 @@ class AppLocalizationsFa extends AppLocalizations {
       'حالت دستی: پروتکل، مبهم‌سازی، scan mode و اندپوینت سفارشی در پایین کاملاً در اختیار شماست.';
 
   @override
+  String get watchdogNetworkProfile => 'پروفایل شبکه';
+
+  @override
+  String get watchdogNetworkProfileSubtitle =>
+      'شدت بررسی واچ‌داگ را تنظیم می‌کند. بر اساس شرایط شبکه انتخاب کنید.';
+
+  @override
+  String get watchdogProfileStable => 'پایدار';
+
+  @override
+  String get watchdogProfileStableDesc =>
+      'کیفیت اینترنت خوب — بررسی سخت‌گیرانه، تشخیص سریع‌تر قطعی.';
+
+  @override
+  String get watchdogProfileNormal => 'معمولی';
+
+  @override
+  String get watchdogProfileNormalDesc =>
+      'تنظیمات متعادل برای اکثر شبکه‌ها (پیش‌فرض).';
+
+  @override
+  String get watchdogProfileHarsh => 'فیلترینگ شدید';
+
+  @override
+  String get watchdogProfileHarshDesc =>
+      'فیلترینگ سنگین یا شبکه ناپایدار — بررسی آسان‌گیر، restart بی‌مورد کمتر.';
+
+  @override
   String get appUpdate => 'بروزرسانی برنامه';
 
   @override

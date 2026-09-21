@@ -11,6 +11,7 @@ import 'watchdog_quality_metrics.dart';
 import 'watchdog_quality_tracker.dart';
 import 'watchdog_restart_decider.dart';
 import 'watchdog_types.dart';
+import 'watchdog_profile_params.dart';
 
 export 'watchdog_types.dart'
     show ProbeResult, RecoveryLeaseResult, RecoveryLeaseHandle;
@@ -58,14 +59,12 @@ class TunnelWatchdog {
 
   late final WatchdogProber _prober = WatchdogProber(
     socksPort: params.socksPort,
-    probeHost: params.probeHost,
-    probePort: params.probePort,
-    doHttpProbe: params.doHttpProbe,
     connectTimeout: params.connectTimeout,
     socksTimeout: params.socksTimeout,
     httpProbeTimeout: params.httpProbeTimeout,
     log: log,
     logSource: logSource,
+    profileParams: WatchdogProfileParams.forProfile(params.networkProfile),
   );
 
   late final WatchdogCircuitBreaker _circuit = WatchdogCircuitBreaker(

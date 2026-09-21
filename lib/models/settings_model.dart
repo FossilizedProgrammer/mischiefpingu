@@ -15,6 +15,7 @@ class AppSettings {
   bool autoFindIpAndSni;
   bool saveFoundIpsAndSni;
   bool watchdogEnabled;
+  String watchdogNetworkProfile;  
 
   int upstreamType;
 
@@ -164,6 +165,7 @@ class AppSettings {
     this.themeId = 'ocean',
     this.muted = false,
     this.watchdogEnabled = true,
+    this.watchdogNetworkProfile = 'normal',
     List<String>? enabledLogSources,
   }) : enabledLogSources =
            enabledLogSources ??

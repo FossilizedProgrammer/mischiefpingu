@@ -120,6 +120,10 @@ extension AppProviderWatchdogs on AppProvider {
   ///    • ensureWatchdogs دوباره صدا زده می‌شود
   ///    • syncWithConnectionState وضعیت را reset می‌کند
   /// ═══════════════════════════════════════════════════════════════
+  /// ═══════════════════════════════════════════════════════════════
+  ///  ⚠️ syncWatchdogs — حالا به settings.watchdogEnabled
+  ///  و تغییر پروفایل احترام می‌گذارد.
+  /// ═══════════════════════════════════════════════════════════════
   void syncWatchdogs() {
     // ─── واچ‌داگ غیرفعال است → همه را متوقف کن ───
     if (!settings.watchdogEnabled) {
@@ -127,8 +131,29 @@ extension AppProviderWatchdogs on AppProvider {
       return;
     }
 
-    // ─── واچ‌داگ فعال است → ensure + sync ───
+    // ═══════════════════════════════════════════════════════════
+    //  بررسی تغییر پروفایل: اگر پروفایل عوض شده باشد،
+    //  watchdog manager را دوباره می‌سازیم.
+    //
+    //  ⚠️ به جای restart فوری، فقط manager را rebuild می‌کنیم
+    //  و failure countها reset می‌شوند.
+    // ═══════════════════════════════════════════════════════════
+    final currentProfile = settings.watchdogNetworkProfile;
+    if (_lastBuiltProfile != null && _lastBuiltProfile != currentProfile) {
+      processService.addLog(
+        '→ Watchdog profile changed: '
+        '$_lastBuiltProfile → $currentProfile — rebuilding',
+        source: LogSource.app,
+      );
+      _watchdogManager?.disposeAll();
+      _watchdogManager = null;
+      _lastBuiltProfile = null;
+    }
+
     ensureWatchdogs();
+
+_lastBuiltProfile ??= currentProfile;
+
     _watchdogManager!.syncWithConnectionState(
       psiphonConnected: processService.isPsiphonConnected,
       aetherConnected: processService.isAetherRunning && !isAutoTesting,

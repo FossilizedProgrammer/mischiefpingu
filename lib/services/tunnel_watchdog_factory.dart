@@ -3,9 +3,9 @@ library;
 import '../providers/app_provider.dart';
 import 'process_service.dart';
 import 'watchdog/tunnel_watchdog.dart';
-import 'tunnel_watchdog_manager.dart';
-import 'watchdog/watchdog_config.dart';
+import 'watchdog/watchdog_network_profile.dart';
 import 'watchdog/watchdog_params.dart';
+import 'tunnel_watchdog_manager.dart';
 
 class TunnelWatchdogFactory {
   TunnelWatchdogFactory._();
@@ -25,14 +25,19 @@ class TunnelWatchdogFactory {
   }) {
     final log = processService.addLog;
 
+    // ═══════════════════════════════════════════════════════════
+    //  خواندن پروفایل سراسری از settings.
+    //  همه تونل‌ها از همان پروفایل استفاده می‌کنند (حتی Aether).
+    // ═══════════════════════════════════════════════════════════
+    final profile = WatchdogNetworkProfile.fromId(
+      provider.settings.watchdogNetworkProfile,
+    );
+
     final psiphon = TunnelWatchdog(
-      params: WatchdogParams(
+      params: WatchdogParams.fromProfile(
         name: 'Psiphon',
         socksPort: provider.settings.socksPort,
-        interval: WatchdogConfig.psiphonInterval,
-        doHttpProbe: true,
-        probeHost: '8.8.8.8',
-        probePort: 80,
+        profile: profile,
       ),
       isConnected: () => processService.isPsiphonConnected,
       isUserStopped: () => provider.userStoppedPsiphon,
@@ -45,13 +50,10 @@ class TunnelWatchdogFactory {
     );
 
     final aether = TunnelWatchdog(
-      params: WatchdogParams(
+      params: WatchdogParams.fromProfile(
         name: 'Aether',
         socksPort: provider.settings.aetherLocalPort,
-        interval: WatchdogConfig.aetherInterval,
-        doHttpProbe: false,
-        probeHost: '8.8.8.8',
-        probePort: 80,
+        profile: profile,
       ),
       isConnected: () => processService.isAetherRunning,
       isUserStopped: () => provider.userStoppedAether,
@@ -64,13 +66,10 @@ class TunnelWatchdogFactory {
     );
 
     final tor = TunnelWatchdog(
-      params: WatchdogParams(
+      params: WatchdogParams.fromProfile(
         name: 'Tor',
         socksPort: provider.settings.torSocksPort,
-        interval: WatchdogConfig.torInterval,
-        doHttpProbe: true,
-        probeHost: '8.8.8.8',
-        probePort: 80,
+        profile: profile,
       ),
       isConnected: () => processService.isTorConnected,
       isUserStopped: () => provider.userStoppedTor,
@@ -83,13 +82,10 @@ class TunnelWatchdogFactory {
     );
 
     final sstp = TunnelWatchdog(
-      params: WatchdogParams(
+      params: WatchdogParams.fromProfile(
         name: 'SSTP',
         socksPort: provider.settings.sstpSocksPort,
-        interval: WatchdogConfig.sstpInterval,
-        doHttpProbe: true,
-        probeHost: '8.8.8.8',
-        probePort: 80,
+        profile: profile,
       ),
       isConnected: () => processService.isSstpConnected,
       isUserStopped: () => provider.userStoppedSstp,
@@ -99,6 +95,13 @@ class TunnelWatchdogFactory {
       logSource: LogSource.sstp,
       isInternetAlive: isInternetAlive,
       acquireRecoveryLease: acquireSstpLease,
+    );
+
+    log(
+      '→ Watchdog built with profile=${profile.id} '
+      '(interval=${psiphon.interval.inSeconds}s, '
+      'maxFailures=${psiphon.maxFailures})',
+      source: LogSource.app,
     );
 
     return TunnelWatchdogManager(

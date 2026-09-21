@@ -110,6 +110,7 @@ extension AppSettingsSerialization on AppSettings {
       themeId: _s(m, 'themeId', 'ocean'),
       muted: _b(m, 'muted', false),
       watchdogEnabled: _b(m, 'watchdogEnabled', true),
+      watchdogNetworkProfile: _s(m, 'watchdogNetworkProfile', 'normal'),      
       enabledLogSources: _list(m, 'enabledLogSources', [
         'Psiphon',
         'Aether',
@@ -193,6 +194,7 @@ extension AppSettingsSerialization on AppSettings {
     'themeId': themeId,
     'muted': muted,
     'watchdogEnabled': watchdogEnabled,
+    'watchdogNetworkProfile': watchdogNetworkProfile,    
     'enabledLogSources': enabledLogSources,
   };
 

@@ -222,6 +222,15 @@
   "backToPresets": "Back to presets",
   "aetherManualHint": "Manual mode: Protocol, obfuscation, scan mode, and custom endpoint are fully under your control below.",
 
+  "watchdogNetworkProfile": "Network Profile",
+  "watchdogNetworkProfileSubtitle": "Adjusts how aggressively the watchdog probes. Choose based on your network conditions.",
+  "watchdogProfileStable": "Stable",
+  "watchdogProfileStableDesc": "Good internet quality — strict probing, faster detection of failures.",
+  "watchdogProfileNormal": "Normal",
+  "watchdogProfileNormalDesc": "Balanced settings for most networks (default).",
+  "watchdogProfileHarsh": "Harsh filtering",
+  "watchdogProfileHarshDesc": "Heavy filtering or unstable network — lenient probing, fewer false restarts.",
+  
   "appUpdate": "App Update",
   "appUpdateChecking": "Checking for updates...",
   "appUpdateFailed": "Update check failed",

@@ -673,6 +673,34 @@ class AppLocalizationsRu extends AppLocalizations {
       'Ручной режим: протокол, обфускация, режим сканирования и пользовательский endpoint полностью в вашем распоряжении ниже.';
 
   @override
+  String get watchdogNetworkProfile => 'Профиль сети';
+
+  @override
+  String get watchdogNetworkProfileSubtitle =>
+      'Настраивает агрессивность проверок сторожевого таймера. Выберите под вашу сеть.';
+
+  @override
+  String get watchdogProfileStable => 'Стабильно';
+
+  @override
+  String get watchdogProfileStableDesc =>
+      'Хорошее качество интернета — строгие проверки, быстрое обнаружение сбоев.';
+
+  @override
+  String get watchdogProfileNormal => 'Обычный';
+
+  @override
+  String get watchdogProfileNormalDesc =>
+      'Сбалансированные настройки для большинства сетей (по умолчанию).';
+
+  @override
+  String get watchdogProfileHarsh => 'Жёсткая фильтрация';
+
+  @override
+  String get watchdogProfileHarshDesc =>
+      'Сильная фильтрация или нестабильная сеть — мягкие проверки, меньше ложных перезапусков.';
+
+  @override
   String get appUpdate => 'Обновление приложения';
 
   @override

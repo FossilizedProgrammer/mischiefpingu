@@ -1384,6 +1384,54 @@ abstract class AppLocalizations {
   /// **'Manual mode: Protocol, obfuscation, scan mode, and custom endpoint are fully under your control below.'**
   String get aetherManualHint;
 
+  /// No description provided for @watchdogNetworkProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Network Profile'**
+  String get watchdogNetworkProfile;
+
+  /// No description provided for @watchdogNetworkProfileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjusts how aggressively the watchdog probes. Choose based on your network conditions.'**
+  String get watchdogNetworkProfileSubtitle;
+
+  /// No description provided for @watchdogProfileStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Stable'**
+  String get watchdogProfileStable;
+
+  /// No description provided for @watchdogProfileStableDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Good internet quality — strict probing, faster detection of failures.'**
+  String get watchdogProfileStableDesc;
+
+  /// No description provided for @watchdogProfileNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get watchdogProfileNormal;
+
+  /// No description provided for @watchdogProfileNormalDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced settings for most networks (default).'**
+  String get watchdogProfileNormalDesc;
+
+  /// No description provided for @watchdogProfileHarsh.
+  ///
+  /// In en, this message translates to:
+  /// **'Harsh filtering'**
+  String get watchdogProfileHarsh;
+
+  /// No description provided for @watchdogProfileHarshDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Heavy filtering or unstable network — lenient probing, fewer false restarts.'**
+  String get watchdogProfileHarshDesc;
+
   /// No description provided for @appUpdate.
   ///
   /// In en, this message translates to:

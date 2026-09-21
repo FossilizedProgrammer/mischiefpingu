@@ -239,6 +239,8 @@ class AppProvider extends ChangeNotifier {
   TunnelWatchdogManager? _watchdogManager;
   TunnelWatchdogManager? get watchdogManager => _watchdogManager;
 
+  String? _lastBuiltProfile;
+
   late final PsiphonLogWatcher _psiphonLog;
   late final TorLogWatcher _torLog;
   late final SstpLogWatcher _sstpLog;
@@ -921,6 +923,7 @@ class AppProvider extends ChangeNotifier {
     _currentHealth = null;
     _lastNotifiedHealth = null;
     _escalationInProgress = false;
+    _lastBuiltProfile = null;
 
     // ═══════════════════════════════════════════════════════════════
     //  فاز v5: NetworkChangeDetector cleanup
