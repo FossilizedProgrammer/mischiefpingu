@@ -18,6 +18,8 @@ import 'database/gateway_history_store.dart';
 import 'database/profile_performance_store.dart';
 import 'process_service.dart';
 
+part 'aether/auto_test/store_attacher.dart';
+
 class AetherAutoTestService {
   final ProcessService processService;
   AppSettings settings;
@@ -46,10 +48,14 @@ class AetherAutoTestService {
     this.aetherLogger,
     this.decisionEngine,
   }) {
-    _rebuildCollaborators();
+    rebuildCollaborators();
   }
 
-  void _rebuildCollaborators() {
+  /// بازسازی collaboratorها.
+  ///
+  /// ⚠️ public شده تا `store_attacher.dart` (که `part of` هست)
+  /// بتونه صدا بزنه — و از خارج از کلاس هم قابل استفاده باشه.
+  void rebuildCollaborators() {
     _prober = SocksProber(
       processService,
       isCancelled: () => _executor.isCancelRequested,
@@ -101,55 +107,43 @@ class AetherAutoTestService {
 
   void updateSettings(AppSettings newSettings) {
     settings = newSettings;
-    _rebuildCollaborators();
+    rebuildCollaborators();
   }
 
+  /// attach کردن همه storeها با یک rebuild واحد.
+  ///
+  /// ⚠️ پیاده‌سازی در `store_attacher.dart` هست.
   void attachAllStores({
     GatewayHistoryStore? historyStore,
     ProfilePerformanceStore? profileStore,
     AetherLogger? logger,
     AetherDecisionEngine? decisionEngine,
-  }) {
-    var changed = false;
-
-    if (historyStore != null) {
-      gatewayHistoryStore = historyStore;
-      changed = true;
-    }
-    if (profileStore != null) {
-      profilePerformanceStore = profileStore;
-      changed = true;
-    }
-    if (logger != null) {
-      aetherLogger = logger;
-      changed = true;
-    }
-    if (decisionEngine != null) {
-      this.decisionEngine = decisionEngine;
-      changed = true;
-    }
-
-    if (changed) _rebuildCollaborators();
-  }
+  }) =>
+      attachAllStoresInternal(
+        historyStore: historyStore,
+        profileStore: profileStore,
+        logger: logger,
+        decisionEngine: decisionEngine,
+      );
 
   void attachDecisionEngine(AetherDecisionEngine engine) {
     decisionEngine = engine;
-    _rebuildCollaborators();
+    rebuildCollaborators();
   }
 
   void attachGatewayHistoryStore(GatewayHistoryStore store) {
     gatewayHistoryStore = store;
-    _rebuildCollaborators();
+    rebuildCollaborators();
   }
 
   void attachProfilePerformanceStore(ProfilePerformanceStore store) {
     profilePerformanceStore = store;
-    _rebuildCollaborators();
+    rebuildCollaborators();
   }
 
   void attachAetherLogger(AetherLogger logger) {
     aetherLogger = logger;
-    _rebuildCollaborators();
+    rebuildCollaborators();
   }
 
   bool get isCancelRequested => _executor.isCancelRequested;
@@ -175,17 +169,10 @@ class AetherAutoTestService {
   Future<MapEntry<String, String>?> loadAutoWinner() =>
       _store.loadAutoWinner();
 
-  /// ═══════════════════════════════════════════════════════════════
-  ///  پاک کردن endpoint ذخیره‌شده (وقتی fail شد).
-  /// ═══════════════════════════════════════════════════════════════
+  /// پاک کردن endpoint ذخیره‌شده (وقتی fail شد).
   Future<void> clearLastEndpoint() => _store.clearLastEndpoint();
 
-  /// ═══════════════════════════════════════════════════════════════
-  ///  ذخیرهٔ endpoint واقعی از لاگ Aether.
-  ///
-  ///  این متد از process listener صدا زده می‌شود وقتی خط
-  ///  `using cloudflare edge X.X.X.X:PORT` در لاگ ظاهر شود.
-  /// ═══════════════════════════════════════════════════════════════
+  /// ذخیرهٔ endpoint واقعی از لاگ Aether.
   Future<void> saveRealEndpointFromLog(
     String endpoint, {
     required String protocol,

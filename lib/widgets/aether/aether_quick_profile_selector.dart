@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/settings_model.dart';
 import '../../providers/app_provider.dart';
+import 'aether_manual_profile_hint.dart';
+import 'aether_profile_labels.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  AetherQuickProfileSelector — انتخاب پروفایل با SegmentedButton.
@@ -21,6 +23,9 @@ import '../../providers/app_provider.dart';
 ///
 ///  در حالت Manual، تمام dropdownهای پایین (protocol،
 ///  obfuscation، scanMode، custom endpoint) فعال می‌شن.
+///
+///  ⚠️ توابع label/desc/icon به AetherProfileLabels منتقل شدن
+///  تا این فایل فقط UI بمونه.
 /// ═══════════════════════════════════════════════════════════════
 class AetherQuickProfileSelector extends StatelessWidget {
   final bool isRunning;
@@ -32,51 +37,6 @@ class AetherQuickProfileSelector extends StatelessWidget {
     'patchy',
     'strict',
   ];
-
-  String _label(String id, AppLocalizations l10n) {
-    switch (id) {
-      case 'adaptive':
-        return l10n.profileAdaptive;
-      case 'patchy':
-        return l10n.profilePatchy;
-      case 'strict':
-        return l10n.profileStrict;
-      case 'manual':
-        return l10n.profileManual;
-      default:
-        return id;
-    }
-  }
-
-  String _desc(String id, AppLocalizations l10n) {
-    switch (id) {
-      case 'adaptive':
-        return l10n.profileAdaptiveDesc;
-      case 'patchy':
-        return l10n.profilePatchyDesc;
-      case 'strict':
-        return l10n.profileStrictDesc;
-      case 'manual':
-        return l10n.profileManualDesc;
-      default:
-        return '';
-    }
-  }
-
-  IconData _icon(String id) {
-    switch (id) {
-      case 'adaptive':
-        return Icons.auto_awesome;
-      case 'patchy':
-        return Icons.network_check;
-      case 'strict':
-        return Icons.security;
-      case 'manual':
-        return Icons.tune;
-      default:
-        return Icons.tune;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,8 +72,8 @@ class AetherQuickProfileSelector extends StatelessWidget {
               .map(
                 (id) => ButtonSegment<String>(
                   value: id,
-                  label: Text(_label(id, l10n)),
-                  icon: Icon(_icon(id), size: 16),
+                  label: Text(AetherProfileLabels.label(id, l10n)),
+                  icon: Icon(AetherProfileLabels.icon(id), size: 16),
                 ),
               )
               .toList(),
@@ -137,7 +97,7 @@ class AetherQuickProfileSelector extends StatelessWidget {
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
           child: Text(
-            _desc(currentId, l10n),
+            AetherProfileLabels.description(currentId, l10n),
             key: ValueKey(currentId),
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
@@ -185,36 +145,7 @@ class AetherQuickProfileSelector extends StatelessWidget {
         // ═══════════════════════════════════════════════════════════
         if (isManual && !isRunning) ...[
           const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.amber.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: Colors.amber.withValues(alpha: 0.4),
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.info_outline,
-                  size: 16,
-                  color: Colors.amber.shade800,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'حالت دستی: پروتکل، مبهم‌سازی، scan mode و '
-                    'اندپوینت سفارشی در پایین کاملاً در اختیار شماست.',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: Colors.amber.shade900,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          const AetherManualProfileHint(),
         ],
       ],
     );

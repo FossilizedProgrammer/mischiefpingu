@@ -6,6 +6,7 @@ import '../../database/profile_performance_store.dart';
 import '../../database/gateway_score_calculator.dart';
 import '../../process/log_source.dart';
 import '../../aether_logger.dart';
+import '../util/endpoint_parser.dart';   
 import 'ranked_candidate.dart';
 
 part 'engine/candidate_builder.dart';

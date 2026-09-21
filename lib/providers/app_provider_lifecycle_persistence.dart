@@ -7,6 +7,9 @@ extension AppProviderLifecyclePersistence on AppProvider {
     settings = await persistence.loadSettings();
     aetherTestService.updateSettings(settings);
 
+    // ─── انتقال منابع فعال لاگ به ProcessService ───
+    processService.setEnabledLogSources(settings.enabledLogSources.toSet());
+
     final hasExisting = (await persistence.loadIpList(const [])).isNotEmpty;
     if (!hasExisting) {
       applySetting(1);
@@ -41,6 +44,13 @@ extension AppProviderLifecyclePersistence on AppProvider {
     loggingEnabled = value;
     processService.loggingEnabled = value;
     await persistence.saveLoggingEnabled(value);
+    touch();
+  }
+
+  Future<void> setLogSourcesInternal(Set<String> sources) async {
+    settings.enabledLogSources = sources.toList();
+    processService.setEnabledLogSources(sources);
+    await saveSettings();
     touch();
   }
 

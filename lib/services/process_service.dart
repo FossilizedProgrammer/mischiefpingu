@@ -55,29 +55,6 @@ class ProcessService extends ChangeNotifier
   @override
   bool isAetherRunning = false;
 
-  /// ═══════════════════════════════════════════════════════════════
-  ///  ⚠️ isAetherTunnelReady — آیا tunnel Aether واقعاً آماده است؟
-  ///
-  ///  تفاوت با isAetherRunning:
-  ///    • isAetherRunning     = پروسه Aether spawn شده (فقط همین)
-  ///    • isAetherTunnelReady = Aether خط "socks5 server listening"
-  ///      را چاپ کرده (tunnel واقعاً validate شده)
-  ///
-  ///  بین این دو معمولاً ۵–۱۰ ثانیه فاصله است.
-  ///
-  ///  چه زمانی true می‌شود:
-  ///    • لاگ Aether شامل "socks5 server listening"
-  ///    • لاگ Aether شامل "exposing socks5"
-  ///
-  ///  چه زمانی false می‌شود:
-  ///    • stopAether() صدا زده شود
-  ///    • startAether() صدا زده شود (شروع تازه)
-  ///    • exitCode listener فعال شود
-  ///
-  ///  ⚠️ auto-probe و health check باید به این flag اعتماد کنند،
-  ///  نه isAetherRunning — وگرنه probe قبل از آماده شدن SOCKS
-  ///  اجرا می‌شود و "Connection refused" می‌دهد.
-  /// ═══════════════════════════════════════════════════════════════
   @override
   bool isAetherTunnelReady = false;
 
@@ -105,16 +82,6 @@ class ProcessService extends ChangeNotifier
   @override
   int torBootstrapProgress = 0;
 
-  /// ═══════════════════════════════════════════════════════════════
-  ///  فلگ سرکوب sad notification هنگام exit پروسه.
-  ///
-  ///  وقتی کاربر دستی stop می‌کند، این فلگ true می‌شود تا
-  ///  exitCode listener نوتیف sad نفرستد. بعد از اینکه
-  ///  listener اجرا شد، دوباره false می‌شود.
-  ///
-  ///  این برای جلوگیری از sad اشتباه است وقتی کاربر خودش
-  ///  تونل را متوقف کرده و پروسه با exitCode برمی‌گردد.
-  /// ═══════════════════════════════════════════════════════════════
   bool suppressSadNotification = false;
 
   // ═══════════════════════════════════════════════════════════════
@@ -350,6 +317,15 @@ class ProcessService extends ChangeNotifier
   final LogStore _logStore = LogStore();
   Stream<String> get logStream => _logStore.stream;
   List<String> get fullLog => _logStore.fullLog;
+
+  /// منابع فعال لاگ.
+  Set<String> get enabledLogSources => _logStore.enabledSources;
+
+  /// به‌روزرسانی منابع فعال لاگ.
+  void setEnabledLogSources(Set<String> sources) {
+    _logStore.setEnabledSources(sources);
+    notifyListeners();
+  }
 
   bool _initialized = false;
 

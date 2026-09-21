@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/cdn_scanner_provider.dart';
 import 'settings_tile_base.dart';
+import 'cdn_scanner/cdn_scanner_controller.dart';
 import 'cdn_scanner/cdn_scanner_inputs.dart';
 import 'cdn_scanner/cdn_scanner_results.dart';
 import 'cdn_scanner/cdn_custom_ips_manager.dart';
@@ -18,36 +19,23 @@ class CdnScannerSection extends StatefulWidget {
 class _CdnScannerSectionState extends State<CdnScannerSection> {
   final _inputCtrl = TextEditingController();
   final _sniCtrl = TextEditingController();
-  bool _controllersSynced = false;
-  String? _lastSyncedPreset;
+  late final CdnScannerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = CdnScannerController(
+      inputCtrl: _inputCtrl,
+      sniCtrl: _sniCtrl,
+    );
+  }
 
   @override
   void dispose() {
+    _controller.dispose();
     _inputCtrl.dispose();
     _sniCtrl.dispose();
     super.dispose();
-  }
-
-  void _syncControllers(CdnScannerProvider scan) {
-    if (!scan.isLoaded) return;
-
-    final presetChanged = _lastSyncedPreset != scan.selectedPresetId;
-    final firstTime = !_controllersSynced;
-
-    if (firstTime || presetChanged) {
-      _lastSyncedPreset = scan.selectedPresetId;
-      _controllersSynced = true;
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        if (scan.selectedPresetId == 'custom') {
-          _inputCtrl.text = scan.customIps.join('\n');
-        } else {
-          _inputCtrl.text = scan.customInput;
-        }
-        _sniCtrl.text = scan.snis.join('\n');
-      });
-    }
   }
 
   @override
@@ -56,7 +44,8 @@ class _CdnScannerSectionState extends State<CdnScannerSection> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
 
-    _syncControllers(scan);
+    // sync controllerها با state provider
+    _controller.sync(scan);
 
     return SettingsTile(
       title: l10n.cdnScanner,

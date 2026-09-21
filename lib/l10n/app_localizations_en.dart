@@ -295,6 +295,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get log => 'Log';
 
   @override
+  String get logSourceFilter => 'Filter Log Sources';
+
+  @override
+  String get logSourcePsiphon => 'Psiphon';
+
+  @override
+  String get logSourceAether => 'Aether';
+
+  @override
+  String get logSourceTor => 'Tor';
+
+  @override
+  String get logSourceSstp => 'SSTP';
+
+  @override
+  String get logSourceApp => 'App';
+
+  @override
+  String get logSourceSystem => 'System';
+
+  @override
   String get manageList => 'Manage list (Add / Delete)';
 
   @override
@@ -480,6 +501,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get select => 'Select...';
 
   @override
+  String get selectAll => 'Select all';
+
+  @override
   String get server => 'Server';
 
   @override
@@ -626,6 +650,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get working => 'Working';
+
+  @override
+  String get watchdog => 'Watchdog';
+
+  @override
+  String get watchdogEnabled => 'Enable watchdog';
+
+  @override
+  String get watchdogEnabledSubtitle =>
+      'Automatically restart tunnels when they become unresponsive';
+
+  @override
+  String get watchdogSettings => 'Watchdog Settings';
 
   @override
   String get appUpdate => 'App Update';

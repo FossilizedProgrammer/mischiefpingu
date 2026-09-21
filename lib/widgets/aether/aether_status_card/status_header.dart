@@ -2,6 +2,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'helpers.dart';
+
 /// ═══════════════════════════════════════════════════════════════
 ///  ردیف اول کارت: آیکن وضعیت + برچسب + uptime.
 /// ═══════════════════════════════════════════════════════════════
@@ -91,7 +93,8 @@ class _UptimeBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
-        _format(uptime),
+        // ⚠️ استفاده از helper مشترک به جای متد خصوصی محلی
+        AetherStatusHelpers.formatDuration(uptime),
         style: theme.textTheme.bodySmall?.copyWith(
           fontFamily: 'monospace',
           fontWeight: FontWeight.w600,
@@ -99,15 +102,5 @@ class _UptimeBadge extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _format(Duration d) {
-    if (d.inHours > 0) {
-      return '${d.inHours}h ${d.inMinutes.remainder(60)}m';
-    }
-    if (d.inMinutes > 0) {
-      return '${d.inMinutes}m ${d.inSeconds.remainder(60)}s';
-    }
-    return '${d.inSeconds}s';
   }
 }

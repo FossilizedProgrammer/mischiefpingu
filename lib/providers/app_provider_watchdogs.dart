@@ -107,7 +107,27 @@ extension AppProviderWatchdogs on AppProvider {
     );
   }
 
+  /// ═══════════════════════════════════════════════════════════════
+  ///  ⚠️ syncWatchdogs — حالا به settings.watchdogEnabled احترام
+  ///  می‌گذارد.
+  ///
+  ///  وقتی user واچ‌داگ را غیرفعال می‌کند:
+  ///    • همهٔ watchdogها stop() می‌شوند
+  ///    • هیچ probe جدیدی زده نمی‌شود
+  ///    • هیچ restart خودکاری رخ نمی‌دهد
+  ///
+  ///  وقتی دوباره فعال می‌کند:
+  ///    • ensureWatchdogs دوباره صدا زده می‌شود
+  ///    • syncWithConnectionState وضعیت را reset می‌کند
+  /// ═══════════════════════════════════════════════════════════════
   void syncWatchdogs() {
+    // ─── واچ‌داگ غیرفعال است → همه را متوقف کن ───
+    if (!settings.watchdogEnabled) {
+      _watchdogManager?.stopAll();
+      return;
+    }
+
+    // ─── واچ‌داگ فعال است → ensure + sync ───
     ensureWatchdogs();
     _watchdogManager!.syncWithConnectionState(
       psiphonConnected: processService.isPsiphonConnected,

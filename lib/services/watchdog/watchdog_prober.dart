@@ -8,6 +8,8 @@ import 'watchdog_quality_metrics.dart';
 
 part 'prober/metrics_builder.dart';
 part 'prober/https_probe.dart';
+part 'prober/socks_handshake.dart';
+part 'prober/tls_probe.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  WatchdogProber — probe SOCKS + HTTPS با metric کیفی.
@@ -15,9 +17,11 @@ part 'prober/https_probe.dart';
 ///  ⚠️ نسخهٔ نهایی: hostname + HTTPS 443 + SNI معتبر.
 ///  ⚠️ از StreamIterator برای جلوگیری از "already listened" استفاده می‌شود.
 ///
-///  بخش‌های داخلی در `prober/` جدا شده‌اند:
-///    • ProberMetricsBuilder → ساخت WatchdogQualityMetrics
-///    • ProberHttpsProbe     → probe HTTPS (روی secure socket آماده)
+///  منطق به چهار part جدا شده:
+///    • ProberMetricsBuilder  → ساخت WatchdogQualityMetrics
+///    • ProberHttpsProbe      → probe HTTPS (روی secure socket آماده)
+///    • WatchdogProberSocksHandshake → مرحله 1+2+3 (TCP + greeting + CONNECT)
+///    • WatchdogProberTlsProbe       → مرحله 4 (TLS + HTTPS)
 /// ═══════════════════════════════════════════════════════════════
 class WatchdogProber {
   final int socksPort;
@@ -62,134 +66,34 @@ class WatchdogProber {
     bool httpStatusOk = false;
 
     try {
-      // ─── مرحله 1: TCP به SOCKS ───
-      try {
-        sock = await Socket.connect(
-          '127.0.0.1',
-          socksPort,
-          timeout: connectTimeout,
-        );
-        tcpOk = true;
-      } on SocketException {
-        sw.stop();
-        return buildMetrics(
-          latencyMs: sw.elapsedMilliseconds,
-          tcpOk: false,
-          greetOk: false,
-          connectOk: false,
-          httpRespOk: false,
-          httpStatusOk: false,
-        );
-      }
+      // ─── مرحله 1+2+3: SOCKS handshake ───
+      final hs = await performSocksHandshake(sw: sw);
 
-      iter = StreamIterator<List<int>>(sock.timeout(socksTimeout));
+      sock = hs.sock;
+      iter = hs.iter;
+      tcpOk = hs.tcpOk;
+      greetOk = hs.greetOk;
+      connectOk = hs.connectOk;
 
-      // ─── مرحله 2: SOCKS5 greeting ───
-      sock.add([0x05, 0x01, 0x00]);
-      await sock.flush();
-
-      if (!await iter.moveNext()) {
-        sw.stop();
-        return buildMetrics(
-          latencyMs: sw.elapsedMilliseconds,
-          tcpOk: tcpOk,
-          greetOk: false,
-          connectOk: false,
-          httpRespOk: false,
-          httpStatusOk: false,
-        );
-      }
-      final greet = iter.current;
-      if (greet.isEmpty || greet[0] != 0x05) {
-        sw.stop();
-        return buildMetrics(
-          latencyMs: sw.elapsedMilliseconds,
-          tcpOk: tcpOk,
-          greetOk: false,
-          connectOk: false,
-          httpRespOk: false,
-          httpStatusOk: false,
-        );
-      }
-      if (greet.length >= 2 && greet[1] != 0x00) {
-        sw.stop();
-        return buildMetrics(
-          latencyMs: sw.elapsedMilliseconds,
-          tcpOk: tcpOk,
-          greetOk: false,
-          connectOk: false,
-          httpRespOk: false,
-          httpStatusOk: false,
-        );
-      }
-      greetOk = true;
-
-      // ─── مرحله 3: SOCKS5 CONNECT با hostname ───
-      final hostBytes = utf8.encode(probeHostname);
-      sock.add(<int>[
-        0x05,
-        0x01,
-        0x00,
-        0x03,
-        hostBytes.length,
-        ...hostBytes,
-        (probeHttpsPort >> 8) & 0xFF,
-        probeHttpsPort & 0xFF,
-      ]);
-      await sock.flush();
-
-      if (!await iter.moveNext()) {
+      if (!hs.socksOk) {
         sw.stop();
         return buildMetrics(
           latencyMs: sw.elapsedMilliseconds,
           tcpOk: tcpOk,
           greetOk: greetOk,
-          connectOk: false,
+          connectOk: connectOk,
           httpRespOk: false,
           httpStatusOk: false,
         );
       }
-      final resp = iter.current;
-      if (resp.length < 2 || resp[1] != 0x00) {
-        sw.stop();
-        return buildMetrics(
-          latencyMs: sw.elapsedMilliseconds,
-          tcpOk: tcpOk,
-          greetOk: greetOk,
-          connectOk: false,
-          httpRespOk: false,
-          httpStatusOk: false,
-        );
-      }
-      connectOk = true;
 
-      // ─── مرحله 4: TLS handshake ───
+      // ─── مرحله 4: TLS + HTTPS ───
       if (doHttpProbe) {
-        await iter.cancel();
-        iter = null;
-
-        try {
-          secure = await SecureSocket.secure(
-            sock,
-            host: probeHostname,
-            onBadCertificate: (_) => true,
-          ).timeout(httpProbeTimeout);
-        } catch (e) {
-          log('✗ probe: TLS handshake failed: $e', source: logSource);
-          sw.stop();
-          return buildMetrics(
-            latencyMs: sw.elapsedMilliseconds,
-            tcpOk: tcpOk,
-            greetOk: greetOk,
-            connectOk: connectOk,
-            httpRespOk: false,
-            httpStatusOk: false,
-          );
-        }
-
-        final httpResult = await probeHttps(secure);
-        httpRespOk = httpResult.responseOk;
-        httpStatusOk = httpResult.statusOk;
+        final tls = await performTlsAndHttps(sock: sock!, iter: iter);
+        secure = tls.secure;
+        httpRespOk = tls.httpRespOk;
+        httpStatusOk = tls.httpStatusOk;
+        iter = null; // iterator cancel شد
       } else {
         httpRespOk = true;
         httpStatusOk = true;

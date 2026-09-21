@@ -40,7 +40,7 @@ extension AetherDecisionEngineOutcomeRecorder on AetherDecisionEngine {
       latencyMs: latencyMs,
     );
 
-    final ep = _parseEndpoint(candidate.endpoint);
+    final ep = EndpointParser.parse(candidate.endpoint);
     if (ep == null) return;
 
     try {
@@ -65,9 +65,7 @@ extension AetherDecisionEngineOutcomeRecorder on AetherDecisionEngine {
         );
       }
     } catch (e) {
-      logInternal(
-        '⚠ DecisionEngine: history record failed: $e',
-      );
+      logInternal('⚠ DecisionEngine: history record failed: $e');
     }
   }
 
@@ -77,7 +75,7 @@ extension AetherDecisionEngineOutcomeRecorder on AetherDecisionEngine {
     required bool wasCleanDisconnect,
     int reconnectCount = 0,
   }) async {
-    final ep = _parseEndpoint(candidate.endpoint);
+    final ep = EndpointParser.parse(candidate.endpoint);
     if (ep == null) return;
 
     try {
@@ -101,19 +99,7 @@ extension AetherDecisionEngineOutcomeRecorder on AetherDecisionEngine {
         );
       }
     } catch (e) {
-      logInternal(
-        '⚠ DecisionEngine: session end record failed: $e',
-      );
+      logInternal('⚠ DecisionEngine: session end record failed: $e');
     }
-  }
-
-  (String, int)? _parseEndpoint(String endpoint) {
-    if (endpoint.isEmpty) return null;
-    final idx = endpoint.lastIndexOf(':');
-    if (idx <= 0) return null;
-    final ip = endpoint.substring(0, idx);
-    final port = int.tryParse(endpoint.substring(idx + 1));
-    if (port == null || port < 1 || port > 65535) return null;
-    return (ip, port);
   }
 }

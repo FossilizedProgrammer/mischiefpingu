@@ -664,6 +664,48 @@ abstract class AppLocalizations {
   /// **'Log'**
   String get log;
 
+  /// No description provided for @logSourceFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter Log Sources'**
+  String get logSourceFilter;
+
+  /// No description provided for @logSourcePsiphon.
+  ///
+  /// In en, this message translates to:
+  /// **'Psiphon'**
+  String get logSourcePsiphon;
+
+  /// No description provided for @logSourceAether.
+  ///
+  /// In en, this message translates to:
+  /// **'Aether'**
+  String get logSourceAether;
+
+  /// No description provided for @logSourceTor.
+  ///
+  /// In en, this message translates to:
+  /// **'Tor'**
+  String get logSourceTor;
+
+  /// No description provided for @logSourceSstp.
+  ///
+  /// In en, this message translates to:
+  /// **'SSTP'**
+  String get logSourceSstp;
+
+  /// No description provided for @logSourceApp.
+  ///
+  /// In en, this message translates to:
+  /// **'App'**
+  String get logSourceApp;
+
+  /// No description provided for @logSourceSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get logSourceSystem;
+
   /// No description provided for @manageList.
   ///
   /// In en, this message translates to:
@@ -1012,6 +1054,12 @@ abstract class AppLocalizations {
   /// **'Select...'**
   String get select;
 
+  /// No description provided for @selectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Select all'**
+  String get selectAll;
+
   /// No description provided for @server.
   ///
   /// In en, this message translates to:
@@ -1299,6 +1347,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Working'**
   String get working;
+
+  /// No description provided for @watchdog.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchdog'**
+  String get watchdog;
+
+  /// No description provided for @watchdogEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable watchdog'**
+  String get watchdogEnabled;
+
+  /// No description provided for @watchdogEnabledSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically restart tunnels when they become unresponsive'**
+  String get watchdogEnabledSubtitle;
+
+  /// No description provided for @watchdogSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchdog Settings'**
+  String get watchdogSettings;
 
   /// No description provided for @appUpdate.
   ///

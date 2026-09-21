@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 import '../../widgets/aether_protocol_card.dart';
+import '../../widgets/aether/aether_status_card.dart';
+import 'aether/aether_switches_section.dart';
 
 class AetherSettingsTile extends StatelessWidget {
   const AetherSettingsTile({super.key});
@@ -14,11 +16,6 @@ class AetherSettingsTile extends StatelessWidget {
     final s = provider.settings;
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-
-    void save() {
-      provider.saveSettings();
-      provider.touch();
-    }
 
     final protocolBadge = s.isAetherProfileAutomatic
         ? l10n.profile
@@ -97,31 +94,16 @@ class AetherSettingsTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ─── پیکربندی پروتکل ───
-                    const AetherProtocolCard(),
-
+                    // ═══════════════════════════════════════════════
+                    //  ⚠️ جدید: نمایش وضعیت لحظه‌ای Aether
+                    //  فقط وقتی تونل در حال اجرا است نمایش داده می‌شه
+                    // ═══════════════════════════════════════════════
+                    const AetherStatusCard(),
                     const SizedBox(height: 12),
 
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      dense: true,
-                      title: Text(l10n.shareOnLan),
-                      value: s.aetherShareLan,
-                      onChanged: (v) {
-                        s.aetherShareLan = v;
-                        save();
-                      },
-                    ),
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      dense: true,
-                      title: Text(l10n.autoReconnectAether),
-                      value: s.autoReconnectAether,
-                      onChanged: (v) {
-                        s.autoReconnectAether = v;
-                        save();
-                      },
-                    ),
+                    const AetherProtocolCard(),
+                    const SizedBox(height: 12),
+                    const AetherSwitchesSection(),
                   ],
                 ),
               ),

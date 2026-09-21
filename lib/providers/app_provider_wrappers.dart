@@ -9,4 +9,6 @@ extension AppProviderWrappers on AppProvider {
       saveHttpHostListInternal(list);
   Future<void> saveTlsSniList(List<String> list) =>
       saveTlsSniListInternal(list);
+  Future<void> setLogSources(Set<String> sources) =>
+      setLogSourcesInternal(sources);
 }

@@ -1,5 +1,7 @@
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,12 +25,7 @@ import 'aether_status_card/reconnects_row.dart';
 ///
 ///  این کارت فقط برای نمایش است — هیچ تنظیمی اینجا نیست.
 ///
-///  بخش‌های داخلی در `aether_status_card/` جدا شده‌اند:
-///    • StatusHeader     → ردیف وضعیت + uptime
-///    • AetherInfoRow    → ردیف Protocol / Gateway
-///    • AetherMetricsRow → سه باکس Latency / Jitter / Loss
-///    • AetherReconnectsRow → تعداد reconnect
-///    • AetherStatusHelpers → توابع فرمت‌دهی
+///  ⚠️ وقتی isRunning=false، کارت اصلاً نمایش داده نمی‌شه.
 /// ═══════════════════════════════════════════════════════════════
 class AetherStatusCard extends StatefulWidget {
   const AetherStatusCard({super.key});
@@ -38,19 +35,29 @@ class AetherStatusCard extends StatefulWidget {
 }
 
 class _AetherStatusCardState extends State<AetherStatusCard> {
+  Timer? _ticker;
+
   @override
   void initState() {
     super.initState();
     _startTicker();
   }
 
+  @override
+  void dispose() {
+    _ticker?.cancel();
+    _ticker = null;
+    super.dispose();
+  }
+
   /// هر ۱۰ ثانیه یک rebuild می‌زند تا uptime زنده بماند.
+  ///
+  /// ⚠️ تغییر: از Timer.periodic استفاده می‌کنیم (به جای Future.doWhile)
+  /// که idiom استاندارد Dart است و cancel در dispose رو ساده می‌کنه.
   void _startTicker() {
-    Future.doWhile(() async {
-      await Future.delayed(const Duration(seconds: 10));
-      if (!mounted) return false;
+    _ticker = Timer.periodic(const Duration(seconds: 10), (_) {
+      if (!mounted) return;
       setState(() {});
-      return mounted;
     });
   }
 
@@ -92,6 +99,14 @@ class _AetherStatusCardState extends State<AetherStatusCard> {
 
     // ─── زمان اتصال ───
     final connectedAt = provider.lastAetherConnectedAt;
+
+    // ═══════════════════════════════════════════════════════════════
+    //  ⚠️ اگر Aether در حال اجرا نیست، کارت نمایش داده نشه.
+    //  این کار از شلوغ شدن UI جلوگیری می‌کنه.
+    // ═══════════════════════════════════════════════════════════════
+    if (!isRunning && !isTesting) {
+      return const SizedBox.shrink();
+    }
 
     return Card(
       margin: const EdgeInsets.fromLTRB(12, 8, 12, 8),

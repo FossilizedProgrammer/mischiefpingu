@@ -5,6 +5,24 @@ import 'settings_model.dart';
 class SettingsValidation {
   SettingsValidation._();
 
+  static const Set<String> _validLogSources = {
+    'Psiphon',
+    'Aether',
+    'Tor',
+    'SSTP',
+    'App',
+    'System',
+  };
+
+  static const List<String> _defaultLogSources = [
+    'Psiphon',
+    'Aether',
+    'Tor',
+    'SSTP',
+    'App',
+    'System',
+  ];
+
   static void validateAndNormalize(AppSettings s) {
     _validateAetherProfile(s);
     _validateAether(s);
@@ -12,6 +30,22 @@ class SettingsValidation {
     _validateTor(s);
     _validateSstp(s);
     _validateConduit(s);
+    _validateLogSources(s);
+  }
+
+  static void _validateLogSources(AppSettings s) {
+    if (s.enabledLogSources.isEmpty) {
+      s.enabledLogSources = List.from(_defaultLogSources);
+      return;
+    }
+    final filtered = s.enabledLogSources
+        .where((source) => _validLogSources.contains(source))
+        .toList();
+    if (filtered.isEmpty) {
+      s.enabledLogSources = List.from(_defaultLogSources);
+    } else {
+      s.enabledLogSources = filtered;
+    }
   }
 
   static void _validateAetherProfile(AppSettings s) {
@@ -67,9 +101,6 @@ class SettingsValidation {
   static void _validatePsiphon(AppSettings s) {
     if (!['socks5', 'http'].contains(s.proxyType)) s.proxyType = 'socks5';
 
-    if (s.upstreamType == 2) {
-      s.upstreamType = 0;
-    }
     if (s.upstreamType < 0 || s.upstreamType > 5) {
       s.upstreamType = 0;
     }

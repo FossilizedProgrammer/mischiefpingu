@@ -89,14 +89,6 @@ extension GatewayReconnectPhase1 on GatewayReconnectOrchestrator {
 
   /// ═══════════════════════════════════════════════════════════════
   ///  tryEndpointDirect — تلاش مستقیم با یک endpoint خام.
-  ///
-  ///  این متد برای fast-path [2/2] استفاده می‌شود: وقتی endpoint
-  ///  ذخیره‌شده در SharedPreferences داریم ولی GatewayRecord
-  ///  کامل در DB نداریم.
-  ///
-  ///  تفاوت با tryGateway:
-  ///    • GatewayRecord لازم ندارد (ساختگی می‌سازد)
-  ///    • بعد از موفقیت، یک رکورد جدید در DB ثبت می‌کند
   /// ═══════════════════════════════════════════════════════════════
   Future<bool> tryEndpointDirect({
     required String endpoint,
@@ -148,8 +140,7 @@ extension GatewayReconnectPhase1 on GatewayReconnectOrchestrator {
 
     logMessage('★ Fast-path: connected via $endpoint');
 
-    // ─── ثبت موفقیت در تاریخچه ───
-    final parsed = _parseEndpoint(endpoint);
+    final parsed = EndpointParser.parse(endpoint);
     if (parsed != null) {
       try {
         await historyStore.recordSuccess(
@@ -163,15 +154,5 @@ extension GatewayReconnectPhase1 on GatewayReconnectOrchestrator {
     }
 
     return true;
-  }
-
-  (String, int)? _parseEndpoint(String endpoint) {
-    if (endpoint.isEmpty) return null;
-    final idx = endpoint.lastIndexOf(':');
-    if (idx <= 0) return null;
-    final ip = endpoint.substring(0, idx);
-    final port = int.tryParse(endpoint.substring(idx + 1));
-    if (port == null || port < 1 || port > 65535) return null;
-    return (ip, port);
   }
 }

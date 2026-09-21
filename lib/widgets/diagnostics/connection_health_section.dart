@@ -1,7 +1,5 @@
 library;
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,17 +7,21 @@ import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 import '../../services/health/tunnel_health_models.dart';
 import '../settings_tile_base.dart';
+
+import 'connection_health/auto_probe_scheduler.dart';
+import 'connection_health/probe_manager.dart';
+import 'connection_health/tunnel_state_resolver.dart';
 import 'connection_health/tunnel_health_row.dart';
-import 'connection_health/tunnel_health_tester.dart';
 import 'connection_health/tunnel_probe_result.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  ConnectionHealthSection — بخش جامع سلامت همه تونل‌ها.
 ///
 ///  ⚠️ تغییرات این نسخه:
-///    • از isAetherTunnelReady استفاده می‌کند (نه isAetherRunning)
-///    • auto-probe با backoff در همین widget مدیریت می‌شود
-///    • تا وقتی tunnel واقعاً آماده نشده، probe نمی‌زند
+///    • منطق auto-probe به AutoProbeScheduler منتقل شد
+///    • منطق probe به ProbeManager منتقل شد
+///    • resolve وضعیت به TunnelStateResolver منتقل شد
+///    • این فایل فقط widget + state fields رو داره
 /// ═══════════════════════════════════════════════════════════════
 class ConnectionHealthSection extends StatefulWidget {
   const ConnectionHealthSection({super.key});
@@ -30,26 +32,26 @@ class ConnectionHealthSection extends StatefulWidget {
 }
 
 class _ConnectionHealthSectionState extends State<ConnectionHealthSection> {
-  final TunnelHealthTester _tester = const TunnelHealthTester();
+  late final AutoProbeScheduler _scheduler;
+  final ProbeManager _probeManager = const ProbeManager();
 
   final Map<TunnelKind, TunnelProbeResult> _lastProbeResults = {};
   final Set<TunnelKind> _probingKinds = {};
 
-  /// Timerهای auto-probe در انتظار.
-  final Map<TunnelKind, Timer> _autoProbeTimers = {};
-
-  /// تونل‌هایی که auto-probe موفق داشته‌اند (جلوگیری از تکرار).
-  final Set<TunnelKind> _autoProbed = {};
-
-  /// وضعیت قبلی هر تونل برای تشخیص transition.
-  final Map<TunnelKind, bool> _previousRunning = {};
+  @override
+  void initState() {
+    super.initState();
+    _scheduler = AutoProbeScheduler(
+      runProbe: _runAutoProbe,
+      onStateChanged: () {
+        if (mounted) setState(() {});
+      },
+    );
+  }
 
   @override
   void dispose() {
-    for (final t in _autoProbeTimers.values) {
-      t.cancel();
-    }
-    _autoProbeTimers.clear();
+    _scheduler.dispose();
     super.dispose();
   }
 
@@ -59,10 +61,11 @@ class _ConnectionHealthSectionState extends State<ConnectionHealthSection> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
 
-    final runningStates = _resolveRunningStates(provider);
+    final resolver = TunnelStateResolver(provider);
+    final runningStates = resolver.resolveRunningStates();
 
     // تشخیص transition و زمان‌بندی auto-probe
-    _detectTransitionsAndScheduleAutoProbe(provider, runningStates);
+    _scheduler.detectTransitions(provider, runningStates);
 
     final healthyCount = runningStates.values.where((v) => v).length;
 
@@ -78,7 +81,7 @@ class _ConnectionHealthSectionState extends State<ConnectionHealthSection> {
             Expanded(
               child: FilledButton.tonalIcon(
                 onPressed: _probingKinds.isEmpty
-                    ? () => _probeAll(context, provider)
+                    ? () => _probeAll(context, provider, resolver)
                     : null,
                 icon: const Icon(Icons.refresh, size: 18),
                 label: Text(l10n.tunnelHealthProbeAll),
@@ -96,203 +99,46 @@ class _ConnectionHealthSectionState extends State<ConnectionHealthSection> {
             isRunning: runningStates[kind] ?? false,
             isProbing: _probingKinds.contains(kind),
             lastProbeResult: _lastProbeResults[kind],
-            onProbe: () => _probeOne(context, provider, kind),
+            onProbe: () => _probeOne(context, provider, resolver, kind),
           ),
       ],
     );
   }
 
-  /// ═══════════════════════════════════════════════════════════════
-  ///  تشخیص transition از stopped به running و شروع auto-probe.
-  /// ═══════════════════════════════════════════════════════════════
-  void _detectTransitionsAndScheduleAutoProbe(
-    AppProvider provider,
-    Map<TunnelKind, bool> runningStates,
-  ) {
-    for (final kind in TunnelKind.values) {
-      final isRunning = runningStates[kind] ?? false;
-      final wasRunning = _previousRunning[kind] ?? false;
+  /// auto-probe (بدون SnackBar، بدون بررسی running state چون
+  /// scheduler خودش چک می‌کنه).
+  Future<bool> _runAutoProbe(TunnelKind kind) async {
+    if (!mounted) return false;
+    if (_probingKinds.contains(kind)) return false;
 
-      // ─── transition: stopped → running ───
-      if (isRunning && !wasRunning) {
-        debugPrint(
-          '[ConnectionHealthSection] ${kind.displayName} '
-          'transitioned to running — scheduling auto-probe',
-        );
-
-        _autoProbed.remove(kind);
-        _scheduleAutoProbe(provider, kind, attempt: 1);
-      }
-
-      // ─── transition: running → stopped ───
-      if (!isRunning && wasRunning) {
-        debugPrint(
-          '[ConnectionHealthSection] ${kind.displayName} '
-          'transitioned to stopped',
-        );
-
-        _autoProbeTimers.remove(kind)?.cancel();
-        _lastProbeResults.remove(kind);
-        _autoProbed.remove(kind);
-      }
-
-      _previousRunning[kind] = isRunning;
-    }
-  }
-
-  /// ═══════════════════════════════════════════════════════════════
-  ///  Schedule یک auto-probe با تاخیر و backoff نمایی.
-  ///
-  ///  attempt 1: 2s
-  ///  attempt 2: 3s
-  ///  attempt 3: 5s
-  ///  attempt 4: 8s
-  ///  attempt 5+: 12s
-  ///  حداکثر 6 تلاش
-  /// ═══════════════════════════════════════════════════════════════
-  void _scheduleAutoProbe(
-    AppProvider provider,
-    TunnelKind kind, {
-    required int attempt,
-  }) {
-    _autoProbeTimers.remove(kind)?.cancel();
-
-    if (_autoProbed.contains(kind)) return;
-
-    // اگه همین الان در حال probe است، دوباره schedule کن
-    if (_probingKinds.contains(kind)) {
-      _autoProbeTimers[kind] = Timer(
-        const Duration(seconds: 2),
-        () => _scheduleAutoProbe(provider, kind, attempt: attempt),
-      );
-      return;
-    }
-
-    final delay = _delayForAttempt(attempt);
-    debugPrint(
-      '[ConnectionHealthSection] ${kind.displayName} '
-      'auto-probe attempt #$attempt in ${delay.inSeconds}s',
-    );
-
-    _autoProbeTimers[kind] = Timer(delay, () async {
-      _autoProbeTimers.remove(kind);
-
-      if (!mounted) return;
-
-      // چک کن هنوز تونل در حال اجراست
-      final currentStates = _resolveRunningStates(provider);
-      if (!(currentStates[kind] ?? false)) {
-        debugPrint(
-          '[ConnectionHealthSection] ${kind.displayName} '
-          'auto-probe cancelled (tunnel stopped)',
-        );
-        return;
-      }
-
-      if (_autoProbed.contains(kind)) return;
-
-      await _autoProbe(provider, kind, attempt: attempt);
-    });
-  }
-
-  Duration _delayForAttempt(int attempt) {
-    switch (attempt) {
-      case 1:
-        return const Duration(seconds: 2);
-      case 2:
-        return const Duration(seconds: 3);
-      case 3:
-        return const Duration(seconds: 5);
-      case 4:
-        return const Duration(seconds: 8);
-      default:
-        return const Duration(seconds: 12);
-    }
-  }
-
-  /// اجرای auto-probe و اگر شکست خورد، دوباره schedule کن.
-  Future<void> _autoProbe(
-    AppProvider provider,
-    TunnelKind kind, {
-    required int attempt,
-  }) async {
-    if (!mounted) return;
-    if (_probingKinds.contains(kind)) return;
+    final provider = context.read<AppProvider>();
+    final resolver = TunnelStateResolver(provider);
 
     setState(() {
       _probingKinds.add(kind);
     });
 
-    try {
-      final port = _socksPortFor(provider, kind);
-      debugPrint(
-        '[ConnectionHealthSection] auto-probe ${kind.displayName} '
-        'attempt #$attempt on 127.0.0.1:$port',
-      );
+    final port = resolver.socksPortFor(kind);
+    final result = await _probeManager.run(kind: kind, socksPort: port);
 
-      final result = await _tester.probe(kind: kind, socksPort: port);
+    if (!mounted) return false;
 
-      if (!mounted) return;
+    setState(() {
+      _lastProbeResults[kind] = result;
+      _probingKinds.remove(kind);
+    });
 
-      if (result.success) {
-        debugPrint(
-          '[ConnectionHealthSection] ${kind.displayName} '
-          'auto-probe SUCCESS (${result.latencyMs}ms)',
-        );
-
-        setState(() {
-          _lastProbeResults[kind] = result;
-          _probingKinds.remove(kind);
-          _autoProbed.add(kind);
-        });
-
-        _autoProbeTimers.remove(kind)?.cancel();
-      } else {
-        debugPrint(
-          '[ConnectionHealthSection] ${kind.displayName} '
-          'auto-probe FAILED (attempt #$attempt): ${result.error}',
-        );
-
-        setState(() {
-          _lastProbeResults[kind] = result;
-          _probingKinds.remove(kind);
-        });
-
-        if (attempt < 6) {
-          _scheduleAutoProbe(provider, kind, attempt: attempt + 1);
-        } else {
-          debugPrint(
-            '[ConnectionHealthSection] ${kind.displayName} '
-            'auto-probe giving up after $attempt attempts',
-          );
-        }
-      }
-    } catch (e) {
-      debugPrint(
-        '[ConnectionHealthSection] ${kind.displayName} '
-        'auto-probe threw: $e',
-      );
-
-      if (!mounted) return;
-
-      setState(() {
-        _lastProbeResults[kind] = TunnelProbeResult.failure(error: '$e');
-        _probingKinds.remove(kind);
-      });
-
-      if (attempt < 6) {
-        _scheduleAutoProbe(provider, kind, attempt: attempt + 1);
-      }
-    }
+    return result.success;
   }
 
   /// probe دستی (دکمه رفرش).
   Future<void> _probeOne(
     BuildContext context,
     AppProvider provider,
+    TunnelStateResolver resolver,
     TunnelKind kind,
   ) async {
-    if (!_isTunnelRunning(provider, kind)) {
+    if (!resolver.isTunnelRunning(kind)) {
       if (!context.mounted) return;
       final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -308,48 +154,34 @@ class _ConnectionHealthSectionState extends State<ConnectionHealthSection> {
     if (_probingKinds.contains(kind)) return;
 
     // کنسل کردن auto-probe چون user خودش خواست
-    _autoProbeTimers.remove(kind)?.cancel();
-    _autoProbed.add(kind);
+    _scheduler.cancelFor(kind);
 
     setState(() {
       _probingKinds.add(kind);
     });
 
-    try {
-      final port = _socksPortFor(provider, kind);
-      debugPrint(
-        '[ConnectionHealthSection] manual probe ${kind.displayName} '
-        'on 127.0.0.1:$port',
-      );
+    final port = resolver.socksPortFor(kind);
+    final result = await _probeManager.run(kind: kind, socksPort: port);
 
-      final result = await _tester.probe(kind: kind, socksPort: port);
+    if (!mounted) return;
 
-      if (!mounted) return;
+    setState(() {
+      _lastProbeResults[kind] = result;
+      _probingKinds.remove(kind);
+    });
 
-      setState(() {
-        _lastProbeResults[kind] = result;
-        _probingKinds.remove(kind);
-      });
-
-      if (!result.success) {
-        provider.recordTunnelError(kind);
-      }
-    } catch (e) {
-      debugPrint(
-        '[ConnectionHealthSection] ${kind.displayName} '
-        'manual probe threw: $e',
-      );
-      if (!mounted) return;
-      setState(() {
-        _lastProbeResults[kind] = TunnelProbeResult.failure(error: '$e');
-        _probingKinds.remove(kind);
-      });
+    if (!result.success) {
+      provider.recordTunnelError(kind);
     }
   }
 
-  Future<void> _probeAll(BuildContext context, AppProvider provider) async {
+  Future<void> _probeAll(
+    BuildContext context,
+    AppProvider provider,
+    TunnelStateResolver resolver,
+  ) async {
     final runningKinds = TunnelKind.values
-        .where((k) => _isTunnelRunning(provider, k))
+        .where((k) => resolver.isTunnelRunning(k))
         .toList();
 
     if (runningKinds.isEmpty) {
@@ -366,43 +198,7 @@ class _ConnectionHealthSectionState extends State<ConnectionHealthSection> {
     }
 
     await Future.wait(
-      runningKinds.map((k) => _probeOne(context, provider, k)),
+      runningKinds.map((k) => _probeOne(context, provider, resolver, k)),
     );
-  }
-
-  /// ═══════════════════════════════════════════════════════════════
-  ///  ⚠️ برای Aether از isAetherTunnelReady استفاده می‌کنیم نه
-  ///  isAetherRunning. دلیل: SOCKS Aether فقط وقتی قابل استفاده
-  ///  است که tunnel validate شده باشد.
-  ///
-  ///  بقیه تونل‌ها (Psiphon/Tor/SSTP) از isXConnected استفاده
-  ///  می‌کنند که خودشان بعد از آماده شدن واقعی true می‌شوند.
-  /// ═══════════════════════════════════════════════════════════════
-  Map<TunnelKind, bool> _resolveRunningStates(AppProvider provider) {
-    final ps = provider.processService;
-    return {
-      TunnelKind.psiphon: ps.isPsiphonConnected,
-      TunnelKind.aether: ps.isAetherTunnelReady, // ← اینجا
-      TunnelKind.tor: ps.isTorConnected,
-      TunnelKind.sstp: ps.isSstpConnected,
-    };
-  }
-
-  bool _isTunnelRunning(AppProvider provider, TunnelKind kind) {
-    return _resolveRunningStates(provider)[kind] ?? false;
-  }
-
-  int _socksPortFor(AppProvider provider, TunnelKind kind) {
-    final s = provider.settings;
-    switch (kind) {
-      case TunnelKind.psiphon:
-        return s.socksPort;
-      case TunnelKind.aether:
-        return s.aetherLocalPort;
-      case TunnelKind.tor:
-        return s.torSocksPort;
-      case TunnelKind.sstp:
-        return s.sstpSocksPort;
-    }
   }
 }

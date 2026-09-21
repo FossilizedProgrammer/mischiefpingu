@@ -27,6 +27,14 @@ extension AppSettingsSerialization on AppSettings {
     return d;
   }
 
+  static List<String> _list(Map m, String k, List<String> d) {
+    final v = m[k];
+    if (v is List) {
+      return v.map((e) => e.toString()).toList();
+    }
+    return d;
+  }
+
   static AppSettings fromJson(Map<String, dynamic> m) {
     final s = AppSettings(
       ip: _s(m, 'ip', ''),
@@ -101,6 +109,12 @@ extension AppSettingsSerialization on AppSettings {
       aetherTryLastEndpointFirst: _b(m, 'aetherTryLastEndpointFirst', true),
       themeId: _s(m, 'themeId', 'ocean'),
       muted: _b(m, 'muted', false),
+      watchdogEnabled: _b(m, 'watchdogEnabled', true),
+      enabledLogSources: _list(
+        m,
+        'enabledLogSources',
+        ['Psiphon', 'Aether', 'Tor', 'SSTP', 'App', 'System'],
+      ),
     );
     SettingsValidation.validateAndNormalize(s);
     return s;
@@ -175,6 +189,8 @@ extension AppSettingsSerialization on AppSettings {
         'aetherTryLastEndpointFirst': aetherTryLastEndpointFirst,
         'themeId': themeId,
         'muted': muted,
+        'watchdogEnabled': watchdogEnabled,
+        'enabledLogSources': enabledLogSources,
       };
 
   String toJsonString() => jsonEncode(toJsonMap());

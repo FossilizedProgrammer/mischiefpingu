@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
+import 'log/log_filter_section.dart';
 
 class LogTile extends StatelessWidget {
   const LogTile({super.key});
@@ -90,6 +91,8 @@ class LogTile extends StatelessWidget {
                       value: provider.loggingEnabled,
                       onChanged: (v) => provider.setLoggingEnabled(v == true),
                     ),
+                    const SizedBox(height: 8),
+                    LogFilterSection(provider: provider, l10n: l10n),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,

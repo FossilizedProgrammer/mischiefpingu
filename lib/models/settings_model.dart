@@ -14,6 +14,7 @@ class AppSettings {
   bool onlyIpv4;
   bool autoFindIpAndSni;
   bool saveFoundIpsAndSni;
+bool watchdogEnabled;
 
   int upstreamType;
 
@@ -87,6 +88,12 @@ class AppSettings {
   String themeId;
   bool muted;
 
+  /// لیست منابع فعال لاگ.
+  ///
+  /// اگر خالی باشد، همه منابع لاگ می‌شوند.
+  /// در غیر این صورت فقط منابع موجود در لیست لاگ می‌شوند.
+  List<String> enabledLogSources;
+
   AppSettings({
     this.ip = '23.215.0.206',
     this.httpHost = 'aparat.com',
@@ -156,7 +163,10 @@ class AppSettings {
     this.psiphonBinarySha = '',
     this.themeId = 'ocean',
     this.muted = false,
-  });
+    this.watchdogEnabled = true,
+    List<String>? enabledLogSources,
+  }) : enabledLogSources = enabledLogSources ??
+            ['Psiphon', 'Aether', 'Tor', 'SSTP', 'App', 'System'];
 
   factory AppSettings.fromJson(Map<String, dynamic> m) =>
       AppSettingsSerialization.fromJson(m);

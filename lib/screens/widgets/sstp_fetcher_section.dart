@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 import '../../providers/sstp_fetcher_provider.dart';
-import '../../services/vpngate_scraper_service.dart';
 import '../../widgets/settings_tile_base.dart';
+import 'sstp_fetcher/sstp_fetcher_actions.dart';
 import 'sstp_fetcher/sstp_fetcher_controls.dart';
 import 'sstp_fetcher/sstp_fetcher_status.dart';
 import 'sstp_fetcher/sstp_server_list.dart';
@@ -32,50 +32,6 @@ class _SstpFetcherSectionState extends State<SstpFetcherSection> {
     fetcher.init();
   }
 
-  Future<void> _applyServer(SstpServer s) async {
-    final app = context.read<AppProvider>();
-    if (app.processService.isSstpRunning) {
-      await app.connectSstp();
-      await Future.delayed(const Duration(milliseconds: 400));
-    }
-    app.settings.sstpServer = s.ip;
-    app.settings.sstpPort = s.port;
-    await app.saveSettings();
-    app.touch();
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'SSTP → ${s.ip}:${s.port}'
-          '${s.country.isNotEmpty ? ' (${s.country})' : ''}',
-        ),
-        duration: const Duration(seconds: 3),
-      ),
-    );
-  }
-
-  Future<void> _clearAll(SstpFetcherProvider fetcher) async {
-    final l10n = AppLocalizations.of(context);
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('${l10n.clearAll}?'),
-        content: Text('${fetcher.servers.length}'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n.cancelBtn),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(l10n.clearAll),
-          ),
-        ],
-      ),
-    );
-    if (confirm == true) await fetcher.clearAll();
-  }
-
   @override
   Widget build(BuildContext context) {
     final fetcher = context.watch<SstpFetcherProvider>();
@@ -99,7 +55,7 @@ class _SstpFetcherSectionState extends State<SstpFetcherSection> {
           child: TextButton.icon(
             onPressed: fetcher.servers.isEmpty || fetcher.isLoading
                 ? null
-                : () => _clearAll(fetcher),
+                : () => SstpFetcherActions.clearAll(context, fetcher),
             icon: const Icon(Icons.delete_outline, size: 18),
             label: Text(l10n.clearAll),
           ),
@@ -109,8 +65,8 @@ class _SstpFetcherSectionState extends State<SstpFetcherSection> {
         SstpServerList(
           fetcher: fetcher,
           theme: theme,
-          onApply: _applyServer,
-          onClearAll: _clearAll,
+          onApply: (s) => SstpFetcherActions.applyServer(context, s),
+          onClearAll: (f) => SstpFetcherActions.clearAll(context, f),
         ),
       ],
     );

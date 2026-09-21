@@ -6,6 +6,7 @@ import '../aether_cache_manager.dart';
 import '../database/gateway_history_store.dart';
 import '../process_service.dart';
 import 'aether_test_helpers.dart';
+import 'util/endpoint_parser.dart';
 
 class AetherFailureHandler {
   final ProcessService processService;
@@ -111,13 +112,16 @@ class AetherFailureHandler {
     }
   }
 
-  static (String ip, int port)? parseEndpoint(String endpoint) {
-    if (endpoint.isEmpty) return null;
-    final idx = endpoint.lastIndexOf(':');
-    if (idx <= 0) return null;
-    final ip = endpoint.substring(0, idx);
-    final port = int.tryParse(endpoint.substring(idx + 1));
-    if (port == null) return null;
-    return (ip, port);
+  /// ═══════════════════════════════════════════════════════════════
+  ///  پارس endpoint — delegate به EndpointParser مشترک.
+  ///
+  ///  ⚠️ این متد به عنوان wrapper باقی مونده تا کد قدیمی که
+  ///  `AetherFailureHandler.parseEndpoint(...)` صدا می‌زنه،
+  ///  بدون تغییر کار کنه.
+  /// ═══════════════════════════════════════════════════════════════
+  static (String, int)? parseEndpoint(String endpoint) {
+    final parsed = EndpointParser.parse(endpoint);
+    if (parsed == null) return null;
+    return (parsed.$1, parsed.$2);
   }
 }

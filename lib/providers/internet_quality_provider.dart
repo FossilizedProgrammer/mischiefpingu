@@ -38,6 +38,16 @@ class InternetQualityProvider extends ChangeNotifier {
   /// آخرین نتیجه یا null.
   InternetDiagnosticResult? get lastResult => _result;
 
+  /// ═══════════════════════════════════════════════════════════════
+  ///  ⚠️ جدید: invalidate کردن cache داخلی.
+  ///
+  ///  از AppProvider (وقتی NetworkChangeDetector تغییر شبکه رو
+  ///  تشخیص داد) صدا زده می‌شه.
+  /// ═══════════════════════════════════════════════════════════════
+  void invalidateCache() {
+    _monitor.invalidateCache();
+  }
+
   /// اجرای diagnostic فوری و انتظار برای نتیجه.
   Future<InternetDiagnosticResult> testNow() async {
     if (_isLoading) {

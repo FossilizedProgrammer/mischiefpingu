@@ -294,6 +294,27 @@ class AppLocalizationsFa extends AppLocalizations {
   String get log => 'لاگ';
 
   @override
+  String get logSourceFilter => 'فیلتر منابع لاگ';
+
+  @override
+  String get logSourcePsiphon => 'سایفون';
+
+  @override
+  String get logSourceAether => 'اتر';
+
+  @override
+  String get logSourceTor => 'تور';
+
+  @override
+  String get logSourceSstp => 'اس‌اس‌تی‌پی';
+
+  @override
+  String get logSourceApp => 'برنامه';
+
+  @override
+  String get logSourceSystem => 'سیستم';
+
+  @override
   String get manageList => 'مدیریت لیست (افزودن / حذف)';
 
   @override
@@ -476,6 +497,9 @@ class AppLocalizationsFa extends AppLocalizations {
   String get select => 'انتخاب…';
 
   @override
+  String get selectAll => 'انتخاب همه';
+
+  @override
   String get server => 'سرور';
 
   @override
@@ -622,6 +646,19 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get working => 'در حال کار';
+
+  @override
+  String get watchdog => 'واچ‌داگ';
+
+  @override
+  String get watchdogEnabled => 'فعال‌سازی واچ‌داگ';
+
+  @override
+  String get watchdogEnabledSubtitle =>
+      'راه‌اندازی مجدد خودکار تونل‌ها در صورت عدم پاسخ‌دهی';
+
+  @override
+  String get watchdogSettings => 'تنظیمات واچ‌داگ';
 
   @override
   String get appUpdate => 'بروزرسانی برنامه';

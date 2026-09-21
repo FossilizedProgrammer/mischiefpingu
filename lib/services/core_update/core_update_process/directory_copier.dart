@@ -6,7 +6,15 @@ import 'package:path/path.dart' as p;
 
 import '../../app_data_service.dart';
 
-/// کپی درخت دایرکتوری + نصب pt.
+part 'aether_pt_installer.dart';
+
+/// ═══════════════════════════════════════════════════════════════
+///  DirectoryCopier — کپی درخت دایرکتوری.
+///
+///  نصب پوشه `pt` مخصوص Aether به `aether_pt_installer.dart`
+///  منتقل شده و از طریق extension `AetherPtInstaller`
+///  در دسترسه.
+/// ═══════════════════════════════════════════════════════════════
 class DirectoryCopier {
   final void Function(String)? log;
   DirectoryCopier({this.log});
@@ -14,6 +22,10 @@ class DirectoryCopier {
   void _log(String m) => log?.call(m);
   bool get _isWin => AppDataService.isWindows;
 
+  /// کپی درخت دایرکتوری از src به dest.
+  ///
+  /// اگر [skipIfExists] true باشه، فایل‌های موجود بازنویسی نمی‌شن.
+  /// خروجی: تعداد فایل‌های کپی‌شده.
   Future<int> copyDirectoryTree({
     required String src,
     required String dest,
@@ -64,51 +76,5 @@ class DirectoryCopier {
 
     _log('→ copyDirectoryTree: $count file(s) copied → $dest');
     return count;
-  }
-
-  Future<void> installAetherPtDirectory({
-    required String dataDir,
-    String? stagingSource,
-    String? fallbackSource,
-  }) async {
-    final destPt = p.join(dataDir, 'pt');
-
-    String? srcPt;
-
-    if (stagingSource != null) {
-      final candidate = p.join(stagingSource, 'pt');
-      if (await Directory(candidate).exists()) {
-        srcPt = candidate;
-      }
-    }
-
-    if (srcPt == null && fallbackSource != null) {
-      final candidate = p.join(fallbackSource, 'pt');
-      if (await Directory(candidate).exists()) {
-        srcPt = candidate;
-      }
-    }
-
-    if (srcPt == null) {
-      _log(
-        '→ installAetherPtDirectory: no `pt` directory found '
-        '(staging=$stagingSource, fallback=$fallbackSource)',
-      );
-      return;
-    }
-
-    final destPtDir = Directory(destPt);
-    if (await destPtDir.exists()) {
-      try {
-        await destPtDir.delete(recursive: true);
-        _log('→ Removed old `pt` directory before install');
-      } catch (e) {
-        _log('⚠ Could not remove old `pt`: $e — will overwrite in place');
-      }
-    }
-
-    _log('→ Installing Aether `pt` directory: $srcPt → $destPt');
-    final count = await copyDirectoryTree(src: srcPt, dest: destPt);
-    _log('★ Aether `pt` directory installed ($count files) → $destPt');
   }
 }

@@ -296,6 +296,27 @@ class AppLocalizationsRu extends AppLocalizations {
   String get log => 'Лог';
 
   @override
+  String get logSourceFilter => 'Фильтр источников логов';
+
+  @override
+  String get logSourcePsiphon => 'Psiphon';
+
+  @override
+  String get logSourceAether => 'Aether';
+
+  @override
+  String get logSourceTor => 'Tor';
+
+  @override
+  String get logSourceSstp => 'SSTP';
+
+  @override
+  String get logSourceApp => 'Приложение';
+
+  @override
+  String get logSourceSystem => 'Система';
+
+  @override
   String get manageList => 'Управление списком (Добавить / Удалить)';
 
   @override
@@ -480,6 +501,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get select => 'Выбрать…';
 
   @override
+  String get selectAll => 'Выбрать все';
+
+  @override
   String get server => 'Сервер';
 
   @override
@@ -627,6 +651,19 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get working => 'Работа';
+
+  @override
+  String get watchdog => 'Сторожевой таймер';
+
+  @override
+  String get watchdogEnabled => 'Включить сторожевой таймер';
+
+  @override
+  String get watchdogEnabledSubtitle =>
+      'Автоматически перезапускать туннели при отсутствии ответа';
+
+  @override
+  String get watchdogSettings => 'Настройки сторожевого таймера';
 
   @override
   String get appUpdate => 'Обновление приложения';

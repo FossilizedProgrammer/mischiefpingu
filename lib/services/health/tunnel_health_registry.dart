@@ -10,20 +10,22 @@ import 'tunnel_quality_detector.dart';
 part 'registry/psiphon_adapter.dart';
 part 'registry/tor_adapter.dart';
 part 'registry/sstp_adapter.dart';
+part 'registry/tunnel_health_registry_init.dart';
+part 'registry/tunnel_health_registry_ops.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  TunnelHealthRegistry — registry مرکزی همهٔ health monitorها.
 ///
-///  این کلاس:
-///    • یک monitor برای هر تونل می‌سازه
-///    • adapterهای مخصوص هر تونل رو مدیریت می‌کنه
-///    • health snapshot ترکیبی می‌ده به UI
-///    • callbackهای degradation رو به provider وصل می‌کنه
+///  این کلاس فقط state و lifecycle رو نگه می‌داره.
+///  عملیات (start/stop/feed/snapshot) در
+///  `registry/tunnel_health_registry_ops.dart` تعریف شدن.
 ///
 ///  adapterهای هر تونل در `registry/` جدا شده‌اند:
 ///    • PsiphonAdapter → feed + start/stop source
 ///    • TorAdapter     → feed + start/stop source
 ///    • SstpAdapter    → feed + start/stop source
+///
+///  منطق initialize() در `registry/tunnel_health_registry_init.dart`.
 /// ═══════════════════════════════════════════════════════════════
 class TunnelHealthRegistry {
   final void Function(String message, {String source}) log;
@@ -54,131 +56,9 @@ class TunnelHealthRegistry {
   });
 
   /// ساخت monitorها. یک بار در constructor provider صدا زده می‌شه.
-  void initialize() {
-    for (final kind in TunnelKind.values) {
-      _monitors[kind] = TunnelHealthMonitor(
-        kind: kind,
-        log: log,
-        onUpdate: (report) {
-          onReport(kind, report);
-          _detectors[kind]?.ingest(report);
-        },
-      );
+  void initialize() => initializeMonitorsAndAdapters();
 
-      _detectors[kind] = TunnelQualityDetector(
-        kind: kind,
-        log: log,
-        onDegradationDetected: (reason) {
-          onDegradationDetected(kind, reason);
-        },
-        onEscalateProfile: onEscalateProfile != null
-            ? (reason) => onEscalateProfile!(kind, reason)
-            : null,
-      );
-    }
-
-    // ─── ساخت adapterها ───
-    _psiphonAdapter = PsiphonAdapter(
-      log: log,
-      monitor: _monitors[TunnelKind.psiphon]!,
-    );
-
-    _torAdapter = TorAdapter(
-      log: log,
-      monitor: _monitors[TunnelKind.tor]!,
-    );
-
-    _sstpAdapter = SstpAdapter(
-      log: log,
-      monitor: _monitors[TunnelKind.sstp]!,
-    );
-  }
-
-  /// شروع monitor یک تونل.
-  void startMonitor(TunnelKind kind, DateTime connectedAt) {
-    _monitors[kind]?.start(connectedAt);
-
-    switch (kind) {
-      case TunnelKind.psiphon:
-        _psiphonAdapter?.start();
-        break;
-      case TunnelKind.tor:
-        _torAdapter?.start();
-        break;
-      case TunnelKind.sstp:
-        _sstpAdapter?.start();
-        break;
-      case TunnelKind.aether:
-        // Aether از tracker خودش استفاده می‌کنه
-        break;
-    }
-  }
-
-  /// توقف monitor یک تونل.
-  void stopMonitor(TunnelKind kind) {
-    _monitors[kind]?.stop();
-
-    switch (kind) {
-      case TunnelKind.psiphon:
-        _psiphonAdapter?.reset();
-        break;
-      case TunnelKind.tor:
-        _torAdapter?.reset();
-        break;
-      case TunnelKind.sstp:
-        _sstpAdapter?.reset();
-        break;
-      case TunnelKind.aether:
-        break;
-    }
-
-    _detectors[kind]?.reset();
-  }
-
-  /// feed یک log line به adapter مربوطه.
-  ///
-  /// این متد از `feedLogWatchers` در provider صدا زده می‌شه.
-  void feedLog(String line, {TunnelKind? onlyFor}) {
-    if (onlyFor == null || onlyFor == TunnelKind.psiphon) {
-      _psiphonAdapter?.feed(line);
-    }
-    if (onlyFor == null || onlyFor == TunnelKind.tor) {
-      _torAdapter?.feed(line);
-    }
-    if (onlyFor == null || onlyFor == TunnelKind.sstp) {
-      _sstpAdapter?.feed(line);
-    }
-  }
-
-  /// ثبت reconnect.
-  void recordReconnect(TunnelKind kind) {
-    _monitors[kind]?.recordReconnect();
-  }
-
-  /// ثبت error.
-  void recordError(TunnelKind kind) {
-    _monitors[kind]?.recordError();
-  }
-
-  /// گرفتن report یک تونل.
-  TunnelHealthReport? reportFor(TunnelKind kind) => _monitors[kind]?.current;
-
-  /// گرفتن snapshot از همه.
-  HealthSnapshot snapshot() {
-    final reports = <TunnelKind, TunnelHealthReport>{};
-    for (final entry in _monitors.entries) {
-      final r = entry.value.current;
-      if (r != null) reports[entry.key] = r;
-    }
-    return HealthSnapshot(
-      reports: reports,
-      timestamp: DateTime.now(),
-    );
-  }
-
-  /// گرفتن monitor خام یک تونل (برای Aether که adapter جدا داره).
-  TunnelHealthMonitor? monitorFor(TunnelKind kind) => _monitors[kind];
-
+  /// dispose کامل registry.
   void dispose() {
     for (final m in _monitors.values) {
       m.dispose();

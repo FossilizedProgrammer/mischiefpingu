@@ -16,6 +16,9 @@ class LogStore {
 
   bool _disposed = false;
 
+  /// منابع فعال برای لاگ‌گیری. اگر خالی باشد، همه منابع لاگ می‌شوند.
+  Set<String> _enabledSources = Set.from(LogSource.all);
+
   /// Stream خطوط جدید (برای log watcherها).
   Stream<String> get stream => _logStream.stream;
 
@@ -25,10 +28,23 @@ class LogStore {
   /// لیست غیرقابل‌تغییر همهٔ خطوط.
   List<String> get fullLog => List.unmodifiable(_logs);
 
+  /// منابع فعال فعلی.
+  Set<String> get enabledSources => Set.unmodifiable(_enabledSources);
+
+  /// به‌روزرسانی منابع فعال.
+  void setEnabledSources(Set<String> sources) {
+    _enabledSources = Set.from(sources);
+  }
+
   /// اضافه کردن یک خط. [notify] برای زمانی که صاحب store
   /// می‌خواهد بعد از add، listenerها را خبر کند.
   void add(String message, {String source = LogSource.empty}) {
     if (!enabled || _disposed) return;
+
+    // ─── فیلتر کردن بر اساس منبع ───
+    if (source.isNotEmpty && !_enabledSources.contains(source)) {
+      return;
+    }
 
     final time = DateTime.now().toString().substring(11, 19);
     final tag = source.isNotEmpty ? '[$source] ' : '';

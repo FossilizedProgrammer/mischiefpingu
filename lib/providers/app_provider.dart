@@ -26,6 +26,7 @@ import '../services/tor/tor_log_watcher.dart';
 import '../services/sstp/sstp_log_watcher.dart';
 import '../services/recovery/recovery_coordinator.dart';
 import '../services/diagnostics/connectivity_probe.dart';
+import '../services/network/network_change_detector.dart';
 import '../services/watchdog/tunnel_watchdog.dart';
 import '../services/database/database_initializer.dart';
 import '../services/database/gateway_database.dart';
@@ -44,6 +45,7 @@ import '../constants/default_lists.dart';
 import 'internet_quality_provider.dart';
 
 part 'app_provider_snapshot.dart';
+part 'app_provider_state.dart';
 part 'sstp/sstp_launch.dart';
 part 'sstp/sstp_preflight.dart';
 part 'tor/tor_launch.dart';
@@ -69,6 +71,7 @@ part 'app_provider_log_watchers.dart';
 part 'app_provider_process_listener.dart';
 part 'app_provider_wrappers.dart';
 
+
 class AppProvider extends ChangeNotifier {
   final ProcessService processService = ProcessService();
   late final AetherAutoTestService _aetherTestService;
@@ -89,6 +92,19 @@ class AppProvider extends ChangeNotifier {
   /// ═══════════════════════════════════════════════════════════════
   late final ConnectivityProbe _connectivityProbe;
   ConnectivityProbe get connectivityProbe => _connectivityProbe;
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  NetworkChangeDetector — تشخیص تغییر شبکه (WiFi ↔ Mobile)
+  ///
+  ///  وقتی شبکه عوض بشه، cacheهای ConnectivityProbe و
+  ///  InternetQualityMonitor رو invalidate می‌کنه تا تصمیم‌گیری
+  ///  بر اساس اطلاعات قدیمی نباشه.
+  ///
+  ///  ⚠️ این detector خودش restart نمی‌کنه — تصمیم به watchdog
+  ///  و auto-reconnect سپرده می‌شود.
+  /// ═══════════════════════════════════════════════════════════════
+  late final NetworkChangeDetector _networkChangeDetector;
+  NetworkChangeDetector get networkChangeDetector => _networkChangeDetector;
 
   /// ═══════════════════════════════════════════════════════════════
   ///  GatewayHistoryStore — تاریخچه Gatewayها (فاز ۱)
@@ -129,6 +145,14 @@ class AppProvider extends ChangeNotifier {
   ConnectionHealth? get currentHealth => _currentHealth;
 
   /// ═══════════════════════════════════════════════════════════════
+  ///  ⚠️ آخرین health که UI رو notify کردیم.
+  ///
+  ///  برای جلوگیری از rebuildهای بی‌مورد، فقط وقتی health
+  ///  نسبت به این مقدار meaningful تغییر کند، touch می‌زنیم.
+  /// ═══════════════════════════════════════════════════════════════
+  ConnectionHealth? _lastNotifiedHealth;
+
+  /// ═══════════════════════════════════════════════════════════════
   ///  فاز v4: QualityDegradationDetector — تشخیص افت کیفیت + escalation
   /// ═══════════════════════════════════════════════════════════════
   late final QualityDegradationDetector _degradationDetector;
@@ -163,6 +187,14 @@ class AppProvider extends ChangeNotifier {
 
   /// Timer برای poll کردن lastReport و ingest در healthMonitor.
   Timer? _healthPollTimer;
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  ⚠️ بازهٔ poll health.
+  ///
+  ///  قبلاً مقدار 3 ثانیه به صورت inline در constructor بود.
+  ///  حالا به عنوان constant.
+  /// ═══════════════════════════════════════════════════════════════
+  static const Duration _healthPollInterval = Duration(seconds: 3);
 
   /// ═══════════════════════════════════════════════════════════════
   ///  GatewayReconnectOrchestrator — reconnect هوشمند (فاز ۴)
@@ -297,6 +329,12 @@ class AppProvider extends ChangeNotifier {
     _recoveryCoordinator = RecoveryCoordinator(log: processService.addLog);
     _connectivityProbe = ConnectivityProbe(log: processService.addLog);
 
+    // ─── NetworkChangeDetector ───
+    _networkChangeDetector = NetworkChangeDetector(
+      log: processService.addLog,
+      onChange: _onNetworkChanged,
+    );
+
     // ─── Gateway History Store (فاز ۱) ───
     _gatewayHistoryStore = GatewayHistoryStore(
       log: (msg, {source = LogSource.empty}) =>
@@ -341,11 +379,20 @@ class AppProvider extends ChangeNotifier {
 
     // ═══════════════════════════════════════════════════════════════
     //  فاز v4: HealthMonitor + DegradationDetector + Stats
+    //
+    //  ⚠️ تغییر: onUpdate حالا از _isHealthMeaningfullyChanged
+    //  استفاده می‌کنه تا از rebuildهای بی‌مورد جلوگیری کنه.
     // ═══════════════════════════════════════════════════════════════
     _healthMonitor = ConnectionHealthMonitor(
       onUpdate: (h) {
         _currentHealth = h;
-        if (!isShuttingDown) touch();
+        if (isShuttingDown) return;
+
+        // فقط اگه meaningful تغییر کرد، UI رو notify کن
+        if (_isHealthMeaningfullyChanged(h)) {
+          _lastNotifiedHealth = h;
+          touch();
+        }
       },
       log: processService.addLog,
     );
@@ -355,10 +402,17 @@ class AppProvider extends ChangeNotifier {
     //    • onEscalateProfile اضافه شد
     //    • وقتی packet loss 100% هست، به جای restart کردن،
     //      profile رو به profile سخت‌گیرتر escalate می‌کنه
+    //
+    //  ⚠️ اضافه شد: احترام به settings.watchdogEnabled
+    //  اگر واچ‌داگ غیرفعال باشد، هیچ restart/escalation خودکاری
+    //  رخ نمی‌دهد.
     // ═══════════════════════════════════════════════════════════════
     _degradationDetector = QualityDegradationDetector(
       onDegradationDetected: (reason) {
         if (userStoppedAether || isShuttingDown) return;
+        // ⚠️ اگر واچ‌داگ غیرفعال است، مداخله نکن
+        if (!settings.watchdogEnabled) return;
+
         processService.addLog(
           '↻ Preemptive Aether restart triggered: $reason',
           source: LogSource.aether,
@@ -369,6 +423,8 @@ class AppProvider extends ChangeNotifier {
       },
       onEscalateProfile: (reason) {
         if (userStoppedAether || isShuttingDown) return;
+        // ⚠️ اگر واچ‌داگ غیرفعال است، escalation نکن
+        if (!settings.watchdogEnabled) return;
         if (_escalationInProgress) {
           processService.addLog(
             '→ Escalation skipped (already in progress)',
@@ -424,6 +480,10 @@ class AppProvider extends ChangeNotifier {
     //
     //  ⚠️ Aether در registry ثبت می‌شه ولی از monitor خودش
     //  استفاده می‌کنه. یعنی Aether report جداگانه نمی‌ده.
+    //
+    //  ⚠️ اضافه شد: احترام به settings.watchdogEnabled در
+    //  onDegradationDetected — وقتی واچ‌داگ خاموشه، هیچ
+    //  restart خودکاری رخ نمی‌ده.
     // ═══════════════════════════════════════════════════════════════
     _healthRegistry = TunnelHealthRegistry(
       log: processService.addLog,
@@ -435,6 +495,9 @@ class AppProvider extends ChangeNotifier {
       },
       onDegradationDetected: (kind, reason) {
         if (isShuttingDown) return;
+
+        // ⚠️ اگر واچ‌داگ غیرفعال است، مداخله نکن
+        if (!settings.watchdogEnabled) return;
 
         // Aether مسیر خودش رو داره (degradationDetector جدا)
         if (kind == TunnelKind.aether) return;
@@ -521,7 +584,98 @@ class AppProvider extends ChangeNotifier {
     // ═══════════════════════════════════════════════════════════════
     _startHealthPollTimer();
 
+    // ═══════════════════════════════════════════════════════════════
+    //  فاز v5: NetworkChangeDetector
+    // ═══════════════════════════════════════════════════════════════
+    _networkChangeDetector.start();
+
     Future.microtask(initializeProvider);
+  }
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  ⚠️ آیا این health نسبت به آخرین notify شده معنادار
+  ///  تغییر کرده؟
+  ///
+  ///  این متد جلوی rebuildهای بی‌مورد UI رو می‌گیره. بدون این،
+  ///  هر 3 ثانیه کل UI rebuild می‌شد حتی اگه health ثابت مونده بود.
+  ///
+  ///  آستانه‌ها عمداً generous انتخاب شدن — چون UI نمی‌خواد
+  ///  با هر تغییر کوچیک 1ms هم rebuild بشه.
+  /// ═══════════════════════════════════════════════════════════════
+  bool _isHealthMeaningfullyChanged(ConnectionHealth h) {
+    final prev = _lastNotifiedHealth;
+
+    // اولین بار — همیشه notify
+    if (prev == null) return true;
+
+    // تغییر بیشتر از 2 امتیاز = meaningful
+    if ((h.score - prev.score).abs() > 2.0) return true;
+
+    // تغییر latency بیشتر از 50ms = meaningful
+    if ((h.latencyMs - prev.latencyMs).abs() > 50) return true;
+
+    // تغییر jitter بیشتر از 30ms = meaningful
+    if ((h.jitterMs - prev.jitterMs).abs() > 30) return true;
+
+    // تغییر packet loss بیشتر از 1% = meaningful
+    if ((h.packetLossPct - prev.packetLossPct).abs() > 1.0) return true;
+
+    // هر reconnect جدید = meaningful
+    if (h.reconnectCount != prev.reconnectCount) return true;
+
+    // هر error جدید = meaningful
+    if (h.errorCount != prev.errorCount) return true;
+
+    // هر تغییر trend = meaningful
+    if (h.trend != prev.trend) return true;
+
+    // uptime رو هر 10 ثانیه یک بار آپدیت می‌کنیم کافیه
+    final uptimeChanged =
+        h.uptime.inSeconds ~/ 10 != prev.uptime.inSeconds ~/ 10;
+    if (uptimeChanged) return true;
+
+    // هیچ تغییر meaningful نیست
+    return false;
+  }
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  واکنش به تغییر شبکه.
+  ///
+  ///  ⚠️ نکته مهم: این متد restart نمی‌کنه. فقط:
+  ///    1. cache ConnectivityProbe رو invalidate می‌کنه
+  ///    2. cache InternetQualityMonitor رو invalidate می‌کنه
+  ///
+  ///  چرا؟ چون ممکنه شبکه لحظه‌ای قطع شده باشه. اجازه بده
+  ///  watchdog طبیعی (که 5 تا failure می‌خواد) خودش تصمیم بگیره.
+  ///  اگه ما فوری restart بزنیم، circuit breaker ممکنه trigger بشه.
+  /// ═══════════════════════════════════════════════════════════════
+  void _onNetworkChanged() {
+    if (isShuttingDown) return;
+
+    processService.addLog(
+      '→ Network changed — invalidating connectivity/quality caches',
+      source: LogSource.app,
+    );
+
+    // ۱. invalidate connectivity probe
+    try {
+      _connectivityProbe.invalidateCache();
+    } catch (e) {
+      processService.addLog(
+        '⚠ Failed to invalidate ConnectivityProbe cache: $e',
+        source: LogSource.app,
+      );
+    }
+
+    // ۲. invalidate internet quality monitor
+    try {
+      _qualityProvider?.invalidateCache();
+    } catch (e) {
+      processService.addLog(
+        '⚠ Failed to invalidate InternetQuality cache: $e',
+        source: LogSource.app,
+      );
+    }
   }
 
   /// پروفایل بعدی در زنجیرهٔ escalation.
@@ -560,6 +714,15 @@ class AppProvider extends ChangeNotifier {
         return;
       }
 
+      // ⚠️ دوباره چک کن که واچ‌داگ هنوز فعال است
+      if (!settings.watchdogEnabled) {
+        processService.addLog(
+          '→ Escalation restart skipped (watchdog disabled mid-flight)',
+          source: LogSource.aether,
+        );
+        return;
+      }
+
       await restartAetherInternal(reason: 'profile escalation: $reason');
     } catch (e) {
       processService.addLog(
@@ -574,11 +737,24 @@ class AppProvider extends ChangeNotifier {
   }
 
   /// شروع timer poll برای Health.
+  ///
+  /// ⚠️ تغییرات این نسخه:
+  ///   • interval در constant `_healthPollInterval` تعریف شده
+  ///   • از onUpdate جدید استفاده می‌کنه که به
+  ///     `_isHealthMeaningfullyChanged` وابسته است
+  ///   • ⚠️ اگر واچ‌داگ غیرفعال است، اصلاً ingest نمی‌کنه
+  ///     تا degradation detector trigger نشه
   void _startHealthPollTimer() {
     _healthPollTimer?.cancel();
-    _healthPollTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+    _healthPollTimer = Timer.periodic(_healthPollInterval, (_) {
       if (isShuttingDown) return;
       if (!processService.isAetherRunning) return;
+
+      // ⚠️ اگر واچ‌داگ غیرفعال است، health رو ingest نکن
+      // چون degradation detector ممکنه trigger بشه.
+      // (هرچند degradation detector خودش هم watchdogEnabled رو چک می‌کنه،
+      // ولی اینجا هم double-safety داریم.)
+      if (!settings.watchdogEnabled) return;
 
       final tracker = _aetherTestService.performanceTracker;
       final report = tracker?.lastReport;
@@ -757,7 +933,13 @@ class AppProvider extends ChangeNotifier {
     _degradationDetector.reset();
     _currentActiveCandidate = null;
     _currentHealth = null;
+    _lastNotifiedHealth = null;
     _escalationInProgress = false;
+
+    // ═══════════════════════════════════════════════════════════════
+    //  فاز v5: NetworkChangeDetector cleanup
+    // ═══════════════════════════════════════════════════════════════
+    _networkChangeDetector.dispose();
 
     // ═══════════════════════════════════════════════════════════════
     //  TunnelHealthRegistry cleanup

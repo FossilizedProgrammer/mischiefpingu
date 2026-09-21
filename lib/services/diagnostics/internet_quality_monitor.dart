@@ -32,7 +32,7 @@ class InternetQualityMonitor {
   InternetDiagnosticResult? _lastResult;
   InternetDiagnosticResult? get lastResult => _lastResult;
 
-  /// ⚠️ جدید: cache کوتاه برای isInternetAlive تا watchdog
+  /// ⚠️ cache کوتاه برای isInternetAlive تا watchdog
   /// هر بار ۳ ثانیه block نشود.
   bool? _cachedAlive;
   DateTime? _cachedAliveAt;
@@ -61,6 +61,18 @@ class InternetQualityMonitor {
     _running = false;
     _level = MonitoringLevel.idle;
     _log('→ InternetQualityMonitor: stopped');
+  }
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  ⚠️ جدید: invalidate کردن cache.
+  ///
+  ///  از NetworkChangeDetector صدا زده می‌شه وقتی شبکه عوض می‌شه.
+  ///  این کار باعث می‌شه next isInternetAlive() دوباره probe بزنه.
+  /// ═══════════════════════════════════════════════════════════════
+  void invalidateCache() {
+    _cachedAlive = null;
+    _cachedAliveAt = null;
+    _log('→ InternetQualityMonitor: cache invalidated');
   }
 
   /// اجرای فوری یک diagnostic (مثلاً وقتی user دکمه Test Internet می‌زند).
