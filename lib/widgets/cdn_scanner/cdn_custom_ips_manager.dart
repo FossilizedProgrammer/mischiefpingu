@@ -99,8 +99,9 @@ class CdnCustomIpsManager extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color:
-                    count == 0 ? theme.disabledColor : theme.colorScheme.error,
+                color: count == 0
+                    ? theme.disabledColor
+                    : theme.colorScheme.error,
               ),
             ),
           ),

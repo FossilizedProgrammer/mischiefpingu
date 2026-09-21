@@ -93,7 +93,7 @@ class ArchiveExtractor {
 
   /// تشخیص نوع آرشیو از روی URL.
   ({bool isZip, bool isTarXz, bool isArchive, String archiveName})
-      classifyArchive(String url, String baseName) {
+  classifyArchive(String url, String baseName) {
     final lower = url.toLowerCase();
     final isZip = lower.endsWith('.zip');
     final isTarball = lower.endsWith('.tar.gz') || lower.endsWith('.tgz');
@@ -102,10 +102,10 @@ class ArchiveExtractor {
     final archiveName = isZip
         ? '$baseName.zip'
         : isTarball
-            ? '$baseName.tar.gz'
-            : isTarXz
-                ? '$baseName.tar.xz'
-                : '$baseName.bin';
+        ? '$baseName.tar.gz'
+        : isTarXz
+        ? '$baseName.tar.xz'
+        : '$baseName.bin';
     return (
       isZip: isZip,
       isTarXz: isTarXz,

@@ -101,8 +101,7 @@ class NetworkChangeDetector {
       // ─── تغییر دیده شد ───
       final now = DateTime.now();
       final lastEvent = _lastEventAt;
-      if (lastEvent != null &&
-          now.difference(lastEvent) < _minEventSpacing) {
+      if (lastEvent != null && now.difference(lastEvent) < _minEventSpacing) {
         // spam — signature رو آپدیت کن ولی event نزن
         _lastSignature = signature;
         return;
@@ -136,10 +135,7 @@ class NetworkChangeDetector {
       // بعضی وقتا NetworkInterface.list() در لینوکس استثنا می‌ده
       // وقتی interface در حال خاموش شدنه. نادیده بگیر.
       if (!_disposed) {
-        log(
-          '⚠ NetworkChangeDetector: check failed: $e',
-          source: LogSource.app,
-        );
+        log('⚠ NetworkChangeDetector: check failed: $e', source: LogSource.app);
       }
     }
   }
@@ -158,11 +154,12 @@ class NetworkChangeDetector {
 
     final entries = <String>[];
     for (final iface in interfaces) {
-      final addrs = iface.addresses
-          .map((a) => a.address)
-          .where((s) => s.isNotEmpty)
-          .toList()
-        ..sort();
+      final addrs =
+          iface.addresses
+              .map((a) => a.address)
+              .where((s) => s.isNotEmpty)
+              .toList()
+            ..sort();
       for (final addr in addrs) {
         entries.add('${iface.name}:$addr');
       }

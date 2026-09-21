@@ -17,11 +17,7 @@ class HealthStats extends StatelessWidget {
   final TunnelHealthReport report;
   final ThemeData theme;
 
-  const HealthStats({
-    super.key,
-    required this.report,
-    required this.theme,
-  });
+  const HealthStats({super.key, required this.report, required this.theme});
 
   @override
   Widget build(BuildContext context) {
@@ -73,40 +69,48 @@ class HealthStats extends StatelessWidget {
     // ─── Psiphon ───
     final protocol = report.extra['protocol'];
     if (protocol is String && protocol.isNotEmpty && protocol != 'unknown') {
-      extras.add(HealthStat(
-        label: l10n.tunnelHealthProtocol,
-        value: protocol,
-        color: Colors.blue,
-      ));
+      extras.add(
+        HealthStat(
+          label: l10n.tunnelHealthProtocol,
+          value: protocol,
+          color: Colors.blue,
+        ),
+      );
     }
 
     final bytesPerSec = report.extra['bytesPerSec'];
     if (bytesPerSec is int && bytesPerSec > 0) {
-      extras.add(HealthStat(
-        label: l10n.tunnelHealthThroughput,
-        value: '${HealthHelpers.formatBytes(bytesPerSec)}/s',
-        color: Colors.green,
-      ));
+      extras.add(
+        HealthStat(
+          label: l10n.tunnelHealthThroughput,
+          value: '${HealthHelpers.formatBytes(bytesPerSec)}/s',
+          color: Colors.green,
+        ),
+      );
     }
 
     // ─── Tor ───
     final circuitCount = report.extra['circuitsEstablished'];
     if (circuitCount is int && circuitCount > 0) {
-      extras.add(HealthStat(
-        label: l10n.tunnelHealthCircuits,
-        value: '$circuitCount',
-        color: Colors.purple,
-      ));
+      extras.add(
+        HealthStat(
+          label: l10n.tunnelHealthCircuits,
+          value: '$circuitCount',
+          color: Colors.purple,
+        ),
+      );
     }
 
     // ─── SSTP ───
     final assignedIp = report.extra['assignedIp'];
     if (assignedIp is String && assignedIp.isNotEmpty) {
-      extras.add(HealthStat(
-        label: l10n.tunnelHealthIp,
-        value: assignedIp,
-        color: Colors.teal,
-      ));
+      extras.add(
+        HealthStat(
+          label: l10n.tunnelHealthIp,
+          value: assignedIp,
+          color: Colors.teal,
+        ),
+      );
     }
 
     return extras;

@@ -25,7 +25,8 @@ extension ProfilePerformanceStoreMaintenance on ProfilePerformanceStore {
 
       final deleted = await db.delete(
         DatabaseSchema.tableProfilePerformance,
-        where: '(${DatabaseSchema.colSuccessCount} * 1.0 / '
+        where:
+            '(${DatabaseSchema.colSuccessCount} * 1.0 / '
             '(${DatabaseSchema.colSuccessCount} + ${DatabaseSchema.colFailureCount})) < ? '
             'AND (${DatabaseSchema.colSuccessCount} + ${DatabaseSchema.colFailureCount}) >= ? '
             'AND ${DatabaseSchema.colUpdatedAt} < ?',
@@ -33,9 +34,7 @@ extension ProfilePerformanceStoreMaintenance on ProfilePerformanceStore {
       );
 
       if (deleted > 0) {
-        logInternal(
-          '→ Pruned $deleted weak profile performance entry(ies)',
-        );
+        logInternal('→ Pruned $deleted weak profile performance entry(ies)');
       }
       return deleted;
     } catch (e) {

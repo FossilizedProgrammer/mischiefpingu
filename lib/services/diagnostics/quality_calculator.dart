@@ -49,7 +49,7 @@ class QualityCalculator {
 
     final variance =
         lats.map((l) => math.pow(l - avg, 2)).fold<double>(0, (a, b) => a + b) /
-            lats.length;
+        lats.length;
     final jitter = math.sqrt(variance).round();
 
     MetricStatus status;

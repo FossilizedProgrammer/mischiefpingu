@@ -148,8 +148,7 @@ void main() {
         packetLossPct: 999,
         successCount: 0,
         failureCount: 99999,
-        lastSuccessAt: DateTime.now()
-            .subtract(const Duration(days: 365)),
+        lastSuccessAt: DateTime.now().subtract(const Duration(days: 365)),
         totalAttempts: 99999,
         reconnectCount: 99999,
       );

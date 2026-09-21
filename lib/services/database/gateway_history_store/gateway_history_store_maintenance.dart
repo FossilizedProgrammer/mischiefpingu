@@ -29,7 +29,8 @@ extension GatewayHistoryStoreMaintenance on GatewayHistoryStore {
 
       final deleted = await db.delete(
         DatabaseSchema.tableGatewayHistory,
-        where: '${DatabaseSchema.colScore} < ? '
+        where:
+            '${DatabaseSchema.colScore} < ? '
             'AND ${DatabaseSchema.colFailureCount} >= ? '
             'AND (${DatabaseSchema.colLastSuccessAt} IS NULL '
             'OR ${DatabaseSchema.colLastSuccessAt} < ?)',

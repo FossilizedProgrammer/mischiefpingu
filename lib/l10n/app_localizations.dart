@@ -1372,6 +1372,18 @@ abstract class AppLocalizations {
   /// **'Watchdog Settings'**
   String get watchdogSettings;
 
+  /// No description provided for @backToPresets.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to presets'**
+  String get backToPresets;
+
+  /// No description provided for @aetherManualHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual mode: Protocol, obfuscation, scan mode, and custom endpoint are fully under your control below.'**
+  String get aetherManualHint;
+
   /// No description provided for @appUpdate.
   ///
   /// In en, this message translates to:

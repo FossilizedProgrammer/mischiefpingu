@@ -11,10 +11,7 @@ import 'package:flutter/material.dart';
 class ProbeLatencyBadge extends StatelessWidget {
   final int latencyMs;
 
-  const ProbeLatencyBadge({
-    super.key,
-    required this.latencyMs,
-  });
+  const ProbeLatencyBadge({super.key, required this.latencyMs});
 
   @override
   Widget build(BuildContext context) {

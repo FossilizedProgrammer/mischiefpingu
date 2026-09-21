@@ -21,9 +21,7 @@ extension AetherDecisionEngineCandidateBuilder on AetherDecisionEngine {
     final custom = settings.aetherCustomEndpoint.trim();
     if (custom.isNotEmpty) {
       final c = _customCandidate(custom);
-      logInternal(
-        '→ DecisionEngine: custom endpoint → ${c.label}',
-      );
+      logInternal('→ DecisionEngine: custom endpoint → ${c.label}');
       return [c];
     }
 
@@ -71,9 +69,7 @@ extension AetherDecisionEngineCandidateBuilder on AetherDecisionEngine {
   }
 
   // ─── delegate به source builderها ───
-  Future<void> _addHistoryCandidates(
-    void Function(RankedCandidate) add,
-  ) async {
+  Future<void> _addHistoryCandidates(void Function(RankedCandidate) add) async {
     final builder = HistorySourceBuilder(
       engine: this,
       historyStore: historyStore,
@@ -81,9 +77,7 @@ extension AetherDecisionEngineCandidateBuilder on AetherDecisionEngine {
     await builder.build(add);
   }
 
-  Future<void> _addCacheCandidates(
-    void Function(RankedCandidate) add,
-  ) async {
+  Future<void> _addCacheCandidates(void Function(RankedCandidate) add) async {
     final builder = CacheSourceBuilder(
       engine: this,
       profileStore: profileStore,
@@ -108,10 +102,12 @@ extension AetherDecisionEngineCandidateBuilder on AetherDecisionEngine {
       );
 
   RankedCandidate _customCandidate(String endpoint) {
-    final proto =
-        settings.aetherProtocol == 'auto' ? 'masque' : settings.aetherProtocol;
-    final masque =
-        (proto == 'masque' || proto == 'mim') ? settings.masqueOption : '';
+    final proto = settings.aetherProtocol == 'auto'
+        ? 'masque'
+        : settings.aetherProtocol;
+    final masque = (proto == 'masque' || proto == 'mim')
+        ? settings.masqueOption
+        : '';
     return RankedCandidate(
       protocol: proto,
       masque: masque,
@@ -123,13 +119,12 @@ extension AetherDecisionEngineCandidateBuilder on AetherDecisionEngine {
   }
 
   void _logRankedList(List<RankedCandidate> list) {
-    logInternal(
-      '→ DecisionEngine: ranked ${list.length} candidate(s)',
-    );
+    logInternal('→ DecisionEngine: ranked ${list.length} candidate(s)');
     for (var i = 0; i < list.length; i++) {
       final c = list[i];
-      final scoreStr =
-          c.score == 0 ? '  —' : c.score.toStringAsFixed(0).padLeft(3);
+      final scoreStr = c.score == 0
+          ? '  —'
+          : c.score.toStringAsFixed(0).padLeft(3);
       logInternal(
         '   ${(i + 1).toString().padLeft(2)}. [$scoreStr] '
         '${c.label.padRight(22)} (${c.source.name} · ${c.reason})',

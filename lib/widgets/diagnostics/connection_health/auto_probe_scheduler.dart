@@ -36,10 +36,7 @@ class AutoProbeScheduler {
   /// callback وقتی transition تشخیص داده شد (برای setState).
   final void Function() onStateChanged;
 
-  AutoProbeScheduler({
-    required this.runProbe,
-    required this.onStateChanged,
-  });
+  AutoProbeScheduler({required this.runProbe, required this.onStateChanged});
 
   void dispose() {
     for (final t in _timers.values) {

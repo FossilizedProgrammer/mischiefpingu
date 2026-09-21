@@ -32,11 +32,7 @@ class AetherQuickProfileSelector extends StatelessWidget {
 
   const AetherQuickProfileSelector({super.key, required this.isRunning});
 
-  static const List<String> _quickProfiles = [
-    'adaptive',
-    'patchy',
-    'strict',
-  ];
+  static const List<String> _quickProfiles = ['adaptive', 'patchy', 'strict'];
 
   @override
   Widget build(BuildContext context) {
@@ -125,13 +121,8 @@ class AetherQuickProfileSelector extends StatelessWidget {
                       select('manual');
                     }
                   },
-            icon: Icon(
-              isManual ? Icons.auto_awesome : Icons.tune,
-              size: 16,
-            ),
-            label: Text(
-              isManual ? 'بازگشت به پروفایل‌های آماده' : l10n.profileManual,
-            ),
+            icon: Icon(isManual ? Icons.auto_awesome : Icons.tune, size: 16),
+            label: Text(isManual ? l10n.backToPresets : l10n.profileManual),
             style: OutlinedButton.styleFrom(
               foregroundColor: isManual
                   ? theme.colorScheme.primary

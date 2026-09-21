@@ -53,8 +53,9 @@ class AetherInstaller {
         proxy: proxy,
         onProgress: onProgress,
         onCancelCheck: onCancelCheck,
-        totalHint:
-            info.downloadSizeBytes > 0 ? info.downloadSizeBytes : 4500000,
+        totalHint: info.downloadSizeBytes > 0
+            ? info.downloadSizeBytes
+            : 4500000,
       );
       onProgress?.call(80);
       await processUtils.extractArchive(archive, tmp.path);
@@ -128,7 +129,8 @@ class AetherInstaller {
         fallbackSource: platformDir,
       );
 
-      final newVer = CoreUpdateUtils.parseAetherVersion(
+      final newVer =
+          CoreUpdateUtils.parseAetherVersion(
             await AetherAssetResolver.queryVersion(dest),
           ) ??
           info.latestVersion;

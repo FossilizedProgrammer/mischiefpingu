@@ -22,15 +22,12 @@ extension GatewayHistoryStoreInternal on GatewayHistoryStore {
     final weight = oldCount < 5
         ? 1
         : oldCount < 20
-            ? 2
-            : 4;
+        ? 2
+        : 4;
     return ((oldAvg * weight + newValue) / (weight + 1)).round();
   }
 
-  double computeScore(
-    GatewayRecord rec, {
-    List<DateTime>? recentSuccesses,
-  }) {
+  double computeScore(GatewayRecord rec, {List<DateTime>? recentSuccesses}) {
     return GatewayScoreCalculator.compute(
       avgLatencyMs: rec.avgLatencyMs,
       avgJitterMs: rec.avgJitterMs,
@@ -54,16 +51,19 @@ extension GatewayHistoryStoreInternal on GatewayHistoryStore {
     try {
       final rows = await db.query(
         DatabaseSchema.tableAetherEvents,
-        where: '${DatabaseSchema.colEventType} = ? AND '
+        where:
+            '${DatabaseSchema.colEventType} = ? AND '
             '${DatabaseSchema.colProtocol} = ?',
         whereArgs: ['connection_success', protocol],
         orderBy: '${DatabaseSchema.colTimestamp} DESC',
         limit: 20,
       );
       return rows
-          .map((r) => DateTime.fromMillisecondsSinceEpoch(
-                (r[DatabaseSchema.colTimestamp] as int?) ?? 0,
-              ))
+          .map(
+            (r) => DateTime.fromMillisecondsSinceEpoch(
+              (r[DatabaseSchema.colTimestamp] as int?) ?? 0,
+            ),
+          )
           .toList();
     } catch (_) {
       return const [];
@@ -77,12 +77,11 @@ extension GatewayHistoryStoreInternal on GatewayHistoryStore {
     required String protocol,
     String masqueOption = '',
     String sni = '',
-  }) =>
-      GatewayRecord.buildKey(
-        ip: ip,
-        port: port,
-        protocol: protocol,
-        masqueOption: masqueOption,
-        sni: sni,
-      );
+  }) => GatewayRecord.buildKey(
+    ip: ip,
+    port: port,
+    protocol: protocol,
+    masqueOption: masqueOption,
+    sni: sni,
+  );
 }

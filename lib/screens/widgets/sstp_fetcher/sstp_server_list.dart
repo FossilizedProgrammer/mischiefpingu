@@ -71,7 +71,8 @@ class SstpServerList extends StatelessWidget {
             itemBuilder: (ctx, i) {
               final s = visible[i];
               final app = context.watch<AppProvider>();
-              final isCurrent = app.settings.sstpServer == s.ip &&
+              final isCurrent =
+                  app.settings.sstpServer == s.ip &&
                   app.settings.sstpPort == s.port;
               final h = fetcher.healthOf(s);
               return SstpServerTile(

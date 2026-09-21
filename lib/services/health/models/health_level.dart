@@ -5,10 +5,10 @@ library;
 /// ═══════════════════════════════════════════════════════════════
 enum HealthLevel {
   excellent, // >= 80
-  good,      // >= 60
-  fair,      // >= 40
-  degraded,  // >= 20
-  failing;   // < 20
+  good, // >= 60
+  fair, // >= 40
+  degraded, // >= 20
+  failing; // < 20
 
   static HealthLevel fromScore(double score) {
     if (score >= 80) return HealthLevel.excellent;

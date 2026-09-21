@@ -37,9 +37,7 @@ class TorManualProxySection extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           l10n.manualProxyOption,
-          style: Theme.of(context)
-              .textTheme
-              .titleSmall
+          style: Theme.of(context).textTheme.titleSmall
               ?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),

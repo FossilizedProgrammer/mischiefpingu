@@ -60,7 +60,8 @@ class DirectoryCopier {
           final base = p.basename(destPath).toLowerCase();
           final relParts = p.split(rel);
           final isInsidePt = relParts.contains('pt');
-          final shouldChmod = base == 'aether' ||
+          final shouldChmod =
+              base == 'aether' ||
               base == 'aether.exe' ||
               !base.contains('.') ||
               isInsidePt;

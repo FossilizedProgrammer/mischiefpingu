@@ -13,10 +13,7 @@ class QualityStatisticsService {
   final AetherEventStore eventStore;
   final void Function(String message, {String source}) log;
 
-  QualityStatisticsService({
-    required this.eventStore,
-    required this.log,
-  });
+  QualityStatisticsService({required this.eventStore, required this.log});
 
   /// گزارش 24 ساعت اخیر به تفکیک پروتکل.
   Future<ProtocolStats> computeLast24h() async {
@@ -100,8 +97,10 @@ class QualityStatisticsService {
 
     for (final s in sorted) {
       buffer.writeln('${s.protocol.toUpperCase()}:');
-      buffer.writeln('  Success: ${(s.successRate * 100).toStringAsFixed(1)}% '
-          '(${s.successCount}/${s.totalAttempts})');
+      buffer.writeln(
+        '  Success: ${(s.successRate * 100).toStringAsFixed(1)}% '
+        '(${s.successCount}/${s.totalAttempts})',
+      );
       buffer.writeln('  Avg latency: ${s.avgLatencyMs}ms');
       buffer.writeln('');
     }

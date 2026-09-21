@@ -42,9 +42,7 @@ class LogFilterSection extends StatelessWidget {
               },
               icon: const Icon(Icons.select_all, size: 16),
               label: Text(l10n.selectAll),
-              style: TextButton.styleFrom(
-                visualDensity: VisualDensity.compact,
-              ),
+              style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
             ),
             TextButton.icon(
               onPressed: () {
@@ -53,9 +51,7 @@ class LogFilterSection extends StatelessWidget {
               },
               icon: const Icon(Icons.deselect, size: 16),
               label: Text(l10n.clearAll),
-              style: TextButton.styleFrom(
-                visualDensity: VisualDensity.compact,
-              ),
+              style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
             ),
           ],
         ),

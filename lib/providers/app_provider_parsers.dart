@@ -66,8 +66,7 @@ extension AppProviderParsers on AppProvider {
   void tryParseAetherRealEndpoint(String line) {
     if (!line.contains('using') || !line.contains('edge')) return;
 
-    final endpoint =
-        _aetherTestService.extractRealEndpointFromLog(line);
+    final endpoint = _aetherTestService.extractRealEndpointFromLog(line);
     if (endpoint == null || endpoint.isEmpty) return;
 
     // فقط اگر endpoint فعلی ذخیره‌شده با این فرق دارد ذخیره کن

@@ -38,13 +38,13 @@ class _TunnelStateSnapshot {
 
   @override
   int get hashCode => Object.hash(
-        psiphonRunning,
-        psiphonConnected,
-        aetherRunning,
-        torRunning,
-        torConnected,
-        torBootstrapProgress,
-        sstpRunning,
-        sstpConnected,
-      );
+    psiphonRunning,
+    psiphonConnected,
+    aetherRunning,
+    torRunning,
+    torConnected,
+    torBootstrapProgress,
+    sstpRunning,
+    sstpConnected,
+  );
 }

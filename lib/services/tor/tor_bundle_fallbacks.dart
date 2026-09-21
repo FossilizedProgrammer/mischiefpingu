@@ -38,10 +38,11 @@ class TorBundleFallbacks {
 
   /// مقایسه دو نسخه (برای مرتب‌سازی نزولی).
   static int compareVersions(String a, String b) {
-    List<int> parts(String v) => RegExp(r'\d+')
-        .allMatches(v)
-        .map((m) => int.parse(m.group(0)!))
-        .toList();
+    List<int> parts(String v) =>
+        RegExp(r'\d+')
+            .allMatches(v)
+            .map((m) => int.parse(m.group(0)!))
+            .toList();
     final pa = parts(a);
     final pb = parts(b);
     for (var i = 0; i < pa.length && i < pb.length; i++) {

@@ -152,9 +152,7 @@ class _StatusIcon extends StatelessWidget {
       decoration: BoxDecoration(
         color: status.color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: status.color.withValues(alpha: 0.4),
-        ),
+        border: Border.all(color: status.color.withValues(alpha: 0.4)),
       ),
       child: Icon(status.icon, color: status.color, size: 18),
     );

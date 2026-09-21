@@ -156,13 +156,11 @@ class _PainfulLogoState extends State<PainfulLogo> {
                       curve: const Interval(0.0, 1.0, curve: Curves.easeOut),
                     );
                     return ScaleTransition(
-                      scale: Tween<double>(begin: 0.85, end: 1.0).animate(
-                        safeAnim,
-                      ),
-                      child: FadeTransition(
-                        opacity: safeAnim,
-                        child: child,
-                      ),
+                      scale: Tween<double>(
+                        begin: 0.85,
+                        end: 1.0,
+                      ).animate(safeAnim),
+                      child: FadeTransition(opacity: safeAnim, child: child),
                     );
                   },
                   child: _assetResolver.resolve(_mode, theme),

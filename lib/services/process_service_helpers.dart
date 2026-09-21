@@ -8,7 +8,8 @@ extension ProcessServiceHelpers on ProcessService {
   }) async {
     try {
       if (await File(binaryPath).exists()) return true;
-      final msg = customMessage ??
+      final msg =
+          customMessage ??
           'Binary not found. Please click "Show more" and download it from "Core Updates".';
       setBinaryMissingMessage(msg);
       addLog('✗ Binary missing: $binaryPath', source: source);

@@ -8,7 +8,7 @@ import '../process_service.dart';
 import 'decision/aether_decision_engine.dart';
 import 'decision/ranked_candidate.dart';
 import 'gateway_performance_tracker.dart';
-import 'util/endpoint_parser.dart';   
+import 'util/endpoint_parser.dart';
 
 part 'gateway_reconnect/gateway_reconnect_phase1.dart';
 part 'gateway_reconnect/gateway_reconnect_phase2.dart';

@@ -48,10 +48,7 @@ extension GatewayReconnectPhase1 on GatewayReconnectOrchestrator {
       return false;
     }
 
-    final prober = SocksProber(
-      processService,
-      isCancelled: isCancelRequested,
-    );
+    final prober = SocksProber(processService, isCancelled: isCancelRequested);
 
     final diag = await prober.waitForHealthy(
       port,
@@ -79,11 +76,7 @@ extension GatewayReconnectPhase1 on GatewayReconnectOrchestrator {
       );
     } catch (_) {}
 
-    startTrackerForGateway(
-      record: record,
-      port: port,
-      endpoint: endpoint,
-    );
+    startTrackerForGateway(record: record, port: port, endpoint: endpoint);
     return true;
   }
 
@@ -120,10 +113,7 @@ extension GatewayReconnectPhase1 on GatewayReconnectOrchestrator {
       return false;
     }
 
-    final prober = SocksProber(
-      processService,
-      isCancelled: isCancelRequested,
-    );
+    final prober = SocksProber(processService, isCancelled: isCancelRequested);
 
     final diag = await prober.waitForHealthy(
       port,

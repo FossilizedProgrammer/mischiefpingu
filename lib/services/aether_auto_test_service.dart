@@ -84,10 +84,7 @@ class AetherAutoTestService {
     final store = gatewayHistoryStore;
     _performanceTracker = store == null
         ? null
-        : GatewayPerformanceTracker(
-            store: store,
-            log: processService.addLog,
-          );
+        : GatewayPerformanceTracker(store: store, log: processService.addLog);
 
     _executor = AetherTestExecutor(
       processService: processService,
@@ -118,13 +115,12 @@ class AetherAutoTestService {
     ProfilePerformanceStore? profileStore,
     AetherLogger? logger,
     AetherDecisionEngine? decisionEngine,
-  }) =>
-      attachAllStoresInternal(
-        historyStore: historyStore,
-        profileStore: profileStore,
-        logger: logger,
-        decisionEngine: decisionEngine,
-      );
+  }) => attachAllStoresInternal(
+    historyStore: historyStore,
+    profileStore: profileStore,
+    logger: logger,
+    decisionEngine: decisionEngine,
+  );
 
   void attachDecisionEngine(AetherDecisionEngine engine) {
     decisionEngine = engine;
@@ -166,8 +162,7 @@ class AetherAutoTestService {
       _store.getLastSuccessfulEndpoint();
 
   /// آخرین transport موفق — برای fast-path.
-  Future<MapEntry<String, String>?> loadAutoWinner() =>
-      _store.loadAutoWinner();
+  Future<MapEntry<String, String>?> loadAutoWinner() => _store.loadAutoWinner();
 
   /// پاک کردن endpoint ذخیره‌شده (وقتی fail شد).
   Future<void> clearLastEndpoint() => _store.clearLastEndpoint();
@@ -177,12 +172,11 @@ class AetherAutoTestService {
     String endpoint, {
     required String protocol,
     required String masque,
-  }) =>
-      _store.saveRealEndpointFromLog(
-        endpoint,
-        protocol: protocol,
-        masque: masque,
-      );
+  }) => _store.saveRealEndpointFromLog(
+    endpoint,
+    protocol: protocol,
+    masque: masque,
+  );
 
   /// استخراج endpoint واقعی از خط لاگ.
   String? extractRealEndpointFromLog(String line) =>

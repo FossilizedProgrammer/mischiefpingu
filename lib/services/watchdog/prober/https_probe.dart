@@ -24,10 +24,7 @@ extension WatchdogProberHttpsProbe on WatchdogProber {
       }
 
       if (buffer.isEmpty) {
-        log(
-          '✗ probe: HTTPS returned 0 bytes (tunnel dead)',
-          source: logSource,
-        );
+        log('✗ probe: HTTPS returned 0 bytes (tunnel dead)', source: logSource);
         return (responseOk: false, statusOk: false);
       }
 
@@ -40,7 +37,8 @@ extension WatchdogProberHttpsProbe on WatchdogProber {
         return (responseOk: false, statusOk: false);
       }
 
-      final statusOk = head.contains(' 200 ') ||
+      final statusOk =
+          head.contains(' 200 ') ||
           head.contains(' 204 ') ||
           head.contains(' 301 ') ||
           head.contains(' 302 ') ||

@@ -32,10 +32,7 @@ class ConnectionHealthMonitor {
   static const Duration _interval = Duration(seconds: 15);
   static const int _maxHistory = 8;
 
-  ConnectionHealthMonitor({
-    required this.onUpdate,
-    required this.log,
-  });
+  ConnectionHealthMonitor({required this.onUpdate, required this.log});
 
   /// شروع مانیتورینگ.
   void start(DateTime connectedAt, {int initialReconnectCount = 0}) {
@@ -114,7 +111,8 @@ class ConnectionHealthMonitor {
     // ─── uptime bonus (حداکثر +10) ───
     final uptimeBonus = (uptime.inMinutes / 30.0).clamp(0.0, 1.0) * 10;
 
-    final raw = latencyScore * 0.45 +
+    final raw =
+        latencyScore * 0.45 +
         jitterScore * 0.20 +
         lossScore * 0.25 +
         uptimeBonus -

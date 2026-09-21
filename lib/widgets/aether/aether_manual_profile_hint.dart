@@ -2,6 +2,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import '../../l10n/app_localizations.dart';
+
 /// ═══════════════════════════════════════════════════════════════
 ///  AetherManualProfileHint — کادر هشدار برای حالت manual.
 /// ═══════════════════════════════════════════════════════════════
@@ -17,22 +19,15 @@ class AetherManualProfileHint extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.amber.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Colors.amber.withValues(alpha: 0.4),
-        ),
+        border: Border.all(color: Colors.amber.withValues(alpha: 0.4)),
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.info_outline,
-            size: 16,
-            color: Colors.amber.shade800,
-          ),
+          Icon(Icons.info_outline, size: 16, color: Colors.amber.shade800),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'حالت دستی: پروتکل، مبهم‌سازی، scan mode و '
-              'اندپوینت سفارشی در پایین کاملاً در اختیار شماست.',
+              AppLocalizations.of(context).aetherManualHint,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: Colors.amber.shade900,
                 fontWeight: FontWeight.w500,

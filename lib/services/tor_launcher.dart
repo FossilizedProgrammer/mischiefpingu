@@ -14,7 +14,8 @@ extension ProcessServiceTorLauncher on ProcessService {
     const src = LogSource.tor;
 
     try {
-      final binaryPath = await AppDataService.findTorBinary() ??
+      final binaryPath =
+          await AppDataService.findTorBinary() ??
           await AppDataService.getTorBinaryPath();
       if (!await File(binaryPath).exists()) {
         final torDir = await AppDataService.getTorDir();
@@ -152,10 +153,7 @@ extension ProcessServiceTorLauncher on ProcessService {
       //  ⚠️ sad notification هنگام خروج غیرمنتظره
       // ═══════════════════════════════════════════════════════════
       if (wasConnected && !suppressSadNotification) {
-        addLog(
-          '⚠ Tor exited unexpectedly (code=$code)',
-          source: src,
-        );
+        addLog('⚠ Tor exited unexpectedly (code=$code)', source: src);
         setSadNotification('Tor');
       }
       suppressSadNotification = false;

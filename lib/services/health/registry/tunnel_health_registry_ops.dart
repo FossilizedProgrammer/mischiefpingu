@@ -82,10 +82,7 @@ extension TunnelHealthRegistryOps on TunnelHealthRegistry {
       final r = entry.value.current;
       if (r != null) reports[entry.key] = r;
     }
-    return HealthSnapshot(
-      reports: reports,
-      timestamp: DateTime.now(),
-    );
+    return HealthSnapshot(reports: reports, timestamp: DateTime.now());
   }
 
   /// گرفتن monitor خام یک تونل.

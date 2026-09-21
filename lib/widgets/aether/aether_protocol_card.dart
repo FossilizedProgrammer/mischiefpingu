@@ -23,7 +23,8 @@ class AetherProtocolCard extends StatelessWidget {
 
     final protocolLocked = s.isAetherProtocolLockedByProfile;
 
-    final showMasqueSection = !protocolLocked &&
+    final showMasqueSection =
+        !protocolLocked &&
         (s.aetherProtocol == 'masque' || s.aetherProtocol == 'mim');
 
     void save() {
@@ -64,8 +65,8 @@ class AetherProtocolCard extends StatelessWidget {
     final effectiveProtocol = protocolLocked
         ? 'masque'
         : (protocols.any((e) => e.key == s.aetherProtocol)
-            ? s.aetherProtocol
-            : protocols.first.key);
+              ? s.aetherProtocol
+              : protocols.first.key);
 
     return Card(
       margin: const EdgeInsets.fromLTRB(12, 8, 12, 8),

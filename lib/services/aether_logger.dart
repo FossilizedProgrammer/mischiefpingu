@@ -27,8 +27,8 @@ class AetherLogger {
   AetherLogger({
     required AetherEventStore store,
     required void Function(String message, {String source}) log,
-  })  : store = store,
-        log = log {
+  }) : store = store,
+       log = log {
     _emitter = _EventEmitter(store: store, log: log);
   }
 

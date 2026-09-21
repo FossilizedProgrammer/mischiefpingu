@@ -27,24 +27,24 @@ class SstpServer {
   String get key => '$ip:$port';
 
   Map<String, dynamic> toJson() => {
-        'ip': ip,
-        'port': port,
-        'country': country,
-        'countryShort': countryShort,
-        'ping': ping,
-        'speed': speed,
-        'operator': operator,
-      };
+    'ip': ip,
+    'port': port,
+    'country': country,
+    'countryShort': countryShort,
+    'ping': ping,
+    'speed': speed,
+    'operator': operator,
+  };
 
   factory SstpServer.fromJson(Map<String, dynamic> j) => SstpServer(
-        ip: j['ip'] as String? ?? '',
-        port: j['port'] as int? ?? 443,
-        country: j['country'] as String? ?? '',
-        countryShort: j['countryShort'] as String? ?? '',
-        ping: j['ping'] as int? ?? 0,
-        speed: j['speed'] as int? ?? 0,
-        operator: j['operator'] as String? ?? '',
-      );
+    ip: j['ip'] as String? ?? '',
+    port: j['port'] as int? ?? 443,
+    country: j['country'] as String? ?? '',
+    countryShort: j['countryShort'] as String? ?? '',
+    ping: j['ping'] as int? ?? 0,
+    speed: j['speed'] as int? ?? 0,
+    operator: j['operator'] as String? ?? '',
+  );
 
   @override
   String toString() => '$ip:$port ($country)';

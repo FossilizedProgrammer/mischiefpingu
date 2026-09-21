@@ -66,10 +66,7 @@ extension ProcessServicePsiphonListener on ProcessService {
       //  false باشد) و تونل قبلاً وصل بوده، پنگوئن غمگین می‌شود.
       // ═══════════════════════════════════════════════════════════
       if (wasConnected && !suppressSadNotification) {
-        addLog(
-          '⚠ Psiphon exited unexpectedly (code=$code)',
-          source: src,
-        );
+        addLog('⚠ Psiphon exited unexpectedly (code=$code)', source: src);
         setSadNotification('Psiphon');
       }
       suppressSadNotification = false;

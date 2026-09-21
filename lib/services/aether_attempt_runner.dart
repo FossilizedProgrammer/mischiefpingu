@@ -80,11 +80,7 @@ class AetherAttemptRunner {
       source: LogSource.aether,
     );
 
-    return AttemptResult(
-      outcome: _translate(diag),
-      diag: diag,
-      usedPort: port,
-    );
+    return AttemptResult(outcome: _translate(diag), diag: diag, usedPort: port);
   }
 
   AttemptOutcome _translate(SocksDiag diag) {

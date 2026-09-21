@@ -53,7 +53,8 @@ class DatabaseSchema {
 
   static const String tableGatewayHistory = 'gateway_history';
 
-  static const String createTableGatewayHistory = '''
+  static const String createTableGatewayHistory =
+      '''
     CREATE TABLE $tableGatewayHistory (
       $colId INTEGER PRIMARY KEY AUTOINCREMENT,
       $colUniqueKey TEXT NOT NULL UNIQUE,
@@ -110,7 +111,8 @@ class DatabaseSchema {
   static const String colNetworkName = 'network_name';
   static const String colError = 'error';
 
-  static const String createTableAetherEvents = '''
+  static const String createTableAetherEvents =
+      '''
     CREATE TABLE $tableAetherEvents (
       $colId INTEGER PRIMARY KEY AUTOINCREMENT,
       $colTimestamp INTEGER NOT NULL,
@@ -144,7 +146,8 @@ class DatabaseSchema {
 
   static const String tableProfilePerformance = 'profile_performance';
 
-  static const String createTableProfilePerformance = '''
+  static const String createTableProfilePerformance =
+      '''
     CREATE TABLE $tableProfilePerformance (
       $colId INTEGER PRIMARY KEY AUTOINCREMENT,
       $colUniqueKey TEXT NOT NULL UNIQUE,

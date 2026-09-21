@@ -34,7 +34,8 @@ class PsiphonHealthSource {
     required int successCount,
     required int totalSamples,
     required Map<String, dynamic> extra,
-  }) onReport;
+  })
+  onReport;
 
   // ─── state ───
   int successCount = 0;
@@ -53,10 +54,7 @@ class PsiphonHealthSource {
   late final PsiphonLogParser _parser;
   late final PsiphonReportEmitter _emitter;
 
-  PsiphonHealthSource({
-    required this.log,
-    required this.onReport,
-  }) {
+  PsiphonHealthSource({required this.log, required this.onReport}) {
     _parser = PsiphonLogParser(source: this);
     _emitter = PsiphonReportEmitter(source: this);
   }

@@ -127,10 +127,7 @@ class QualityDegradationDetector {
     _restartInProgress = true;
     _lastTriggerAt = DateTime.now();
 
-    log(
-      '⚠ Quality degradation detected: $reason',
-      source: LogSource.aether,
-    );
+    log('⚠ Quality degradation detected: $reason', source: LogSource.aether);
     onDegradationDetected(reason);
 
     Future.delayed(_cooldown, () {

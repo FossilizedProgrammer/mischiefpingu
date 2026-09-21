@@ -216,6 +216,12 @@
 "watchdogEnabledSubtitle": "Automatically restart tunnels when they become unresponsive",
 "watchdogSettings": "Watchdog Settings",
 
+"backToPresets": "Back to presets",
+"aetherManualHint": "Manual mode: Protocol, obfuscation, scan mode, and custom endpoint are fully under your control below.",
+
+  "backToPresets": "Back to presets",
+  "aetherManualHint": "Manual mode: Protocol, obfuscation, scan mode, and custom endpoint are fully under your control below.",
+
   "appUpdate": "App Update",
   "appUpdateChecking": "Checking for updates...",
   "appUpdateFailed": "Update check failed",

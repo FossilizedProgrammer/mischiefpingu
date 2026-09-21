@@ -32,14 +32,8 @@ extension TunnelHealthRegistryInit on TunnelHealthRegistry {
       monitor: _monitors[TunnelKind.psiphon]!,
     );
 
-    _torAdapter = TorAdapter(
-      log: log,
-      monitor: _monitors[TunnelKind.tor]!,
-    );
+    _torAdapter = TorAdapter(log: log, monitor: _monitors[TunnelKind.tor]!);
 
-    _sstpAdapter = SstpAdapter(
-      log: log,
-      monitor: _monitors[TunnelKind.sstp]!,
-    );
+    _sstpAdapter = SstpAdapter(log: log, monitor: _monitors[TunnelKind.sstp]!);
   }
 }

@@ -15,10 +15,7 @@ class CdnScannerController {
   String? _lastSyncedPreset;
   bool _controllersSynced = false;
 
-  CdnScannerController({
-    required this.inputCtrl,
-    required this.sniCtrl,
-  });
+  CdnScannerController({required this.inputCtrl, required this.sniCtrl});
 
   /// sync controllerها با state provider. idempotent است.
   void sync(CdnScannerProvider scan) {

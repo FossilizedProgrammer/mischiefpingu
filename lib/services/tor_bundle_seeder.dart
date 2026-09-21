@@ -122,7 +122,8 @@ class TorBundleSeeder {
           final baseNoExt = PlatformInfo.isWindows && base.endsWith('.exe')
               ? base.substring(0, base.length - 4)
               : base;
-          final shouldChmod = !PlatformInfo.isWindows &&
+          final shouldChmod =
+              !PlatformInfo.isWindows &&
               (executables.contains(baseNoExt) ||
                   entity.path.contains('pluggable_transports') ||
                   !base.contains('.'));

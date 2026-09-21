@@ -72,10 +72,7 @@ extension AppProviderProcessListener on AppProvider {
     final psiphonIsConnected = current.psiphonConnected;
 
     if (psiphonIsConnected && !psiphonWasConnected) {
-      _healthRegistry.startMonitor(
-        TunnelKind.psiphon,
-        DateTime.now(),
-      );
+      _healthRegistry.startMonitor(TunnelKind.psiphon, DateTime.now());
       processService.addLog(
         '→ Psiphon health monitor started',
         source: LogSource.app,
@@ -93,10 +90,7 @@ extension AppProviderProcessListener on AppProvider {
     final torIsConnected = current.torConnected;
 
     if (torIsConnected && !torWasConnected) {
-      _healthRegistry.startMonitor(
-        TunnelKind.tor,
-        DateTime.now(),
-      );
+      _healthRegistry.startMonitor(TunnelKind.tor, DateTime.now());
       processService.addLog(
         '→ Tor health monitor started',
         source: LogSource.app,
@@ -114,10 +108,7 @@ extension AppProviderProcessListener on AppProvider {
     final sstpIsConnected = current.sstpConnected;
 
     if (sstpIsConnected && !sstpWasConnected) {
-      _healthRegistry.startMonitor(
-        TunnelKind.sstp,
-        DateTime.now(),
-      );
+      _healthRegistry.startMonitor(TunnelKind.sstp, DateTime.now());
       processService.addLog(
         '→ SSTP health monitor started',
         source: LogSource.app,

@@ -661,6 +661,13 @@ class AppLocalizationsFa extends AppLocalizations {
   String get watchdogSettings => 'تنظیمات واچ‌داگ';
 
   @override
+  String get backToPresets => 'بازگشت به پروفایل‌های آماده';
+
+  @override
+  String get aetherManualHint =>
+      'حالت دستی: پروتکل، مبهم‌سازی، scan mode و اندپوینت سفارشی در پایین کاملاً در اختیار شماست.';
+
+  @override
   String get appUpdate => 'بروزرسانی برنامه';
 
   @override

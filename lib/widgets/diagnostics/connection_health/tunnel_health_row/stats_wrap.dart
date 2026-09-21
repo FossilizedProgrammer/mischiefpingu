@@ -19,11 +19,7 @@ class StatsWrap extends StatelessWidget {
   final TunnelHealthReport report;
   final ThemeData theme;
 
-  const StatsWrap({
-    super.key,
-    required this.report,
-    required this.theme,
-  });
+  const StatsWrap({super.key, required this.report, required this.theme});
 
   @override
   Widget build(BuildContext context) {

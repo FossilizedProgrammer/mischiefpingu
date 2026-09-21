@@ -112,9 +112,7 @@ extension PacketLossProberTarget on PacketLossProber {
       );
       await secure.flush();
 
-      final secureIter = StreamIterator<List<int>>(
-        secure.timeout(timeout),
-      );
+      final secureIter = StreamIterator<List<int>>(secure.timeout(timeout));
       final buffer = <int>[];
       try {
         while (await secureIter.moveNext()) {

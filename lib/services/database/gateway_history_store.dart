@@ -13,6 +13,7 @@ part 'gateway_history_store/gateway_history_store_query.dart';
 part 'gateway_history_store/gateway_history_store_maintenance.dart';
 part 'gateway_history_store/record/success_failure.dart';
 part 'gateway_history_store/record/performance_session.dart';
+
 // ❌ حذف شد: part 'gateway_history_store/gateway_history_store_record.dart';
 
 class GatewayHistoryStore {

@@ -75,8 +75,7 @@ const List<AetherProfile> aetherProfiles = [
   AetherProfile(
     id: 'strict',
     label: 'Strict network',
-    description:
-        'وای‌فای محدود یا فیلتر سنگین — fragment + masque-in-masque + noize gfw',
+    description: 'وای‌فای محدود یا فیلتر سنگین — fragment + masque-in-masque + noize gfw',
     scanMode: 'stealth',
     noize: 'gfw',
     candidates: [

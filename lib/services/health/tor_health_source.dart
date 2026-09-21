@@ -29,7 +29,8 @@ class TorHealthSource {
     required int successCount,
     required int totalSamples,
     required Map<String, dynamic> extra,
-  }) onReport;
+  })
+  onReport;
 
   // ─── state ───
   int successCount = 0;
@@ -46,10 +47,7 @@ class TorHealthSource {
   late final TorLogParser _parser;
   late final TorReportEmitter _emitter;
 
-  TorHealthSource({
-    required this.log,
-    required this.onReport,
-  }) {
+  TorHealthSource({required this.log, required this.onReport}) {
     _parser = TorLogParser(source: this);
     _emitter = TorReportEmitter(source: this);
   }

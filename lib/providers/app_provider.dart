@@ -71,7 +71,6 @@ part 'app_provider_log_watchers.dart';
 part 'app_provider_process_listener.dart';
 part 'app_provider_wrappers.dart';
 
-
 class AppProvider extends ChangeNotifier {
   final ProcessService processService = ProcessService();
   late final AetherAutoTestService _aetherTestService;
@@ -527,21 +526,15 @@ class AppProvider extends ChangeNotifier {
         switch (kind) {
           case TunnelKind.psiphon:
             // ignore: discarded_futures
-            restartPsiphonInternal(
-              reason: 'health degradation: $reason',
-            );
+            restartPsiphonInternal(reason: 'health degradation: $reason');
             break;
           case TunnelKind.tor:
             // ignore: discarded_futures
-            restartTorInternal(
-              reason: 'health degradation: $reason',
-            );
+            restartTorInternal(reason: 'health degradation: $reason');
             break;
           case TunnelKind.sstp:
             // ignore: discarded_futures
-            restartSstpInternal(
-              reason: 'health degradation: $reason',
-            );
+            restartSstpInternal(reason: 'health degradation: $reason');
             break;
           case TunnelKind.aether:
             break;
@@ -827,19 +820,12 @@ class AppProvider extends ChangeNotifier {
     }
 
     // بقیه از registry
-    for (final kind in [
-      TunnelKind.psiphon,
-      TunnelKind.tor,
-      TunnelKind.sstp,
-    ]) {
+    for (final kind in [TunnelKind.psiphon, TunnelKind.tor, TunnelKind.sstp]) {
       final r = _healthRegistry.reportFor(kind);
       if (r != null) reports[kind] = r;
     }
 
-    return HealthSnapshot(
-      reports: reports,
-      timestamp: DateTime.now(),
-    );
+    return HealthSnapshot(reports: reports, timestamp: DateTime.now());
   }
 
   /// ثبت reconnect برای یک تونل غیر-Aether.

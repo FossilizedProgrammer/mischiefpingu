@@ -9,12 +9,5 @@ class LogSource {
   static const String empty = '';
 
   /// لیست تمام منابع لاگ برای استفاده در فیلترها.
-  static const List<String> all = [
-    psiphon,
-    aether,
-    tor,
-    sstp,
-    app,
-    system,
-  ];
+  static const List<String> all = [psiphon, aether, tor, sstp, app, system];
 }

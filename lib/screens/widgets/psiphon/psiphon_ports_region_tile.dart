@@ -68,7 +68,8 @@ class PsiphonPortsRegionTile extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
-          initialValue: providerS.egressRegion.isNotEmpty &&
+          initialValue:
+              providerS.egressRegion.isNotEmpty &&
                   regions.contains(providerS.egressRegion)
               ? providerS.egressRegion
               : '',

@@ -665,6 +665,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get watchdogSettings => 'Watchdog Settings';
 
   @override
+  String get backToPresets => 'Back to presets';
+
+  @override
+  String get aetherManualHint =>
+      'Manual mode: Protocol, obfuscation, scan mode, and custom endpoint are fully under your control below.';
+
+  @override
   String get appUpdate => 'App Update';
 
   @override

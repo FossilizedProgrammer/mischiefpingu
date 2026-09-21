@@ -12,11 +12,7 @@ class HealthHeader extends StatelessWidget {
   final TunnelHealthReport report;
   final Color color;
 
-  const HealthHeader({
-    super.key,
-    required this.report,
-    required this.color,
-  });
+  const HealthHeader({super.key, required this.report, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +21,7 @@ class HealthHeader extends StatelessWidget {
 
     return Row(
       children: [
-        Icon(
-          Icons.monitor_heart_outlined,
-          color: color,
-          size: 20,
-        ),
+        Icon(Icons.monitor_heart_outlined, color: color, size: 20),
         const SizedBox(width: 8),
         Text(
           l10n.tunnelHealthTitle(report.kind.displayName),
@@ -39,17 +31,11 @@ class HealthHeader extends StatelessWidget {
         ),
         const Spacer(),
         Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 6,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: color.withValues(alpha: 0.4),
-              width: 1.5,
-            ),
+            border: Border.all(color: color.withValues(alpha: 0.4), width: 1.5),
           ),
           child: Text(
             '${report.score.toStringAsFixed(0)}/100',

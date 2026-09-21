@@ -32,6 +32,5 @@ class ProfilePerformanceStore {
     String protocol,
     String masque,
     String network,
-  ) =>
-      '$profile|$protocol|$masque|$network';
+  ) => '$profile|$protocol|$masque|$network';
 }

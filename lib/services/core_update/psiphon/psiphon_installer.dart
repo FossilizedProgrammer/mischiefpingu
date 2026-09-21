@@ -54,8 +54,9 @@ class PsiphonInstaller {
         proxy: proxy,
         onProgress: onProgress,
         onCancelCheck: onCancelCheck,
-        totalHint:
-            info.downloadSizeBytes > 0 ? info.downloadSizeBytes : 10435684,
+        totalHint: info.downloadSizeBytes > 0
+            ? info.downloadSizeBytes
+            : 10435684,
       );
       onProgress?.call(85);
 

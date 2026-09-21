@@ -25,8 +25,7 @@ void main() {
     DatabaseInitializer.ensureInitialized();
   });
 
-  testWidgets('App smoke test — MyApp boots without crashing',
-      (tester) async {
+  testWidgets('App smoke test — MyApp boots without crashing', (tester) async {
     final localeProvider = LocaleProvider();
     final appProvider = AppProvider();
     final qualityProvider = InternetQualityProvider(

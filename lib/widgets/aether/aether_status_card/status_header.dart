@@ -65,10 +65,7 @@ class AetherStatusHeader extends StatelessWidget {
           ),
         ),
         if (isRunning && connectedAt != null)
-          _UptimeBadge(
-            connectedAt: connectedAt!,
-            theme: theme,
-          ),
+          _UptimeBadge(connectedAt: connectedAt!, theme: theme),
       ],
     );
   }
@@ -78,10 +75,7 @@ class _UptimeBadge extends StatelessWidget {
   final DateTime connectedAt;
   final ThemeData theme;
 
-  const _UptimeBadge({
-    required this.connectedAt,
-    required this.theme,
-  });
+  const _UptimeBadge({required this.connectedAt, required this.theme});
 
   @override
   Widget build(BuildContext context) {

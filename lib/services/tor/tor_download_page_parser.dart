@@ -30,8 +30,8 @@ class TorDownloadPageParser {
       final pattern = isWin
           ? r'href="([^"]*tor-expert-bundle-windows-x86_64-[^"]*\.tar\.gz)"'
           : r'href="([^"]*tor-expert-bundle-linux-' +
-              archTag +
-              r'-[^"]*\.tar\.gz)"';
+                archTag +
+                r'-[^"]*\.tar\.gz)"';
 
       final match = RegExp(pattern).firstMatch(html);
       if (match == null) {

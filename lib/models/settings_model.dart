@@ -14,7 +14,7 @@ class AppSettings {
   bool onlyIpv4;
   bool autoFindIpAndSni;
   bool saveFoundIpsAndSni;
-bool watchdogEnabled;
+  bool watchdogEnabled;
 
   int upstreamType;
 
@@ -165,8 +165,9 @@ bool watchdogEnabled;
     this.muted = false,
     this.watchdogEnabled = true,
     List<String>? enabledLogSources,
-  }) : enabledLogSources = enabledLogSources ??
-            ['Psiphon', 'Aether', 'Tor', 'SSTP', 'App', 'System'];
+  }) : enabledLogSources =
+           enabledLogSources ??
+           ['Psiphon', 'Aether', 'Tor', 'SSTP', 'App', 'System'];
 
   factory AppSettings.fromJson(Map<String, dynamic> m) =>
       AppSettingsSerialization.fromJson(m);

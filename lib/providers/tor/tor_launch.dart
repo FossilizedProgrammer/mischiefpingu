@@ -98,12 +98,15 @@ extension AppProviderTorLaunch on AppProvider {
         geoip6Path: assets.geoip6Path,
         lyrebirdPath: assets.lyrebirdPath,
         conjurePath: assets.conjurePath,
-        aetherSocks:
-            settings.torTransport == 'aether' ? settings.aetherLocalPort : null,
-        psiphonSocks:
-            settings.torTransport == 'psiphon' ? settings.socksPort : null,
-        sstpSocks:
-            settings.torTransport == 'sstp' ? settings.sstpSocksPort : null,
+        aetherSocks: settings.torTransport == 'aether'
+            ? settings.aetherLocalPort
+            : null,
+        psiphonSocks: settings.torTransport == 'psiphon'
+            ? settings.socksPort
+            : null,
+        sstpSocks: settings.torTransport == 'sstp'
+            ? settings.sstpSocksPort
+            : null,
       );
 
       final torrcPath = '$torDir/torrc';

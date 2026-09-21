@@ -22,12 +22,10 @@ class SstpHealthSource {
     required int successCount,
     required int totalSamples,
     required Map<String, dynamic> extra,
-  }) onReport;
+  })
+  onReport;
 
-  SstpHealthSource({
-    required this.log,
-    required this.onReport,
-  });
+  SstpHealthSource({required this.log, required this.onReport});
 
   int _successCount = 0;
   int _totalSamples = 0;
@@ -103,8 +101,9 @@ class SstpHealthSource {
     final jitter = (_currentLatencyMs - _lastLatencyMs).abs();
     _lastLatencyMs = _currentLatencyMs;
 
-    final lossPct =
-        _totalSamples > 0 ? (_handshakeFailures / _totalSamples) * 100.0 : 0.0;
+    final lossPct = _totalSamples > 0
+        ? (_handshakeFailures / _totalSamples) * 100.0
+        : 0.0;
 
     onReport(
       latencyMs: latency,

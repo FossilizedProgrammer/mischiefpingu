@@ -14,7 +14,7 @@ extension WatchdogProberTlsProbe on WatchdogProber {
   /// `iter` رو cancel می‌کنه چون بعد از secure شدن، سوکت
   /// دیگه قابل استفاده از طریق iterator خام نیست.
   Future<({SecureSocket? secure, bool httpRespOk, bool httpStatusOk})>
-      performTlsAndHttps({
+  performTlsAndHttps({
     required Socket sock,
     required StreamIterator<List<int>>? iter,
   }) async {

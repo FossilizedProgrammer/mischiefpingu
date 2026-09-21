@@ -82,24 +82,24 @@ class AetherEvent {
   });
 
   Map<String, Object?> toMap() => {
-        'id': id,
-        'timestamp': timestamp.millisecondsSinceEpoch,
-        'event_type': eventType.id,
-        'profile': profile,
-        'protocol': protocol,
-        'masque_option': masqueOption,
-        'endpoint': endpoint,
-        'scan_mode': scanMode,
-        'result': result,
-        'duration_ms': durationMs,
-        'latency_ms': latencyMs,
-        'jitter_ms': jitterMs,
-        'packet_loss_pct': packetLossPct,
-        'attempt_number': attemptNumber,
-        'network_type': networkType,
-        'network_name': networkName,
-        'error': error,
-      };
+    'id': id,
+    'timestamp': timestamp.millisecondsSinceEpoch,
+    'event_type': eventType.id,
+    'profile': profile,
+    'protocol': protocol,
+    'masque_option': masqueOption,
+    'endpoint': endpoint,
+    'scan_mode': scanMode,
+    'result': result,
+    'duration_ms': durationMs,
+    'latency_ms': latencyMs,
+    'jitter_ms': jitterMs,
+    'packet_loss_pct': packetLossPct,
+    'attempt_number': attemptNumber,
+    'network_type': networkType,
+    'network_name': networkName,
+    'error': error,
+  };
 
   factory AetherEvent.fromMap(Map<String, Object?> m) {
     return AetherEvent(

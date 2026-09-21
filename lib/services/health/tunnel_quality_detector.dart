@@ -67,9 +67,7 @@ class TunnelQualityDetector {
         '100% packet loss — escalating profile',
         source: LogSource.app,
       );
-      onEscalateProfile!(
-        '100% packet loss (tunnel up but no data)',
-      );
+      onEscalateProfile!('100% packet loss (tunnel up but no data)');
       return;
     }
 

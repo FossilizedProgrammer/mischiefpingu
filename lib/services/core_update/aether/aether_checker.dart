@@ -50,7 +50,8 @@ class AetherChecker {
         displayName: 'Aether (WARP / MASQUE)',
         installedVersion: installed,
         latestVersion: latest.isEmpty ? installed : latest,
-        hasUpdate: latest.isNotEmpty &&
+        hasUpdate:
+            latest.isNotEmpty &&
             (CoreUpdateUtils.isMissingVersion(installed) ||
                 CoreUpdateUtils.isNewerVersion(installed, latest)),
         downloadUrl: url,

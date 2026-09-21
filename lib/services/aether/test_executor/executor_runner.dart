@@ -19,10 +19,7 @@ extension AetherTestExecutorRunner on AetherTestExecutor {
     final candidates = await planner.buildCandidates(autoWinner: autoWinner);
 
     if (candidates.isEmpty) {
-      processService.addLog(
-        '✗ No candidates to try',
-        source: LogSource.aether,
-      );
+      processService.addLog('✗ No candidates to try', source: LogSource.aether);
       return false;
     }
 
@@ -32,10 +29,7 @@ extension AetherTestExecutorRunner on AetherTestExecutor {
     );
     for (final c in candidates) {
       final tag = c.fromProfileCache || c.fromHistory ? ' [${c.cacheTag}]' : '';
-      processService.addLog(
-        '   • ${c.label}$tag',
-        source: LogSource.aether,
-      );
+      processService.addLog('   • ${c.label}$tag', source: LogSource.aether);
     }
 
     for (final attempt in candidates) {
@@ -63,11 +57,7 @@ extension AetherTestExecutorRunner on AetherTestExecutor {
         forceFragmentH2: attempt.fragmentH2,
       );
 
-      final result = await runner.run(
-        attempt: attempt,
-        args: args,
-        port: port,
-      );
+      final result = await runner.run(attempt: attempt, args: args, port: port);
 
       final attemptDuration = DateTime.now().difference(attemptStart);
       final latencyMs = attemptDuration.inMilliseconds;

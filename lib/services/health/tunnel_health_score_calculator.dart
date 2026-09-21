@@ -58,7 +58,8 @@ class TunnelHealthScoreCalculator {
     final reconnectScore = _reconnectScore(reconnectCount, totalSamples);
     final errorScore = _errorScore(errorCount, totalSamples);
 
-    final total = latencyScore * weightLatency +
+    final total =
+        latencyScore * weightLatency +
         jitterScore * weightJitter +
         successScore * weightSuccessRate +
         lossScore * weightPacketLoss +

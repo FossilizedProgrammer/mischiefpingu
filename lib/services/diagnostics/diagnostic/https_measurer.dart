@@ -58,8 +58,9 @@ class HttpsMeasurer {
 
       final uri = Uri.https(host, '/');
 
-      final req =
-          await client.getUrl(uri).timeout(DiagnosticConfig.httpsTimeout);
+      final req = await client
+          .getUrl(uri)
+          .timeout(DiagnosticConfig.httpsTimeout);
       req.headers.set('User-Agent', DiagnosticConfig.httpsUserAgent);
       req.headers.set('Accept', 'text/html,application/xhtml+xml,*/*');
       req.headers.set('Accept-Language', 'en-US,en;q=0.9');

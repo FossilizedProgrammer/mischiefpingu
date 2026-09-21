@@ -128,6 +128,7 @@ class ConnectivityProbeResult {
   });
 
   @override
-  String toString() => 'ConnectivityProbeResult($successCount/$totalCount, '
+  String toString() =>
+      'ConnectivityProbeResult($successCount/$totalCount, '
       '${elapsedMs}ms, alive=$isAlive)';
 }

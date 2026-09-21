@@ -73,10 +73,7 @@ extension GatewayReconnectPhase2 on GatewayReconnectOrchestrator {
     final started = await processService.startAether(args);
     if (!started) return false;
 
-    final prober = SocksProber(
-      processService,
-      isCancelled: isCancelRequested,
-    );
+    final prober = SocksProber(processService, isCancelled: isCancelRequested);
     final diag = await prober.waitForHealthy(
       port,
       timeout: const Duration(seconds: 45),
@@ -111,10 +108,7 @@ extension GatewayReconnectPhase2 on GatewayReconnectOrchestrator {
     final started = await processService.startAether(args);
     if (!started) return false;
 
-    final prober = SocksProber(
-      processService,
-      isCancelled: isCancelRequested,
-    );
+    final prober = SocksProber(processService, isCancelled: isCancelRequested);
     final diag = await prober.waitForHealthy(
       port,
       timeout: const Duration(seconds: 45),

@@ -21,26 +21,31 @@ extension AetherAttemptPlannerLegacy on AetherAttemptPlanner {
         settings.isAetherProfileAutomatic ? 'auto' : settings.aetherProtocol,
         custom,
       );
-      final masque =
-          (proto == 'masque' || proto == 'mim') ? settings.masqueOption : '';
-      add(EndpointAttempt(
-        label: 'Custom Endpoint ($custom)',
-        protocol: proto,
-        masque: masque,
-        endpoint: custom,
-      ));
+      final masque = (proto == 'masque' || proto == 'mim')
+          ? settings.masqueOption
+          : '';
+      add(
+        EndpointAttempt(
+          label: 'Custom Endpoint ($custom)',
+          protocol: proto,
+          masque: masque,
+          endpoint: custom,
+        ),
+      );
       return list;
     }
 
     // 2. Last winner
     if (settings.aetherTryLastEndpointFirst && autoWinner != null) {
-      add(EndpointAttempt(
-        label: 'Last remembered (${autoWinner.key})',
-        protocol: autoWinner.key,
-        masque: autoWinner.value,
-        endpoint: '',
-        fromHistory: true,
-      ));
+      add(
+        EndpointAttempt(
+          label: 'Last remembered (${autoWinner.key})',
+          protocol: autoWinner.key,
+          masque: autoWinner.value,
+          endpoint: '',
+          fromHistory: true,
+        ),
+      );
     }
 
     // 3. History
@@ -67,14 +72,16 @@ extension AetherAttemptPlannerLegacy on AetherAttemptPlanner {
     try {
       final top = await store.getTopGateways(limit: 5, minScore: 20.0);
       for (final r in top) {
-        add(EndpointAttempt(
-          label: AetherAttemptPlanner.labelForGateway(r),
-          protocol: r.protocol,
-          masque: r.masqueOption,
-          endpoint: r.endpoint,
-          historicalScore: r.score,
-          fromHistory: true,
-        ));
+        add(
+          EndpointAttempt(
+            label: AetherAttemptPlanner.labelForGateway(r),
+            protocol: r.protocol,
+            masque: r.masqueOption,
+            endpoint: r.endpoint,
+            historicalScore: r.score,
+            fromHistory: true,
+          ),
+        );
       }
     } catch (_) {}
   }
@@ -94,19 +101,21 @@ extension AetherAttemptPlannerLegacy on AetherAttemptPlanner {
       );
       for (final b in best) {
         if (b.rate < 0.5) continue;
-        add(EndpointAttempt(
-          label: AetherAttemptPlanner.labelForProfilePerf(
+        add(
+          EndpointAttempt(
+            label: AetherAttemptPlanner.labelForProfilePerf(
+              protocol: b.protocol,
+              masque: b.masque,
+              rate: b.rate,
+            ),
             protocol: b.protocol,
             masque: b.masque,
-            rate: b.rate,
+            endpoint: '',
+            historicalScore: b.rate * 100,
+            fromHistory: true,
+            fromProfileCache: true,
           ),
-          protocol: b.protocol,
-          masque: b.masque,
-          endpoint: '',
-          historicalScore: b.rate * 100,
-          fromHistory: true,
-          fromProfileCache: true,
-        ));
+        );
       }
     } catch (_) {}
   }
@@ -122,41 +131,48 @@ extension AetherAttemptPlannerLegacy on AetherAttemptPlanner {
         ProfileCandidate(protocol: 'wireguard'),
         ProfileCandidate(protocol: 'gool'),
       ]) {
-        add(EndpointAttempt(
-          label: AetherAttemptPlanner.labelFor(c),
-          protocol: c.protocol,
-          masque: c.masque,
-          endpoint: '',
-          fragmentH2: c.fragmentH2,
-        ));
+        add(
+          EndpointAttempt(
+            label: AetherAttemptPlanner.labelFor(c),
+            protocol: c.protocol,
+            masque: c.masque,
+            endpoint: '',
+            fragmentH2: c.fragmentH2,
+          ),
+        );
       }
       return;
     }
 
     for (final c in candidates) {
-      add(EndpointAttempt(
-        label: AetherAttemptPlanner.labelFor(c),
-        protocol: c.protocol,
-        masque: c.masque,
-        endpoint: '',
-        fragmentH2: c.fragmentH2,
-      ));
+      add(
+        EndpointAttempt(
+          label: AetherAttemptPlanner.labelFor(c),
+          protocol: c.protocol,
+          masque: c.masque,
+          endpoint: '',
+          fragmentH2: c.fragmentH2,
+        ),
+      );
     }
   }
 
   void _addManualCandidate(void Function(EndpointAttempt) add) {
     final proto = settings.aetherProtocol;
-    final masque =
-        (proto == 'masque' || proto == 'mim') ? settings.masqueOption : '';
+    final masque = (proto == 'masque' || proto == 'mim')
+        ? settings.masqueOption
+        : '';
     final frag = settings.aetherProfile == 'strict' && masque == 'HTTP-2';
-    add(EndpointAttempt(
-      label: AetherAttemptPlanner.labelFor(
-        ProfileCandidate(protocol: proto, masque: masque, fragmentH2: frag),
+    add(
+      EndpointAttempt(
+        label: AetherAttemptPlanner.labelFor(
+          ProfileCandidate(protocol: proto, masque: masque, fragmentH2: frag),
+        ),
+        protocol: proto,
+        masque: masque,
+        endpoint: '',
+        fragmentH2: frag,
       ),
-      protocol: proto,
-      masque: masque,
-      endpoint: '',
-      fragmentH2: frag,
-    ));
+    );
   }
 }

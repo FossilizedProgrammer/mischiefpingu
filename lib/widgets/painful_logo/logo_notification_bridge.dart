@@ -33,7 +33,8 @@ class LogoNotificationBridge {
 
     final sadTs = ps.pendingSadTimestamp;
     if (sadTs != null) {
-      final isNew = _lastSeenSadTimestamp == null ||
+      final isNew =
+          _lastSeenSadTimestamp == null ||
           sadTs.isAfter(_lastSeenSadTimestamp!);
       if (isNew) {
         _lastSeenSadTimestamp = sadTs;
@@ -45,7 +46,8 @@ class LogoNotificationBridge {
 
     final happyTs = ps.pendingHappyTimestamp;
     if (happyTs != null) {
-      final isNew = _lastSeenHappyTimestamp == null ||
+      final isNew =
+          _lastSeenHappyTimestamp == null ||
           happyTs.isAfter(_lastSeenHappyTimestamp!);
       if (isNew) {
         _lastSeenHappyTimestamp = happyTs;

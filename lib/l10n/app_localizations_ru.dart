@@ -666,6 +666,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get watchdogSettings => 'Настройки сторожевого таймера';
 
   @override
+  String get backToPresets => 'Вернуться к профилям';
+
+  @override
+  String get aetherManualHint =>
+      'Ручной режим: протокол, обфускация, режим сканирования и пользовательский endpoint полностью в вашем распоряжении ниже.';
+
+  @override
   String get appUpdate => 'Обновление приложения';
 
   @override

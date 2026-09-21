@@ -90,9 +90,7 @@ extension SocksDiagnoserHttpsProbe on SocksDiagnoser {
           onBadCertificate: (_) => true,
         ).timeout(SocksDiagnoser.tlsTimeout);
       } catch (e) {
-        processService.addLog(
-          '✗ TLS handshake ${target.host} failed: $e',
-        );
+        processService.addLog('✗ TLS handshake ${target.host} failed: $e');
         return false;
       }
 
@@ -123,9 +121,7 @@ extension SocksDiagnoserHttpsProbe on SocksDiagnoser {
       }
 
       if (buffer.isEmpty) {
-        processService.addLog(
-          '✗ probe ${target.host} — 0 bytes response',
-        );
+        processService.addLog('✗ probe ${target.host} — 0 bytes response');
         return false;
       }
 
@@ -139,7 +135,8 @@ extension SocksDiagnoserHttpsProbe on SocksDiagnoser {
       }
 
       final firstLine = head.split("\r\n").first;
-      final statusOk = head.contains(' 200 ') ||
+      final statusOk =
+          head.contains(' 200 ') ||
           head.contains(' 204 ') ||
           head.contains(' 301 ') ||
           head.contains(' 302 ') ||
@@ -149,20 +146,14 @@ extension SocksDiagnoserHttpsProbe on SocksDiagnoser {
           head.contains(' 404 ');
 
       if (!statusOk) {
-        processService.addLog(
-          '✗ probe ${target.host} — status $firstLine',
-        );
+        processService.addLog('✗ probe ${target.host} — status $firstLine');
         return false;
       }
 
-      processService.addLog(
-        '✓ probe ${target.host} — CONFIRMED ($firstLine)',
-      );
+      processService.addLog('✓ probe ${target.host} — CONFIRMED ($firstLine)');
       return true;
     } catch (e) {
-      processService.addLog(
-        '✗ probe ${target.host} — exception: $e',
-      );
+      processService.addLog('✗ probe ${target.host} — exception: $e');
       return false;
     } finally {
       try {

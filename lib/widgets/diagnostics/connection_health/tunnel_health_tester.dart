@@ -44,14 +44,10 @@ class TunnelHealthTester {
       } catch (e) {
         sw.stop();
         debugPrint('[TunnelHealthTester] TCP connect failed: $e');
-        return TunnelProbeResult.failure(
-          error: 'TCP connect failed: $e',
-        );
+        return TunnelProbeResult.failure(error: 'TCP connect failed: $e');
       }
 
-      iter = StreamIterator<List<int>>(
-        sock.timeout(_socksTotalTimeout),
-      );
+      iter = StreamIterator<List<int>>(sock.timeout(_socksTotalTimeout));
 
       // ─── مرحله 2: SOCKS5 greeting ───
       sock.add([0x05, 0x01, 0x00]);
@@ -98,18 +94,14 @@ class TunnelHealthTester {
         sw.stop();
         final code = connResp.length >= 2 ? connResp[1] : -1;
         debugPrint('[TunnelHealthTester] CONNECT failed (code=$code)');
-        return TunnelProbeResult.failure(
-          error: 'CONNECT failed (code=$code)',
-        );
+        return TunnelProbeResult.failure(error: 'CONNECT failed (code=$code)');
       }
 
       // ═══════════════════════════════════════════════════════════
       //  ✅ تونل زنده است — SOCKS greeting + CONNECT موفق
       // ═══════════════════════════════════════════════════════════
       sw.stop();
-      debugPrint(
-        '[TunnelHealthTester] SUCCESS in ${sw.elapsedMilliseconds}ms',
-      );
+      debugPrint('[TunnelHealthTester] SUCCESS in ${sw.elapsedMilliseconds}ms');
       return TunnelProbeResult.success(latencyMs: sw.elapsedMilliseconds);
     } catch (e) {
       sw.stop();

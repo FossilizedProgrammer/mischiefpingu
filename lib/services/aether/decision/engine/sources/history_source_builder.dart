@@ -15,9 +15,7 @@ class HistorySourceBuilder {
     required this.historyStore,
   });
 
-  Future<void> build(
-    void Function(RankedCandidate) add,
-  ) async {
+  Future<void> build(void Function(RankedCandidate) add) async {
     try {
       final top = await historyStore.getTopGateways(
         limit: AetherDecisionEngine.maxHistoryCandidates,
@@ -29,20 +27,21 @@ class HistorySourceBuilder {
         final decay = GatewayScoreCalculator.decayFactor(r.updatedAt);
         final effectiveScore = r.score * decay;
 
-        add(RankedCandidate(
-          protocol: r.protocol,
-          masque: r.masqueOption,
-          endpoint: r.endpoint,
-          score: effectiveScore,
-          source: CandidateSource.history,
-          reason: 'history score=${r.score.toStringAsFixed(0)} '
-              'decay=${decay.toStringAsFixed(2)}',
-        ));
+        add(
+          RankedCandidate(
+            protocol: r.protocol,
+            masque: r.masqueOption,
+            endpoint: r.endpoint,
+            score: effectiveScore,
+            source: CandidateSource.history,
+            reason:
+                'history score=${r.score.toStringAsFixed(0)} '
+                'decay=${decay.toStringAsFixed(2)}',
+          ),
+        );
       }
     } catch (e) {
-      engine.logInternal(
-        '⚠ DecisionEngine: history candidates failed: $e',
-      );
+      engine.logInternal('⚠ DecisionEngine: history candidates failed: $e');
     }
   }
 }

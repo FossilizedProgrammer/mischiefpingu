@@ -46,8 +46,9 @@ class AetherEndpointStore {
       }
     } catch (_) {}
 
-    final proto =
-        settings.aetherProtocol == 'auto' ? 'masque' : settings.aetherProtocol;
+    final proto = settings.aetherProtocol == 'auto'
+        ? 'masque'
+        : settings.aetherProtocol;
     final fromConfig = await AetherConfigParser.extractEndpoint(proto);
     if (fromConfig != null &&
         fromConfig.isNotEmpty &&
@@ -120,9 +121,7 @@ class AetherEndpointStore {
     String masque,
   ) async {
     final found = await AetherConfigParser.extractEndpoint(protocol);
-    if (found != null &&
-        found.isNotEmpty &&
-        _isValidPublicEndpoint(found)) {
+    if (found != null && found.isNotEmpty && _isValidPublicEndpoint(found)) {
       await prefs.setString(_lastEndpointKey, found);
       await prefs.setString(_lastProtocolKey, protocol);
       await prefs.setString(_lastMasqueKey, masque);

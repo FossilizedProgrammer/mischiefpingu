@@ -18,10 +18,7 @@ class SstpFetcherActions {
   SstpFetcherActions._();
 
   /// اعمال یک سرور SSTP به عنوان سرور فعلی.
-  static Future<void> applyServer(
-    BuildContext context,
-    SstpServer s,
-  ) async {
+  static Future<void> applyServer(BuildContext context, SstpServer s) async {
     final app = context.read<AppProvider>();
     if (app.processService.isSstpRunning) {
       await app.connectSstp();

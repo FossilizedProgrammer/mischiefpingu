@@ -51,9 +51,9 @@ class SstpFetcherProvider extends ChangeNotifier {
       health[s.key] ?? SstpHealthResult.unknown;
 
   int get aliveCount => servers.where((s) {
-        final h = health[s.key];
-        return h?.status == SstpHealth.alive;
-      }).length;
+    final h = health[s.key];
+    return h?.status == SstpHealth.alive;
+  }).length;
 
   Future<void> init() async {
     servers = await _store.load();

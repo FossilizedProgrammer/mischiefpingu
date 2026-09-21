@@ -52,8 +52,8 @@ extension AppProviderAetherInternal on AppProvider {
     touch();
 
     final wasRunning = processService.isAetherRunning;
-    final wasConnected = wasRunning &&
-        aetherStatus.toLowerCase().contains('healthy');
+    final wasConnected =
+        wasRunning && aetherStatus.toLowerCase().contains('healthy');
 
     try {
       // ═══════════════════════════════════════════════════════════
@@ -290,18 +290,16 @@ extension AppProviderAetherInternal on AppProvider {
       // ⚠️ این endpoint نامعتبر بود، باید پاک شود
       return (success: false, endpointWasInvalid: true);
     } catch (e) {
-      processService.addLog(
-        '⚠ Fast-path threw: $e',
-        source: src,
-      );
+      processService.addLog('⚠ Fast-path threw: $e', source: src);
       return (success: false, endpointWasInvalid: false);
     }
   }
 
   /// ثبت session state برای UI status card (فاز ۶).
   void _recordAetherSessionState() {
-    lastAetherConnectedProtocol =
-        settings.aetherProtocol == 'auto' ? 'auto' : settings.aetherProtocol;
+    lastAetherConnectedProtocol = settings.aetherProtocol == 'auto'
+        ? 'auto'
+        : settings.aetherProtocol;
     lastAetherConnectedGatewayKey =
         '${settings.ip}:${settings.aetherLocalPort}';
     lastAetherConnectedAt = DateTime.now();

@@ -45,10 +45,7 @@ extension AppProviderAetherSmartReconnect on AppProvider {
       );
       return ok;
     } catch (e) {
-      processService.addLog(
-        '⚠ Smart reconnect threw: $e',
-        source: src,
-      );
+      processService.addLog('⚠ Smart reconnect threw: $e', source: src);
       return false;
     }
   }

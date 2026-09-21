@@ -12,11 +12,7 @@ class ScoreBadge extends StatelessWidget {
   final TunnelHealthReport report;
   final AppLocalizations l10n;
 
-  const ScoreBadge({
-    super.key,
-    required this.report,
-    required this.l10n,
-  });
+  const ScoreBadge({super.key, required this.report, required this.l10n});
 
   @override
   Widget build(BuildContext context) {

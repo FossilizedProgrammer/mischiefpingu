@@ -54,8 +54,9 @@ class TorLogParser {
       source.circuitsEstablished++;
       source.successCount++;
       source.totalSamples++;
-      source.currentLatencyMs =
-          source.currentLatencyMs > 0 ? source.currentLatencyMs : 500;
+      source.currentLatencyMs = source.currentLatencyMs > 0
+          ? source.currentLatencyMs
+          : 500;
       return;
     }
 

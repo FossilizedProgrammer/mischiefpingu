@@ -6,7 +6,7 @@ import '../../database/profile_performance_store.dart';
 import '../../database/gateway_score_calculator.dart';
 import '../../process/log_source.dart';
 import '../../aether_logger.dart';
-import '../util/endpoint_parser.dart';   
+import '../util/endpoint_parser.dart';
 import 'ranked_candidate.dart';
 
 part 'engine/candidate_builder.dart';
@@ -51,34 +51,31 @@ class AetherDecisionEngine {
 
   Future<List<RankedCandidate>> buildRankedCandidates({
     MapEntry<String, String>? autoWinner,
-  }) =>
-      buildRankedCandidatesImpl(autoWinner: autoWinner);
+  }) => buildRankedCandidatesImpl(autoWinner: autoWinner);
 
   Future<void> recordOutcome({
     required RankedCandidate candidate,
     required bool success,
     required int latencyMs,
     String errorMessage = '',
-  }) =>
-      recordOutcomeImpl(
-        candidate: candidate,
-        success: success,
-        latencyMs: latencyMs,
-        errorMessage: errorMessage,
-      );
+  }) => recordOutcomeImpl(
+    candidate: candidate,
+    success: success,
+    latencyMs: latencyMs,
+    errorMessage: errorMessage,
+  );
 
   Future<void> recordSessionEnd({
     required RankedCandidate candidate,
     required Duration uptime,
     required bool wasCleanDisconnect,
     int reconnectCount = 0,
-  }) =>
-      recordSessionEndImpl(
-        candidate: candidate,
-        uptime: uptime,
-        wasCleanDisconnect: wasCleanDisconnect,
-        reconnectCount: reconnectCount,
-      );
+  }) => recordSessionEndImpl(
+    candidate: candidate,
+    uptime: uptime,
+    wasCleanDisconnect: wasCleanDisconnect,
+    reconnectCount: reconnectCount,
+  );
 
   /// لاگ داخلی — در دسترس همهٔ partها.
   void logInternal(String msg) => log(msg, source: LogSource.aether);

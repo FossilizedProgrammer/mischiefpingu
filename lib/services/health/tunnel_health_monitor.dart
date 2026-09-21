@@ -52,10 +52,7 @@ class TunnelHealthMonitor {
     _history.clear();
     _timer?.cancel();
     _timer = Timer.periodic(defaultTickInterval, (_) => _tick());
-    log(
-      '→ ${kind.displayName} HealthMonitor: started',
-      source: LogSource.app,
-    );
+    log('→ ${kind.displayName} HealthMonitor: started', source: LogSource.app);
   }
 
   /// توقف.
@@ -65,10 +62,7 @@ class TunnelHealthMonitor {
     _connectedAt = null;
     _history.clear();
     _current = null;
-    log(
-      '→ ${kind.displayName} HealthMonitor: stopped',
-      source: LogSource.app,
-    );
+    log('→ ${kind.displayName} HealthMonitor: stopped', source: LogSource.app);
   }
 
   /// ثبت یک reconnect.

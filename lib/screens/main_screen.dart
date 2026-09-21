@@ -37,10 +37,10 @@ class _MainScreenState extends State<MainScreen>
       parent: _animController,
       curve: Curves.easeOutCubic,
     );
-    _slideAnim =
-        Tween<Offset>(begin: const Offset(0, -0.08), end: Offset.zero).animate(
-      CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
-    );
+    _slideAnim = Tween<Offset>(begin: const Offset(0, -0.08), end: Offset.zero)
+        .animate(
+          CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
+        );
 
     windowManager.addListener(this);
   }

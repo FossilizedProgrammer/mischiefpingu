@@ -26,7 +26,7 @@ class AdvancedSettingsColumn extends StatelessWidget {
     return const Column(
       children: [
         InternetQualityTile(),
-        ConnectionHealthSection(), 
+        ConnectionHealthSection(),
         ThemeSelectorTile(),
         LanguageSelectorTile(),
         NotificationsSettingsTile(),

@@ -135,8 +135,9 @@ class RecoveryCoordinator {
     _leaseTimers.remove(tunnel);
 
     if (_globalLease != null && identical(_globalLease, lease)) {
-      _globalLease =
-          _activeLeases.values.isNotEmpty ? _activeLeases.values.first : null;
+      _globalLease = _activeLeases.values.isNotEmpty
+          ? _activeLeases.values.first
+          : null;
     }
 
     log(
