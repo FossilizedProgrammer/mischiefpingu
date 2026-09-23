@@ -3,33 +3,50 @@ part of '../aether_decision_engine.dart';
 /// ═══════════════════════════════════════════════════════════════
 ///  ساخت ranked candidates — منطق کامل.
 ///
-///  منابع candidate به ترتیب اولویت:
-///    1. آخرین Gateway موفق (lastRemembered)
-///    2. تاریخچه (history)
-///    3. Smart Cache (cache)
-///    4. پیش‌فرض پروفایل (defaultFallback)
-///
-///  منطق هر منبع در `engine/sources/` جدا شده‌اند:
-///    • HistorySourceBuilder   → candidates از تاریخچه
-///    • CacheSourceBuilder     → candidates از Smart Cache
-///    • ProfileSourceBuilder   → candidates پیش‌فرض پروفایل
+///  ⚠️ تغییرات این نسخه (رفع باگ custom-first):
+///    • در حالت custom_first، این متد custom رو return **نمی‌کنه**
+///      چون لایهٔ بالاتر (AetherAttemptPlanner.buildCandidates)
+///      خودش custom رو با هر دو نسخهٔ H2/H3 اضافه می‌کنه.
+///    • در حالت custom_only، فقط custom return می‌شه.
+///    • در حالت automatic (یا custom بدون pinning)، لیست عادی
+///      ساخته می‌شه و custom در ابتدای اون قرار می‌گیره.
 /// ═══════════════════════════════════════════════════════════════
 extension AetherDecisionEngineCandidateBuilder on AetherDecisionEngine {
   Future<List<RankedCandidate>> buildRankedCandidatesImpl({
     MapEntry<String, String>? autoWinner,
   }) async {
     final custom = settings.aetherCustomEndpoint.trim();
-    if (custom.isNotEmpty) {
+
+    // ═══════════════════════════════════════════════════════════
+    //  حالت custom_only: فقط endpoint سفارشی
+    // ═══════════════════════════════════════════════════════════
+    if (custom.isNotEmpty && settings.isEndpointPinningCustomOnly) {
       final c = _customCandidate(custom);
-      logInternal('→ DecisionEngine: custom endpoint → ${c.label}');
+      logInternal('→ DecisionEngine: custom-only → ${c.label}');
       return [c];
     }
 
+    // ═══════════════════════════════════════════════════════════
+    //  حالت custom_first: custom توسط planner اضافه می‌شه،
+    //  پس اینجا فقط لیست عادی رو می‌سازیم (بدون custom).
+    // ═══════════════════════════════════════════════════════════
+    final isCustomFirst =
+        custom.isNotEmpty && settings.isEndpointPinningCustomFirst;
+
+    // ═══════════════════════════════════════════════════════════
+    //  حالت automatic با custom خالی: لیست عادی
+    //  حالت automatic با custom ست: custom + لیست عادی
+    // ═══════════════════════════════════════════════════════════
     final list = <RankedCandidate>[];
     final seen = <String>{};
 
     void add(RankedCandidate c) {
       if (seen.add(c.dedupeKey)) list.add(c);
+    }
+
+    // ─── در حالت automatic با custom، custom رو اول اضافه کن ───
+    if (custom.isNotEmpty && !isCustomFirst) {
+      add(_customCandidate(custom));
     }
 
     if (settings.aetherTryLastEndpointFirst && autoWinner != null) {

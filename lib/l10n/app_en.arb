@@ -211,13 +211,10 @@
   "vpngateServers": "VPN Gate SSTP Servers",
   "working": "Working",
 
-"watchdog": "Watchdog",
-"watchdogEnabled": "Enable watchdog",
-"watchdogEnabledSubtitle": "Automatically restart tunnels when they become unresponsive",
-"watchdogSettings": "Watchdog Settings",
-
-"backToPresets": "Back to presets",
-"aetherManualHint": "Manual mode: Protocol, obfuscation, scan mode, and custom endpoint are fully under your control below.",
+  "watchdog": "Watchdog",
+  "watchdogEnabled": "Enable watchdog",
+  "watchdogEnabledSubtitle": "Automatically restart tunnels when they become unresponsive",
+  "watchdogSettings": "Watchdog Settings",
 
   "backToPresets": "Back to presets",
   "aetherManualHint": "Manual mode: Protocol, obfuscation, scan mode, and custom endpoint are fully under your control below.",
@@ -230,7 +227,7 @@
   "watchdogProfileNormalDesc": "Balanced settings for most networks (default).",
   "watchdogProfileHarsh": "Harsh filtering",
   "watchdogProfileHarshDesc": "Heavy filtering or unstable network — lenient probing, fewer false restarts.",
-  
+
   "appUpdate": "App Update",
   "appUpdateChecking": "Checking for updates...",
   "appUpdateFailed": "Update check failed",
@@ -278,9 +275,8 @@
   "internetQualityTcp": "TCP",
   "internetQualityTest": "Test",
   "internetQualityUnstable": "Unstable",
-  
-  "wireguardSettings": "WireGuard Settings",
 
+  "wireguardSettings": "WireGuard Settings",
 
   "tunnelHealth": "Tunnel Health",
   "tunnelHealthProbeAll": "Test all",
@@ -324,7 +320,6 @@
   },
   "tunnelHealthNoDataWarning": "Tunnel is up but no data is flowing",
   "tunnelHealthMeasuringHealth": "Measuring health…",
-  "tunnelHealthMeasuringHealth": "Measuring health…",
   "tunnelHealthTitle": "{tunnel} Health",
   "@tunnelHealthTitle": {
     "placeholders": {
@@ -332,7 +327,6 @@
     }
   },
 
-  "wireguardSettings": "WireGuard Settings",
   "wireguardConfig": "WireGuard Config",
   "wireguardConfigHint": "Paste a standard WireGuard config (INI format) or a wireguard:// URI. The app auto-detects the format.",
   "wireguardConfigInvalid": "Invalid WireGuard config — check PrivateKey, PublicKey, and Endpoint.",
@@ -345,5 +339,52 @@
   "logSourceWireGuard": "WireGuard",
   "torViaWireGuard": "Via WireGuard (Tor-over-WireGuard)",
   "psiphonWireGuardUpstream": "WireGuard (SOCKS upstream)",
-  "sstpWireGuardUpstream": "WireGuard (SOCKS upstream)"
+  "sstpWireGuardUpstream": "WireGuard (SOCKS upstream)",
+
+  "endpointPinning": "Endpoint Pinning",
+  "endpointPinningSubtitle": "Control how Aether chooses its endpoint",
+  "endpointPinningAutomatic": "Auto",
+  "endpointPinningCustomFirst": "Custom first",
+  "endpointPinningCustomOnly": "Custom only",
+  "endpointPinningAutomaticDesc": "Always auto-scan for the best endpoint. Recommended for most users.",
+  "endpointPinningCustomFirstDesc": "Try your custom endpoint first. If it fails, fall back to auto-scan.",
+  "endpointPinningCustomOnlyDesc": "Only use your custom endpoint. No auto-scan fallback. Use for testing a specific server.",
+  "endpointPinningNeedsCustom": "Set a custom endpoint below to enable Custom-first and Custom-only modes.",
+
+  "aetherAttemptProgress": "Attempt {current} of {max}",
+  "@aetherAttemptProgress": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "aetherAttemptProtocol": "Protocol: {protocol}",
+  "@aetherAttemptProtocol": {
+    "placeholders": {
+      "protocol": { "type": "String" }
+    }
+  },
+  "aetherAttemptWaiting": "Waiting {seconds}s before next attempt…",
+  "@aetherAttemptWaiting": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+
+  "diagnosticsReport": "Diagnostics Report",
+  "diagnosticsReportGenerate": "Generate Report",
+  "diagnosticsReportCopy": "Copy Report",
+  "diagnosticsReportSave": "Save Report",
+  "diagnosticsReportGenerated": "Report generated successfully",
+  "diagnosticsReportCopied": "Report copied to clipboard",
+  "diagnosticsReportSaved": "Report saved to: {path}",
+  "@diagnosticsReportSaved": {
+    "placeholders": {
+      "path": { "type": "String" }
+    }
+  },
+  "diagnosticsReportRedacted": "Sensitive data has been redacted",
+  "diagnosticsReportPreview": "Preview",
+  "diagnosticsReportClose": "Close",
+  "diagnosticsReportGenerating": "Generating report…"
 }

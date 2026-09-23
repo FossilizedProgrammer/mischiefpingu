@@ -1,6 +1,6 @@
 library;
 
-import '../app_data_service.dart'; // ⚠️ درست شد (قبلاً '../app_data_service.dart' بود ولی عمق اشتباه)
+import '../app_data_service.dart';
 import '../core_update_models.dart';
 import 'core_update_network.dart';
 import 'core_update_pending.dart';

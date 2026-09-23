@@ -1,3 +1,5 @@
+// lib/models/settings_validation.dart
+
 library;
 
 import 'settings_model.dart';
@@ -28,9 +30,16 @@ class SettingsValidation {
     'System',
   ];
 
+  static const Set<String> _validEndpointPinningModes = {
+    'automatic',
+    'custom_first',
+    'custom_only',
+  };
+
   static void validateAndNormalize(AppSettings s) {
     _validateAetherProfile(s);
     _validateAether(s);
+    _validateEndpointPinning(s);
     _validatePsiphon(s);
     _validateTor(s);
     _validateSstp(s);
@@ -38,6 +47,17 @@ class SettingsValidation {
     _validateLogSources(s);
     _validateWatchdogProfile(s);
     _validateWireGuard(s);
+  }
+
+  static void _validateEndpointPinning(AppSettings s) {
+    if (!_validEndpointPinningModes.contains(s.aetherEndpointPinning)) {
+      s.aetherEndpointPinning = 'automatic';
+    }
+    // اگه custom endpoint خالیه، نمیتونیم custom_only یا custom_first داشته باشیم
+    if (s.aetherCustomEndpoint.trim().isEmpty &&
+        s.aetherEndpointPinning != 'automatic') {
+      s.aetherEndpointPinning = 'automatic';
+    }
   }
 
   static void _validateLogSources(AppSettings s) {
@@ -97,14 +117,6 @@ class SettingsValidation {
   static void _validatePsiphon(AppSettings s) {
     if (!['socks5', 'http'].contains(s.proxyType)) s.proxyType = 'socks5';
 
-    // ⬅ upstreamType معتبر: 0..6
-    //   0 = direct
-    //   1 = manual
-    //   2 = Aether upstream
-    //   3 = Conduit
-    //   4 = Tor upstream
-    //   5 = SSTP upstream
-    //   6 = WireGuard upstream  ← جدید
     if (s.upstreamType < 0 || s.upstreamType > 6) {
       s.upstreamType = 0;
     }
@@ -140,8 +152,6 @@ class SettingsValidation {
     if (s.sstpHttpPort < 1 || s.sstpHttpPort > 65535) {
       s.sstpHttpPort = 8082;
     }
-    // ⬅ sstpUpstreamType معتبر: 0..5
-    //   5 = WireGuard upstream  ← جدید
     if (s.sstpUpstreamType < 0 || s.sstpUpstreamType > 5) {
       s.sstpUpstreamType = 0;
     }

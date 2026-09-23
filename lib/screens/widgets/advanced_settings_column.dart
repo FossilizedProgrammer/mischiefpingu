@@ -1,3 +1,5 @@
+// lib/screens/widgets/advanced_settings_column.dart
+
 library;
 
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ import 'sstp_fetcher_section.dart';
 import 'core_update_tile.dart';
 import 'app_update_tile.dart';
 import 'log_tile.dart';
+import 'diagnostics_report_tile.dart';
 import '../../widgets/cdn_scanner_section.dart';
 import '../../widgets/internet_quality_tile.dart';
 import '../../widgets/diagnostics/connection_health_section.dart';
@@ -41,6 +44,7 @@ class AdvancedSettingsColumn extends StatelessWidget {
         CoreUpdateTile(),
         AppUpdateTile(),
         WatchdogSettingsTile(),
+        DiagnosticsReportTile(),
         LogTile(),
       ],
     );

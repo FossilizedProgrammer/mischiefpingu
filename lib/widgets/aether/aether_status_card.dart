@@ -1,3 +1,5 @@
+// lib/widgets/aether/aether_status_card.dart
+
 library;
 
 import 'dart:async';
@@ -11,21 +13,14 @@ import 'aether_status_card/status_header.dart';
 import 'aether_status_card/info_rows.dart';
 import 'aether_status_card/metrics_row.dart';
 import 'aether_status_card/reconnects_row.dart';
+import 'aether_status_card/attempt_progress_row.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  AetherStatusCard — نمایش وضعیت لحظه‌ای Aether (فاز ۶).
 ///
-///  اطلاعات نمایش‌داده‌شده:
-///    • وضعیت اتصال (Connected / Testing / Stopped)
-///    • پروتکل فعلی
-///    • Gateway فعلی
-///    • Latency / Jitter / Packet loss
-///    • تعداد reconnect
-///    • مدت زمان اتصال
-///
-///  این کارت فقط برای نمایش است — هیچ تنظیمی اینجا نیست.
-///
-///  ⚠️ وقتی isRunning=false، کارت اصلاً نمایش داده نمی‌شه.
+///  ⚠️ تغییرات این نسخه:
+///    • AttemptProgressRow اضافه شد — نمایش شماره تلاش
+///    • وقتی retry در جریانه، این ردیف بالای متریک‌ها نشون داده میشه
 /// ═══════════════════════════════════════════════════════════════
 class AetherStatusCard extends StatefulWidget {
   const AetherStatusCard({super.key});
@@ -50,10 +45,6 @@ class _AetherStatusCardState extends State<AetherStatusCard> {
     super.dispose();
   }
 
-  /// هر ۱۰ ثانیه یک rebuild می‌زند تا uptime زنده بماند.
-  ///
-  /// ⚠️ تغییر: از Timer.periodic استفاده می‌کنیم (به جای Future.doWhile)
-  /// که idiom استاندارد Dart است و cancel در dispose رو ساده می‌کنه.
   void _startTicker() {
     _ticker = Timer.periodic(const Duration(seconds: 10), (_) {
       if (!mounted) return;
@@ -73,7 +64,6 @@ class _AetherStatusCardState extends State<AetherStatusCard> {
         !isTesting &&
         provider.aetherStatus.toLowerCase().contains('healthy');
 
-    // ─── وضعیت رنگ و آیکن ───
     final statusColor = isTesting
         ? Colors.orange
         : isRunning
@@ -92,18 +82,19 @@ class _AetherStatusCardState extends State<AetherStatusCard> {
             ? (isHealthy ? 'Connected' : 'Running (unverified)')
             : 'Stopped';
 
-    // ─── داده‌های عملکرد از tracker ───
     final tracker = provider.aetherTestService.performanceTracker;
     final report = tracker?.lastReport;
     final lastKey = tracker?.lastMeasuredKey;
 
-    // ─── زمان اتصال ───
     final connectedAt = provider.lastAetherConnectedAt;
 
-    // ═══════════════════════════════════════════════════════════════
-    //  ⚠️ اگر Aether در حال اجرا نیست، کارت نمایش داده نشه.
-    //  این کار از شلوغ شدن UI جلوگیری می‌کنه.
-    // ═══════════════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════
+    //  🆕 RetryState برای نمایش شماره تلاش
+    // ═══════════════════════════════════════════════════════════
+    final retryState = provider.aetherRetryState;
+    final showRetryProgress =
+        isTesting && retryState != null && retryState.currentAttempt > 0;
+
     if (!isRunning && !isTesting) {
       return const SizedBox.shrink();
     }
@@ -115,7 +106,6 @@ class _AetherStatusCardState extends State<AetherStatusCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ─── ردیف اول: وضعیت ───
             AetherStatusHeader(
               statusColor: statusColor,
               statusIcon: statusIcon,
@@ -125,10 +115,16 @@ class _AetherStatusCardState extends State<AetherStatusCard> {
               theme: theme,
             ),
 
+            // ═══════════════════════════════════════════════════
+            //  🆕 شماره تلاش (فقط وقتی در حال تست هستیم)
+            // ═══════════════════════════════════════════════════
+            if (showRetryProgress) ...[
+              const SizedBox(height: 12),
+              AttemptProgressRow(state: retryState, theme: theme),
+            ],
+
             if (isRunning) ...[
               const Divider(height: 24),
-
-              // ─── پروتکل ───
               AetherInfoRow(
                 icon: Icons.hub_outlined,
                 label: 'Protocol',
@@ -137,18 +133,13 @@ class _AetherStatusCardState extends State<AetherStatusCard> {
                 theme: theme,
               ),
               const SizedBox(height: 6),
-
-              // ─── Gateway ───
               AetherInfoRow(
                 icon: Icons.dns_outlined,
                 label: 'Gateway',
                 value: AetherStatusHelpers.shortenKey(lastKey),
                 theme: theme,
               ),
-
               const SizedBox(height: 16),
-
-              // ─── متریک‌های عملکرد ───
               if (report != null && report.isValid) ...[
                 AetherMetricsRow(report: report, theme: theme),
                 const SizedBox(height: 12),
@@ -156,8 +147,6 @@ class _AetherStatusCardState extends State<AetherStatusCard> {
                 const _MeasuringPlaceholder(),
                 const SizedBox(height: 12),
               ],
-
-              // ─── reconnect count ───
               AetherReconnectsRow(
                 count: provider.aetherReconnectCount,
                 theme: theme,
@@ -170,7 +159,6 @@ class _AetherStatusCardState extends State<AetherStatusCard> {
   }
 }
 
-/// placeholder ساده برای زمانی که report آماده نیست.
 class _MeasuringPlaceholder extends StatelessWidget {
   const _MeasuringPlaceholder();
 

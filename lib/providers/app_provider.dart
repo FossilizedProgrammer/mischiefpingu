@@ -47,6 +47,7 @@ import '../services/wireguard/wireguard_config_parser.dart';
 import '../services/wireguard/wireguard_config_builder.dart';
 import '../services/wireguard/wireguard_paths.dart';
 import '../services/wireguard/wireguard_log_watcher.dart';
+import '../services/aether/retry/retry_state.dart';
 
 part 'app_provider_snapshot.dart';
 part 'app_provider_state.dart';
@@ -86,6 +87,13 @@ class AppProvider extends ChangeNotifier {
   final SettingsPersistenceService persistence = SettingsPersistenceService();
   final AutoReconnectManager _reconnectManager = AutoReconnectManager();
   AutoReconnectManager get reconnectManager => _reconnectManager;
+
+  RetryState? get aetherRetryState => _aetherTestService.retryState;
+  String get aetherRetryStatusText {
+    final state = aetherRetryState;
+    if (state == null) return '';
+    return state.statusText;
+  }
 
 // ═══════════════════════════════════════════════════════════════
 //  WireGuard state

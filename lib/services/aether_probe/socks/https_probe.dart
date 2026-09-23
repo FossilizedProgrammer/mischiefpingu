@@ -33,7 +33,7 @@ extension SocksDiagnoserHttpsProbe on SocksDiagnoser {
 
       // یک iterator مشترک برای کل مکالمه
       iter = StreamIterator<List<int>>(
-        sock.timeout(const Duration(seconds: 15)),
+        sock.timeout(SocksDiagnoser.socksReadTimeout),
       );
 
       // ─── SOCKS5 greeting ───

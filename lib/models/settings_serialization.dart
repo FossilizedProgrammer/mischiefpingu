@@ -1,3 +1,5 @@
+// lib/models/settings_serialization.dart
+
 library;
 
 import 'dart:convert';
@@ -107,6 +109,7 @@ extension AppSettingsSerialization on AppSettings {
       psiphonBinarySha: _s(m, 'psiphonBinarySha', ''),
       aetherCustomEndpoint: _s(m, 'aetherCustomEndpoint', ''),
       aetherTryLastEndpointFirst: _b(m, 'aetherTryLastEndpointFirst', true),
+      aetherEndpointPinning: _s(m, 'aetherEndpointPinning', 'automatic'),
       themeId: _s(m, 'themeId', 'ocean'),
       muted: _b(m, 'muted', false),
       wireguardConfigRaw: _s(m, 'wireguardConfigRaw', ''),
@@ -195,6 +198,7 @@ extension AppSettingsSerialization on AppSettings {
         'psiphonBinarySha': psiphonBinarySha,
         'aetherCustomEndpoint': aetherCustomEndpoint,
         'aetherTryLastEndpointFirst': aetherTryLastEndpointFirst,
+        'aetherEndpointPinning': aetherEndpointPinning,
         'themeId': themeId,
         'muted': muted,
         'watchdogEnabled': watchdogEnabled,

@@ -1,8 +1,11 @@
+// lib/widgets/aether/aether_connection_mode_section.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
+import 'aether_endpoint_pinning_selector.dart';
 
 class AetherConnectionModeSection extends StatelessWidget {
   final bool isRunning;
@@ -67,9 +70,21 @@ class AetherConnectionModeSection extends StatelessWidget {
           enabled: !isRunning,
           onChanged: (v) {
             s.aetherCustomEndpoint = v.trim();
+            // اگه custom خالی شد و در حالت custom-first/only بودیم،
+            // خودکار به automatic برگرد
+            if (s.aetherCustomEndpoint.isEmpty &&
+                s.aetherEndpointPinning != 'automatic') {
+              s.aetherEndpointPinning = 'automatic';
+            }
             save();
           },
         ),
+        const SizedBox(height: 16),
+
+        // ═══════════════════════════════════════════════════════
+        //  🆕 Endpoint Pinning Selector
+        // ═══════════════════════════════════════════════════════
+        AetherEndpointPinningSelector(isRunning: isRunning),
       ],
     );
   }

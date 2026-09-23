@@ -1,3 +1,5 @@
+// lib/models/settings_model.dart
+
 library;
 
 import 'settings_serialization.dart';
@@ -21,16 +23,9 @@ class AppSettings {
 //  WireGuard settings
 // ═══════════════════════════════════════════════════════════════
 
-  /// کانفیگ خام (استاندارد یا URI) که کاربر وارد کرده.
   String wireguardConfigRaw;
-
-  /// پورت SOCKS5 محلی wireproxy.
   int wireguardSocksPort;
-
-  /// به اشتراک گذاشتن در شبکه محلی.
   bool wireguardShareLan;
-
-  /// اتصال مجدد خودکار.
   bool wireguardAutoReconnect;
 
   int upstreamType;
@@ -62,6 +57,18 @@ class AppSettings {
   bool aetherQuickReconnect;
   String aetherCustomEndpoint;
   bool aetherTryLastEndpointFirst;
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  حالت Endpoint Pinning برای Aether.
+  ///
+  ///  مقادیر ممکن:
+  ///    • 'automatic'      → همیشه اسکن خودکار (پیش‌فرض)
+  ///    • 'custom_first'   → اول endpoint سفارشی، بعد در صورت شکست
+  ///                          به حالت کشف خودکار می‌رود
+  ///    • 'custom_only'    → فقط endpoint سفارشی، بدون هیچ
+  ///                          جایگزینی خودکار
+  /// ═══════════════════════════════════════════════════════════════
+  String aetherEndpointPinning;
 
   bool psiphonShareLan;
   String psiphonBuildRev;
@@ -105,10 +112,6 @@ class AppSettings {
   String themeId;
   bool muted;
 
-  /// لیست منابع فعال لاگ.
-  ///
-  /// اگر خالی باشد، همه منابع لاگ می‌شوند.
-  /// در غیر این صورت فقط منابع موجود در لیست لاگ می‌شوند.
   List<String> enabledLogSources;
 
   AppSettings({
@@ -144,6 +147,7 @@ class AppSettings {
     this.aetherQuickReconnect = true,
     this.aetherCustomEndpoint = '',
     this.aetherTryLastEndpointFirst = true,
+    this.aetherEndpointPinning = 'automatic',
     this.psiphonShareLan = false,
     this.conduitMode = 'auto',
     this.conduitCompartmentId = '',
@@ -206,4 +210,20 @@ class AppSettings {
   bool get isAetherProfileAutomatic => aetherProfile != 'manual';
 
   bool get isAetherProtocolLockedByProfile => isAetherProfileAutomatic;
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Endpoint Pinning getters
+  // ═══════════════════════════════════════════════════════════════
+
+  bool get isEndpointPinningAutomatic => aetherEndpointPinning == 'automatic';
+
+  bool get isEndpointPinningCustomFirst =>
+      aetherEndpointPinning == 'custom_first';
+
+  bool get isEndpointPinningCustomOnly =>
+      aetherEndpointPinning == 'custom_only';
+
+  /// آیا endpoint سفارشی برای pinning در دسترس است؟
+  bool get hasCustomEndpointForPinning =>
+      aetherCustomEndpoint.trim().isNotEmpty;
 }

@@ -975,4 +975,86 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get sstpWireGuardUpstream => 'WireGuard (SOCKS upstream)';
+
+  @override
+  String get endpointPinning => 'Привязка endpoint';
+
+  @override
+  String get endpointPinningSubtitle =>
+      'Управляйте тем, как Aether выбирает endpoint';
+
+  @override
+  String get endpointPinningAutomatic => 'Авто';
+
+  @override
+  String get endpointPinningCustomFirst => 'Сначала свой';
+
+  @override
+  String get endpointPinningCustomOnly => 'Только свой';
+
+  @override
+  String get endpointPinningAutomaticDesc =>
+      'Всегда автоматический поиск лучшего endpoint. Рекомендуется.';
+
+  @override
+  String get endpointPinningCustomFirstDesc =>
+      'Сначала попробовать ваш endpoint. При неудаче — автосканирование.';
+
+  @override
+  String get endpointPinningCustomOnlyDesc =>
+      'Использовать только ваш endpoint. Без автосканирования. Для тестирования.';
+
+  @override
+  String get endpointPinningNeedsCustom =>
+      'Укажите свой endpoint ниже, чтобы включить режимы «Сначала свой» и «Только свой».';
+
+  @override
+  String aetherAttemptProgress(int current, int max) {
+    return 'Попытка $current из $max';
+  }
+
+  @override
+  String aetherAttemptProtocol(String protocol) {
+    return 'Протокол: $protocol';
+  }
+
+  @override
+  String aetherAttemptWaiting(int seconds) {
+    return 'Ожидание $secondsс до следующей попытки…';
+  }
+
+  @override
+  String get diagnosticsReport => 'Диагностический отчёт';
+
+  @override
+  String get diagnosticsReportGenerate => 'Создать отчёт';
+
+  @override
+  String get diagnosticsReportCopy => 'Копировать';
+
+  @override
+  String get diagnosticsReportSave => 'Сохранить';
+
+  @override
+  String get diagnosticsReportGenerated => 'Отчёт успешно создан';
+
+  @override
+  String get diagnosticsReportCopied => 'Отчёт скопирован';
+
+  @override
+  String diagnosticsReportSaved(String path) {
+    return 'Отчёт сохранён: $path';
+  }
+
+  @override
+  String get diagnosticsReportRedacted => 'Конфиденциальные данные удалены';
+
+  @override
+  String get diagnosticsReportPreview => 'Предпросмотр';
+
+  @override
+  String get diagnosticsReportClose => 'Закрыть';
+
+  @override
+  String get diagnosticsReportGenerating => 'Создание отчёта…';
 }

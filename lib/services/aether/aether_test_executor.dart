@@ -1,3 +1,5 @@
+// lib/services/aether/aether_test_executor.dart
+
 library;
 
 import 'dart:async';
@@ -15,6 +17,8 @@ import 'aether_failure_handler.dart';
 import 'aether_test_helpers.dart';
 import 'decision/aether_decision_engine.dart';
 import 'gateway_performance_tracker.dart';
+import 'retry/aether_retry_strategy.dart';
+import 'retry/retry_state.dart';
 
 part 'test_executor/executor_runner.dart';
 part 'test_executor/tracker_starter.dart';
@@ -26,7 +30,10 @@ part 'test_executor/tracker_starter.dart';
 ///    • ExecutorRunner   → منطق اصلی run()
 ///    • TrackerStarter   → شروع performance tracker
 ///
-///  ⚠️ FIX: run() در runner خودش cancelRequested رو ریست می‌کنه.
+///  ⚠️ تغییرات این نسخه:
+///    • retryState اضافه شد — برای نمایش شماره تلاش در UI
+///    • MASQUE option برای هر attempt به صورت پویا محاسبه میشه
+///    • تاخیر افزایشی بین تلاش‌ها
 /// ═══════════════════════════════════════════════════════════════
 class AetherTestExecutor {
   final ProcessService processService;
@@ -48,6 +55,15 @@ class AetherTestExecutor {
 
   bool cancelRequested = false;
   bool portSwapTried = false;
+
+  /// ═══════════════════════════════════════════════════════════
+  ///  🆕 RetryState — برای نمایش شماره تلاش در UI.
+  ///
+  ///  این state در طول یک چرخه‌ی اتصال نگه داشته میشه.
+  ///  بعد از هر چرخه، می‌تونه باقی بمونه تا UI آخرین وضعیت
+  ///  رو نمایش بده.
+  /// ═══════════════════════════════════════════════════════════
+  RetryState? retryState;
 
   AetherTestExecutor({
     required this.processService,
@@ -77,6 +93,7 @@ class AetherTestExecutor {
   void reset() {
     cancelRequested = false;
     portSwapTried = false;
+    retryState?.reset();
   }
 
   AetherFailureHandler get failureHandler => _failureHandler;

@@ -970,4 +970,86 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get sstpWireGuardUpstream => 'وایرگارد (آپ‌استریم SOCKS)';
+
+  @override
+  String get endpointPinning => 'پین کردن اندپوینت';
+
+  @override
+  String get endpointPinningSubtitle =>
+      'کنترل کنید Aether چطور اندپوینت خود را انتخاب کند';
+
+  @override
+  String get endpointPinningAutomatic => 'خودکار';
+
+  @override
+  String get endpointPinningCustomFirst => 'اول سفارشی';
+
+  @override
+  String get endpointPinningCustomOnly => 'فقط سفارشی';
+
+  @override
+  String get endpointPinningAutomaticDesc =>
+      'همیشه اسکن خودکار برای بهترین اندپوینت. توصیه‌شده برای اکثر کاربران.';
+
+  @override
+  String get endpointPinningCustomFirstDesc =>
+      'اول اندپوینت سفارشی را امتحان کن. اگر شکست خورد، به اسکن خودکار برگرد.';
+
+  @override
+  String get endpointPinningCustomOnlyDesc =>
+      'فقط اندپوینت سفارشی. بدون fallback. برای تست یک سرور خاص.';
+
+  @override
+  String get endpointPinningNeedsCustom =>
+      'برای فعال‌سازی حالت‌های «اول سفارشی» و «فقط سفارشی»، یک اندپوینت سفارشی پایین تعیین کنید.';
+
+  @override
+  String aetherAttemptProgress(int current, int max) {
+    return 'تلاش $current از $max';
+  }
+
+  @override
+  String aetherAttemptProtocol(String protocol) {
+    return 'پروتکل: $protocol';
+  }
+
+  @override
+  String aetherAttemptWaiting(int seconds) {
+    return 'انتظار $seconds ثانیه قبل از تلاش بعدی…';
+  }
+
+  @override
+  String get diagnosticsReport => 'گزارش تشخیصی';
+
+  @override
+  String get diagnosticsReportGenerate => 'تولید گزارش';
+
+  @override
+  String get diagnosticsReportCopy => 'کپی گزارش';
+
+  @override
+  String get diagnosticsReportSave => 'ذخیره گزارش';
+
+  @override
+  String get diagnosticsReportGenerated => 'گزارش با موفقیت تولید شد';
+
+  @override
+  String get diagnosticsReportCopied => 'گزارش در کلیپ‌بورد کپی شد';
+
+  @override
+  String diagnosticsReportSaved(String path) {
+    return 'گزارش ذخیره شد در: $path';
+  }
+
+  @override
+  String get diagnosticsReportRedacted => 'اطلاعات حساس حذف شده‌اند';
+
+  @override
+  String get diagnosticsReportPreview => 'پیش‌نمایش';
+
+  @override
+  String get diagnosticsReportClose => 'بستن';
+
+  @override
+  String get diagnosticsReportGenerating => 'در حال تولید گزارش…';
 }

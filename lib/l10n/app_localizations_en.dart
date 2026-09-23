@@ -972,4 +972,86 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sstpWireGuardUpstream => 'WireGuard (SOCKS upstream)';
+
+  @override
+  String get endpointPinning => 'Endpoint Pinning';
+
+  @override
+  String get endpointPinningSubtitle =>
+      'Control how Aether chooses its endpoint';
+
+  @override
+  String get endpointPinningAutomatic => 'Auto';
+
+  @override
+  String get endpointPinningCustomFirst => 'Custom first';
+
+  @override
+  String get endpointPinningCustomOnly => 'Custom only';
+
+  @override
+  String get endpointPinningAutomaticDesc =>
+      'Always auto-scan for the best endpoint. Recommended for most users.';
+
+  @override
+  String get endpointPinningCustomFirstDesc =>
+      'Try your custom endpoint first. If it fails, fall back to auto-scan.';
+
+  @override
+  String get endpointPinningCustomOnlyDesc =>
+      'Only use your custom endpoint. No auto-scan fallback. Use for testing a specific server.';
+
+  @override
+  String get endpointPinningNeedsCustom =>
+      'Set a custom endpoint below to enable Custom-first and Custom-only modes.';
+
+  @override
+  String aetherAttemptProgress(int current, int max) {
+    return 'Attempt $current of $max';
+  }
+
+  @override
+  String aetherAttemptProtocol(String protocol) {
+    return 'Protocol: $protocol';
+  }
+
+  @override
+  String aetherAttemptWaiting(int seconds) {
+    return 'Waiting ${seconds}s before next attempt…';
+  }
+
+  @override
+  String get diagnosticsReport => 'Diagnostics Report';
+
+  @override
+  String get diagnosticsReportGenerate => 'Generate Report';
+
+  @override
+  String get diagnosticsReportCopy => 'Copy Report';
+
+  @override
+  String get diagnosticsReportSave => 'Save Report';
+
+  @override
+  String get diagnosticsReportGenerated => 'Report generated successfully';
+
+  @override
+  String get diagnosticsReportCopied => 'Report copied to clipboard';
+
+  @override
+  String diagnosticsReportSaved(String path) {
+    return 'Report saved to: $path';
+  }
+
+  @override
+  String get diagnosticsReportRedacted => 'Sensitive data has been redacted';
+
+  @override
+  String get diagnosticsReportPreview => 'Preview';
+
+  @override
+  String get diagnosticsReportClose => 'Close';
+
+  @override
+  String get diagnosticsReportGenerating => 'Generating report…';
 }

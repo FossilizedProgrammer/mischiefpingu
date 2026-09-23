@@ -1959,6 +1959,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'WireGuard (SOCKS upstream)'**
   String get sstpWireGuardUpstream;
+
+  /// No description provided for @endpointPinning.
+  ///
+  /// In en, this message translates to:
+  /// **'Endpoint Pinning'**
+  String get endpointPinning;
+
+  /// No description provided for @endpointPinningSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Control how Aether chooses its endpoint'**
+  String get endpointPinningSubtitle;
+
+  /// No description provided for @endpointPinningAutomatic.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto'**
+  String get endpointPinningAutomatic;
+
+  /// No description provided for @endpointPinningCustomFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom first'**
+  String get endpointPinningCustomFirst;
+
+  /// No description provided for @endpointPinningCustomOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom only'**
+  String get endpointPinningCustomOnly;
+
+  /// No description provided for @endpointPinningAutomaticDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Always auto-scan for the best endpoint. Recommended for most users.'**
+  String get endpointPinningAutomaticDesc;
+
+  /// No description provided for @endpointPinningCustomFirstDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Try your custom endpoint first. If it fails, fall back to auto-scan.'**
+  String get endpointPinningCustomFirstDesc;
+
+  /// No description provided for @endpointPinningCustomOnlyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Only use your custom endpoint. No auto-scan fallback. Use for testing a specific server.'**
+  String get endpointPinningCustomOnlyDesc;
+
+  /// No description provided for @endpointPinningNeedsCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a custom endpoint below to enable Custom-first and Custom-only modes.'**
+  String get endpointPinningNeedsCustom;
+
+  /// No description provided for @aetherAttemptProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempt {current} of {max}'**
+  String aetherAttemptProgress(int current, int max);
+
+  /// No description provided for @aetherAttemptProtocol.
+  ///
+  /// In en, this message translates to:
+  /// **'Protocol: {protocol}'**
+  String aetherAttemptProtocol(String protocol);
+
+  /// No description provided for @aetherAttemptWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting {seconds}s before next attempt…'**
+  String aetherAttemptWaiting(int seconds);
+
+  /// No description provided for @diagnosticsReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnostics Report'**
+  String get diagnosticsReport;
+
+  /// No description provided for @diagnosticsReportGenerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Report'**
+  String get diagnosticsReportGenerate;
+
+  /// No description provided for @diagnosticsReportCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy Report'**
+  String get diagnosticsReportCopy;
+
+  /// No description provided for @diagnosticsReportSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Report'**
+  String get diagnosticsReportSave;
+
+  /// No description provided for @diagnosticsReportGenerated.
+  ///
+  /// In en, this message translates to:
+  /// **'Report generated successfully'**
+  String get diagnosticsReportGenerated;
+
+  /// No description provided for @diagnosticsReportCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Report copied to clipboard'**
+  String get diagnosticsReportCopied;
+
+  /// No description provided for @diagnosticsReportSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Report saved to: {path}'**
+  String diagnosticsReportSaved(String path);
+
+  /// No description provided for @diagnosticsReportRedacted.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensitive data has been redacted'**
+  String get diagnosticsReportRedacted;
+
+  /// No description provided for @diagnosticsReportPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get diagnosticsReportPreview;
+
+  /// No description provided for @diagnosticsReportClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get diagnosticsReportClose;
+
+  /// No description provided for @diagnosticsReportGenerating.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating report…'**
+  String get diagnosticsReportGenerating;
 }
 
 class _AppLocalizationsDelegate

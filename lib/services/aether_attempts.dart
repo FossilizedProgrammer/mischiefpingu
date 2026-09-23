@@ -1,3 +1,5 @@
+// lib/services/aether_attempts.dart
+
 library;
 
 import '../models/gateway_record.dart';
@@ -9,6 +11,7 @@ import 'database/gateway_history_store.dart';
 import 'database/profile_performance_store.dart';
 
 part 'aether_attempts/attempt_planner_legacy.dart';
+part 'aether_attempts/endpoint_pinning.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  EndpointAttempt — یک کاندید اتصال به Aether.
@@ -26,6 +29,12 @@ class EndpointAttempt {
   /// فاز v4: کاندید اصلی (اگر از DecisionEngine آمده باشد).
   final RankedCandidate? rankedSource;
 
+  /// ═══════════════════════════════════════════════════════════
+  ///  🆕 آیا این attempt از custom endpoint کاربر آمده؟
+  ///  برای پیاده‌سازی endpoint pinning لازمه.
+  /// ═══════════════════════════════════════════════════════════
+  final bool isCustomEndpoint;
+
   EndpointAttempt({
     required this.label,
     required this.protocol,
@@ -36,6 +45,7 @@ class EndpointAttempt {
     this.fromHistory = false,
     this.fromProfileCache = false,
     this.rankedSource,
+    this.isCustomEndpoint = false,
   });
 
   String get dedupeKey => '$protocol|$masque|$endpoint|$fragmentH2';
@@ -49,7 +59,8 @@ class EndpointAttempt {
   @override
   String toString() =>
       'EndpointAttempt($label, score=${historicalScore?.toStringAsFixed(1) ?? "-"}, '
-      'fromHistory=$fromHistory, fromProfileCache=$fromProfileCache)';
+      'fromHistory=$fromHistory, fromProfileCache=$fromProfileCache, '
+      'isCustom=$isCustomEndpoint)';
 }
 
 /// ═══════════════════════════════════════════════════════════════
@@ -57,6 +68,12 @@ class EndpointAttempt {
 ///
 ///  فاز v4: به DecisionEngine واگذار می‌کند.
 ///  Fallback: منطق legacy در `aether_attempts/attempt_planner_legacy.dart`.
+///
+///  🆕 Endpoint Pinning: در `aether_attempts/endpoint_pinning.dart`.
+///
+///  ⚠️ تغییر مهم (رفع باگ custom-first):
+///  در حالت custom_first، custom candidate از engine فیلتر می‌شه
+///  چون planner خودش اون رو (با هر دو نسخهٔ H2/H3) اضافه می‌کنه.
 /// ═══════════════════════════════════════════════════════════════
 class AetherAttemptPlanner {
   final AppSettings settings;
@@ -73,18 +90,72 @@ class AetherAttemptPlanner {
     this.decisionEngine,
   });
 
+  /// ساخت لیست کاندیدها با در نظر گرفتن endpoint pinning mode.
   Future<List<EndpointAttempt>> buildCandidates({
     MapEntry<String, String>? autoWinner,
   }) async {
-    // ─── مسیر جدید: DecisionEngine ───
+    // ═══════════════════════════════════════════════════════════
+    //  مرحله 1: Endpoint Pinning
+    // ═══════════════════════════════════════════════════════════
+
+    // custom_only: فقط endpoint سفارشی
+    if (settings.isEndpointPinningCustomOnly) {
+      final pinned = buildCustomOnlyCandidates();
+      if (pinned.isNotEmpty) return pinned;
+      // اگه custom خالیه (که نباید اتفاق بیفته چون validation انجام شده)
+      // fall through به automatic
+    }
+
+    // custom_first: endpoint سفارشی اول، بقیه بعدش
+    final customCandidates = settings.isEndpointPinningCustomFirst
+        ? buildCustomFirstCandidates()
+        : const <EndpointAttempt>[];
+
+    // ═══════════════════════════════════════════════════════════
+    //  مرحله 2: ساخت لیست اصلی (automatic یا fallback)
+    // ═══════════════════════════════════════════════════════════
+
+    List<EndpointAttempt> mainCandidates;
+
     final engine = decisionEngine;
     if (engine != null) {
       final ranked = await engine.buildRankedCandidates(autoWinner: autoWinner);
-      return ranked.map(_fromRanked).toList();
+
+      // ═══════════════════════════════════════════════════════════
+      //  ⚠️ FIX: در حالت custom_first، custom candidate از engine
+      //  رو فیلتر کن چون planner خودش اون رو با هر دو نسخهٔ H2/H3
+      //  اضافه کرده. این از تکرار و از دست رفتن fallback جلوگیری
+      //  می‌کنه.
+      // ═══════════════════════════════════════════════════════════
+      final filtered = settings.isEndpointPinningCustomFirst
+          ? ranked.where((c) => c.source != CandidateSource.custom)
+          : ranked;
+
+      mainCandidates = filtered.map(_fromRanked).toList();
+    } else {
+      mainCandidates = await legacyBuild(autoWinner);
     }
 
-    // ─── Fallback: منطق legacy ───
-    return legacyBuild(autoWinner);
+    // ═══════════════════════════════════════════════════════════
+    //  مرحله 3: ادغام custom-first با main
+    // ═══════════════════════════════════════════════════════════
+
+    if (customCandidates.isEmpty) {
+      return mainCandidates;
+    }
+
+    // dedupe: حذف custom endpoint از main اگه تکراری باشه
+    final seen = <String>{};
+    final result = <EndpointAttempt>[];
+
+    for (final c in customCandidates) {
+      if (seen.add(c.dedupeKey)) result.add(c);
+    }
+    for (final c in mainCandidates) {
+      if (seen.add(c.dedupeKey)) result.add(c);
+    }
+
+    return result;
   }
 
   EndpointAttempt _fromRanked(RankedCandidate c) => EndpointAttempt(
@@ -98,6 +169,7 @@ class AetherAttemptPlanner {
             c.source == CandidateSource.lastRemembered,
         fromProfileCache: c.source == CandidateSource.cache,
         rankedSource: c,
+        isCustomEndpoint: c.source == CandidateSource.custom,
       );
 
   // ─── Public static helpers (برای دسترسی از part) ───

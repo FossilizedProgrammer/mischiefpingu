@@ -17,6 +17,7 @@ import 'aether_socks_probe.dart';
 import 'database/gateway_history_store.dart';
 import 'database/profile_performance_store.dart';
 import 'process_service.dart';
+import 'aether/retry/retry_state.dart';
 
 part 'aether/auto_test/store_attacher.dart';
 
@@ -24,6 +25,7 @@ class AetherAutoTestService {
   final ProcessService processService;
   AppSettings settings;
 
+  RetryState? get retryState => _executor.retryState;
   GatewayHistoryStore? gatewayHistoryStore;
   ProfilePerformanceStore? profilePerformanceStore;
   AetherLogger? aetherLogger;

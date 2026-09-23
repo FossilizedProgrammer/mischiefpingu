@@ -210,14 +210,15 @@
   "verboseLoggingSubtitle": "Включить детальный отладочный вывод из sstp-proxy",
   "vpngateServers": "Серверы SSTP VPN Gate",
   "working": "Работа",
-"watchdog": "Сторожевой таймер",
-"watchdogEnabled": "Включить сторожевой таймер",
-"watchdogEnabledSubtitle": "Автоматически перезапускать туннели при отсутствии ответа",
-"watchdogSettings": "Настройки сторожевого таймера",
+
+  "watchdog": "Сторожевой таймер",
+  "watchdogEnabled": "Включить сторожевой таймер",
+  "watchdogEnabledSubtitle": "Автоматически перезапускать туннели при отсутствии ответа",
+  "watchdogSettings": "Настройки сторожевого таймера",
 
   "backToPresets": "Вернуться к профилям",
   "aetherManualHint": "Ручной режим: протокол, обфускация, режим сканирования и пользовательский endpoint полностью в вашем распоряжении ниже.",
-  
+
   "watchdogNetworkProfile": "Профиль сети",
   "watchdogNetworkProfileSubtitle": "Настраивает агрессивность проверок сторожевого таймера. Выберите под вашу сеть.",
   "watchdogProfileStable": "Стабильно",
@@ -226,7 +227,7 @@
   "watchdogProfileNormalDesc": "Сбалансированные настройки для большинства сетей (по умолчанию).",
   "watchdogProfileHarsh": "Жёсткая фильтрация",
   "watchdogProfileHarshDesc": "Сильная фильтрация или нестабильная сеть — мягкие проверки, меньше ложных перезапусков.",
-    
+
   "appUpdate": "Обновление приложения",
   "appUpdateChecking": "Проверка обновлений...",
   "appUpdateFailed": "Ошибка проверки обновлений",
@@ -279,6 +280,11 @@
   "tunnelHealthProbeAll": "Проверить все",
   "tunnelHealthProbeAgain": "Повторить",
   "tunnelHealthNotRunning": "{tunnel} не запущен",
+  "@tunnelHealthNotRunning": {
+    "placeholders": {
+      "tunnel": { "type": "String" }
+    }
+  },
   "tunnelHealthNoTunnelRunning": "Ни один туннель не запущен",
   "tunnelHealthStopped": "Остановлен",
   "tunnelHealthReachable": "Доступен (проверка ОК)",
@@ -299,10 +305,25 @@
   "tunnelHealthCircuits": "Цепи",
   "tunnelHealthIp": "IP",
   "tunnelHealthLastProbeOk": "Последняя проверка: {latency}ms — ОК",
+  "@tunnelHealthLastProbeOk": {
+    "placeholders": {
+      "latency": { "type": "int" }
+    }
+  },
   "tunnelHealthLastProbeFailed": "Последняя проверка не удалась: {error}",
+  "@tunnelHealthLastProbeFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
   "tunnelHealthNoDataWarning": "Туннель поднят, но данные не проходят",
   "tunnelHealthMeasuringHealth": "Измерение состояния…",
   "tunnelHealthTitle": "Состояние {tunnel}",
+  "@tunnelHealthTitle": {
+    "placeholders": {
+      "tunnel": { "type": "String" }
+    }
+  },
 
   "wireguardSettings": "Настройки WireGuard",
   "wireguardConfig": "Конфигурация WireGuard",
@@ -317,5 +338,52 @@
   "logSourceWireGuard": "WireGuard",
   "torViaWireGuard": "Через WireGuard (Tor-over-WireGuard)",
   "psiphonWireGuardUpstream": "WireGuard (SOCKS upstream)",
-  "sstpWireGuardUpstream": "WireGuard (SOCKS upstream)"
+  "sstpWireGuardUpstream": "WireGuard (SOCKS upstream)",
+
+  "endpointPinning": "Привязка endpoint",
+  "endpointPinningSubtitle": "Управляйте тем, как Aether выбирает endpoint",
+  "endpointPinningAutomatic": "Авто",
+  "endpointPinningCustomFirst": "Сначала свой",
+  "endpointPinningCustomOnly": "Только свой",
+  "endpointPinningAutomaticDesc": "Всегда автоматический поиск лучшего endpoint. Рекомендуется.",
+  "endpointPinningCustomFirstDesc": "Сначала попробовать ваш endpoint. При неудаче — автосканирование.",
+  "endpointPinningCustomOnlyDesc": "Использовать только ваш endpoint. Без автосканирования. Для тестирования.",
+  "endpointPinningNeedsCustom": "Укажите свой endpoint ниже, чтобы включить режимы «Сначала свой» и «Только свой».",
+
+  "aetherAttemptProgress": "Попытка {current} из {max}",
+  "@aetherAttemptProgress": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "aetherAttemptProtocol": "Протокол: {protocol}",
+  "@aetherAttemptProtocol": {
+    "placeholders": {
+      "protocol": { "type": "String" }
+    }
+  },
+  "aetherAttemptWaiting": "Ожидание {seconds}с до следующей попытки…",
+  "@aetherAttemptWaiting": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+
+  "diagnosticsReport": "Диагностический отчёт",
+  "diagnosticsReportGenerate": "Создать отчёт",
+  "diagnosticsReportCopy": "Копировать",
+  "diagnosticsReportSave": "Сохранить",
+  "diagnosticsReportGenerated": "Отчёт успешно создан",
+  "diagnosticsReportCopied": "Отчёт скопирован",
+  "diagnosticsReportSaved": "Отчёт сохранён: {path}",
+  "@diagnosticsReportSaved": {
+    "placeholders": {
+      "path": { "type": "String" }
+    }
+  },
+  "diagnosticsReportRedacted": "Конфиденциальные данные удалены",
+  "diagnosticsReportPreview": "Предпросмотр",
+  "diagnosticsReportClose": "Закрыть",
+  "diagnosticsReportGenerating": "Создание отчёта…"
 }

@@ -37,6 +37,7 @@ class SocksDiagnoser {
   ];
 
   static const Duration socksConnectTimeout = Duration(seconds: 10);
+  static const Duration socksReadTimeout = Duration(seconds: 15);
   static const Duration tlsTimeout = Duration(seconds: 12);
   static const Duration httpReadTimeout = Duration(seconds: 10);
   static const int minTargetsOk = 1;
