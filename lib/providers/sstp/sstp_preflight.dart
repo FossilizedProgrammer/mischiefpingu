@@ -19,8 +19,7 @@ extension AppProviderSstpPreflight on AppProvider {
           log: (line) => processService.addLog(line, source: src),
         );
 
-        final msg =
-            'SSTP binary not found. Place '
+        final msg = 'SSTP binary not found. Place '
             '"sstp-proxy${AppDataService.exeExt}" '
             'in the data folder, next to the app binary, or inside the '
             '"${AppDataService.osFolder}" folder. You can also download it '

@@ -22,15 +22,16 @@ class CoreUpdateMessageBox extends StatelessWidget {
         color: isSuccess
             ? Colors.green.withValues(alpha: 0.1)
             : isFailed
-            ? Colors.red.withValues(alpha: 0.1)
-            : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                ? Colors.red.withValues(alpha: 0.1)
+                : theme.colorScheme.surfaceContainerHighest
+                    .withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isSuccess
               ? Colors.green.withValues(alpha: 0.3)
               : isFailed
-              ? Colors.red.withValues(alpha: 0.3)
-              : theme.colorScheme.outline.withValues(alpha: 0.2),
+                  ? Colors.red.withValues(alpha: 0.3)
+                  : theme.colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: Text(
@@ -39,8 +40,8 @@ class CoreUpdateMessageBox extends StatelessWidget {
           color: isSuccess
               ? Colors.green.shade700
               : isFailed
-              ? Colors.red.shade700
-              : theme.colorScheme.onSurface,
+                  ? Colors.red.shade700
+                  : theme.colorScheme.onSurface,
           fontWeight: FontWeight.w500,
         ),
       ),

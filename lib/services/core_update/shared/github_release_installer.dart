@@ -88,6 +88,7 @@ class GithubReleaseInstaller {
 
       String found;
       if (cls.isArchive) {
+        // ─── استخراج آرشیو ───
         await _extractor.extract(
           archive: archive,
           extractDir: extractDir,
@@ -101,6 +102,9 @@ class GithubReleaseInstaller {
           fallbackPattern: spec.fallbackPattern,
         );
       } else {
+        // ═══════════════════════════════════════════════════════
+        //  🆕 raw binary (مثل wireproxy)
+        // ═══════════════════════════════════════════════════════
         found = archive;
         _log('→ Raw binary (not archive): $archive');
       }

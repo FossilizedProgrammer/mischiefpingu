@@ -1,5 +1,7 @@
 library;
 
+import 'asset_pattern_override.dart';
+
 /// تنظیمات یک core مبتنی بر GitHub Releases.
 class GithubCoreSpec {
   /// شناسه core (برای لاگ و PendingCoreUpdate).
@@ -29,6 +31,14 @@ class GithubCoreSpec {
   /// تخمین اندازه دانلود (بایت) اگر GitHub size نداشت.
   final int defaultDownloadSize;
 
+  // ═══════════════════════════════════════════════════════════
+  //  🆕 فیلد جدید: picker سفارشی برای انتخاب asset
+  //
+  //  اگر null باشه، از AssetPicker.pick() عمومی استفاده می‌شه.
+  //  اگر غیر null باشه، از این picker استفاده می‌شه.
+  // ═══════════════════════════════════════════════════════════
+  final AssetPickerFn? assetPicker;
+
   const GithubCoreSpec({
     required this.coreId,
     required this.displayName,
@@ -39,5 +49,6 @@ class GithubCoreSpec {
     required this.destPathResolver,
     required this.tempPrefix,
     required this.defaultDownloadSize,
+    this.assetPicker,
   });
 }

@@ -17,15 +17,13 @@ class CoreUpdateVersionChecker {
   }) async {
     try {
       if (coreId == 'aether') {
-        final exe =
-            await AppDataService.resolveBinaryPath('aether') ??
+        final exe = await AppDataService.resolveBinaryPath('aether') ??
             await AppDataService.getBinaryPath('aether');
         final v = await _queryExeVersion(exe, ['--version']);
         return CoreUpdateUtils.parseAetherVersion(v) ?? 'unknown';
       }
       if (coreId == 'tor') {
-        final exe =
-            await AppDataService.findTorBinary() ??
+        final exe = await AppDataService.findTorBinary() ??
             await AppDataService.getTorBinaryPath();
         final v = await _queryExeVersion(exe, ['--version']);
         return CoreUpdateUtils.parseTorVersion(v) ?? 'not installed';
@@ -33,7 +31,7 @@ class CoreUpdateVersionChecker {
       if (coreId == 'psiphon') {
         final exe =
             await AppDataService.resolveBinaryPath('psiphon-tunnel-core') ??
-            await AppDataService.getBinaryPath('psiphon-tunnel-core');
+                await AppDataService.getBinaryPath('psiphon-tunnel-core');
         if (!await File(exe).exists()) return 'not installed';
         final v = await _queryExeVersion(exe, ['-v']);
         final parsed = CoreUpdateUtils.parsePsiphonVersion(v);
@@ -45,8 +43,7 @@ class CoreUpdateVersionChecker {
         return 'installed';
       }
       if (coreId == 'sunandlion') {
-        final exe =
-            await AppDataService.resolveBinaryPath(
+        final exe = await AppDataService.resolveBinaryPath(
               'psiphon-tunnel-core-sunandlion',
             ) ??
             await AppDataService.getBinaryPath(
@@ -66,10 +63,28 @@ class CoreUpdateVersionChecker {
         final m = RegExp(r'\b(\d+\.\d+\.\d+(?:[-\+][\w\.]+)?)\b').firstMatch(v);
         return m?.group(1) ?? 'installed';
       }
+      // ═══════════════════════════════════════════════════════════
+      //  ⚠️ جدید: WireGuard (wireproxy)
+      // ═══════════════════════════════════════════════════════════
+      if (coreId == 'wireguard') {
+        final exe = await AppDataService.resolveBinaryPath('wireproxy') ??
+            await AppDataService.getBinaryPath('wireproxy');
+        if (!await File(exe).exists()) return 'not installed';
+        final v = await _queryExeVersion(exe, ['--version']);
+        if (v == null) return 'installed';
+        // خروجی wireproxy --version این شکلی است:
+        //   wireproxy version: v1.1.2
+        //   wireproxy version: 1.1.2
+        final m = RegExp(r'\b(\d+\.\d+\.\d+(?:[-\+][\w\.]+)?)\b').firstMatch(v);
+        return m?.group(1) ?? 'installed';
+      }
       return 'unknown';
     } catch (e) {
       _log('⚠ Could not detect $coreId version: $e');
-      if (coreId == 'tor' || coreId == 'sunandlion' || coreId == 'sstp') {
+      if (coreId == 'tor' ||
+          coreId == 'sunandlion' ||
+          coreId == 'sstp' ||
+          coreId == 'wireguard') {
         return 'not installed';
       }
       return 'unknown';

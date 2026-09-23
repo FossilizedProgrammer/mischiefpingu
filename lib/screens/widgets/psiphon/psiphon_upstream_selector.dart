@@ -36,6 +36,8 @@ class PsiphonUpstreamSelector extends StatelessWidget {
             DropdownMenuItem(value: 3, child: Text(l10n.conduitWebrtc)),
             DropdownMenuItem(value: 4, child: Text(l10n.torSocksUpstream)),
             DropdownMenuItem(value: 5, child: Text(l10n.sstpSocksUpstream)),
+            DropdownMenuItem(
+                value: 6, child: Text(l10n.psiphonWireGuardUpstream)),
           ],
           onChanged: onUpstreamTypeChanged,
         ),

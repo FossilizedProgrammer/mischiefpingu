@@ -14,13 +14,13 @@ class TorChecker {
   void _log(String m) => log?.call(m);
 
   TorBundleDiscovery get _discovery => TorBundleDiscovery(
-    log: _log,
-    getText: (url, proxy, {accept = '*/*', userAgent = ''}) =>
-        network.getText(url, proxy, accept: accept, userAgent: userAgent),
-    headRequest: (url, proxy, {timeoutSec = 15}) =>
-        network.headRequest(url, proxy, timeoutSec: timeoutSec),
-    linuxArch: network.detectArch,
-  );
+        log: _log,
+        getText: (url, proxy, {accept = '*/*', userAgent = ''}) =>
+            network.getText(url, proxy, accept: accept, userAgent: userAgent),
+        headRequest: (url, proxy, {timeoutSec = 15}) =>
+            network.headRequest(url, proxy, timeoutSec: timeoutSec),
+        linuxArch: network.detectArch,
+      );
 
   Future<CoreUpdateInfo> check(
     String? proxy, {
@@ -33,8 +33,8 @@ class TorChecker {
       final url = await _discovery.discover(proxy);
       if (url != null) {
         discoveredUrl = url;
-        final vMatch = RegExp(r'tor-expert-bundle[^/]*?(\d+\.\d+\.\d+)')
-            .firstMatch(url);
+        final vMatch =
+            RegExp(r'tor-expert-bundle[^/]*?(\d+\.\d+\.\d+)').firstMatch(url);
         if (vMatch != null) latestVer = vMatch.group(1)!;
       }
     } catch (e) {
@@ -45,8 +45,7 @@ class TorChecker {
       displayName: 'Tor (Onion Routing)',
       installedVersion: installed,
       latestVersion: latestVer,
-      hasUpdate:
-          CoreUpdateUtils.isMissingVersion(installed) ||
+      hasUpdate: CoreUpdateUtils.isMissingVersion(installed) ||
           (latestVer != installed && latestVer != 'not installed'),
       downloadUrl: discoveredUrl,
       releaseNotes: CoreUpdateUtils.isMissingVersion(installed)

@@ -5,6 +5,7 @@ import '../../app_data_service.dart';
 class AssetPicker {
   AssetPicker._();
 
+  /// پسوندهای آرشیو شناخته‌شده.
   static const List<String> archiveExts = [
     '.tar.gz',
     '.tgz',
@@ -14,6 +15,7 @@ class AssetPicker {
   ];
 
   /// انتخاب بهترین asset از لیست release های GitHub.
+  ///
   /// [arch] یکی از: 'x86_64' | 'aarch64' | 'armv7'
   static Map<String, dynamic>? pick(List<dynamic> assets, String arch) {
     if (assets.isEmpty) return null;
@@ -22,8 +24,10 @@ class AssetPicker {
     final archPatterns = _archPatterns(arch);
 
     bool looksWindows(String name) {
-      if (name.contains('windows') || name.contains('win')) return true;
-      return name.contains('.exe');
+      if (name.contains('windows')) return true;
+      if (name.contains('win')) return true;
+      if (name.endsWith('.exe')) return true;
+      return false;
     }
 
     bool looksLinux(String name) {
@@ -35,6 +39,7 @@ class AssetPicker {
     bool matchesOs(String name) =>
         isWin ? looksWindows(name) : looksLinux(name);
 
+    // ─── مرحله 1: OS + arch + آرشیو ───
     for (final a in assets) {
       final m = a as Map<String, dynamic>;
       final name = (m['name'] as String? ?? '').toLowerCase();
@@ -46,6 +51,17 @@ class AssetPicker {
       }
     }
 
+    // ─── مرحله 2: OS + arch (بدون پسوند آرشیو — برای باینری خام) ───
+    for (final a in assets) {
+      final m = a as Map<String, dynamic>;
+      final name = (m['name'] as String? ?? '').toLowerCase();
+      if (name.isEmpty) continue;
+      if (matchesOs(name) && archPatterns.any(name.contains)) {
+        return m;
+      }
+    }
+
+    // ─── مرحله 3: OS + آرشیو ───
     for (final a in assets) {
       final m = a as Map<String, dynamic>;
       final name = (m['name'] as String? ?? '').toLowerCase();
@@ -55,6 +71,15 @@ class AssetPicker {
       }
     }
 
+    // ─── مرحله 4: فقط OS ───
+    for (final a in assets) {
+      final m = a as Map<String, dynamic>;
+      final name = (m['name'] as String? ?? '').toLowerCase();
+      if (name.isEmpty) continue;
+      if (matchesOs(name)) return m;
+    }
+
+    // ─── مرحله 5: هر آرشیو ───
     final extOnly = <Map<String, dynamic>>[];
     for (final a in assets) {
       final m = a as Map<String, dynamic>;
@@ -73,6 +98,7 @@ class AssetPicker {
       return extOnly.first;
     }
 
+    // ─── مرحله 6: هر asset ───
     for (final a in assets) {
       final m = a as Map<String, dynamic>;
       final name = (m['name'] as String? ?? '').toLowerCase();
@@ -83,6 +109,7 @@ class AssetPicker {
     return assets.first as Map<String, dynamic>;
   }
 
+  /// الگوهای معماری — پوشش‌دهنده نام‌گذاری‌های مختلف.
   static List<String> _archPatterns(String arch) {
     switch (arch) {
       case 'aarch64':
@@ -90,6 +117,7 @@ class AssetPicker {
       case 'armv7':
         return ['armv7', 'armhf', 'arm'];
       default:
+        // x86_64
         return ['x86_64', 'amd64', 'x64'];
     }
   }

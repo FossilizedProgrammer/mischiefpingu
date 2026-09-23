@@ -81,6 +81,12 @@ class AppUpdateStateManager {
     if (ps.isAetherRunning) return '127.0.0.1:${app.settings.aetherLocalPort}';
     if (ps.isTorConnected) return '127.0.0.1:${app.settings.torSocksPort}';
     if (ps.isSstpConnected) return '127.0.0.1:${app.settings.sstpSocksPort}';
+    // ═══════════════════════════════════════════════════════════
+    //  ⚠️ اضافه شد: WireGuard
+    // ═══════════════════════════════════════════════════════════
+    if (ps.isWireGuardConnected) {
+      return '127.0.0.1:${app.settings.wireguardSocksPort}';
+    }
     return null;
   }
 

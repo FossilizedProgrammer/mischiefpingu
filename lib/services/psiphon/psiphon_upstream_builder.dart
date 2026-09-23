@@ -17,7 +17,8 @@ class PsiphonUpstreamBuilder {
       settings.upstreamType == 1 ||
       settings.upstreamType == 2 ||
       settings.upstreamType == 4 ||
-      settings.upstreamType == 5;
+      settings.upstreamType == 5 ||
+      settings.upstreamType == 6;
 
   /// بخش upstream را به config اضافه می‌کند.
   void apply(Map<String, dynamic> config) {
@@ -33,6 +34,9 @@ class PsiphonUpstreamBuilder {
         break;
       case 5:
         _applySocks(config, settings.sstpSocksPort, 'SSTP');
+        break;
+      case 6:
+        _applySocks(config, settings.wireguardSocksPort, 'WireGuard');
         break;
       default:
         break;

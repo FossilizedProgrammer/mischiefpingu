@@ -90,7 +90,6 @@ class _ConnectionHealthSectionState extends State<ConnectionHealthSection> {
           ],
         ),
         const SizedBox(height: 8),
-
         for (final kind in TunnelKind.values)
           TunnelHealthRow(
             key: ValueKey(kind),
@@ -180,9 +179,8 @@ class _ConnectionHealthSectionState extends State<ConnectionHealthSection> {
     AppProvider provider,
     TunnelStateResolver resolver,
   ) async {
-    final runningKinds = TunnelKind.values
-        .where((k) => resolver.isTunnelRunning(k))
-        .toList();
+    final runningKinds =
+        TunnelKind.values.where((k) => resolver.isTunnelRunning(k)).toList();
 
     if (runningKinds.isEmpty) {
       if (!context.mounted) return;

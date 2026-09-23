@@ -10,6 +10,7 @@ import 'core_update/core_update_sunandlion.dart';
 import 'core_update/core_update_tor.dart';
 import 'core_update/core_update_version_checker.dart';
 import 'core_update/core_updater_registry.dart';
+import 'core_update/wireguard/wireguard_updater.dart';
 import 'core_update_models.dart';
 import 'core_update_utils.dart';
 
@@ -58,6 +59,12 @@ class CoreUpdateService {
       log: log,
     ),
     sstp: SstpProxyUpdater(
+      network: _network,
+      pending: _pending,
+      processUtils: _process,
+      log: log,
+    ),
+    wireguard: WireGuardUpdater(
       network: _network,
       pending: _pending,
       processUtils: _process,

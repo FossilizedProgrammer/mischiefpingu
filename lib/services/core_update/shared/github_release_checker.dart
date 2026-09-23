@@ -43,7 +43,14 @@ class GithubReleaseChecker {
       var size = 0;
 
       final arch = await network.detectArch();
-      final asset = AssetPicker.pick(assets, arch);
+
+      // ═══════════════════════════════════════════════════════
+      //  🆕 اگر spec.assetPicker داره، از اون استفاده کن
+      //  در غیر این صورت AssetPicker عمومی
+      // ═══════════════════════════════════════════════════════
+      final asset = spec.assetPicker != null
+          ? spec.assetPicker!(assets, arch)
+          : AssetPicker.pick(assets, arch);
 
       if (asset != null) {
         url = (asset['browser_download_url'] as String? ?? '');
@@ -63,8 +70,7 @@ class GithubReleaseChecker {
         displayName: spec.displayName,
         installedVersion: installed,
         latestVersion: latest.isEmpty ? installed : latest,
-        hasUpdate:
-            latest.isNotEmpty &&
+        hasUpdate: latest.isNotEmpty &&
             (CoreUpdateUtils.isMissingVersion(installed) ||
                 CoreUpdateUtils.isNewerVersion(installed, latest)),
         downloadUrl: url,

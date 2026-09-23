@@ -49,11 +49,12 @@ class CoreUpdateProcessUtils {
     required String src,
     required String dest,
     bool skipIfExists = false,
-  }) => _copier.copyDirectoryTree(
-    src: src,
-    dest: dest,
-    skipIfExists: skipIfExists,
-  );
+  }) =>
+      _copier.copyDirectoryTree(
+        src: src,
+        dest: dest,
+        skipIfExists: skipIfExists,
+      );
 
   /// نصب پوشه `pt` مخصوص Aether.
   ///
@@ -63,11 +64,12 @@ class CoreUpdateProcessUtils {
     required String dataDir,
     String? stagingSource,
     String? fallbackSource,
-  }) => _copier.installAetherPtDirectoryImpl(
-    dataDir: dataDir,
-    stagingSource: stagingSource,
-    fallbackSource: fallbackSource,
-  );
+  }) =>
+      _copier.installAetherPtDirectoryImpl(
+        dataDir: dataDir,
+        stagingSource: stagingSource,
+        fallbackSource: fallbackSource,
+      );
 
   Future<void> updateExecutableDirBinary(String coreId, String stagingPath) =>
       _platformSync.updateExecutableDirBinary(coreId, stagingPath);

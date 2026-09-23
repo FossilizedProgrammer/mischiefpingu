@@ -2,6 +2,11 @@ part of '../app_provider.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  منطق start Psiphon (internal).
+///
+///  ⚠️ FIX:
+///   • isAutoTesting در try/finally
+///   • isPsiphonBusy/isLoading با generation check
+///   • چک userStoppedPsiphon بعد از ensureHealthy
 /// ═══════════════════════════════════════════════════════════════
 extension AppProviderPsiphonLaunch on AppProvider {
   Future<void> startPsiphonInternal({required bool fromAutoReconnect}) async {
@@ -76,19 +81,25 @@ extension AppProviderPsiphonLaunch on AppProvider {
               : 'Aether: Testing ${settings.aetherProtocol.toUpperCase()}…';
           touch();
 
+          // ⚠️ FIX: isAutoTesting در try/finally
+          bool aetherOk = false;
           isAutoTesting = true;
-          final ok = await _aetherTestService.ensureHealthy(showUi: false);
-          isAutoTesting = false;
+          try {
+            aetherOk = await _aetherTestService.ensureHealthy(showUi: false);
+          } finally {
+            isAutoTesting = false;
+          }
 
+          // ⚠️ FIX: چک cancel بعد از await
           if (userStoppedPsiphon || _aetherTestService.isCancelRequested) {
             processService.addLog(
-              'Psiphon start cancelled by user',
+              'Psiphon start cancelled by user (during Aether upstream)',
               source: src,
             );
             return;
           }
 
-          if (!ok && !processService.isAetherRunning) {
+          if (!aetherOk && !processService.isAetherRunning) {
             aetherStatus = 'Aether: not available — Psiphon not started';
             processService.addLog(
               '✗ Aether unavailable → Psiphon not started',
@@ -108,6 +119,13 @@ extension AppProviderPsiphonLaunch on AppProvider {
       }
 
       await saveSettings();
+
+      // ⚠️ FIX: چک cancel بعد از saveSettings
+      if (userStoppedPsiphon) {
+        processService.addLog('Psiphon start cancelled by user', source: src);
+        return;
+      }
+
       final config = buildPsiphonConfig();
       final useSunAndLion = settings.effectiveUseSunAndLion;
       processService.addLog(
@@ -137,8 +155,11 @@ extension AppProviderPsiphonLaunch on AppProvider {
     } catch (e) {
       processService.addLog('✗ connectPsiphon error: $e', source: src);
     } finally {
-      isPsiphonBusy = false;
-      isLoading = false;
+      // ⚠️ FIX: generation check — فقط اگر start فعلی معتبره، flagها رو ریست کن
+      if (myGeneration == _psiphonGeneration) {
+        isPsiphonBusy = false;
+        isLoading = false;
+      }
       await AppDataService.fixDataDirOwnership();
       touch();
     }

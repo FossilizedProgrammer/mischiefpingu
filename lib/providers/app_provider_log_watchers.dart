@@ -60,6 +60,17 @@ extension AppProviderLogWatchers on AppProvider {
     } else if (!processService.isSstpRunning) {
       sstpLog.reset();
     }
+
+    // ─── WireGuard ───
+    if (processService.isWireGuardRunning && !restartingWireGuard) {
+      final dead = _wireGuardLog.feed(line);
+      if (dead && !userStoppedWireGuard && !isShuttingDown) {
+        // The verification method is already defined
+        _verifyAndRestartWireGuard();
+      }
+    } else if (!processService.isWireGuardRunning) {
+      _wireGuardLog.reset();
+    }
   }
 
   /// ⚠️ قبل از restart، SOCKS probe بزن.
@@ -183,5 +194,40 @@ extension AppProviderLogWatchers on AppProvider {
         sock?.destroy();
       } catch (_) {}
     }
+  }
+
+  Future<void> _verifyAndRestartWireGuard() async {
+    const src = LogSource.wireguard;
+
+    final internetOk = await _connectivityProbe.isInternetAlive();
+    if (!internetOk) {
+      processService.addLog(
+        '⚠ WireGuard log watcher triggered but Internet is DOWN — '
+        'skipping restart',
+        source: src,
+      );
+      _wireGuardLog.reset();
+      return;
+    }
+
+    final alive = await _probeSocks(settings.wireguardSocksPort);
+    if (alive) {
+      processService.addLog(
+        '✅ WireGuard log watcher suggested restart but SOCKS is alive '
+        '— skipping',
+        source: src,
+      );
+      _wireGuardLog.reset();
+      return;
+    }
+
+    processService.addLog(
+      '⚠ WireGuard log watcher suggests restart '
+      '(verified dead via SOCKS probe)',
+      source: src,
+    );
+    await restartWireGuardInternal(
+      reason: 'log watcher detected dead tunnel',
+    );
   }
 }

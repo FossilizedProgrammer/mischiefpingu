@@ -66,9 +66,8 @@ class ThemeChip extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected
-                    ? info.seedColor
-                    : theme.colorScheme.onSurface,
+                color:
+                    isSelected ? info.seedColor : theme.colorScheme.onSurface,
               ),
             ),
           ],

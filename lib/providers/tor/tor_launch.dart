@@ -2,6 +2,10 @@ part of '../app_provider.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  منطق start Tor (internal).
+///
+///  ⚠️ FIX:
+///   • isTorBusy با generation check در finally
+///   • چک userStoppedTor بعد از هر await طولانی
 /// ═══════════════════════════════════════════════════════════════
 extension AppProviderTorLaunch on AppProvider {
   Future<void> startTorInternal({required bool fromAutoReconnect}) async {
@@ -60,26 +64,49 @@ extension AppProviderTorLaunch on AppProvider {
       final upstream = await resolveTorUpstream(
         fromAutoReconnect: fromAutoReconnect,
       );
+
+      // ⚠️ FIX: چک cancel بعد از upstream
+      if (userStoppedTor) {
+        processService.addLog(
+          'Tor start cancelled by user (after upstream resolve)',
+          source: src,
+        );
+        return;
+      }
+
       if (!upstream.ok) return;
 
       final transportType = upstream.type;
       final transportDetail = upstream.detail;
 
+      await saveSettings();
+
+      // ⚠️ FIX: چک cancel بعد از saveSettings
       if (userStoppedTor) {
-        processService.addLog('Tor start cancelled by user', source: src);
+        processService.addLog(
+          'Tor start cancelled by user (after saveSettings)',
+          source: src,
+        );
         return;
       }
 
-      await saveSettings();
       final dataDir = await AppDataService.getDataDir();
       final torDir = await AppDataService.ensureTorDir();
       final torDataDir = '$torDir/tordata';
       await Directory(torDataDir).create(recursive: true);
 
+      // ⚠️ FIX: چک cancel
+      if (userStoppedTor) {
+        processService.addLog(
+          'Tor start cancelled by user (after ensureTorDir)',
+          source: src,
+        );
+        return;
+      }
+
       var internalSocks = settings.torSocksPort;
       var internalHttp = settings.torHttpPort;
       if (settings.torShareLan) {
-        // ⚠️ حالا pickInternalPort async است و await درست کار می‌کند
         internalSocks = await pickInternalPort(settings.torSocksPort);
         internalHttp = await pickInternalPort(settings.torHttpPort);
       }
@@ -98,29 +125,30 @@ extension AppProviderTorLaunch on AppProvider {
         geoip6Path: assets.geoip6Path,
         lyrebirdPath: assets.lyrebirdPath,
         conjurePath: assets.conjurePath,
-        aetherSocks: settings.torTransport == 'aether'
-            ? settings.aetherLocalPort
-            : null,
-        psiphonSocks: settings.torTransport == 'psiphon'
-            ? settings.socksPort
-            : null,
-        sstpSocks: settings.torTransport == 'sstp'
-            ? settings.sstpSocksPort
-            : null,
+        aetherSocks:
+            settings.torTransport == 'aether' ? settings.aetherLocalPort : null,
+        psiphonSocks:
+            settings.torTransport == 'psiphon' ? settings.socksPort : null,
+        sstpSocks:
+            settings.torTransport == 'sstp' ? settings.sstpSocksPort : null,
       );
 
       final torrcPath = '$torDir/torrc';
       await File(torrcPath).writeAsString(res.torrc);
 
-      torStatus = 'Tor: Bootstrapping…';
-      touch();
-
+      // ⚠️ FIX: چک cancel قبل از start نهایی
       if (userStoppedTor) {
-        processService.addLog('Tor start cancelled by user', source: src);
+        processService.addLog(
+          'Tor start cancelled by user (before process start)',
+          source: src,
+        );
         torStatus = 'Tor: Stopped';
         touch();
         return;
       }
+
+      torStatus = 'Tor: Bootstrapping…';
+      touch();
 
       processService.prepareTorNotification(transportType, transportDetail);
 
@@ -134,6 +162,20 @@ extension AppProviderTorLaunch on AppProvider {
         internalSocksPort: internalSocks,
         internalHttpPort: internalHttp,
       );
+
+      // ⚠️ FIX: چک cancel بعد از start
+      if (userStoppedTor) {
+        processService.addLog(
+          'Tor start cancelled by user (after process start) — stopping',
+          source: src,
+        );
+        try {
+          await processService.stopTor();
+        } catch (_) {}
+        torStatus = 'Tor: Stopped';
+        touch();
+        return;
+      }
 
       torStatus = ok ? 'Tor: Bootstrapping…' : 'Tor: Failed to start';
       if (!ok) {
@@ -154,7 +196,10 @@ extension AppProviderTorLaunch on AppProvider {
       processService.addLog('✗ connectTor error: $e', source: src);
       torStatus = 'Tor: Error';
     } finally {
-      isTorBusy = false;
+      // ⚠️ FIX: generation check — فقط اگر start فعلی معتبره
+      if (myGeneration == _torGeneration) {
+        isTorBusy = false;
+      }
       await AppDataService.fixDataDirOwnership();
       touch();
     }

@@ -43,6 +43,10 @@ import '../services/health/tunnel_health_models.dart';
 import '../services/health/tunnel_health_registry.dart';
 import '../constants/default_lists.dart';
 import 'internet_quality_provider.dart';
+import '../services/wireguard/wireguard_config_parser.dart';
+import '../services/wireguard/wireguard_config_builder.dart';
+import '../services/wireguard/wireguard_paths.dart';
+import '../services/wireguard/wireguard_log_watcher.dart';
 
 part 'app_provider_snapshot.dart';
 part 'app_provider_state.dart';
@@ -70,6 +74,9 @@ part 'app_provider_reconnect.dart';
 part 'app_provider_log_watchers.dart';
 part 'app_provider_process_listener.dart';
 part 'app_provider_wrappers.dart';
+part 'app_provider_wireguard.dart';
+part 'app_provider_wireguard_internal.dart';
+part 'app_provider_wireguard_preflight.dart';
 
 class AppProvider extends ChangeNotifier {
   final ProcessService processService = ProcessService();
@@ -79,6 +86,20 @@ class AppProvider extends ChangeNotifier {
   final SettingsPersistenceService persistence = SettingsPersistenceService();
   final AutoReconnectManager _reconnectManager = AutoReconnectManager();
   AutoReconnectManager get reconnectManager => _reconnectManager;
+
+// ═══════════════════════════════════════════════════════════════
+//  WireGuard state
+// ═══════════════════════════════════════════════════════════════
+  bool isWireGuardBusy = false;
+  bool userStoppedWireGuard = true;
+  bool restartingWireGuard = false;
+  String wireGuardStatus = 'WireGuard: Ready';
+
+  late final WireGuardLogWatcher _wireGuardLog;
+
+  int _wireGuardGeneration = 0;
+  int get wireGuardGeneration => _wireGuardGeneration;
+  int nextWireGuardGeneration() => ++_wireGuardGeneration;
 
   /// ═══════════════════════════════════════════════════════════════
   ///  RecoveryCoordinator — جلوگیری از restart همزمان
@@ -319,6 +340,7 @@ class AppProvider extends ChangeNotifier {
     _psiphonLog = PsiphonLogWatcher(log: processService.addLog);
     _torLog = TorLogWatcher(log: processService.addLog);
     _sstpLog = SstpLogWatcher(log: processService.addLog);
+    _wireGuardLog = WireGuardLogWatcher(log: processService.addLog);
 
     _logSubscription = processService.logStream.listen(
       feedLogWatchers,
@@ -516,6 +538,9 @@ class AppProvider extends ChangeNotifier {
             break;
           case TunnelKind.aether:
             return;
+          case TunnelKind.wireguard:
+            if (userStoppedWireGuard) return;
+            break;
         }
 
         processService.addLog(
@@ -539,6 +564,10 @@ class AppProvider extends ChangeNotifier {
             restartSstpInternal(reason: 'health degradation: $reason');
             break;
           case TunnelKind.aether:
+            break;
+          case TunnelKind.wireguard:
+            // ignore: discarded_futures
+            restartWireGuardInternal(reason: 'health degradation: $reason');
             break;
         }
       },

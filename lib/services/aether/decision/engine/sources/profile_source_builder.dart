@@ -48,8 +48,7 @@ class ProfileSourceBuilder {
       fragmentH2: c.fragmentH2,
       score: baseScore,
       source: CandidateSource.defaultFallback,
-      reason:
-          'profile default'
+      reason: 'profile default'
           '${baseScore > 0 ? " (protocol bonus $baseScore)" : ""}',
     );
   }

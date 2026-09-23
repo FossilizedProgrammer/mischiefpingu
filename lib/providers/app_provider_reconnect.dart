@@ -103,6 +103,32 @@ extension AppProviderReconnect on AppProvider {
     } else if (processService.isSstpRunning || isSstpBusy || userStoppedSstp) {
       _reconnectManager.cancelSstpTimer();
     }
+
+    if (!processService.isWireGuardRunning &&
+        !isWireGuardBusy &&
+        processService.wireGuardPid == null &&
+        !userStoppedWireGuard &&
+        settings.wireguardAutoReconnect &&
+        !isAutoTesting &&
+        !restartingWireGuard) {
+      _reconnectManager.scheduleWireGuardReconnect(
+        shouldReconnect: () =>
+            !processService.isWireGuardRunning &&
+            !isWireGuardBusy &&
+            processService.wireGuardPid == null &&
+            !userStoppedWireGuard &&
+            settings.wireguardAutoReconnect &&
+            !isAutoTesting &&
+            !restartingWireGuard &&
+            !isShuttingDown,
+        onReconnect: () => connectWireGuard(fromAutoReconnect: true),
+        log: processService.addLog,
+      );
+    } else if (processService.isWireGuardRunning ||
+        isWireGuardBusy ||
+        userStoppedWireGuard) {
+      _reconnectManager.cancelWireGuardTimer();
+    }
   }
 
   void updateTunnelStatuses() {

@@ -170,7 +170,7 @@
   "showLess": "Show less",
   "showLessSubtitle": "Hide advanced settings & logs",
   "showMore": "Show more",
-  "showMoreSubtitle": "Appearance, Aether, Psiphon, Tor, Scanner, Updates, Log",
+  "showMoreSubtitle": "Appearance, Aether, Psiphon, Tor, SSTP, WireGuard, Scanner, Updates, Log",
   "sni": "SNI",
   "sniList": "SNI list (one per line, order = priority)",
   "socksPort": "SOCKS port",
@@ -278,6 +278,9 @@
   "internetQualityTcp": "TCP",
   "internetQualityTest": "Test",
   "internetQualityUnstable": "Unstable",
+  
+  "wireguardSettings": "WireGuard Settings",
+
 
   "tunnelHealth": "Tunnel Health",
   "tunnelHealthProbeAll": "Test all",
@@ -321,10 +324,26 @@
   },
   "tunnelHealthNoDataWarning": "Tunnel is up but no data is flowing",
   "tunnelHealthMeasuringHealth": "Measuring health…",
+  "tunnelHealthMeasuringHealth": "Measuring health…",
   "tunnelHealthTitle": "{tunnel} Health",
   "@tunnelHealthTitle": {
     "placeholders": {
       "tunnel": { "type": "String" }
     }
-  }
+  },
+
+  "wireguardSettings": "WireGuard Settings",
+  "wireguardConfig": "WireGuard Config",
+  "wireguardConfigHint": "Paste a standard WireGuard config (INI format) or a wireguard:// URI. The app auto-detects the format.",
+  "wireguardConfigInvalid": "Invalid WireGuard config — check PrivateKey, PublicKey, and Endpoint.",
+  "wireguardFormatStandard": "STANDARD",
+  "wireguardFormatUri": "URI",
+  "wireguardConvertToUri": "Convert to URI",
+  "wireguardConvertToStandard": "Convert to Standard",
+  "wireguardConnected": "WireGuard Connected",
+  "autoReconnectWireGuard": "Auto-reconnect WireGuard",
+  "logSourceWireGuard": "WireGuard",
+  "torViaWireGuard": "Via WireGuard (Tor-over-WireGuard)",
+  "psiphonWireGuardUpstream": "WireGuard (SOCKS upstream)",
+  "sstpWireGuardUpstream": "WireGuard (SOCKS upstream)"
 }

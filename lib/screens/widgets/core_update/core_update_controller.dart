@@ -145,6 +145,8 @@ class CoreUpdateController extends ChangeNotifier {
         return 'sunandlion';
       case CoreKind.sstp:
         return 'sstp';
+      case CoreKind.wireguard:
+        return 'wireguard';
     }
   }
 }

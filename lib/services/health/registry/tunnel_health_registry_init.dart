@@ -35,5 +35,9 @@ extension TunnelHealthRegistryInit on TunnelHealthRegistry {
     _torAdapter = TorAdapter(log: log, monitor: _monitors[TunnelKind.tor]!);
 
     _sstpAdapter = SstpAdapter(log: log, monitor: _monitors[TunnelKind.sstp]!);
+    _wireguardAdapter = WireGuardAdapter(
+      log: log,
+      monitor: _monitors[TunnelKind.wireguard]!,
+    );
   }
 }

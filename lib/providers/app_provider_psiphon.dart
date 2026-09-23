@@ -14,13 +14,17 @@ extension AppProviderPsiphon on AppProvider {
 
     if (isCurrentlyActive) {
       await stopPsiphonByUser();
-    } else {
-      await startPsiphonInternal(fromAutoReconnect: false);
+      return; // ⚠️ FIX: بعد از stop، دیگه start نکن
     }
+
+    await startPsiphonInternal(fromAutoReconnect: false);
   }
 
   /// ═══════════════════════════════════════════════════════════════
   ///  stopPsiphonByUser — تنها جایی که userStoppedPsiphon=true می‌شود.
+  ///
+  ///  ⚠️ FIX: flagهای busy رو اینجا ریست نمی‌کنیم — می‌ذاریم start
+  ///  خودش در finally با generation check ریست کنه.
   /// ═══════════════════════════════════════════════════════════════
   Future<void> stopPsiphonByUser() async {
     const src = LogSource.psiphon;
@@ -31,6 +35,7 @@ extension AppProviderPsiphon on AppProvider {
     _aetherTestService.requestCancel();
     _recoveryCoordinator.releaseLeaseByTunnel('Psiphon');
 
+    // ⚠️ FIX: generation رو عوض کن — start قبلی در finally دیگه flag ریست نمی‌کنه
     nextPsiphonGeneration();
 
     try {
@@ -39,6 +44,7 @@ extension AppProviderPsiphon on AppProvider {
       processService.addLog('⚠ Psiphon stop error: $e', source: src);
     }
 
+    // ⚠️ FIX: فوری ریست کن تا UI پاسخ بده
     isPsiphonBusy = false;
     isLoading = false;
     watchdogManager?.psiphon.resetGracePeriod();
@@ -50,9 +56,6 @@ extension AppProviderPsiphon on AppProvider {
 
   /// ═══════════════════════════════════════════════════════════════
   ///  restartPsiphonInternal — برای watchdog و health degradation.
-  ///
-  ///  ⚠️ در این نسخه reconnect در TunnelHealthRegistry ثبت می‌شود
-  ///  تا Health Score penalty بگیرد.
   /// ═══════════════════════════════════════════════════════════════
   Future<void> restartPsiphonInternal({required String reason}) async {
     const src = LogSource.psiphon;
@@ -82,14 +85,6 @@ extension AppProviderPsiphon on AppProvider {
       );
       processService.setSadNotification('Psiphon');
 
-      // ═══════════════════════════════════════════════════════════
-      //  ثبت reconnect در Health Registry
-      //
-      //  این باعث می‌شه:
-      //    • reconnectCount در health report افزایش پیدا کنه
-      //    • امتیاز health penalty بگیره
-      //    • trend احتمالاً به degrading بره
-      // ═══════════════════════════════════════════════════════════
       recordTunnelReconnect(TunnelKind.psiphon);
 
       _reconnectManager.cancelPsiphonTimer();

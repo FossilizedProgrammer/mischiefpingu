@@ -17,6 +17,7 @@ import '../../widgets/cdn_scanner_section.dart';
 import '../../widgets/internet_quality_tile.dart';
 import '../../widgets/diagnostics/connection_health_section.dart';
 import '../../widgets/watchdog_settings_tile.dart';
+import 'wireguard_settings_tile.dart';
 
 class AdvancedSettingsColumn extends StatelessWidget {
   const AdvancedSettingsColumn({super.key});
@@ -34,6 +35,7 @@ class AdvancedSettingsColumn extends StatelessWidget {
         PsiphonSettingsTile(),
         TorSettingsTile(),
         SstpSettingsTile(),
+        WireGuardSettingsTile(),
         CdnScannerSection(),
         SstpFetcherSection(),
         CoreUpdateTile(),

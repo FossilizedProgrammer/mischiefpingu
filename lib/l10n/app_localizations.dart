@@ -1111,7 +1111,7 @@ abstract class AppLocalizations {
   /// No description provided for @showMoreSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Appearance, Aether, Psiphon, Tor, Scanner, Updates, Log'**
+  /// **'Appearance, Aether, Psiphon, Tor, SSTP, WireGuard, Scanner, Updates, Log'**
   String get showMoreSubtitle;
 
   /// No description provided for @sni.
@@ -1708,6 +1708,12 @@ abstract class AppLocalizations {
   /// **'Unstable'**
   String get internetQualityUnstable;
 
+  /// No description provided for @wireguardSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'WireGuard Settings'**
+  String get wireguardSettings;
+
   /// No description provided for @tunnelHealth.
   ///
   /// In en, this message translates to:
@@ -1875,6 +1881,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{tunnel} Health'**
   String tunnelHealthTitle(String tunnel);
+
+  /// No description provided for @wireguardConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'WireGuard Config'**
+  String get wireguardConfig;
+
+  /// No description provided for @wireguardConfigHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste a standard WireGuard config (INI format) or a wireguard:// URI. The app auto-detects the format.'**
+  String get wireguardConfigHint;
+
+  /// No description provided for @wireguardConfigInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid WireGuard config — check PrivateKey, PublicKey, and Endpoint.'**
+  String get wireguardConfigInvalid;
+
+  /// No description provided for @wireguardFormatStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'STANDARD'**
+  String get wireguardFormatStandard;
+
+  /// No description provided for @wireguardFormatUri.
+  ///
+  /// In en, this message translates to:
+  /// **'URI'**
+  String get wireguardFormatUri;
+
+  /// No description provided for @wireguardConvertToUri.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert to URI'**
+  String get wireguardConvertToUri;
+
+  /// No description provided for @wireguardConvertToStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert to Standard'**
+  String get wireguardConvertToStandard;
+
+  /// No description provided for @wireguardConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'WireGuard Connected'**
+  String get wireguardConnected;
+
+  /// No description provided for @autoReconnectWireGuard.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-reconnect WireGuard'**
+  String get autoReconnectWireGuard;
+
+  /// No description provided for @logSourceWireGuard.
+  ///
+  /// In en, this message translates to:
+  /// **'WireGuard'**
+  String get logSourceWireGuard;
+
+  /// No description provided for @torViaWireGuard.
+  ///
+  /// In en, this message translates to:
+  /// **'Via WireGuard (Tor-over-WireGuard)'**
+  String get torViaWireGuard;
+
+  /// No description provided for @psiphonWireGuardUpstream.
+  ///
+  /// In en, this message translates to:
+  /// **'WireGuard (SOCKS upstream)'**
+  String get psiphonWireGuardUpstream;
+
+  /// No description provided for @sstpWireGuardUpstream.
+  ///
+  /// In en, this message translates to:
+  /// **'WireGuard (SOCKS upstream)'**
+  String get sstpWireGuardUpstream;
 }
 
 class _AppLocalizationsDelegate

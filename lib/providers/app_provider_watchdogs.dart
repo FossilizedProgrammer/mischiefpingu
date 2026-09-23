@@ -88,6 +88,23 @@ extension AppProviderWatchdogs on AppProvider {
       );
     }
 
+    Future<RecoveryLeaseResult> acquireWireGuardLease() async {
+      final lease = _recoveryCoordinator.tryAcquire(
+        tunnel: 'WireGuard',
+        action: RecoveryAction.watchdogRestart,
+        reason: 'watchdog detected dead tunnel',
+      );
+      if (lease == null) {
+        return const RecoveryLeaseResult.denied(
+          'another recovery is in progress',
+        );
+      }
+      return RecoveryLeaseResult(
+        granted: true,
+        lease: _LeaseHandleWrapper(lease, _recoveryCoordinator),
+      );
+    }
+
     _watchdogManager = TunnelWatchdogFactory.build(
       provider: this,
       processService: processService,
@@ -96,6 +113,7 @@ extension AppProviderWatchdogs on AppProvider {
       acquireAetherLease: acquireAetherLease,
       acquireTorLease: acquireTorLease,
       acquireSstpLease: acquireSstpLease,
+      acquireWireGuardLease: acquireWireGuardLease,
       restartPsiphon: () =>
           restartPsiphonInternal(reason: 'watchdog detected dead tunnel'),
       restartAether: () =>
@@ -104,6 +122,8 @@ extension AppProviderWatchdogs on AppProvider {
           restartTorInternal(reason: 'watchdog detected dead tunnel'),
       restartSstp: () =>
           restartSstpInternal(reason: 'watchdog detected dead tunnel'),
+      restartWireGuard: () =>
+          restartWireGuardInternal(reason: 'watchdog detected dead tunnel'),
     );
   }
 
@@ -152,13 +172,14 @@ extension AppProviderWatchdogs on AppProvider {
 
     ensureWatchdogs();
 
-_lastBuiltProfile ??= currentProfile;
+    _lastBuiltProfile ??= currentProfile;
 
     _watchdogManager!.syncWithConnectionState(
       psiphonConnected: processService.isPsiphonConnected,
       aetherConnected: processService.isAetherRunning && !isAutoTesting,
       torConnected: processService.isTorConnected,
       sstpConnected: processService.isSstpConnected,
+      wireGuardConnected: processService.isWireGuardConnected,
     );
   }
 }

@@ -5,6 +5,8 @@ extension AppProviderAether on AppProvider {
   ///  connectAether — entry point عمومی.
   ///
   ///  فقط تصمیم می‌گیرد: user خواسته start کند یا stop؟
+  ///
+  ///  ⚠️ FIX: بعد از stop، حتماً return می‌کنیم تا وارد start نشه.
   /// ═══════════════════════════════════════════════════════════════
   Future<void> connectAether({bool fromAutoReconnect = false}) async {
     if (fromAutoReconnect) {
@@ -16,11 +18,17 @@ extension AppProviderAether on AppProvider {
 
     if (isCurrentlyActive) {
       await _stopAetherByUser();
-    } else {
-      await _startAetherInternal(fromAutoReconnect: false);
+      return; // ⚠️ FIX: بعد از stop، دیگه start نکن
     }
+
+    await _startAetherInternal(fromAutoReconnect: false);
   }
 
+  /// ═══════════════════════════════════════════════════════════════
+  ///  _stopAetherByUser — توقف کامل Aether.
+  ///
+  ///  ⚠️ FIX: isAutoTesting فوری ریست می‌شه تا دکمه گیر نکنه.
+  /// ═══════════════════════════════════════════════════════════════
   Future<void> _stopAetherByUser() async {
     const src = LogSource.aether;
 
@@ -29,6 +37,11 @@ extension AppProviderAether on AppProvider {
     _reconnectManager.resetRetries('aether');
     _aetherTestService.requestCancel();
     _recoveryCoordinator.releaseLeaseByTunnel('Aether');
+
+    // ⚠️ FIX: ریست فوری flag — جلوگیری از گیر کردن دکمه در حالت Cancel
+    isAutoTesting = false;
+    restartingAether = false;
+    touch();
 
     // ─── Cancel tracker ───
     try {

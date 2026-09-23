@@ -69,8 +69,7 @@ class _AetherStatusCardState extends State<AetherStatusCard> {
 
     final isRunning = ps.isAetherRunning;
     final isTesting = provider.isAutoTesting;
-    final isHealthy =
-        isRunning &&
+    final isHealthy = isRunning &&
         !isTesting &&
         provider.aetherStatus.toLowerCase().contains('healthy');
 
@@ -78,20 +77,20 @@ class _AetherStatusCardState extends State<AetherStatusCard> {
     final statusColor = isTesting
         ? Colors.orange
         : isRunning
-        ? (isHealthy ? Colors.green : Colors.amber)
-        : theme.colorScheme.outline;
+            ? (isHealthy ? Colors.green : Colors.amber)
+            : theme.colorScheme.outline;
 
     final statusIcon = isTesting
         ? Icons.hourglass_top
         : isRunning
-        ? (isHealthy ? Icons.check_circle : Icons.warning_amber_rounded)
-        : Icons.cloud_off_outlined;
+            ? (isHealthy ? Icons.check_circle : Icons.warning_amber_rounded)
+            : Icons.cloud_off_outlined;
 
     final statusLabel = isTesting
         ? 'Testing…'
         : isRunning
-        ? (isHealthy ? 'Connected' : 'Running (unverified)')
-        : 'Stopped';
+            ? (isHealthy ? 'Connected' : 'Running (unverified)')
+            : 'Stopped';
 
     // ─── داده‌های عملکرد از tracker ───
     final tracker = provider.aetherTestService.performanceTracker;

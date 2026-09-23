@@ -2,7 +2,7 @@
   "@@locale": "fa",
 
   "appTitle": "پینگوی شیطون",
-  "appSubtitle": "کلاینت غیررسمی سایفون، اتر، تور و اس‌اس‌تی‌پی",
+  "appSubtitle": "کلاینت غیر رسمی سایفون، اتر، تور، اس‌اس‌تی‌پی، وایرگارد",
 
   "add": "افزودن",
   "addNew": "افزودن جدید",
@@ -170,7 +170,7 @@
   "showLess": "نمایش کمتر",
   "showLessSubtitle": "پنهان کردن تنظیمات پیشرفته و لاگ‌ها",
   "showMore": "نمایش بیشتر",
-  "showMoreSubtitle": "ظاهر، اتر، سایفون، تور، اس‌اس‌تی‌پی، اسکنر، آپدیت‌ها، لاگ",
+  "showMoreSubtitle": "ظاهر، اتر، سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، اسکنر، آپدیت‌ها، لاگ",
   "sni": "SNI",
   "sniList": "لیست SNI (هر خط یکی، ترتیب = اولویت)",
   "socksPort": "پورت SOCKS",
@@ -299,5 +299,25 @@
   "tunnelHealthLastProbeFailed": "آخرین تست ناموفق: {error}",
   "tunnelHealthNoDataWarning": "تونل فعال است ولی داده‌ای عبور نمی‌کند",
   "tunnelHealthMeasuringHealth": "در حال اندازه‌گیری سلامت…",
-  "tunnelHealthTitle": "سلامت {tunnel}"
+  "tunnelHealthTitle": "سلامت {tunnel}",
+  "@tunnelHealthTitle": {
+    "placeholders": {
+      "tunnel": { "type": "String" }
+    }
+  },
+
+  "wireguardSettings": "تنظیمات وایرگارد",
+  "wireguardConfig": "کانفیگ وایرگارد",
+  "wireguardConfigHint": "کانفیگ استاندارد WireGuard (فرمت INI) یا URI با پروتکل wireguard:// را بچسبانید. برنامه فرمت را به‌صورت خودکار تشخیص می‌دهد.",
+  "wireguardConfigInvalid": "کانفیگ WireGuard نامعتبر است — PrivateKey، PublicKey و Endpoint را بررسی کنید.",
+  "wireguardFormatStandard": "استاندارد",
+  "wireguardFormatUri": "URI",
+  "wireguardConvertToUri": "تبدیل به URI",
+  "wireguardConvertToStandard": "تبدیل به استاندارد",
+  "wireguardConnected": "وایرگارد متصل شد",
+  "autoReconnectWireGuard": "اتصال مجدد خودکار وایرگارد",
+  "logSourceWireGuard": "وایرگارد",
+  "torViaWireGuard": "از طریق وایرگارد (Tor-over-WireGuard)",
+  "psiphonWireGuardUpstream": "وایرگارد (آپ‌استریم SOCKS)",
+  "sstpWireGuardUpstream": "وایرگارد (آپ‌استریم SOCKS)"
 }

@@ -7,7 +7,8 @@ enum TunnelKind {
   psiphon,
   aether,
   tor,
-  sstp;
+  sstp,
+  wireguard;
 
   String get displayName {
     switch (this) {
@@ -19,6 +20,8 @@ enum TunnelKind {
         return 'Tor';
       case TunnelKind.sstp:
         return 'SSTP';
+      case TunnelKind.wireguard:
+        return 'WireGuard';
     }
   }
 

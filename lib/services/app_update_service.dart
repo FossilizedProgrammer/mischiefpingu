@@ -103,9 +103,8 @@ class AppUpdateService {
         throw HttpException('HTTP ${res.statusCode} downloading app update');
       }
 
-      final total = res.contentLength > 0
-          ? res.contentLength
-          : info.downloadSizeBytes;
+      final total =
+          res.contentLength > 0 ? res.contentLength : info.downloadSizeBytes;
 
       final sink = File(savePath).openWrite();
       var done = 0;

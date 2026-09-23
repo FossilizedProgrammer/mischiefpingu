@@ -102,12 +102,10 @@ extension AetherDecisionEngineCandidateBuilder on AetherDecisionEngine {
       );
 
   RankedCandidate _customCandidate(String endpoint) {
-    final proto = settings.aetherProtocol == 'auto'
-        ? 'masque'
-        : settings.aetherProtocol;
-    final masque = (proto == 'masque' || proto == 'mim')
-        ? settings.masqueOption
-        : '';
+    final proto =
+        settings.aetherProtocol == 'auto' ? 'masque' : settings.aetherProtocol;
+    final masque =
+        (proto == 'masque' || proto == 'mim') ? settings.masqueOption : '';
     return RankedCandidate(
       protocol: proto,
       masque: masque,
@@ -122,9 +120,8 @@ extension AetherDecisionEngineCandidateBuilder on AetherDecisionEngine {
     logInternal('→ DecisionEngine: ranked ${list.length} candidate(s)');
     for (var i = 0; i < list.length; i++) {
       final c = list[i];
-      final scoreStr = c.score == 0
-          ? '  —'
-          : c.score.toStringAsFixed(0).padLeft(3);
+      final scoreStr =
+          c.score == 0 ? '  —' : c.score.toStringAsFixed(0).padLeft(3);
       logInternal(
         '   ${(i + 1).toString().padLeft(2)}. [$scoreStr] '
         '${c.label.padRight(22)} (${c.source.name} · ${c.reason})',

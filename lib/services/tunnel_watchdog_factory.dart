@@ -17,11 +17,13 @@ class TunnelWatchdogFactory {
     required Future<void> Function() restartAether,
     required Future<void> Function() restartTor,
     required Future<void> Function() restartSstp,
+    required Future<void> Function() restartWireGuard,
     Future<bool> Function()? isInternetAlive,
     Future<RecoveryLeaseResult> Function()? acquirePsiphonLease,
     Future<RecoveryLeaseResult> Function()? acquireAetherLease,
     Future<RecoveryLeaseResult> Function()? acquireTorLease,
     Future<RecoveryLeaseResult> Function()? acquireSstpLease,
+    Future<RecoveryLeaseResult> Function()? acquireWireGuardLease,
   }) {
     final log = processService.addLog;
 
@@ -97,6 +99,22 @@ class TunnelWatchdogFactory {
       acquireRecoveryLease: acquireSstpLease,
     );
 
+    final wireguard = TunnelWatchdog(
+      params: WatchdogParams.fromProfile(
+        name: 'WireGuard',
+        socksPort: provider.settings.wireguardSocksPort,
+        profile: profile,
+      ),
+      isConnected: () => processService.isWireGuardConnected,
+      isUserStopped: () => provider.userStoppedWireGuard,
+      isBusy: () => provider.isWireGuardBusy,
+      onRestart: restartWireGuard,
+      log: log,
+      logSource: LogSource.wireguard,
+      isInternetAlive: isInternetAlive,
+      acquireRecoveryLease: acquireWireGuardLease,
+    );
+
     log(
       '→ Watchdog built with profile=${profile.id} '
       '(interval=${psiphon.interval.inSeconds}s, '
@@ -109,6 +127,7 @@ class TunnelWatchdogFactory {
       aether: aether,
       tor: tor,
       sstp: sstp,
+      wireguard: wireguard,
     );
   }
 }

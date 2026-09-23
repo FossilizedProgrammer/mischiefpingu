@@ -72,8 +72,7 @@ class ConnectionHealth {
   }
 
   @override
-  String toString() =>
-      'ConnectionHealth(score=${score.toStringAsFixed(1)}, '
+  String toString() => 'ConnectionHealth(score=${score.toStringAsFixed(1)}, '
       'lat=${latencyMs}ms, jitter=${jitterMs}ms, '
       'loss=${packetLossPct.toStringAsFixed(1)}%, '
       'uptime=${uptime.inMinutes}min, trend=${trend.name})';

@@ -21,9 +21,8 @@ extension AetherAttemptPlannerLegacy on AetherAttemptPlanner {
         settings.isAetherProfileAutomatic ? 'auto' : settings.aetherProtocol,
         custom,
       );
-      final masque = (proto == 'masque' || proto == 'mim')
-          ? settings.masqueOption
-          : '';
+      final masque =
+          (proto == 'masque' || proto == 'mim') ? settings.masqueOption : '';
       add(
         EndpointAttempt(
           label: 'Custom Endpoint ($custom)',
@@ -159,9 +158,8 @@ extension AetherAttemptPlannerLegacy on AetherAttemptPlanner {
 
   void _addManualCandidate(void Function(EndpointAttempt) add) {
     final proto = settings.aetherProtocol;
-    final masque = (proto == 'masque' || proto == 'mim')
-        ? settings.masqueOption
-        : '';
+    final masque =
+        (proto == 'masque' || proto == 'mim') ? settings.masqueOption : '';
     final frag = settings.aetherProfile == 'strict' && masque == 'HTTP-2';
     add(
       EndpointAttempt(

@@ -64,6 +64,7 @@ class SstpUpstreamSection extends StatelessWidget {
             DropdownMenuItem(value: 2, child: Text(l10n.aetherUpstream)),
             DropdownMenuItem(value: 3, child: Text(l10n.psiphonUpstream)),
             DropdownMenuItem(value: 4, child: Text(l10n.torUpstream)),
+            DropdownMenuItem(value: 5, child: Text(l10n.sstpWireGuardUpstream)),
           ],
           onChanged: (v) => onUpstreamTypeChanged(v ?? 0),
         ),
@@ -94,16 +95,14 @@ class SstpUpstreamSection extends StatelessWidget {
           _InfoBox(
             theme: theme,
             icon: Icons.info_outline,
-            message:
-                'SSTP will route through Psiphon. '
+            message: 'SSTP will route through Psiphon. '
                 'Make sure Psiphon is running.',
           ),
         if (sstpUpstreamType == 4)
           _InfoBox(
             theme: theme,
             icon: Icons.info_outline,
-            message:
-                'SSTP will route through Tor. '
+            message: 'SSTP will route through Tor. '
                 'Make sure Tor is running.',
           ),
       ],

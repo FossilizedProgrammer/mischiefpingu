@@ -100,10 +100,30 @@ class AutoReconnectManager {
     );
   }
 
+  void scheduleWireGuardReconnect({
+    Duration delay = defaultDelay,
+    required bool Function() shouldReconnect,
+    required void Function() onReconnect,
+    required ReconnectLogFn log,
+  }) {
+    _scheduler.schedule(
+      key: 'wireguard',
+      baseDelay: delay,
+      shouldReconnect: shouldReconnect,
+      onReconnect: onReconnect,
+      log: log,
+      logSource: LogSource.wireguard,
+      backoff: _backoff,
+      acquireLease: acquireLease,
+      releaseLease: releaseLease,
+    );
+  }
+
   void cancelPsiphonTimer() => _scheduler.cancel('psiphon');
   void cancelAetherTimer() => _scheduler.cancel('aether');
   void cancelTorTimer() => _scheduler.cancel('tor');
   void cancelSstpTimer() => _scheduler.cancel('sstp');
+  void cancelWireGuardTimer() => _scheduler.cancel('wireguard');
 
   void cancelAll() => _scheduler.cancelAll();
 

@@ -12,7 +12,8 @@ class AppLocalizationsFa extends AppLocalizations {
   String get appTitle => 'پینگوی شیطون';
 
   @override
-  String get appSubtitle => 'کلاینت غیررسمی سایفون، اتر، تور و اس‌اس‌تی‌پی';
+  String get appSubtitle =>
+      'کلاینت غیر رسمی سایفون، اتر، تور، اس‌اس‌تی‌پی، وایرگارد';
 
   @override
   String get add => 'افزودن';
@@ -526,7 +527,7 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get showMoreSubtitle =>
-      'ظاهر، اتر، سایفون، تور، اس‌اس‌تی‌پی، اسکنر، آپدیت‌ها، لاگ';
+      'ظاهر، اتر، سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، اسکنر، آپدیت‌ها، لاگ';
 
   @override
   String get sni => 'SNI';
@@ -834,6 +835,9 @@ class AppLocalizationsFa extends AppLocalizations {
   String get internetQualityUnstable => 'ناپایدار';
 
   @override
+  String get wireguardSettings => 'تنظیمات وایرگارد';
+
+  @override
   String get tunnelHealth => 'سلامت تونل';
 
   @override
@@ -925,4 +929,45 @@ class AppLocalizationsFa extends AppLocalizations {
   String tunnelHealthTitle(String tunnel) {
     return 'سلامت $tunnel';
   }
+
+  @override
+  String get wireguardConfig => 'کانفیگ وایرگارد';
+
+  @override
+  String get wireguardConfigHint =>
+      'کانفیگ استاندارد WireGuard (فرمت INI) یا URI با پروتکل wireguard:// را بچسبانید. برنامه فرمت را به‌صورت خودکار تشخیص می‌دهد.';
+
+  @override
+  String get wireguardConfigInvalid =>
+      'کانفیگ WireGuard نامعتبر است — PrivateKey، PublicKey و Endpoint را بررسی کنید.';
+
+  @override
+  String get wireguardFormatStandard => 'استاندارد';
+
+  @override
+  String get wireguardFormatUri => 'URI';
+
+  @override
+  String get wireguardConvertToUri => 'تبدیل به URI';
+
+  @override
+  String get wireguardConvertToStandard => 'تبدیل به استاندارد';
+
+  @override
+  String get wireguardConnected => 'وایرگارد متصل شد';
+
+  @override
+  String get autoReconnectWireGuard => 'اتصال مجدد خودکار وایرگارد';
+
+  @override
+  String get logSourceWireGuard => 'وایرگارد';
+
+  @override
+  String get torViaWireGuard => 'از طریق وایرگارد (Tor-over-WireGuard)';
+
+  @override
+  String get psiphonWireGuardUpstream => 'وایرگارد (آپ‌استریم SOCKS)';
+
+  @override
+  String get sstpWireGuardUpstream => 'وایرگارد (آپ‌استریم SOCKS)';
 }

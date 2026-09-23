@@ -78,8 +78,8 @@ extension ProcessServiceSstpLauncher on ProcessService {
         isSstpTunnelReady = true;
         isSstpConnected = true;
 
-        final ipMatch = RegExp(r'assigned IP\s+(\d+\.\d+\.\d+\.\d+)')
-            .firstMatch(trimmed);
+        final ipMatch =
+            RegExp(r'assigned IP\s+(\d+\.\d+\.\d+\.\d+)').firstMatch(trimmed);
         if (ipMatch != null) {
           sstpAssignedIp = ipMatch.group(1);
         }

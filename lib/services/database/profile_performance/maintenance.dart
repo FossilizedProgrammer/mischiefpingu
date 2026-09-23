@@ -25,8 +25,7 @@ extension ProfilePerformanceStoreMaintenance on ProfilePerformanceStore {
 
       final deleted = await db.delete(
         DatabaseSchema.tableProfilePerformance,
-        where:
-            '(${DatabaseSchema.colSuccessCount} * 1.0 / '
+        where: '(${DatabaseSchema.colSuccessCount} * 1.0 / '
             '(${DatabaseSchema.colSuccessCount} + ${DatabaseSchema.colFailureCount})) < ? '
             'AND (${DatabaseSchema.colSuccessCount} + ${DatabaseSchema.colFailureCount}) >= ? '
             'AND ${DatabaseSchema.colUpdatedAt} < ?',

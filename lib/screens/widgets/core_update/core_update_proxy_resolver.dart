@@ -27,6 +27,10 @@ class CoreUpdateProxyResolver {
           return p.processService.isSstpConnected
               ? '127.0.0.1:${p.settings.sstpSocksPort}'
               : null;
+        case 'wireguard':
+          return p.processService.isWireGuardConnected
+              ? '127.0.0.1:${p.settings.wireguardSocksPort}'
+              : null;
         default:
           return null;
       }
@@ -42,7 +46,11 @@ class CoreUpdateProxyResolver {
       }
       return v;
     }
-    for (final m in ['psiphon', 'aether', 'tor', 'sstp']) {
+
+    // ═══════════════════════════════════════════════════════════
+    //  🆕 wireguard در لیست auto اضافه شد
+    // ═══════════════════════════════════════════════════════════
+    for (final m in ['psiphon', 'aether', 'tor', 'sstp', 'wireguard']) {
       final v = pick(m);
       if (v != null) return v;
     }
@@ -58,6 +66,7 @@ List<DropdownMenuItem<String>> buildCoreUpdateProxyItems(dynamic l10n) {
     const DropdownMenuItem(value: 'aether', child: Text('Aether')),
     const DropdownMenuItem(value: 'tor', child: Text('Tor')),
     const DropdownMenuItem(value: 'sstp', child: Text('SSTP')),
+    const DropdownMenuItem(value: 'wireguard', child: Text('WireGuard')),
   ];
 }
 
@@ -68,4 +77,5 @@ const List<DropdownMenuItem<String>> coreUpdateProxyItems = [
   DropdownMenuItem(value: 'aether', child: Text('Aether')),
   DropdownMenuItem(value: 'tor', child: Text('Tor')),
   DropdownMenuItem(value: 'sstp', child: Text('SSTP')),
+  DropdownMenuItem(value: 'wireguard', child: Text('WireGuard')),
 ];

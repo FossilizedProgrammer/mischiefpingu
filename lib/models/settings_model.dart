@@ -15,7 +15,23 @@ class AppSettings {
   bool autoFindIpAndSni;
   bool saveFoundIpsAndSni;
   bool watchdogEnabled;
-  String watchdogNetworkProfile;  
+  String watchdogNetworkProfile;
+
+// ═══════════════════════════════════════════════════════════════
+//  WireGuard settings
+// ═══════════════════════════════════════════════════════════════
+
+  /// کانفیگ خام (استاندارد یا URI) که کاربر وارد کرده.
+  String wireguardConfigRaw;
+
+  /// پورت SOCKS5 محلی wireproxy.
+  int wireguardSocksPort;
+
+  /// به اشتراک گذاشتن در شبکه محلی.
+  bool wireguardShareLan;
+
+  /// اتصال مجدد خودکار.
+  bool wireguardAutoReconnect;
 
   int upstreamType;
 
@@ -166,10 +182,13 @@ class AppSettings {
     this.muted = false,
     this.watchdogEnabled = true,
     this.watchdogNetworkProfile = 'normal',
+    this.wireguardConfigRaw = '',
+    this.wireguardSocksPort = 25344,
+    this.wireguardShareLan = false,
+    this.wireguardAutoReconnect = true,
     List<String>? enabledLogSources,
-  }) : enabledLogSources =
-           enabledLogSources ??
-           ['Psiphon', 'Aether', 'Tor', 'SSTP', 'App', 'System'];
+  }) : enabledLogSources = enabledLogSources ??
+            ['Psiphon', 'Aether', 'Tor', 'SSTP', 'App', 'System'];
 
   factory AppSettings.fromJson(Map<String, dynamic> m) =>
       AppSettingsSerialization.fromJson(m);
@@ -181,7 +200,8 @@ class AppSettings {
   bool get isConduit => upstreamType == 3;
   bool get effectiveUseSunAndLion => useSunAndLion && isFronted && !isConduit;
   bool get isDirectPsiphon =>
-      (upstreamType == 0 || upstreamType == 4) && !isFronted;
+      (upstreamType == 0 || upstreamType == 4 || upstreamType == 6) &&
+      !isFronted;
 
   bool get isAetherProfileAutomatic => aetherProfile != 'manual';
 

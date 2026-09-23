@@ -23,7 +23,6 @@ class HealthSnapshot {
       .length;
 
   @override
-  String toString() =>
-      'HealthSnapshot(${reports.length} tunnels, '
+  String toString() => 'HealthSnapshot(${reports.length} tunnels, '
       'healthy=$healthyCount, timestamp=$timestamp)';
 }

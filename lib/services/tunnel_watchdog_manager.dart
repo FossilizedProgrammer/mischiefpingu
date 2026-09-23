@@ -7,15 +7,18 @@ class TunnelWatchdogManager {
   final TunnelWatchdog aether;
   final TunnelWatchdog tor;
   final TunnelWatchdog sstp;
+  final TunnelWatchdog wireguard;
 
   const TunnelWatchdogManager({
     required this.psiphon,
     required this.aether,
     required this.tor,
     required this.sstp,
+    required this.wireguard,
   });
 
-  List<TunnelWatchdog> get all => [psiphon, aether, tor, sstp];
+  /// همه watchdogها — شامل wireguard.
+  List<TunnelWatchdog> get all => [psiphon, aether, tor, sstp, wireguard];
 
   /// start watchdogها بر اساس وضعیت فعلی اتصال.
   /// این متد idempotent است — می‌توانی هر بار از
@@ -25,11 +28,13 @@ class TunnelWatchdogManager {
     required bool aetherConnected,
     required bool torConnected,
     required bool sstpConnected,
+    required bool wireGuardConnected,
   }) {
     _sync(psiphon, psiphonConnected);
     _sync(aether, aetherConnected);
     _sync(tor, torConnected);
     _sync(sstp, sstpConnected);
+    _sync(wireguard, wireGuardConnected);
   }
 
   void _sync(TunnelWatchdog wd, bool connected) {

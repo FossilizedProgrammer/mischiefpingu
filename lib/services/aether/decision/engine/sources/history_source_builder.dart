@@ -34,8 +34,7 @@ class HistorySourceBuilder {
             endpoint: r.endpoint,
             score: effectiveScore,
             source: CandidateSource.history,
-            reason:
-                'history score=${r.score.toStringAsFixed(0)} '
+            reason: 'history score=${r.score.toStringAsFixed(0)} '
                 'decay=${decay.toStringAsFixed(2)}',
           ),
         );

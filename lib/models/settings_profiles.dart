@@ -1,3 +1,4 @@
+// lib/models/settings_profiles.dart
 part of 'settings_model.dart';
 
 class ProfileCandidate {
@@ -33,20 +34,11 @@ class AetherProfile {
 }
 
 const List<AetherProfile> aetherProfiles = [
-  // ═══════════════════════════════════════════════════════════════
-  //  ⚠️ تغییرات:
-  //    • adaptive: noize از 'off' به 'balanced'
-  //    • adaptive: ترتیب candidates — MIM قبل از WireGuard
-  //      (چون WireGuard در ایران خیلی راحت DPI می‌شه)
-  //    • patchy: fragmentH2 برای HTTP-2
-  //    • strict: بدون تغییر (خوبه)
-  // ═══════════════════════════════════════════════════════════════
   AetherProfile(
     id: 'adaptive',
     label: 'Adaptive',
     description: 'تعادل سرعت و پوشش — مناسب اکثر شبکه‌ها',
     scanMode: 'balanced',
-    // ⚠️ قبلاً 'off' بود — در شبکه‌های فیلترشده شکست می‌خورد
     noize: 'balanced',
     candidates: [
       ProfileCandidate(protocol: 'masque', masque: 'HTTP-3'),
@@ -75,7 +67,8 @@ const List<AetherProfile> aetherProfiles = [
   AetherProfile(
     id: 'strict',
     label: 'Strict network',
-    description: 'وای‌فای محدود یا فیلتر سنگین — fragment + masque-in-masque + noize gfw',
+    description:
+        'وای‌فای محدود یا فیلتر سنگین — fragment + masque-in-masque + noize gfw',
     scanMode: 'stealth',
     noize: 'gfw',
     candidates: [
@@ -111,12 +104,6 @@ extension AppSettingsAetherProfile on AppSettings {
     if (p == null) return;
     aetherProfile = id;
 
-    // ═══════════════════════════════════════════════════════════════
-    //  ⚠️ Manual mode:
-    //    • پروتکل 'auto' بی‌معنیه — به 'masque' پیش‌فرض می‌ره
-    //    • scanMode / obfuscation / masqueOption دست نمی‌خورن
-    //      (چون user خودش می‌خواد تنظیم کنه)
-    // ═══════════════════════════════════════════════════════════════
     if (id == 'manual') {
       if (aetherProtocol == 'auto' || aetherProtocol.isEmpty) {
         aetherProtocol = 'masque';
@@ -124,10 +111,6 @@ extension AppSettingsAetherProfile on AppSettings {
       return;
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    //  ⚠️ برگشت از manual به preset:
-    //    • پروتکل دوباره 'auto' می‌شه (چون preset خودش تصمیم می‌گیره)
-    // ═══════════════════════════════════════════════════════════════
     aetherProtocol = 'auto';
 
     final hasCustomEndpoint = aetherCustomEndpoint.trim().isNotEmpty;

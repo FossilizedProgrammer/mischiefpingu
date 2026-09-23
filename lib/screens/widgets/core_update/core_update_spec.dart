@@ -1,6 +1,6 @@
 library;
 
-enum CoreKind { aether, tor, psiphon, sunandlion, sstp }
+enum CoreKind { aether, tor, psiphon, sunandlion, sstp, wireguard }
 
 class CoreUpdateSpec {
   final CoreKind kind;
@@ -33,5 +33,10 @@ const List<CoreUpdateSpec> coreUpdateSpecs = [
     kind: CoreKind.sstp,
     displayName: 'SSTP Proxy',
     note: 'SSTP client from FossilizedProgrammer/sstp-proxy.',
+  ),
+  CoreUpdateSpec(
+    kind: CoreKind.wireguard,
+    displayName: 'WireGuard (wireproxy)',
+    note: 'Userspace WireGuard client from windtf/wireproxy.',
   ),
 ];

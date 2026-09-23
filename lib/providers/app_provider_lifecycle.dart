@@ -168,6 +168,18 @@ extension AppProviderLifecycle on AppProvider {
     }
 
     try {
+      if (processService.isWireGuardRunning || isWireGuardBusy) {
+        processService.addLog('→ Stopping WireGuard…', source: LogSource.app);
+        await processService.stopWireGuard();
+      }
+    } catch (e) {
+      processService.addLog(
+        '⚠ WireGuard shutdown error: $e',
+        source: LogSource.app,
+      );
+    }
+
+    try {
       await processService.closeAllForwardSockets();
     } catch (_) {}
 

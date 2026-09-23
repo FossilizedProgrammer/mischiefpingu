@@ -14,11 +14,18 @@ extension AppProviderSstp on AppProvider {
 
     if (isCurrentlyActive) {
       await stopSstpByUser();
-    } else {
-      await startSstpInternal(fromAutoReconnect: false);
+      return; // ⚠️ FIX: بعد از stop، دیگه start نکن
     }
+
+    await startSstpInternal(fromAutoReconnect: false);
   }
 
+  /// ═══════════════════════════════════════════════════════════════
+  ///  stopSstpByUser — توقف SSTP.
+  ///
+  ///  ⚠️ FIX: generation رو عوض می‌کنیم تا start قبلی در finally
+  ///  دیگه flag رو ریست نکنه.
+  /// ═══════════════════════════════════════════════════════════════
   Future<void> stopSstpByUser() async {
     const src = LogSource.sstp;
 
@@ -36,6 +43,7 @@ extension AppProviderSstp on AppProvider {
       processService.addLog('⚠ SSTP stop error: $e', source: src);
     }
 
+    // ⚠️ FIX: فوری ریست کن
     isSstpBusy = false;
     sstpStatus = 'SSTP: Stopped';
     watchdogManager?.sstp.resetGracePeriod();
@@ -47,8 +55,6 @@ extension AppProviderSstp on AppProvider {
 
   /// ═══════════════════════════════════════════════════════════════
   ///  restartSstpInternal — برای watchdog و health degradation.
-  ///
-  ///  ⚠️ در این نسخه reconnect در TunnelHealthRegistry ثبت می‌شود.
   /// ═══════════════════════════════════════════════════════════════
   Future<void> restartSstpInternal({required String reason}) async {
     const src = LogSource.sstp;
@@ -75,9 +81,6 @@ extension AppProviderSstp on AppProvider {
       processService.addLog('↻ Restarting SSTP — reason: $reason', source: src);
       processService.setSadNotification('SSTP');
 
-      // ═══════════════════════════════════════════════════════════
-      //  ثبت reconnect در Health Registry
-      // ═══════════════════════════════════════════════════════════
       recordTunnelReconnect(TunnelKind.sstp);
 
       _reconnectManager.cancelSstpTimer();

@@ -34,8 +34,7 @@ class CacheSourceBuilder {
             endpoint: '',
             score: score,
             source: CandidateSource.cache,
-            reason:
-                'cache rate=${(b.rate * 100).toStringAsFixed(0)}% '
+            reason: 'cache rate=${(b.rate * 100).toStringAsFixed(0)}% '
                 'lat=${b.latency}ms',
           ),
         );

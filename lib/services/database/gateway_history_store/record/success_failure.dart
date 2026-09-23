@@ -66,12 +66,10 @@ extension GatewayHistoryStoreSuccessFailure on GatewayHistoryStore {
         totalAttempts: newAttempts,
         avgLatencyMs: newLatency,
         endpoint: endpoint.isNotEmpty ? endpoint : existing.endpoint,
-        lastNetworkType: networkType.isNotEmpty
-            ? networkType
-            : existing.lastNetworkType,
-        lastNetworkName: networkName.isNotEmpty
-            ? networkName
-            : existing.lastNetworkName,
+        lastNetworkType:
+            networkType.isNotEmpty ? networkType : existing.lastNetworkType,
+        lastNetworkName:
+            networkName.isNotEmpty ? networkName : existing.lastNetworkName,
         updatedAt: now,
       );
       final withScore = updated.copyWith(score: computeScore(updated));

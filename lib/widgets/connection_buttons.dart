@@ -25,6 +25,7 @@ class ConnectionButtons extends StatelessWidget {
     final psiphonData = resolver.resolvePsiphon(builder);
     final torData = resolver.resolveTor(builder);
     final sstpData = resolver.resolveSstp(builder);
+    final wireGuardData = resolver.resolveWireGuard(builder);
 
     final onSurface = theme.colorScheme.onSurface;
 
@@ -89,6 +90,21 @@ class ConnectionButtons extends StatelessWidget {
             onTap: () => provider.connectSstp(),
             statusText: sstpData.state.statusText(sstpData.progress, l10n),
             statusColor: sstpData.state.statusColor(
+              theme.colorScheme.primary,
+              onSurface,
+            ),
+          ),
+          CircleConnectButton(
+            title: 'WireGuard',
+            actionLabel: wireGuardData.state.actionLabel,
+            icon: wireGuardData.state.icon,
+            color: wireGuardData.state.color,
+            busy: wireGuardData.state.busy,
+            connected: wireGuardData.state.connected,
+            onTap: () => provider.connectWireGuard(),
+            statusText:
+                wireGuardData.state.statusText(wireGuardData.progress, l10n),
+            statusColor: wireGuardData.state.statusColor(
               theme.colorScheme.primary,
               onSurface,
             ),

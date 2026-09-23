@@ -111,8 +111,7 @@ class ConnectionHealthMonitor {
     // ─── uptime bonus (حداکثر +10) ───
     final uptimeBonus = (uptime.inMinutes / 30.0).clamp(0.0, 1.0) * 10;
 
-    final raw =
-        latencyScore * 0.45 +
+    final raw = latencyScore * 0.45 +
         jitterScore * 0.20 +
         lossScore * 0.25 +
         uptimeBonus -

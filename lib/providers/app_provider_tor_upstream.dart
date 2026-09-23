@@ -2,6 +2,10 @@ part of 'app_provider.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  هندل کردن upstream (Aether / Psiphon / SSTP) برای Tor
+///
+///  ⚠️ FIX:
+///   • isAutoTesting در try/finally
+///   • چک userStoppedTor بعد از هر await
 /// ═══════════════════════════════════════════════════════════════
 extension AppProviderTorUpstream on AppProvider {
   Future<({bool ok, String type, String detail})> resolveTorUpstream({
@@ -31,12 +35,21 @@ extension AppProviderTorUpstream on AppProvider {
       torStatus = 'Tor: starting Aether upstream…';
       touch();
 
+      // ⚠️ FIX: isAutoTesting در try/finally
+      bool ok = false;
       isAutoTesting = true;
-      final ok = await _aetherTestService.ensureHealthy(showUi: false);
-      isAutoTesting = false;
+      try {
+        ok = await _aetherTestService.ensureHealthy(showUi: false);
+      } finally {
+        isAutoTesting = false;
+      }
 
+      // ⚠️ FIX: چک cancel
       if (userStoppedTor) {
-        processService.addLog('Tor start cancelled by user', source: src);
+        processService.addLog(
+          'Tor start cancelled by user (during Aether upstream)',
+          source: src,
+        );
         return (ok: false, type: 'aether', detail: '');
       }
 
@@ -80,8 +93,12 @@ extension AppProviderTorUpstream on AppProvider {
 
       await connectPsiphon(fromAutoReconnect: fromAutoReconnect);
 
+      // ⚠️ FIX: چک cancel
       if (userStoppedTor) {
-        processService.addLog('Tor start cancelled by user', source: src);
+        processService.addLog(
+          'Tor start cancelled by user (after Psiphon upstream)',
+          source: src,
+        );
         return (ok: false, type: 'psiphon', detail: '');
       }
 
@@ -122,8 +139,12 @@ extension AppProviderTorUpstream on AppProvider {
 
       await connectSstp(fromAutoReconnect: fromAutoReconnect);
 
+      // ⚠️ FIX: چک cancel
       if (userStoppedTor) {
-        processService.addLog('Tor start cancelled by user', source: src);
+        processService.addLog(
+          'Tor start cancelled by user (after SSTP upstream)',
+          source: src,
+        );
         return (ok: false, type: 'sstp', detail: '');
       }
 

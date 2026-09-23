@@ -530,7 +530,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get showMoreSubtitle =>
-      'Appearance, Aether, Psiphon, Tor, Scanner, Updates, Log';
+      'Appearance, Aether, Psiphon, Tor, SSTP, WireGuard, Scanner, Updates, Log';
 
   @override
   String get sni => 'SNI';
@@ -838,6 +838,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get internetQualityUnstable => 'Unstable';
 
   @override
+  String get wireguardSettings => 'WireGuard Settings';
+
+  @override
   String get tunnelHealth => 'Tunnel Health';
 
   @override
@@ -928,4 +931,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String tunnelHealthTitle(String tunnel) {
     return '$tunnel Health';
   }
+
+  @override
+  String get wireguardConfig => 'WireGuard Config';
+
+  @override
+  String get wireguardConfigHint =>
+      'Paste a standard WireGuard config (INI format) or a wireguard:// URI. The app auto-detects the format.';
+
+  @override
+  String get wireguardConfigInvalid =>
+      'Invalid WireGuard config — check PrivateKey, PublicKey, and Endpoint.';
+
+  @override
+  String get wireguardFormatStandard => 'STANDARD';
+
+  @override
+  String get wireguardFormatUri => 'URI';
+
+  @override
+  String get wireguardConvertToUri => 'Convert to URI';
+
+  @override
+  String get wireguardConvertToStandard => 'Convert to Standard';
+
+  @override
+  String get wireguardConnected => 'WireGuard Connected';
+
+  @override
+  String get autoReconnectWireGuard => 'Auto-reconnect WireGuard';
+
+  @override
+  String get logSourceWireGuard => 'WireGuard';
+
+  @override
+  String get torViaWireGuard => 'Via WireGuard (Tor-over-WireGuard)';
+
+  @override
+  String get psiphonWireGuardUpstream => 'WireGuard (SOCKS upstream)';
+
+  @override
+  String get sstpWireGuardUpstream => 'WireGuard (SOCKS upstream)';
 }

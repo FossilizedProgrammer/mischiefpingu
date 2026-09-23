@@ -34,8 +34,7 @@ class PsiphonHealthSource {
     required int successCount,
     required int totalSamples,
     required Map<String, dynamic> extra,
-  })
-  onReport;
+  }) onReport;
 
   // ─── state ───
   int successCount = 0;

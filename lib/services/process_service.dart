@@ -16,6 +16,7 @@ import 'process/process_happy_detector.dart';
 import 'process/process_tunnel_state.dart';
 import 'process/process_protocol_state.dart';
 import 'process/process_notification_messages.dart';
+import 'wireguard/wireguard_paths.dart';
 
 export 'process/log_source.dart' show LogSource;
 
@@ -38,6 +39,7 @@ part 'process_service_tor.dart';
 part 'sstp_launcher.dart';
 part 'sstp_stopper.dart';
 part 'process_service_sstp.dart';
+part 'process_service_wireguard.dart';
 
 class ProcessService extends ChangeNotifier
     with ProcessNotifications
@@ -48,6 +50,20 @@ class ProcessService extends ChangeNotifier
   // ═══════════════════════════════════════════════════════════════
   //  Tunnel running flags
   // ═══════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════
+//  WireGuard state
+// ═══════════════════════════════════════════════════════════════
+
+  bool isWireGuardRunning = false;
+
+  bool isWireGuardConnected = false;
+
+  bool isWireGuardTunnelReady = false;
+
+  Process? wireGuardProcess;
+
+  int? get wireGuardPid => wireGuardProcess?.pid;
 
   @override
   bool isPsiphonRunning = false;
@@ -206,9 +222,8 @@ class ProcessService extends ChangeNotifier
   void setSstpNotification(String serverInfo, {String detail = ''}) {
     lastSstpServer = serverInfo;
     pendingSstpNotification = serverInfo;
-    pendingSstpTransportDetail = detail.isNotEmpty
-        ? detail
-        : 'Server: $serverInfo';
+    pendingSstpTransportDetail =
+        detail.isNotEmpty ? detail : 'Server: $serverInfo';
   }
 
   // ═══════════════════════════════════════════════════════════════

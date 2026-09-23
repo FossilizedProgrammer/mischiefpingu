@@ -154,12 +154,11 @@ class NetworkChangeDetector {
 
     final entries = <String>[];
     for (final iface in interfaces) {
-      final addrs =
-          iface.addresses
-              .map((a) => a.address)
-              .where((s) => s.isNotEmpty)
-              .toList()
-            ..sort();
+      final addrs = iface.addresses
+          .map((a) => a.address)
+          .where((s) => s.isNotEmpty)
+          .toList()
+        ..sort();
       for (final addr in addrs) {
         entries.add('${iface.name}:$addr');
       }

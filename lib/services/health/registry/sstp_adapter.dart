@@ -12,24 +12,23 @@ class SstpAdapter {
   SstpAdapter({required this.log, required this.monitor}) {
     _source = SstpHealthSource(
       log: log,
-      onReport:
-          ({
-            required int latencyMs,
-            required int jitterMs,
-            required double packetLossPct,
-            required int successCount,
-            required int totalSamples,
-            required Map<String, dynamic> extra,
-          }) {
-            monitor.ingestReport(
-              latencyMs: latencyMs,
-              jitterMs: jitterMs,
-              packetLossPct: packetLossPct,
-              successCount: successCount,
-              totalSamples: totalSamples,
-              extra: extra,
-            );
-          },
+      onReport: ({
+        required int latencyMs,
+        required int jitterMs,
+        required double packetLossPct,
+        required int successCount,
+        required int totalSamples,
+        required Map<String, dynamic> extra,
+      }) {
+        monitor.ingestReport(
+          latencyMs: latencyMs,
+          jitterMs: jitterMs,
+          packetLossPct: packetLossPct,
+          successCount: successCount,
+          totalSamples: totalSamples,
+          extra: extra,
+        );
+      },
     );
   }
 

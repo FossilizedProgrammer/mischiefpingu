@@ -175,7 +175,7 @@ class PerformanceReportCalculator {
     if (lats.length >= 2) {
       final variance =
           lats.map((l) => (l - avg) * (l - avg)).fold<int>(0, (a, b) => a + b) /
-          lats.length;
+              lats.length;
       jitter = _sqrt(variance.round());
     }
 

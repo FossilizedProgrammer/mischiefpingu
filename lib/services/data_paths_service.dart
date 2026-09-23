@@ -38,7 +38,8 @@ class DataPathsService {
   static Future<void> logBinaryCandidates(
     String name, {
     void Function(String)? log,
-  }) => BinaryPathsService.logBinaryCandidates(name, log: log);
+  }) =>
+      BinaryPathsService.logBinaryCandidates(name, log: log);
 
   static Future<String> getSstpBinaryPath() =>
       BinaryPathsService.getSstpBinaryPath();

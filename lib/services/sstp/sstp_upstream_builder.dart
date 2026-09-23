@@ -24,6 +24,9 @@ class SstpUpstreamBuilder {
       case 4:
         _applyTor(args);
         break;
+      case 5:
+        _applyWireGuard(args);
+        break;
       default:
         break;
     }
@@ -65,6 +68,15 @@ class SstpUpstreamBuilder {
     args.addAll(['-proxy', 'socks5://127.0.0.1:${settings.torSocksPort}']);
     processService.addLog(
       '→ SSTP upstream: Tor (127.0.0.1:${settings.torSocksPort})',
+      source: LogSource.sstp,
+    );
+  }
+
+  void _applyWireGuard(List<String> args) {
+    final port = settings.wireguardSocksPort;
+    args.addAll(['-proxy', 'socks5://127.0.0.1:$port']);
+    processService.addLog(
+      '→ SSTP upstream: WireGuard (127.0.0.1:$port)',
       source: LogSource.sstp,
     );
   }

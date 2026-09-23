@@ -138,8 +138,7 @@ class TunnelHealthReport {
   }
 
   @override
-  String toString() =>
-      'TunnelHealthReport(${kind.displayName}, '
+  String toString() => 'TunnelHealthReport(${kind.displayName}, '
       'score=${score.toStringAsFixed(1)}, level=${level.name}, '
       'lat=${latencyMs}ms, jitter=${jitterMs}ms, '
       'loss=${packetLossPct.toStringAsFixed(1)}%, '

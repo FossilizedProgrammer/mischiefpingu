@@ -19,8 +19,7 @@ class ConnectionStateResolver {
   ConnectionButtonData resolveAether(ConnectionButtonBuilder builder) {
     final ps = provider.processService;
     final aetherBusy = provider.isAutoTesting;
-    final aetherHealthy =
-        ps.isAetherRunning &&
+    final aetherHealthy = ps.isAetherRunning &&
         !aetherBusy &&
         _aetherHealthy(provider.aetherStatus);
     final aetherRunningForButton = ps.isAetherRunning || aetherBusy;
@@ -76,6 +75,20 @@ class ConnectionStateResolver {
       isRunning: sstpRunningForButton,
       isConnected: sstpOn,
       isBusy: sstpBusy,
+    );
+  }
+
+  ConnectionButtonData resolveWireGuard(ConnectionButtonBuilder builder) {
+    final ps = provider.processService;
+    final wgConnected = ps.isWireGuardConnected;
+    final wgBusy = provider.isWireGuardBusy && !ps.isWireGuardRunning;
+    final wgRunningForButton =
+        ps.isWireGuardRunning || (provider.isWireGuardBusy && !wgConnected);
+
+    return builder.forSstp(
+      isRunning: wgRunningForButton,
+      isConnected: wgConnected,
+      isBusy: wgBusy,
     );
   }
 }

@@ -42,8 +42,7 @@ class WatchdogConfig {
   static int get highLatencyMs => _default.highLatencyMs;
   static bool get enableQualityBasedRestart =>
       _default.enableQualityBasedRestart;
-  static int get degradedConsecutiveLimit =>
-      _default.degradedConsecutiveLimit;
+  static int get degradedConsecutiveLimit => _default.degradedConsecutiveLimit;
 
   static Duration intervalFor(String tunnelName) =>
       _default.intervalFor(tunnelName);

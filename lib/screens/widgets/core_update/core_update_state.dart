@@ -63,8 +63,7 @@ class CoreUpdateEntryState extends ChangeNotifier {
     required Future<bool> Function(
       String? proxy,
       void Function(int percent) onProgress,
-    )
-    runUpdate,
+    ) runUpdate,
     required Future<void> Function() afterUpdate,
   }) async {
     if (!missing && latest != '…' && installed == latest) {
@@ -83,9 +82,8 @@ class CoreUpdateEntryState extends ChangeNotifier {
         notifyListeners();
       });
       await afterUpdate();
-      checkMessage = ok
-          ? '★ $coreId updated successfully'
-          : '$coreId update skipped';
+      checkMessage =
+          ok ? '★ $coreId updated successfully' : '$coreId update skipped';
     } catch (e) {
       checkMessage = '$coreId update failed: $e';
     } finally {

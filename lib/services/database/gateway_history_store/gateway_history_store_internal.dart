@@ -22,8 +22,8 @@ extension GatewayHistoryStoreInternal on GatewayHistoryStore {
     final weight = oldCount < 5
         ? 1
         : oldCount < 20
-        ? 2
-        : 4;
+            ? 2
+            : 4;
     return ((oldAvg * weight + newValue) / (weight + 1)).round();
   }
 
@@ -51,8 +51,7 @@ extension GatewayHistoryStoreInternal on GatewayHistoryStore {
     try {
       final rows = await db.query(
         DatabaseSchema.tableAetherEvents,
-        where:
-            '${DatabaseSchema.colEventType} = ? AND '
+        where: '${DatabaseSchema.colEventType} = ? AND '
             '${DatabaseSchema.colProtocol} = ?',
         whereArgs: ['connection_success', protocol],
         orderBy: '${DatabaseSchema.colTimestamp} DESC',
@@ -77,11 +76,12 @@ extension GatewayHistoryStoreInternal on GatewayHistoryStore {
     required String protocol,
     String masqueOption = '',
     String sni = '',
-  }) => GatewayRecord.buildKey(
-    ip: ip,
-    port: port,
-    protocol: protocol,
-    masqueOption: masqueOption,
-    sni: sni,
-  );
+  }) =>
+      GatewayRecord.buildKey(
+        ip: ip,
+        port: port,
+        protocol: protocol,
+        masqueOption: masqueOption,
+        sni: sni,
+      );
 }

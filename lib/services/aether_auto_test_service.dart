@@ -51,10 +51,6 @@ class AetherAutoTestService {
     rebuildCollaborators();
   }
 
-  /// بازسازی collaboratorها.
-  ///
-  /// ⚠️ public شده تا `store_attacher.dart` (که `part of` هست)
-  /// بتونه صدا بزنه — و از خارج از کلاس هم قابل استفاده باشه.
   void rebuildCollaborators() {
     _prober = SocksProber(
       processService,
@@ -107,20 +103,18 @@ class AetherAutoTestService {
     rebuildCollaborators();
   }
 
-  /// attach کردن همه storeها با یک rebuild واحد.
-  ///
-  /// ⚠️ پیاده‌سازی در `store_attacher.dart` هست.
   void attachAllStores({
     GatewayHistoryStore? historyStore,
     ProfilePerformanceStore? profileStore,
     AetherLogger? logger,
     AetherDecisionEngine? decisionEngine,
-  }) => attachAllStoresInternal(
-    historyStore: historyStore,
-    profileStore: profileStore,
-    logger: logger,
-    decisionEngine: decisionEngine,
-  );
+  }) =>
+      attachAllStoresInternal(
+        historyStore: historyStore,
+        profileStore: profileStore,
+        logger: logger,
+        decisionEngine: decisionEngine,
+      );
 
   void attachDecisionEngine(AetherDecisionEngine engine) {
     decisionEngine = engine;
@@ -145,6 +139,9 @@ class AetherAutoTestService {
   bool get isCancelRequested => _executor.isCancelRequested;
   void requestCancel() => _executor.requestCancel();
 
+  /// ═══════════════════════════════════════════════════════════════
+  ///  ensureHealthy — اجرای auto-test.
+  /// ═══════════════════════════════════════════════════════════════
   Future<bool> ensureHealthy({bool showUi = true}) {
     final existing = _testFuture;
     if (existing != null) return existing;
@@ -157,28 +154,24 @@ class AetherAutoTestService {
     return future;
   }
 
-  /// آخرین endpoint موفق — برای fast-path.
   Future<String?> getLastSuccessfulEndpoint() =>
       _store.getLastSuccessfulEndpoint();
 
-  /// آخرین transport موفق — برای fast-path.
   Future<MapEntry<String, String>?> loadAutoWinner() => _store.loadAutoWinner();
 
-  /// پاک کردن endpoint ذخیره‌شده (وقتی fail شد).
   Future<void> clearLastEndpoint() => _store.clearLastEndpoint();
 
-  /// ذخیرهٔ endpoint واقعی از لاگ Aether.
   Future<void> saveRealEndpointFromLog(
     String endpoint, {
     required String protocol,
     required String masque,
-  }) => _store.saveRealEndpointFromLog(
-    endpoint,
-    protocol: protocol,
-    masque: masque,
-  );
+  }) =>
+      _store.saveRealEndpointFromLog(
+        endpoint,
+        protocol: protocol,
+        masque: masque,
+      );
 
-  /// استخراج endpoint واقعی از خط لاگ.
   String? extractRealEndpointFromLog(String line) =>
       _store.extractRealEndpointFromLog(line);
 

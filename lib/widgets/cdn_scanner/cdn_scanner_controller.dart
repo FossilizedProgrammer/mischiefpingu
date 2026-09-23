@@ -12,8 +12,9 @@ class CdnScannerController {
   final TextEditingController inputCtrl;
   final TextEditingController sniCtrl;
 
-  String? _lastSyncedPreset;
-  bool _controllersSynced = false;
+  /// آی‌دی آخرین preset که sync شده — برای تشخیص تغییر.
+  String? _lastSyncedPresetId;
+  bool _initialized = false;
 
   CdnScannerController({required this.inputCtrl, required this.sniCtrl});
 
@@ -21,12 +22,12 @@ class CdnScannerController {
   void sync(CdnScannerProvider scan) {
     if (!scan.isLoaded) return;
 
-    final presetChanged = _lastSyncedPreset != scan.selectedPresetId;
-    final firstTime = !_controllersSynced;
+    final presetChanged = _lastSyncedPresetId != scan.selectedPresetId;
+    final firstTime = !_initialized;
 
     if (firstTime || presetChanged) {
-      _lastSyncedPreset = scan.selectedPresetId;
-      _controllersSynced = true;
+      _lastSyncedPresetId = scan.selectedPresetId;
+      _initialized = true;
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (scan.selectedPresetId == 'custom') {

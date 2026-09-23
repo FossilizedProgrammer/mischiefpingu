@@ -1,26 +1,5 @@
 part of 'app_provider.dart';
 
-/// ═══════════════════════════════════════════════════════════════
-///  Process listener — واکنش به تغییرات ProcessService
-///
-///  ⚠️ نکته مهم:
-///  این listener روی *هر* notifyListeners از ProcessService صدا زده
-///  می‌شود — و ProcessService روی هر خط لاگ notify می‌کند!
-///
-///  برای جلوگیری از:
-///    • حلقهٔ restart بین watchdog و auto-reconnect
-///    • sync مداوم watchdog (start/stop پشت سر هم)
-///    • بار زیاد روی checkAutoReconnects
-///
-///  فقط وقتی state *واقعی* تونل‌ها تغییر کرد، منطق سنگین اجرا می‌شود.
-///
-///  ⚠️ کلاس `_TunnelStateSnapshot` در `app_provider.dart` تعریف
-///  شده — اینجا فقط استفاده می‌شود. آن را دوباره تعریف نکنید!
-///
-///  ⚠️ اضافه‌شده در این نسخه:
-///  `tryParseAetherRealEndpoint` — استخراج endpoint واقعی از لاگ
-///  Aether و ذخیرهٔ آن برای fast-path بعدی.
-/// ═══════════════════════════════════════════════════════════════
 extension AppProviderProcessListener on AppProvider {
   void handleProcessServiceChange() {
     if (isShuttingDown) return;
@@ -30,13 +9,12 @@ extension AppProviderProcessListener on AppProvider {
       final last = logs.last;
       tryParseFoundFronting(last);
       tryParseBuildRev(last);
-
-      // ═══════════════════════════════════════════════════════════
-      //  ⚠️ اضافه‌شده: استخراج endpoint واقعی Aether
-      // ═══════════════════════════════════════════════════════════
       tryParseAetherRealEndpoint(last);
     }
 
+    // ═══════════════════════════════════════════════════════════
+    //  🆕 wireGuardTunnelReady هم به snapshot اضافه شد
+    // ═══════════════════════════════════════════════════════════
     final currentState = _TunnelStateSnapshot(
       psiphonRunning: processService.isPsiphonRunning,
       psiphonConnected: processService.isPsiphonConnected,
@@ -46,6 +24,9 @@ extension AppProviderProcessListener on AppProvider {
       torBootstrapProgress: processService.torBootstrapProgress,
       sstpRunning: processService.isSstpRunning,
       sstpConnected: processService.isSstpConnected,
+      wireGuardRunning: processService.isWireGuardRunning,
+      wireGuardConnected: processService.isWireGuardConnected,
+      wireGuardTunnelReady: processService.isWireGuardTunnelReady,
     );
 
     final previousState = _lastTunnelState;
@@ -56,7 +37,6 @@ extension AppProviderProcessListener on AppProvider {
       checkAutoReconnects();
       updateTunnelStatuses();
       syncWatchdogs();
-
       _syncHealthMonitors(currentState, previousState);
     }
 
@@ -117,6 +97,30 @@ extension AppProviderProcessListener on AppProvider {
       _healthRegistry.stopMonitor(TunnelKind.sstp);
       processService.addLog(
         '→ SSTP health monitor stopped',
+        source: LogSource.app,
+      );
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  WireGuard — بر اساس TunnelReady، نه Connected
+    //
+    //  چرا؟ چون WireGuard ممکنه Running باشه ولی SOCKS هنوز
+    //  آماده نباشه. Health monitor باید وقتی شروع بشه که
+    //  SOCKS قابل استفاده باشه.
+    // ═══════════════════════════════════════════════════════════
+    final wgWasReady = previous?.wireGuardTunnelReady ?? false;
+    final wgIsReady = current.wireGuardTunnelReady;
+
+    if (wgIsReady && !wgWasReady) {
+      _healthRegistry.startMonitor(TunnelKind.wireguard, DateTime.now());
+      processService.addLog(
+        '→ WireGuard health monitor started (tunnel ready)',
+        source: LogSource.app,
+      );
+    } else if (!wgIsReady && wgWasReady) {
+      _healthRegistry.stopMonitor(TunnelKind.wireguard);
+      processService.addLog(
+        '→ WireGuard health monitor stopped',
         source: LogSource.app,
       );
     }

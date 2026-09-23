@@ -23,6 +23,7 @@ class TunnelStateResolver {
       TunnelKind.aether: ps.isAetherTunnelReady,
       TunnelKind.tor: ps.isTorConnected,
       TunnelKind.sstp: ps.isSstpConnected,
+      TunnelKind.wireguard: ps.isWireGuardConnected,
     };
   }
 
@@ -40,6 +41,8 @@ class TunnelStateResolver {
         return s.torSocksPort;
       case TunnelKind.sstp:
         return s.sstpSocksPort;
+      case TunnelKind.wireguard:
+        return s.wireguardSocksPort;
     }
   }
 }

@@ -25,6 +25,9 @@ extension TunnelHealthRegistryOps on TunnelHealthRegistry {
       case TunnelKind.aether:
         // Aether از tracker خودش استفاده می‌کنه
         break;
+      case TunnelKind.wireguard:
+        _wireguardAdapter?.start();
+        break;
     }
   }
 
@@ -44,6 +47,9 @@ extension TunnelHealthRegistryOps on TunnelHealthRegistry {
         break;
       case TunnelKind.aether:
         break;
+      case TunnelKind.wireguard:
+        _wireguardAdapter?.reset();
+        break;
     }
 
     _detectors[kind]?.reset();
@@ -59,6 +65,9 @@ extension TunnelHealthRegistryOps on TunnelHealthRegistry {
     }
     if (onlyFor == null || onlyFor == TunnelKind.sstp) {
       _sstpAdapter?.feed(line);
+    }
+    if (onlyFor == null || onlyFor == TunnelKind.wireguard) {
+      _wireguardAdapter?.feed(line);
     }
   }
 

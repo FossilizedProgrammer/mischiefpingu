@@ -2,6 +2,10 @@ part of 'app_provider.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  هندل upstream (Aether / Psiphon / Tor) برای SSTP
+///
+///  ⚠️ FIX:
+///   • isAutoTesting در try/finally
+///   • چک userStoppedSstp بعد از هر await
 /// ═══════════════════════════════════════════════════════════════
 extension AppProviderSstpUpstream on AppProvider {
   Future<bool> resolveSstpUpstream({required bool fromAutoReconnect}) async {
@@ -29,12 +33,21 @@ extension AppProviderSstpUpstream on AppProvider {
       sstpStatus = 'SSTP: starting Aether upstream…';
       touch();
 
+      // ⚠️ FIX: isAutoTesting در try/finally
+      bool ok = false;
       isAutoTesting = true;
-      final ok = await _aetherTestService.ensureHealthy(showUi: false);
-      isAutoTesting = false;
+      try {
+        ok = await _aetherTestService.ensureHealthy(showUi: false);
+      } finally {
+        isAutoTesting = false;
+      }
 
+      // ⚠️ FIX: چک cancel بعد از await
       if (userStoppedSstp) {
-        processService.addLog('SSTP start cancelled by user', source: src);
+        processService.addLog(
+          'SSTP start cancelled by user (during Aether upstream)',
+          source: src,
+        );
         return false;
       }
 
@@ -78,8 +91,12 @@ extension AppProviderSstpUpstream on AppProvider {
 
       await connectPsiphon(fromAutoReconnect: fromAutoReconnect);
 
+      // ⚠️ FIX: چک cancel
       if (userStoppedSstp) {
-        processService.addLog('SSTP start cancelled by user', source: src);
+        processService.addLog(
+          'SSTP start cancelled by user (after Psiphon upstream)',
+          source: src,
+        );
         return false;
       }
 
@@ -123,8 +140,12 @@ extension AppProviderSstpUpstream on AppProvider {
 
       await connectTor(fromAutoReconnect: fromAutoReconnect);
 
+      // ⚠️ FIX: چک cancel
       if (userStoppedSstp) {
-        processService.addLog('SSTP start cancelled by user', source: src);
+        processService.addLog(
+          'SSTP start cancelled by user (after Tor upstream)',
+          source: src,
+        );
         return false;
       }
 

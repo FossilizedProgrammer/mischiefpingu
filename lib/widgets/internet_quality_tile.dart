@@ -49,7 +49,7 @@ class _InternetQualityTileState extends State<InternetQualityTile> {
                   provider.result == null
                       ? l10n.internetQualityNoResult
                       : '${l10n.internetQualitySnackbar} '
-                            '${provider.result!.probableCause}',
+                          '${provider.result!.probableCause}',
                 ),
                 behavior: SnackBarBehavior.floating,
                 duration: const Duration(seconds: 3),

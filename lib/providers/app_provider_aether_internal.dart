@@ -8,7 +8,9 @@ extension AppProviderAetherInternal on AppProvider {
   ///   • fast-path برای هر start اجرا می‌شود (نه فقط auto-reconnect)
   ///   • بعد از fail شدن fast-path، endpoint ذخیره‌شده پاک می‌شود
   ///   • آخرین endpoint واقعی از لاگ Aether استخراج و ذخیره می‌شود
-  ///   • ⚠️ اضافه‌شده: checkHappyTransition هنگام اتصال موفق
+  ///   • checkHappyTransition هنگام اتصال موفق
+  ///   • ⚠️ FIX: isAutoTesting در try/finally — جلوگیری از گیر کردن دکمه
+  ///   • ⚠️ FIX: چک userStoppedAether بعد از ensureHealthy
   /// ═══════════════════════════════════════════════════════════════
   Future<void> _startAetherInternal({required bool fromAutoReconnect}) async {
     const src = LogSource.aether;
@@ -62,6 +64,16 @@ extension AppProviderAetherInternal on AppProvider {
       if (settings.aetherTryLastEndpointFirst &&
           settings.aetherCustomEndpoint.trim().isEmpty) {
         final fastResult = await _tryFastPath(src);
+
+        // ⚠️ FIX: چک cancel بعد از fast-path
+        if (userStoppedAether) {
+          processService.addLog(
+            '→ Aether start cancelled by user (after fast-path)',
+            source: src,
+          );
+          return;
+        }
+
         if (fastResult.success) {
           aetherStatus = 'Aether: Healthy (fast-path)';
           processService.setAetherProtocolNotification(
@@ -72,9 +84,6 @@ extension AppProviderAetherInternal on AppProvider {
 
           _recordAetherSessionState();
 
-          // ═══════════════════════════════════════════════════════════
-          //  ⚠️ نوتیف شادی هنگام اتصال موفق (fast-path)
-          // ═══════════════════════════════════════════════════════════
           processService.checkHappyTransition(
             tunnelName: 'Aether',
             wasConnected: wasConnected,
@@ -86,10 +95,6 @@ extension AppProviderAetherInternal on AppProvider {
           return;
         }
 
-        // ═══════════════════════════════════════════════════════
-        //  ⚠️ اگر fast-path از endpoint ذخیره‌شده استفاده کرد و
-        //  آن fail شد، آن را پاک کن تا بار بعد تلاش نکنیم.
-        // ═══════════════════════════════════════════════════════
         if (fastResult.endpointWasInvalid) {
           processService.addLog(
             '→ Clearing invalid saved endpoint (will not retry)',
@@ -117,6 +122,16 @@ extension AppProviderAetherInternal on AppProvider {
         );
 
         final smartOk = await _trySmartReconnect();
+
+        // ⚠️ FIX: چک cancel بعد از smart reconnect
+        if (userStoppedAether) {
+          processService.addLog(
+            '→ Aether start cancelled by user (after smart reconnect)',
+            source: src,
+          );
+          return;
+        }
+
         if (smartOk) {
           aetherStatus = 'Aether: Healthy';
           processService.setAetherProtocolNotification(
@@ -127,9 +142,6 @@ extension AppProviderAetherInternal on AppProvider {
 
           _recordAetherSessionState();
 
-          // ═══════════════════════════════════════════════════════════
-          //  ⚠️ نوتیف شادی هنگام اتصال موفق (smart reconnect)
-          // ═══════════════════════════════════════════════════════════
           processService.checkHappyTransition(
             tunnelName: 'Aether',
             wasConnected: wasConnected,
@@ -149,23 +161,39 @@ extension AppProviderAetherInternal on AppProvider {
 
       // ═══════════════════════════════════════════════════════════
       //  مسیر نهایی: scan کامل
+      //
+      //  ⚠️ FIX مهم: isAutoTesting در try/finally ریست می‌شه
+      //  تا اگر user cancel کرد یا exception رخ داد، flag گیر نکنه.
       // ═══════════════════════════════════════════════════════════
       aetherStatus = settings.aetherProtocol == 'auto'
           ? 'Aether: Auto-testing protocols…'
           : 'Aether: Starting…';
       touch();
 
+      bool ok = false;
       isAutoTesting = true;
-      final ok = await _aetherTestService.ensureHealthy(showUi: true);
-      isAutoTesting = false;
+      try {
+        ok = await _aetherTestService.ensureHealthy(showUi: true);
+      } finally {
+        // ⚠️ FIX: تضمین ریست در هر شرایطی
+        isAutoTesting = false;
+      }
+
+      // ⚠️ FIX: چک cancel — اگر کاربر وسط کار cancel کرد، برنگردون موفق
+      if (userStoppedAether) {
+        processService.addLog(
+          '→ Aether start cancelled by user (after ensureHealthy)',
+          source: src,
+        );
+        aetherStatus = 'Aether: Stopped';
+        touch();
+        return;
+      }
 
       if (ok) {
         aetherStatus = 'Aether: Healthy';
         _recordAetherSessionState();
 
-        // ═══════════════════════════════════════════════════════════
-        //  ⚠️ نوتیف شادی هنگام اتصال موفق (full scan)
-        // ═══════════════════════════════════════════════════════════
         processService.checkHappyTransition(
           tunnelName: 'Aether',
           wasConnected: wasConnected,
@@ -186,6 +214,11 @@ extension AppProviderAetherInternal on AppProvider {
     } catch (e) {
       processService.addLog('✗ connectAether error: $e', source: src);
       aetherStatus = 'Aether: Error';
+    } finally {
+      // ⚠️ FIX: تضمین ریست flag حتی در exception
+      if (isAutoTesting) {
+        isAutoTesting = false;
+      }
     }
 
     await AppDataService.fixDataDirOwnership();
@@ -247,6 +280,11 @@ extension AppProviderAetherInternal on AppProvider {
         );
       }
 
+      // ⚠️ FIX: چک cancel بین دو تلاش
+      if (userStoppedAether) {
+        return (success: false, endpointWasInvalid: false);
+      }
+
       // ─── تلاش ۲: آخرین endpoint از SharedPreferences ───
       final endpoint = await _aetherTestService.getLastSuccessfulEndpoint();
       if (endpoint == null || endpoint.trim().isEmpty) {
@@ -287,7 +325,6 @@ extension AppProviderAetherInternal on AppProvider {
         '→ Fast-path [2/2]: saved endpoint failed',
         source: src,
       );
-      // ⚠️ این endpoint نامعتبر بود، باید پاک شود
       return (success: false, endpointWasInvalid: true);
     } catch (e) {
       processService.addLog('⚠ Fast-path threw: $e', source: src);
@@ -297,9 +334,8 @@ extension AppProviderAetherInternal on AppProvider {
 
   /// ثبت session state برای UI status card (فاز ۶).
   void _recordAetherSessionState() {
-    lastAetherConnectedProtocol = settings.aetherProtocol == 'auto'
-        ? 'auto'
-        : settings.aetherProtocol;
+    lastAetherConnectedProtocol =
+        settings.aetherProtocol == 'auto' ? 'auto' : settings.aetherProtocol;
     lastAetherConnectedGatewayKey =
         '${settings.ip}:${settings.aetherLocalPort}';
     lastAetherConnectedAt = DateTime.now();

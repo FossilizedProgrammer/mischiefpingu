@@ -16,13 +16,13 @@ class AetherUpdater {
     required CoreUpdatePendingManager pending,
     required CoreUpdateProcessUtils processUtils,
     void Function(String)? log,
-  }) : _checker = AetherChecker(network: network, log: log),
-       _installer = AetherInstaller(
-         network: network,
-         pending: pending,
-         processUtils: processUtils,
-         log: log,
-       );
+  })  : _checker = AetherChecker(network: network, log: log),
+        _installer = AetherInstaller(
+          network: network,
+          pending: pending,
+          processUtils: processUtils,
+          log: log,
+        );
 
   Future<CoreUpdateInfo> check(String? proxy, {required String installed}) =>
       _checker.check(proxy, installed: installed);
@@ -33,11 +33,12 @@ class AetherUpdater {
     String? proxy,
     void Function(int percent)? onProgress,
     bool Function()? onCancelCheck,
-  }) => _installer.update(
-    info,
-    installed: installed,
-    proxy: proxy,
-    onProgress: onProgress,
-    onCancelCheck: onCancelCheck,
-  );
+  }) =>
+      _installer.update(
+        info,
+        installed: installed,
+        proxy: proxy,
+        onProgress: onProgress,
+        onCancelCheck: onCancelCheck,
+      );
 }

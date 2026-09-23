@@ -530,7 +530,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get showMoreSubtitle =>
-      'Внешний вид, Aether, Psiphon, Tor, сканер, обновления, лог';
+      'Внешний вид, Aether, Psiphon, Tor, SSTP, WireGuard, сканер, обновления, лог';
 
   @override
   String get sni => 'SNI';
@@ -840,6 +840,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get internetQualityUnstable => 'Нестабильно';
 
   @override
+  String get wireguardSettings => 'Настройки WireGuard';
+
+  @override
   String get tunnelHealth => 'Состояние туннеля';
 
   @override
@@ -931,4 +934,45 @@ class AppLocalizationsRu extends AppLocalizations {
   String tunnelHealthTitle(String tunnel) {
     return 'Состояние $tunnel';
   }
+
+  @override
+  String get wireguardConfig => 'Конфигурация WireGuard';
+
+  @override
+  String get wireguardConfigHint =>
+      'Вставьте стандартный конфиг WireGuard (формат INI) или URI с протоколом wireguard://. Приложение автоматически определит формат.';
+
+  @override
+  String get wireguardConfigInvalid =>
+      'Неверный конфиг WireGuard — проверьте PrivateKey, PublicKey и Endpoint.';
+
+  @override
+  String get wireguardFormatStandard => 'СТАНДАРТ';
+
+  @override
+  String get wireguardFormatUri => 'URI';
+
+  @override
+  String get wireguardConvertToUri => 'Преобразовать в URI';
+
+  @override
+  String get wireguardConvertToStandard => 'Преобразовать в стандарт';
+
+  @override
+  String get wireguardConnected => 'WireGuard подключён';
+
+  @override
+  String get autoReconnectWireGuard => 'Авто-переподключение WireGuard';
+
+  @override
+  String get logSourceWireGuard => 'WireGuard';
+
+  @override
+  String get torViaWireGuard => 'Через WireGuard (Tor-over-WireGuard)';
+
+  @override
+  String get psiphonWireGuardUpstream => 'WireGuard (SOCKS upstream)';
+
+  @override
+  String get sstpWireGuardUpstream => 'WireGuard (SOCKS upstream)';
 }

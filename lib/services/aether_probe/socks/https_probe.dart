@@ -135,8 +135,7 @@ extension SocksDiagnoserHttpsProbe on SocksDiagnoser {
       }
 
       final firstLine = head.split("\r\n").first;
-      final statusOk =
-          head.contains(' 200 ') ||
+      final statusOk = head.contains(' 200 ') ||
           head.contains(' 204 ') ||
           head.contains(' 301 ') ||
           head.contains(' 302 ') ||

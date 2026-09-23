@@ -99,9 +99,8 @@ class _EditableListDropdownState extends State<EditableListDropdown> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final effectiveValue = _items.contains(_currentValue)
-        ? _currentValue
-        : null;
+    final effectiveValue =
+        _items.contains(_currentValue) ? _currentValue : null;
     return Row(
       children: [
         Expanded(

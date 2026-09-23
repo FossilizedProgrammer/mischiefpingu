@@ -22,23 +22,23 @@ class SunAndLionUpdater {
     required CoreUpdateProcessUtils processUtils,
     void Function(String)? log,
   }) : _updater = GithubReleaseUpdater(
-         spec: GithubCoreSpec(
-           coreId: 'sunandlion',
-           displayName: 'SunAndLion Psiphon Core',
-           owner: 'FossilizedProgrammer',
-           repo: 'sunandlion',
-           binaryBaseName: _binaryBaseName,
-           fallbackPattern: 'sunandlion',
-           destPathResolver: () =>
-               AppDataService.getBinaryPathForWrite(_binaryBaseName),
-           tempPrefix: 'mischiefpingu_sunlion_',
-           defaultDownloadSize: 12000000,
-         ),
-         network: network,
-         pending: pending,
-         processUtils: processUtils,
-         log: log,
-       );
+          spec: GithubCoreSpec(
+            coreId: 'sunandlion',
+            displayName: 'SunAndLion Psiphon Core',
+            owner: 'FossilizedProgrammer',
+            repo: 'sunandlion',
+            binaryBaseName: _binaryBaseName,
+            fallbackPattern: 'sunandlion',
+            destPathResolver: () =>
+                AppDataService.getBinaryPathForWrite(_binaryBaseName),
+            tempPrefix: 'mischiefpingu_sunlion_',
+            defaultDownloadSize: 12000000,
+          ),
+          network: network,
+          pending: pending,
+          processUtils: processUtils,
+          log: log,
+        );
 
   Future<CoreUpdateInfo> check(String? proxy, {required String installed}) =>
       _updater.check(proxy, installed: installed);
@@ -49,11 +49,12 @@ class SunAndLionUpdater {
     String? proxy,
     void Function(int percent)? onProgress,
     bool Function()? onCancelCheck,
-  }) => _updater.update(
-    info,
-    installed: installed,
-    proxy: proxy,
-    onProgress: onProgress,
-    onCancelCheck: onCancelCheck,
-  );
+  }) =>
+      _updater.update(
+        info,
+        installed: installed,
+        proxy: proxy,
+        onProgress: onProgress,
+        onCancelCheck: onCancelCheck,
+      );
 }

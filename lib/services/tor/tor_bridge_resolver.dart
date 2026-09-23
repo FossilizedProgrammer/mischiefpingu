@@ -31,6 +31,7 @@ class TorBridgeResolver {
     int? aetherSocks,
     int? psiphonSocks,
     int? sstpSocks,
+    int? wireguardSocks,
   }) {
     final transport = settings.torTransport;
 
@@ -47,6 +48,8 @@ class TorBridgeResolver {
       upstreamSocks = sstpSocks;
     } else if (transport == 'manual' && settings.torProxyPort > 0) {
       upstreamSocks = settings.torProxyPort;
+    } else if (transport == 'wireguard' && wireguardSocks != null) {
+      upstreamSocks = wireguardSocks;
     }
 
     final usePtProxy = upstreamSocks != null && rawBridges.isNotEmpty;

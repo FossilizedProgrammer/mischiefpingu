@@ -55,13 +55,29 @@ class ArchiveExtractor {
   }
 
   /// پیدا کردن باینری داخل آرشیو استخراج‌شده.
+  ///
   /// [binaryBaseName] اسم بدون پسوند (مثل `sstp-proxy`).
-  /// [fallbackPattern] الگوی جایگزین برای جستجو (مثل `sunandlion`).
+  /// [fallbackPattern] الگوی جایگزین برای جستجو (مثل `wireproxy`).
+  ///
+  /// ⚠️ اگر فایل `raw` باشد (بدون آرشیو)، مستقیم برگردانده می‌شه.
   Future<String> findBinary({
     required Directory extractDir,
     required String binaryBaseName,
     required String fallbackPattern,
+    String? rawFilePath,
   }) async {
+    // ═══════════════════════════════════════════════════════════
+    //  🆕 حالت raw binary: فایل مستقیم (بدون آرشیو)
+    //  این برای wireproxy لازمه چون باینری خام منتشر می‌کنه.
+    // ═══════════════════════════════════════════════════════════
+    if (rawFilePath != null && rawFilePath.isNotEmpty) {
+      final rawFile = File(rawFilePath);
+      if (await rawFile.exists()) {
+        _log('→ [raw] using raw binary: $rawFilePath');
+        return rawFilePath;
+      }
+    }
+
     final binaryName = '$binaryBaseName$_exeExt';
 
     var found = await CoreUpdateUtils.findFile(extractDir, binaryName);
@@ -92,30 +108,41 @@ class ArchiveExtractor {
   }
 
   /// تشخیص نوع آرشیو از روی URL.
-  ({bool isZip, bool isTarXz, bool isArchive, String archiveName})
-  classifyArchive(String url, String baseName) {
+  ///
+  /// ⚠️ اگر URL به آرشیو ختم نشه، `isArchive=false` و
+  /// `isRawBinary=true` برمی‌گردونه — که برای wireproxy لازمه.
+  ({
+    bool isZip,
+    bool isTarXz,
+    bool isArchive,
+    bool isRawBinary,
+    String archiveName,
+  }) classifyArchive(String url, String baseName) {
     final lower = url.toLowerCase();
     final isZip = lower.endsWith('.zip');
     final isTarball = lower.endsWith('.tar.gz') || lower.endsWith('.tgz');
     final isTarXz = lower.endsWith('.tar.xz');
     final isArchive = isZip || isTarball || isTarXz;
+    final isRawBinary = !isArchive;
+
     final archiveName = isZip
         ? '$baseName.zip'
         : isTarball
-        ? '$baseName.tar.gz'
-        : isTarXz
-        ? '$baseName.tar.xz'
-        : '$baseName.bin';
+            ? '$baseName.tar.gz'
+            : isTarXz
+                ? '$baseName.tar.xz'
+                : '$baseName.bin';
+
     return (
       isZip: isZip,
       isTarXz: isTarXz,
       isArchive: isArchive,
+      isRawBinary: isRawBinary,
       archiveName: archiveName,
     );
   }
 
   /// بررسی و "safe copy" از فایل باینری برای اطمینان از سالم بودن.
-  /// (برای SSTP مهم است چون ممکن است symlink شکسته باشد)
   Future<String> safeCopyBinary({
     required String source,
     required String tmpPath,

@@ -48,8 +48,7 @@ class SettingsTile extends StatelessWidget {
           width: 1,
         ),
       ),
-      color:
-          theme.cardTheme.color ??
+      color: theme.cardTheme.color ??
           (theme.brightness == Brightness.dark
               ? const Color(0xFF1E293B)
               : Colors.white),
@@ -66,8 +65,7 @@ class SettingsTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  gradient:
-                      titleGradient ??
+                  gradient: titleGradient ??
                       LinearGradient(
                         colors: [
                           iconBgColor.withValues(alpha: 0.15),

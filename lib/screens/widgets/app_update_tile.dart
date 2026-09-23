@@ -71,9 +71,8 @@ class _AppUpdateTileState extends State<AppUpdateTile> {
       icon: Icons.system_update_alt,
       iconBackgroundColor: theme.colorScheme.primary,
       initiallyExpanded: false,
-      trailingText: info != null && info.hasUpdate
-          ? l10n.appUpdateAvailable
-          : null,
+      trailingText:
+          info != null && info.hasUpdate ? l10n.appUpdateAvailable : null,
       children: [
         if (info != null) ...[
           AppUpdateInfoRow(
@@ -110,8 +109,8 @@ class _AppUpdateTileState extends State<AppUpdateTile> {
             OutlinedButton.icon(
               onPressed:
                   _state.checking || _state.downloading || !_state.serviceReady
-                  ? null
-                  : () => _state.check(context: context),
+                      ? null
+                      : () => _state.check(context: context),
               icon: _state.checking
                   ? const SizedBox(
                       width: 14,

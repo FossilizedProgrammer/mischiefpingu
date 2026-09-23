@@ -16,9 +16,9 @@ class RecoveryLeaseResult {
   });
 
   const RecoveryLeaseResult.denied(String reason)
-    : granted = false,
-      blockReason = reason,
-      lease = null;
+      : granted = false,
+        blockReason = reason,
+        lease = null;
 
   void release() {
     lease?.release();

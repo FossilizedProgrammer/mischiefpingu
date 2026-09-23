@@ -11,14 +11,14 @@ extension ProcessServiceAetherStarter on ProcessService {
     try {
       final dataDir = await AppDataService.getDataDir();
 
-      final binaryPath =
-          await AppDataService.resolveBinaryPath('aether') ??
+      final binaryPath = await AppDataService.resolveBinaryPath('aether') ??
           await AppDataService.getBinaryPath('aether');
 
       if (!await checkBinaryExists(
         binaryPath: binaryPath,
         source: src,
-        customMessage: 'Aether binary not found. Please click "Show more" and download it from "Core Updates".',
+        customMessage:
+            'Aether binary not found. Please click "Show more" and download it from "Core Updates".',
       )) {
         return false;
       }

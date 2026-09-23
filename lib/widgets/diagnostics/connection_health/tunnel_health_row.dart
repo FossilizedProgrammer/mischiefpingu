@@ -79,7 +79,6 @@ class TunnelHealthRow extends StatelessWidget {
             children: [
               _StatusIcon(status: status),
               const SizedBox(width: 10),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,14 +101,11 @@ class TunnelHealthRow extends StatelessWidget {
                   ],
                 ),
               ),
-
               if (hasReport)
                 ScoreBadge(report: r, l10n: l10n)
               else if (lastProbeResult != null && lastProbeResult!.success)
                 ProbeLatencyBadge(latencyMs: lastProbeResult!.latencyMs),
-
               const SizedBox(width: 8),
-
               _ProbeButton(
                 isProbing: isProbing,
                 onProbe: onProbe,
@@ -118,12 +114,10 @@ class TunnelHealthRow extends StatelessWidget {
               ),
             ],
           ),
-
           if (hasReport) ...[
             const SizedBox(height: 8),
             StatsWrap(report: r, theme: theme),
           ],
-
           if (lastProbeResult != null) ...[
             const SizedBox(height: 6),
             ProbeResultBadge(

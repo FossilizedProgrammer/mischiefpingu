@@ -170,7 +170,7 @@
   "showLess": "Показать меньше",
   "showLessSubtitle": "Скрыть расширенные настройки и логи",
   "showMore": "Показать больше",
-  "showMoreSubtitle": "Внешний вид, Aether, Psiphon, Tor, сканер, обновления, лог",
+  "showMoreSubtitle": "Внешний вид, Aether, Psiphon, Tor, SSTP, WireGuard, сканер, обновления, лог",
   "sni": "SNI",
   "sniList": "Список SNI (по одному на строку, порядок = приоритет)",
   "socksPort": "Порт SOCKS",
@@ -302,5 +302,20 @@
   "tunnelHealthLastProbeFailed": "Последняя проверка не удалась: {error}",
   "tunnelHealthNoDataWarning": "Туннель поднят, но данные не проходят",
   "tunnelHealthMeasuringHealth": "Измерение состояния…",
-  "tunnelHealthTitle": "Состояние {tunnel}"
+  "tunnelHealthTitle": "Состояние {tunnel}",
+
+  "wireguardSettings": "Настройки WireGuard",
+  "wireguardConfig": "Конфигурация WireGuard",
+  "wireguardConfigHint": "Вставьте стандартный конфиг WireGuard (формат INI) или URI с протоколом wireguard://. Приложение автоматически определит формат.",
+  "wireguardConfigInvalid": "Неверный конфиг WireGuard — проверьте PrivateKey, PublicKey и Endpoint.",
+  "wireguardFormatStandard": "СТАНДАРТ",
+  "wireguardFormatUri": "URI",
+  "wireguardConvertToUri": "Преобразовать в URI",
+  "wireguardConvertToStandard": "Преобразовать в стандарт",
+  "wireguardConnected": "WireGuard подключён",
+  "autoReconnectWireGuard": "Авто-переподключение WireGuard",
+  "logSourceWireGuard": "WireGuard",
+  "torViaWireGuard": "Через WireGuard (Tor-over-WireGuard)",
+  "psiphonWireGuardUpstream": "WireGuard (SOCKS upstream)",
+  "sstpWireGuardUpstream": "WireGuard (SOCKS upstream)"
 }

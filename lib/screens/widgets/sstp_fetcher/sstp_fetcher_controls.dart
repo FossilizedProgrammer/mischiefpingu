@@ -79,8 +79,8 @@ class SstpFetcherControls extends StatelessWidget {
                 onPressed: fetcher.servers.isEmpty
                     ? null
                     : (fetcher.isHealthChecking
-                          ? fetcher.cancelHealthCheck
-                          : fetcher.checkAllHealth),
+                        ? fetcher.cancelHealthCheck
+                        : fetcher.checkAllHealth),
                 icon: Icon(
                   fetcher.isHealthChecking ? Icons.stop : Icons.network_check,
                 ),

@@ -94,6 +94,8 @@ class LogFilterSection extends StatelessWidget {
         return l10n.logSourceApp;
       case LogSource.system:
         return l10n.logSourceSystem;
+      case LogSource.wireguard:
+        return l10n.logSourceWireGuard;
       default:
         return source;
     }

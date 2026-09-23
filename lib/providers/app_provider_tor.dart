@@ -14,11 +14,18 @@ extension AppProviderTor on AppProvider {
 
     if (isCurrentlyActive) {
       await stopTorByUser();
-    } else {
-      await startTorInternal(fromAutoReconnect: false);
+      return; // ⚠️ FIX: بعد از stop، دیگه start نکن
     }
+
+    await startTorInternal(fromAutoReconnect: false);
   }
 
+  /// ═══════════════════════════════════════════════════════════════
+  ///  stopTorByUser — توقف Tor.
+  ///
+  ///  ⚠️ FIX: generation رو عوض می‌کنیم تا start قبلی در finally
+  ///  دیگه flag رو ریست نکنه. ولی خودمون فوری ریست می‌کنیم.
+  /// ═══════════════════════════════════════════════════════════════
   Future<void> stopTorByUser() async {
     const src = LogSource.tor;
 
@@ -36,6 +43,7 @@ extension AppProviderTor on AppProvider {
       processService.addLog('⚠ Tor stop error: $e', source: src);
     }
 
+    // ⚠️ FIX: فوری ریست کن
     isTorBusy = false;
     torStatus = 'Tor: Stopped';
     watchdogManager?.tor.resetGracePeriod();
@@ -47,8 +55,6 @@ extension AppProviderTor on AppProvider {
 
   /// ═══════════════════════════════════════════════════════════════
   ///  restartTorInternal — برای watchdog و health degradation.
-  ///
-  ///  ⚠️ در این نسخه reconnect در TunnelHealthRegistry ثبت می‌شود.
   /// ═══════════════════════════════════════════════════════════════
   Future<void> restartTorInternal({required String reason}) async {
     const src = LogSource.tor;
@@ -75,9 +81,6 @@ extension AppProviderTor on AppProvider {
       processService.addLog('↻ Restarting Tor — reason: $reason', source: src);
       processService.setSadNotification('Tor');
 
-      // ═══════════════════════════════════════════════════════════
-      //  ثبت reconnect در Health Registry
-      // ═══════════════════════════════════════════════════════════
       recordTunnelReconnect(TunnelKind.tor);
 
       _reconnectManager.cancelTorTimer();
@@ -95,7 +98,6 @@ extension AppProviderTor on AppProvider {
     }
   }
 
-  /// برای دسترسی از فایل `tor/tor_launch.dart` — async چون
-  /// `PortManager.internalFor` هم async است.
+  /// برای دسترسی از فایل `tor/tor_launch.dart`
   Future<int> pickInternalPort(int publicPort) => _pickInternalPort(publicPort);
 }

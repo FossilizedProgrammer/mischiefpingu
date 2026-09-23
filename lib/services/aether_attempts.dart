@@ -88,18 +88,17 @@ class AetherAttemptPlanner {
   }
 
   EndpointAttempt _fromRanked(RankedCandidate c) => EndpointAttempt(
-    label: c.label,
-    protocol: c.protocol,
-    masque: c.masque,
-    endpoint: c.endpoint,
-    fragmentH2: c.fragmentH2,
-    historicalScore: c.score,
-    fromHistory:
-        c.source == CandidateSource.history ||
-        c.source == CandidateSource.lastRemembered,
-    fromProfileCache: c.source == CandidateSource.cache,
-    rankedSource: c,
-  );
+        label: c.label,
+        protocol: c.protocol,
+        masque: c.masque,
+        endpoint: c.endpoint,
+        fragmentH2: c.fragmentH2,
+        historicalScore: c.score,
+        fromHistory: c.source == CandidateSource.history ||
+            c.source == CandidateSource.lastRemembered,
+        fromProfileCache: c.source == CandidateSource.cache,
+        rankedSource: c,
+      );
 
   // ─── Public static helpers (برای دسترسی از part) ───
   static String labelFor(ProfileCandidate c) => _labelFor(c);
@@ -108,7 +107,8 @@ class AetherAttemptPlanner {
     required String protocol,
     required String masque,
     required double rate,
-  }) => _labelForProfilePerf(protocol: protocol, masque: masque, rate: rate);
+  }) =>
+      _labelForProfilePerf(protocol: protocol, masque: masque, rate: rate);
 
   static String _labelFor(ProfileCandidate c) {
     switch (c.protocol) {
@@ -154,11 +154,12 @@ class AetherAttemptPlanner {
     required int port,
     String endpointOverride = '',
     bool forceFragmentH2 = false,
-  }) => _argsBuilder.build(
-    protocol: protocol,
-    masqueOption: masqueOption,
-    port: port,
-    endpointOverride: endpointOverride,
-    forceFragmentH2: forceFragmentH2,
-  );
+  }) =>
+      _argsBuilder.build(
+        protocol: protocol,
+        masqueOption: masqueOption,
+        port: port,
+        endpointOverride: endpointOverride,
+        forceFragmentH2: forceFragmentH2,
+      );
 }

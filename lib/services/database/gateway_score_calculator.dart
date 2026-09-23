@@ -52,8 +52,7 @@ class GatewayScoreCalculator {
     final reconnectScore = _reconnectScore(reconnectCount, totalAttempts);
     final consistencyScore = _consistencyScore(recentSuccesses);
 
-    final total =
-        latencyScore * weightLatency +
+    final total = latencyScore * weightLatency +
         jitterScore * weightJitter +
         successScore * weightSuccessRate +
         lossScore * weightPacketLoss +
@@ -135,9 +134,8 @@ class GatewayScoreCalculator {
   static double _consistencyScore(List<DateTime>? recentSuccesses) {
     if (recentSuccesses == null || recentSuccesses.isEmpty) return 0.0;
     final now = DateTime.now();
-    final last24h = recentSuccesses
-        .where((t) => now.difference(t).inHours < 24)
-        .length;
+    final last24h =
+        recentSuccesses.where((t) => now.difference(t).inHours < 24).length;
     if (last24h >= 5) return 100.0;
     return (last24h / 5.0) * 100.0;
   }

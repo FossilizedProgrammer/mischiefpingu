@@ -34,8 +34,8 @@ class TorReportEmitter {
 
     final lossPct = source.totalSamples > 0
         ? ((source.circuitsFailed + source.streamsFailed) /
-                  source.totalSamples) *
-              100.0
+                source.totalSamples) *
+            100.0
         : 0.0;
 
     source.onReport(

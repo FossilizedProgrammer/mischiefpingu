@@ -19,9 +19,7 @@ class WatchdogProbeTarget {
 
   @override
   bool operator ==(Object other) =>
-      other is WatchdogProbeTarget &&
-      other.host == host &&
-      other.port == port;
+      other is WatchdogProbeTarget && other.host == host && other.port == port;
 
   @override
   int get hashCode => Object.hash(host, port);

@@ -10,6 +10,12 @@ class _TunnelStateSnapshot {
   final int torBootstrapProgress;
   final bool sstpRunning;
   final bool sstpConnected;
+  final bool wireGuardRunning;
+  final bool wireGuardConnected;
+  // ═══════════════════════════════════════════════════════════
+  //  🆕 اضافه شد: آماده بودن تونل WireGuard (نه فقط running)
+  // ═══════════════════════════════════════════════════════════
+  final bool wireGuardTunnelReady;
 
   const _TunnelStateSnapshot({
     required this.psiphonRunning,
@@ -20,6 +26,9 @@ class _TunnelStateSnapshot {
     required this.torBootstrapProgress,
     required this.sstpRunning,
     required this.sstpConnected,
+    required this.wireGuardRunning,
+    required this.wireGuardConnected,
+    required this.wireGuardTunnelReady,
   });
 
   @override
@@ -33,18 +42,24 @@ class _TunnelStateSnapshot {
         other.torConnected == torConnected &&
         other.torBootstrapProgress == torBootstrapProgress &&
         other.sstpRunning == sstpRunning &&
-        other.sstpConnected == sstpConnected;
+        other.sstpConnected == sstpConnected &&
+        other.wireGuardRunning == wireGuardRunning &&
+        other.wireGuardConnected == wireGuardConnected &&
+        other.wireGuardTunnelReady == wireGuardTunnelReady;
   }
 
   @override
   int get hashCode => Object.hash(
-    psiphonRunning,
-    psiphonConnected,
-    aetherRunning,
-    torRunning,
-    torConnected,
-    torBootstrapProgress,
-    sstpRunning,
-    sstpConnected,
-  );
+        psiphonRunning,
+        psiphonConnected,
+        aetherRunning,
+        torRunning,
+        torConnected,
+        torBootstrapProgress,
+        sstpRunning,
+        sstpConnected,
+        wireGuardRunning,
+        wireGuardConnected,
+        wireGuardTunnelReady,
+      );
 }

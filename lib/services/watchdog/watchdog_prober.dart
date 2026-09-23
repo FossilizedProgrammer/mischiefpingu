@@ -49,12 +49,11 @@ class WatchdogProber {
     required this.logSource,
     required this.profileParams,
     List<WatchdogProbeTarget>? targetsOverride,
-  }) : targets =
-           targetsOverride ??
-           WatchdogProbeTargets.forRound(
-             includeCloudflare: profileParams.includeCloudflareTarget,
-             round: 0,
-           );
+  }) : targets = targetsOverride ??
+            WatchdogProbeTargets.forRound(
+              includeCloudflare: profileParams.includeCloudflareTarget,
+              round: 0,
+            );
 
   /// probe با multi-target.
   Future<WatchdogQualityMetrics> probeWithMetrics() async {
@@ -324,8 +323,7 @@ class WatchdogProber {
           final head = String.fromCharCodes(buffer.take(20));
           if (head.startsWith('HTTP/')) {
             httpRespOk = true;
-            httpStatusOk =
-                head.contains(' 200 ') ||
+            httpStatusOk = head.contains(' 200 ') ||
                 head.contains(' 204 ') ||
                 head.contains(' 301 ') ||
                 head.contains(' 302 ') ||

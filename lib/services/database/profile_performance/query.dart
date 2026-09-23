@@ -37,7 +37,7 @@ extension ProfilePerformanceStoreQuery on ProfilePerformanceStore {
 
   /// بهترین پروتکل‌ها برای یک profile + network type.
   Future<List<({String protocol, String masque, double rate, int latency})>>
-  bestProtocols({
+      bestProtocols({
     required String profile,
     required String networkType,
     int limit = 5,

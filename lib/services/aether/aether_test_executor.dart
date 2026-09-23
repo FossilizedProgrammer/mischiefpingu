@@ -25,6 +25,8 @@ part 'test_executor/tracker_starter.dart';
 ///  بخش‌های داخلی در `test_executor/` جدا شده‌اند:
 ///    • ExecutorRunner   → منطق اصلی run()
 ///    • TrackerStarter   → شروع performance tracker
+///
+///  ⚠️ FIX: run() در runner خودش cancelRequested رو ریست می‌کنه.
 /// ═══════════════════════════════════════════════════════════════
 class AetherTestExecutor {
   final ProcessService processService;
@@ -40,15 +42,10 @@ class AetherTestExecutor {
   ProfilePerformanceStore? profilePerformanceStore;
   AetherLogger? logger;
 
-  /// ═══════════════════════════════════════════════════════════════
-  ///  فاز v4: DecisionEngine برای ثبت نتیجه.
-  /// ═══════════════════════════════════════════════════════════════
   final AetherDecisionEngine? decisionEngine;
 
   late final AetherFailureHandler _failureHandler;
 
-  // ⚠️ این دو فیلد public می‌شن تا partها دسترسی داشته باشن
-  //    و getter/setter اضافی لازم نباشه (رفع lint).
   bool cancelRequested = false;
   bool portSwapTried = false;
 

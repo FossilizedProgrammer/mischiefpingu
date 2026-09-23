@@ -70,9 +70,8 @@ extension AppProviderParsers on AppProvider {
     if (endpoint == null || endpoint.isEmpty) return;
 
     // فقط اگر endpoint فعلی ذخیره‌شده با این فرق دارد ذخیره کن
-    final winner = settings.aetherProtocol == 'auto'
-        ? 'auto'
-        : settings.aetherProtocol;
+    final winner =
+        settings.aetherProtocol == 'auto' ? 'auto' : settings.aetherProtocol;
 
     // fire-and-forget
     // ignore: discarded_futures
