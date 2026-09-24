@@ -22,7 +22,7 @@ class HttpsMeasurer {
 
     for (var round = 0; round < DiagnosticConfig.samplesPerMetric; round++) {
       for (final host in DiagnosticConfig.httpsTargets) {
-        final r = await probeOne(host);
+        final r = await _probeOne(host);
         samples.add(
           ProbeSample(
             index: idx++,
@@ -48,7 +48,7 @@ class HttpsMeasurer {
   }
 
   /// probe HTTPS با SNI معتبر.
-  Future<({bool success, int latencyMs})> probeOne(String host) async {
+  Future<({bool success, int latencyMs})> _probeOne(String host) async {
     final sw = Stopwatch()..start();
     HttpClient? client;
     try {

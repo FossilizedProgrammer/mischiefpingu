@@ -1,6 +1,12 @@
 library;
 
-import 'asset_pattern_override.dart';
+/// ═══════════════════════════════════════════════════════════════
+///  AssetPickerFn — callback برای انتخاب asset سفارشی.
+/// ═══════════════════════════════════════════════════════════════
+typedef AssetPickerFn = Map<String, dynamic>? Function(
+  List<dynamic> assets,
+  String arch,
+);
 
 /// تنظیمات یک core مبتنی بر GitHub Releases.
 class GithubCoreSpec {
@@ -32,7 +38,7 @@ class GithubCoreSpec {
   final int defaultDownloadSize;
 
   // ═══════════════════════════════════════════════════════════
-  //  🆕 فیلد جدید: picker سفارشی برای انتخاب asset
+  //  فیلد picker سفارشی برای انتخاب asset
   //
   //  اگر null باشه، از AssetPicker.pick() عمومی استفاده می‌شه.
   //  اگر غیر null باشه، از این picker استفاده می‌شه.

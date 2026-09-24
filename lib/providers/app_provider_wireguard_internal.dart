@@ -2,6 +2,9 @@ part of 'app_provider.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  AppProviderWireGuardInternal — منطق start داخلی.
+///
+///  ⚠️ نسخهٔ ساده — بدون پشتیبانی vpn:// و Amnezia API.
+///  کاربر باید کانفیگ استاندارد یا URI بده.
 /// ═══════════════════════════════════════════════════════════════
 extension AppProviderWireGuardInternal on AppProvider {
   Future<void> _startWireGuardInternal({
@@ -45,9 +48,27 @@ extension AppProviderWireGuardInternal on AppProvider {
       return;
     }
 
-    // ─── preflight ───
+    // ─── preflight باینری ───
     if (!await _preflightWireGuardBinary(src)) return;
-    if (!await _preflightWireGuardConfig(src)) return;
+
+    // ─── preflight کانفیگ ───
+    final parsedConfig = WireGuardConfigParser.parse(
+      settings.wireguardConfigRaw,
+    );
+    if (parsedConfig == null || !parsedConfig.isValid) {
+      processService.addLog(
+        '✗ Invalid or empty WireGuard config',
+        source: src,
+      );
+      wireGuardStatus = 'WireGuard: Invalid config';
+      processService.setPortConflictMessage(
+        'WireGuard config is invalid. Please check PrivateKey, PublicKey, and Endpoint.',
+      );
+      touch();
+      return;
+    }
+
+    // ─── preflight پورت ───
     if (!await _preflightWireGuardPort(src)) return;
 
     if (!fromAutoReconnect) {
@@ -61,23 +82,14 @@ extension AppProviderWireGuardInternal on AppProvider {
     final myGeneration = nextWireGuardGeneration();
 
     try {
-      // ─── پارس کانفیگ ───
-      final config = WireGuardConfigParser.parse(settings.wireguardConfigRaw);
-      if (config == null) {
-        wireGuardStatus = 'WireGuard: Invalid config';
-        processService.addLog(
-          '✗ Failed to parse WireGuard config',
-          source: src,
-        );
-        return;
-      }
+      final coreType = settings.wireGuardCoreType;
 
-      // ─── ساخت فایل کانفیگ ───
       final builder = WireGuardConfigBuilder(processService: processService);
       final wrapperPath = await builder.build(
-        config: config,
+        config: parsedConfig,
         socksPort: settings.wireguardSocksPort,
         shareOnLan: settings.wireguardShareLan,
+        coreType: coreType,
       );
 
       if (userStoppedWireGuard) {
@@ -88,13 +100,9 @@ extension AppProviderWireGuardInternal on AppProvider {
         return;
       }
 
-      // ═══════════════════════════════════════════════════════════
-      //  🆕 پارامترهای shareLan/socksPort حذف شدن چون
-      //  WireGuardConfigBuilder خودش BindAddress رو در wrapper
-      //  ست کرده.
-      // ═══════════════════════════════════════════════════════════
       final ok = await processService.startWireGuard(
         wrapperConfigPath: wrapperPath,
+        coreType: coreType,
       );
 
       if (userStoppedWireGuard) {

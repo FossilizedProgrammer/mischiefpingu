@@ -1,3 +1,5 @@
+// lib/screens/widgets/sstp/sstp_upstream_section.dart
+
 import 'package:flutter/material.dart';
 
 import '../../../l10n/app_localizations.dart';
@@ -83,50 +85,34 @@ class SstpUpstreamSection extends StatelessWidget {
             onProxyPassChanged: onProxyPassChanged,
           ),
         ],
-        if (sstpUpstreamType == 2)
-          _InfoBox(
+        if (sstpUpstreamType == 2) ...[
+          const SizedBox(height: 8),
+          SstpUpstreamInfoBox(
             theme: theme,
             icon: Icons.info_outline,
             message:
                 'SSTP will route through Aether on 127.0.0.1:$aetherLocalPort. '
                 'Make sure Aether is running.',
           ),
-        if (sstpUpstreamType == 3)
-          _InfoBox(
+        ],
+        if (sstpUpstreamType == 3) ...[
+          const SizedBox(height: 8),
+          SstpUpstreamInfoBox(
             theme: theme,
             icon: Icons.info_outline,
             message: 'SSTP will route through Psiphon. '
                 'Make sure Psiphon is running.',
           ),
-        if (sstpUpstreamType == 4)
-          _InfoBox(
+        ],
+        if (sstpUpstreamType == 4) ...[
+          const SizedBox(height: 8),
+          SstpUpstreamInfoBox(
             theme: theme,
             icon: Icons.info_outline,
             message: 'SSTP will route through Tor. '
                 'Make sure Tor is running.',
           ),
-      ],
-    );
-  }
-}
-
-class _InfoBox extends StatelessWidget {
-  final ThemeData theme;
-  final IconData icon;
-  final String message;
-
-  const _InfoBox({
-    required this.theme,
-    required this.icon,
-    required this.message,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 8),
-        SstpUpstreamInfoBox(theme: theme, icon: icon, message: message),
+        ],
       ],
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../../models/wireguard_core_type.dart';
 import '../../providers/app_provider.dart';
 import '../../services/wireguard/wireguard_config_parser.dart';
 import '../../widgets/settings_tile_base.dart';
@@ -14,11 +15,6 @@ import 'wireguard/wireguard_switches_section.dart';
 class WireGuardSettingsTile extends StatelessWidget {
   const WireGuardSettingsTile({super.key});
 
-  /// ═══════════════════════════════════════════════════════════
-  ///  🆕 کوتاه کردن endpoint برای نمایش در badge.
-  ///
-  ///  `gc-wgupt-ai.ramzshadi.ir:51861` → `gc-wgupt-ai…:51861`
-  /// ═══════════════════════════════════════════════════════════
   static String? _shortEndpoint(String rawConfig) {
     if (rawConfig.trim().isEmpty) return null;
     final parsed = WireGuardConfigParser.parse(rawConfig);
@@ -46,9 +42,6 @@ class WireGuardSettingsTile extends StatelessWidget {
 
     final isConnected = ps.isWireGuardConnected;
 
-    // ═══════════════════════════════════════════════════════════
-    //  🆕 trailingText: اگه connected → endpoint، وگرنه null
-    // ═══════════════════════════════════════════════════════════
     final endpoint = _shortEndpoint(s.wireguardConfigRaw);
     final trailing = isConnected && endpoint != null
         ? '${l10n.connected} · $endpoint'
@@ -66,6 +59,51 @@ class WireGuardSettingsTile extends StatelessWidget {
       initiallyExpanded: false,
       trailingText: trailing,
       children: [
+        // ═══════════════════════════════════════════════════════
+        //  انتخاب هسته (Standard / Amnezia)
+        // ═══════════════════════════════════════════════════════
+        Text(
+          l10n.wireguardCoreTitle,
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          l10n.wireguardCoreDescription,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 10),
+        SegmentedButton<WireGuardCoreType>(
+          segments: [
+            ButtonSegment(
+              value: WireGuardCoreType.standard,
+              label: Text(l10n.wireguardCoreStandard),
+              icon: const Icon(Icons.shield_outlined, size: 16),
+            ),
+            ButtonSegment(
+              value: WireGuardCoreType.amnezia,
+              label: Text(l10n.wireguardCoreAmnezia),
+              icon: const Icon(Icons.enhanced_encryption, size: 16),
+            ),
+          ],
+          selected: {s.wireGuardCoreType},
+          onSelectionChanged: (set) {
+            if (set.isEmpty) return;
+            s.wireguardCore =
+                set.first == WireGuardCoreType.amnezia ? 'amnezia' : 'standard';
+            save();
+          },
+          showSelectedIcon: false,
+        ),
+        const Divider(height: 28),
+
+        // ═══════════════════════════════════════════════════════
+        //  کانفیگ
+        // ═══════════════════════════════════════════════════════
         WireGuardConfigSection(
           theme: theme,
           l10n: l10n,

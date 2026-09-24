@@ -2,7 +2,7 @@
   "@@locale": "ru",
 
   "appTitle": "Озорной Пингу",
-  "appSubtitle": "Неофициальный клиент Psiphon, Aether, Tor, SSTP",
+  "appSubtitle": "Неофициальный клиент Psiphon, Aether, Tor, SSTP, WireGuard",
 
   "add": "Добавить",
   "addNew": "Добавить новое",
@@ -340,6 +340,11 @@
   "psiphonWireGuardUpstream": "WireGuard (SOCKS upstream)",
   "sstpWireGuardUpstream": "WireGuard (SOCKS upstream)",
 
+  "wireguardCoreTitle": "Ядро WireGuard",
+  "wireguardCoreDescription": "Выберите реализацию WireGuard. Amnezia добавляет обфускацию для жёсткой цензуры.",
+  "wireguardCoreStandard": "Стандартное (wireguard-go)",
+  "wireguardCoreAmnezia": "Amnezia (wireguard-awg)",
+
   "endpointPinning": "Привязка endpoint",
   "endpointPinningSubtitle": "Управляйте тем, как Aether выбирает endpoint",
   "endpointPinningAutomatic": "Авто",
@@ -385,5 +390,17 @@
   "diagnosticsReportRedacted": "Конфиденциальные данные удалены",
   "diagnosticsReportPreview": "Предпросмотр",
   "diagnosticsReportClose": "Закрыть",
-  "diagnosticsReportGenerating": "Создание отчёта…"
+  "diagnosticsReportGenerating": "Создание отчёта…",
+
+  "amneziaLinkDetected": "Обнаружена ссылка Amnezia VPN",
+  "amneziaLinkName": "Название",
+  "amneziaLinkEndpoint": "API Endpoint",
+  "amneziaLinkHint": "Нажмите «Получить конфиг», чтобы получить реальную конфигурацию AmneziaWG из API.",
+  "amneziaFetch": "Получить конфиг",
+  "amneziaFetching": "Получение…",
+  "amneziaFetchSuccess": "Конфигурация AmneziaWG успешно получена",
+  "amneziaFetchFailed": "Не удалось получить конфигурацию AmneziaWG",
+  "amneziaCoreRequired": "Для ссылок vpn:// требуется ядро AmneziaWG. Приложение выберет его автоматически.",
+  "amneziaApiError": "Ошибка API Amnezia",
+  "amneziaInvalidLink": "Неверный формат ссылки vpn://"
 }

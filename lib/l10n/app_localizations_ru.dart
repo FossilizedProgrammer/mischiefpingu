@@ -12,7 +12,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get appTitle => 'Озорной Пингу';
 
   @override
-  String get appSubtitle => 'Неофициальный клиент Psiphon, Aether, Tor, SSTP';
+  String get appSubtitle =>
+      'Неофициальный клиент Psiphon, Aether, Tor, SSTP, WireGuard';
 
   @override
   String get add => 'Добавить';
@@ -843,6 +844,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get wireguardSettings => 'Настройки WireGuard';
 
   @override
+  String get wireguardCoreTitle => 'Ядро WireGuard';
+
+  @override
+  String get wireguardCoreDescription =>
+      'Выберите реализацию WireGuard. Amnezia добавляет обфускацию для жёсткой цензуры.';
+
+  @override
+  String get wireguardCoreStandard => 'Стандартное (wireguard-go)';
+
+  @override
+  String get wireguardCoreAmnezia => 'Amnezia (wireguard-awg)';
+
+  @override
   String get tunnelHealth => 'Состояние туннеля';
 
   @override
@@ -1057,4 +1071,39 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get diagnosticsReportGenerating => 'Создание отчёта…';
+
+  @override
+  String get amneziaLinkDetected => 'Обнаружена ссылка Amnezia VPN';
+
+  @override
+  String get amneziaLinkName => 'Название';
+
+  @override
+  String get amneziaLinkEndpoint => 'API Endpoint';
+
+  @override
+  String get amneziaLinkHint =>
+      'Нажмите «Получить конфиг», чтобы получить реальную конфигурацию AmneziaWG из API.';
+
+  @override
+  String get amneziaFetch => 'Получить конфиг';
+
+  @override
+  String get amneziaFetching => 'Получение…';
+
+  @override
+  String get amneziaFetchSuccess => 'Конфигурация AmneziaWG успешно получена';
+
+  @override
+  String get amneziaFetchFailed => 'Не удалось получить конфигурацию AmneziaWG';
+
+  @override
+  String get amneziaCoreRequired =>
+      'Для ссылок vpn:// требуется ядро AmneziaWG. Приложение выберет его автоматически.';
+
+  @override
+  String get amneziaApiError => 'Ошибка API Amnezia';
+
+  @override
+  String get amneziaInvalidLink => 'Неверный формат ссылки vpn://';
 }

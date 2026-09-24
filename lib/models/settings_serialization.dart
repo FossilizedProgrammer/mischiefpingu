@@ -113,8 +113,9 @@ extension AppSettingsSerialization on AppSettings {
       themeId: _s(m, 'themeId', 'ocean'),
       muted: _b(m, 'muted', false),
       wireguardConfigRaw: _s(m, 'wireguardConfigRaw', ''),
-      wireguardSocksPort: _i(m, 'wireguardSocksPort', 25344),
+      wireguardSocksPort: _i(m, 'wireguardSocksPort', 1085),
       wireguardShareLan: _b(m, 'wireguardShareLan', false),
+      wireguardCore: _s(m, 'wireguard_core', 'standard'),
       wireguardAutoReconnect: _b(m, 'wireguardAutoReconnect', true),
       watchdogEnabled: _b(m, 'watchdogEnabled', true),
       watchdogNetworkProfile: _s(m, 'watchdogNetworkProfile', 'normal'),
@@ -207,6 +208,7 @@ extension AppSettingsSerialization on AppSettings {
         'wireguardConfigRaw': wireguardConfigRaw,
         'wireguardSocksPort': wireguardSocksPort,
         'wireguardShareLan': wireguardShareLan,
+        'wireguard_core': wireguardCore,
         'wireguardAutoReconnect': wireguardAutoReconnect,
       };
 

@@ -1,31 +1,27 @@
 part of 'process_service.dart';
 
 /// ═══════════════════════════════════════════════════════════════
-///  ProcessServiceWireGuard — start/stop باینری wireproxy.
+///  ProcessServiceWireGuard — start/stop باینری wireproxy / wireproxy-awg.
 ///
-///  ⚠️ تغییرات:
-///    • پارامترهای استفاده‌نشده shareLan/socksPort حذف شدن
-///    • منطق LAN از طریق `WireGuardConfigBuilder` انجام می‌شه
-///      (BindAddress = 0.0.0.0 در wrapper)
-///    • ✅ اصلاح تشخیص "tunnel ready": چون wireproxy خط
-///      "listening" چاپ نمی‌کند، به جای آن نشانه‌های DEBUG
-///      (interface up / handshake response / resolving address)
-///      بررسی می‌شوند.
+///  ⚠️ این فایل `part of` است و نباید import مستقل داشته باشد.
+///  `WireGuardCoreType` از طریق type alias در library اصلی
+///  (process_service.dart) در scope این فایل قرار میگیرد.
 /// ═══════════════════════════════════════════════════════════════
 extension ProcessServiceWireGuard on ProcessService {
   Future<bool> startWireGuard({
     required String wrapperConfigPath,
+    required WireGuardCoreType coreType,
   }) async {
     await ensureInitialized();
     if (isWireGuardRunning) return false;
     const src = LogSource.wireguard;
 
     try {
-      final binaryPath = await WireGuardPaths.resolveBinary();
+      final binaryPath = await WireGuardPaths.resolveBinary(coreType);
       if (binaryPath == null) {
         addLog(
-          '✗ wireproxy binary not found. Place '
-          '"wireproxy${AppDataService.exeExt}" in the data folder '
+          '✗ ${WireGuardPaths.binaryName(coreType)} binary not found. Place '
+          '"${WireGuardPaths.binaryName(coreType)}${AppDataService.exeExt}" in the data folder '
           'or download from Core Updates.',
           source: src,
         );
@@ -35,7 +31,7 @@ extension ProcessServiceWireGuard on ProcessService {
       final workingDir = await WireGuardPaths.workDir();
 
       addLog(
-        'Starting wireproxy with: $binaryPath -c $wrapperConfigPath',
+        'Starting ${WireGuardPaths.binaryName(coreType)} with: $binaryPath -c $wrapperConfigPath',
         source: src,
       );
 
@@ -47,14 +43,16 @@ extension ProcessServiceWireGuard on ProcessService {
       );
       await Future.delayed(const Duration(milliseconds: 900));
 
-      // بررسی اینکه همان لحظه exit نکرده باشد
       bool exitedQuickly = false;
       try {
         final code = await wireGuardProcess!.exitCode.timeout(
           const Duration(milliseconds: 250),
         );
         exitedQuickly = true;
-        addLog('wireproxy exited immediately (code=$code)', source: src);
+        addLog(
+          '${WireGuardPaths.binaryName(coreType)} exited immediately (code=$code)',
+          source: src,
+        );
       } catch (_) {
         exitedQuickly = false;
       }
@@ -70,7 +68,7 @@ extension ProcessServiceWireGuard on ProcessService {
       isWireGuardConnected = false;
       isWireGuardTunnelReady = false;
       addLog(
-        'wireproxy is running (PID: ${wireGuardProcess!.pid})',
+        '${WireGuardPaths.binaryName(coreType)} is running (PID: ${wireGuardProcess!.pid})',
         source: src,
       );
       touch();
@@ -96,18 +94,6 @@ extension ProcessServiceWireGuard on ProcessService {
 
       final lower = trimmed.toLowerCase();
 
-      // ═══════════════════════════════════════════════════════════
-      //  ✅ تشخیص آماده شدن SOCKS
-      //
-      //  ⚠️ نکته مهم: wireproxy خط "socks5 server listening" چاپ
-      //  نمی‌کند. به جای آن، ما به دنبال نشانه‌های DEBUG می‌گردیم
-      //  که ثابت می‌کنند تونل راه افتاده:
-      //
-      //    • "Interface up requested"
-      //    • "Interface state was Down, requested Up, now Up"
-      //    • "Received handshake response"
-      //    • "Resolving address for ..."  ← مطمئن‌ترین نشانه
-      // ═══════════════════════════════════════════════════════════
       if (!isWireGuardTunnelReady) {
         final isResolving = lower.contains('resolving address for');
         final isInitializing = lower.contains('interface up requested') ||

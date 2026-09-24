@@ -3,6 +3,7 @@
 library;
 
 import 'settings_serialization.dart';
+import 'wireguard_core_type.dart';
 
 part 'settings_presets.dart';
 part 'settings_profiles.dart';
@@ -26,6 +27,7 @@ class AppSettings {
   String wireguardConfigRaw;
   int wireguardSocksPort;
   bool wireguardShareLan;
+  String wireguardCore; // "standard" یا "amnezia"
   bool wireguardAutoReconnect;
 
   int upstreamType;
@@ -58,16 +60,6 @@ class AppSettings {
   String aetherCustomEndpoint;
   bool aetherTryLastEndpointFirst;
 
-  /// ═══════════════════════════════════════════════════════════════
-  ///  حالت Endpoint Pinning برای Aether.
-  ///
-  ///  مقادیر ممکن:
-  ///    • 'automatic'      → همیشه اسکن خودکار (پیش‌فرض)
-  ///    • 'custom_first'   → اول endpoint سفارشی، بعد در صورت شکست
-  ///                          به حالت کشف خودکار می‌رود
-  ///    • 'custom_only'    → فقط endpoint سفارشی، بدون هیچ
-  ///                          جایگزینی خودکار
-  /// ═══════════════════════════════════════════════════════════════
   String aetherEndpointPinning;
 
   bool psiphonShareLan;
@@ -187,8 +179,9 @@ class AppSettings {
     this.watchdogEnabled = true,
     this.watchdogNetworkProfile = 'normal',
     this.wireguardConfigRaw = '',
-    this.wireguardSocksPort = 25344,
+    this.wireguardSocksPort = 1085,
     this.wireguardShareLan = false,
+    this.wireguardCore = 'standard',
     this.wireguardAutoReconnect = true,
     List<String>? enabledLogSources,
   }) : enabledLogSources = enabledLogSources ??
@@ -211,10 +204,6 @@ class AppSettings {
 
   bool get isAetherProtocolLockedByProfile => isAetherProfileAutomatic;
 
-  // ═══════════════════════════════════════════════════════════════
-  //  Endpoint Pinning getters
-  // ═══════════════════════════════════════════════════════════════
-
   bool get isEndpointPinningAutomatic => aetherEndpointPinning == 'automatic';
 
   bool get isEndpointPinningCustomFirst =>
@@ -223,7 +212,13 @@ class AppSettings {
   bool get isEndpointPinningCustomOnly =>
       aetherEndpointPinning == 'custom_only';
 
-  /// آیا endpoint سفارشی برای pinning در دسترس است؟
   bool get hasCustomEndpointForPinning =>
       aetherCustomEndpoint.trim().isNotEmpty;
+
+  /// تبدیل رشتهٔ ذخیره‌شده به enum `WireGuardCoreType`.
+  WireGuardCoreType get wireGuardCoreType {
+    return wireguardCore == 'amnezia'
+        ? WireGuardCoreType.amnezia
+        : WireGuardCoreType.standard;
+  }
 }

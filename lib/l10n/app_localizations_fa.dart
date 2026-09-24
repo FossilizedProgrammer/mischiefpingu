@@ -838,6 +838,19 @@ class AppLocalizationsFa extends AppLocalizations {
   String get wireguardSettings => 'تنظیمات وایرگارد';
 
   @override
+  String get wireguardCoreTitle => 'هسته وایرگارد';
+
+  @override
+  String get wireguardCoreDescription =>
+      'پیاده‌سازی WireGuard را انتخاب کنید. Amnezia برای فیلترینگ سنگین، مبهم‌سازی اضافه می‌کند.';
+
+  @override
+  String get wireguardCoreStandard => 'استاندارد (wireguard-go)';
+
+  @override
+  String get wireguardCoreAmnezia => 'Amnezia (wireguard-awg)';
+
+  @override
   String get tunnelHealth => 'سلامت تونل';
 
   @override
@@ -1052,4 +1065,39 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get diagnosticsReportGenerating => 'در حال تولید گزارش…';
+
+  @override
+  String get amneziaLinkDetected => 'لینک وی‌پی‌ان آمنزیا شناسایی شد';
+
+  @override
+  String get amneziaLinkName => 'نام';
+
+  @override
+  String get amneziaLinkEndpoint => 'اندپوینت API';
+
+  @override
+  String get amneziaLinkHint =>
+      'برای دریافت کانفیگ واقعی AmneziaWG از API، روی «دریافت کانفیگ» کلیک کنید.';
+
+  @override
+  String get amneziaFetch => 'دریافت کانفیگ';
+
+  @override
+  String get amneziaFetching => 'در حال دریافت…';
+
+  @override
+  String get amneziaFetchSuccess => 'کانفیگ AmneziaWG با موفقیت دریافت شد';
+
+  @override
+  String get amneziaFetchFailed => 'دریافت کانفیگ AmneziaWG ناموفق بود';
+
+  @override
+  String get amneziaCoreRequired =>
+      'برای لینک‌های vpn://، هسته AmneziaWG لازم است. برنامه به صورت خودکار آن را انتخاب می‌کند.';
+
+  @override
+  String get amneziaApiError => 'خطای API آمنزیا';
+
+  @override
+  String get amneziaInvalidLink => 'فرمت لینک vpn:// نامعتبر است';
 }

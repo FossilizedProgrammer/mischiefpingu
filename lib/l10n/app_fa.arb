@@ -327,6 +327,11 @@
   "torViaWireGuard": "از طریق وایرگارد (Tor-over-WireGuard)",
   "psiphonWireGuardUpstream": "وایرگارد (آپ‌استریم SOCKS)",
   "sstpWireGuardUpstream": "وایرگارد (آپ‌استریم SOCKS)",
+  
+  "wireguardCoreTitle": "هسته وایرگارد",
+  "wireguardCoreDescription": "پیاده‌سازی WireGuard را انتخاب کنید. Amnezia برای فیلترینگ سنگین، مبهم‌سازی اضافه می‌کند.",
+  "wireguardCoreStandard": "استاندارد (wireguard-go)",
+  "wireguardCoreAmnezia": "Amnezia (wireguard-awg)",  
 
   "endpointPinning": "پین کردن اندپوینت",
   "endpointPinningSubtitle": "کنترل کنید Aether چطور اندپوینت خود را انتخاب کند",
@@ -373,5 +378,18 @@
   "diagnosticsReportRedacted": "اطلاعات حساس حذف شده‌اند",
   "diagnosticsReportPreview": "پیش‌نمایش",
   "diagnosticsReportClose": "بستن",
-  "diagnosticsReportGenerating": "در حال تولید گزارش…"
+  "diagnosticsReportGenerating": "در حال تولید گزارش…",
+
+  "amneziaLinkDetected": "لینک وی‌پی‌ان آمنزیا شناسایی شد",
+  "amneziaLinkName": "نام",
+  "amneziaLinkEndpoint": "اندپوینت API",
+  "amneziaLinkHint": "برای دریافت کانفیگ واقعی AmneziaWG از API، روی «دریافت کانفیگ» کلیک کنید.",
+  "amneziaFetch": "دریافت کانفیگ",
+  "amneziaFetching": "در حال دریافت…",
+  "amneziaFetchSuccess": "کانفیگ AmneziaWG با موفقیت دریافت شد",
+  "amneziaFetchFailed": "دریافت کانفیگ AmneziaWG ناموفق بود",
+  "amneziaCoreRequired": "برای لینک‌های vpn://، هسته AmneziaWG لازم است. برنامه به صورت خودکار آن را انتخاب می‌کند.",
+  "amneziaApiError": "خطای API آمنزیا",
+  "amneziaInvalidLink": "فرمت لینک vpn:// نامعتبر است"
+  
 }

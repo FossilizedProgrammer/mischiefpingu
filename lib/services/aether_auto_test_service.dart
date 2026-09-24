@@ -1,3 +1,5 @@
+// lib/services/aether_auto_test_service.dart
+
 library;
 
 import 'dart:async';
@@ -117,26 +119,6 @@ class AetherAutoTestService {
         logger: logger,
         decisionEngine: decisionEngine,
       );
-
-  void attachDecisionEngine(AetherDecisionEngine engine) {
-    decisionEngine = engine;
-    rebuildCollaborators();
-  }
-
-  void attachGatewayHistoryStore(GatewayHistoryStore store) {
-    gatewayHistoryStore = store;
-    rebuildCollaborators();
-  }
-
-  void attachProfilePerformanceStore(ProfilePerformanceStore store) {
-    profilePerformanceStore = store;
-    rebuildCollaborators();
-  }
-
-  void attachAetherLogger(AetherLogger logger) {
-    aetherLogger = logger;
-    rebuildCollaborators();
-  }
 
   bool get isCancelRequested => _executor.isCancelRequested;
   void requestCancel() => _executor.requestCancel();

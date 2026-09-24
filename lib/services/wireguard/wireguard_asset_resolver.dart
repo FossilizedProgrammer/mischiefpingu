@@ -1,90 +1,118 @@
-library;
+// lib/services/wireguard/wireguard_asset_resolver.dart
 
 import '../app_data_service.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  WireGuardAssetResolver — انتخاب asset مناسب از releaseهای
-///  `windtf/wireproxy`.
+///  windtf/wireproxy و artem-russkikh/wireproxy-awg.
 ///
-///  repo `windtf/wireproxy` در releaseهاش معمولاً این assetها
-///  رو منتشر می‌کنه:
-///    • wireproxy_linux_amd64
-///    • wireproxy_linux_arm64
-///    • wireproxy_linux_armv7
-///    • wireproxy_windows_amd64.exe
-///    • wireproxy_windows_arm64.exe
-///    • Source code (zip)  ← این رو نباید انتخاب کنه
-///    • Source code (tar.gz) ← این رو نباید انتخاب کنه
+///  ⚠️ هر دو repo از الگوی نام‌گذاری مشابه استفاده می‌کنند:
+///    • windtf/wireproxy:       wireproxy_linux_amd64
+///    • artem-russkikh/wireproxy-awg: wireproxy-awg_linux_amd64
 ///
-///  اگر repo در آینده اسم‌گذاری رو عوض کرد، فقط این فایل
-///  باید تغییر کنه.
+///  🆕 متد pick حالا با هر دو prefix (wireproxy و wireproxy-awg)
+///  کار می‌کند تا کد ساده‌تر بماند.
 /// ═══════════════════════════════════════════════════════════════
 class WireGuardAssetResolver {
   WireGuardAssetResolver._();
 
-  /// انتخاب asset مناسب.
-  ///
-  /// خروجی:
-  ///   • اولین asset مطابق → برگردانده می‌شه
-  ///   • null → هیچ asset مناسبی پیدا نشد
-  static Map<String, dynamic>? pick(
+  /// پیشوندهای شناخته‌شده — به ترتیب اولویت.
+  static const List<String> _knownPrefixes = [
+    'wireproxy-awg',
+    'wireproxy',
+  ];
+
+  /// ─────────────────────────────────────────────────────────
+  ///  انتخاب asset برای wireproxy (Standard)
+  /// ─────────────────────────────────────────────────────────
+  static Map<String, dynamic>? pickStandard(
     List<dynamic> assets,
     String arch,
-  ) {
+  ) =>
+      _pickWithPrefixes(assets, arch, preferredPrefix: 'wireproxy');
+
+  /// ─────────────────────────────────────────────────────────
+  ///  انتخاب asset برای wireproxy-awg (Amnezia)
+  /// ─────────────────────────────────────────────────────────
+  static Map<String, dynamic>? pickAwg(
+    List<dynamic> assets,
+    String arch,
+  ) =>
+      _pickWithPrefixes(assets, arch, preferredPrefix: 'wireproxy-awg');
+
+  /// ─────────────────────────────────────────────────────────
+  ///  منطق مشترک انتخاب asset با prefix دلخواه.
+  ///
+  ///  ⚠️ اگر [preferredPrefix] موجود نبود، به ترتیب از
+  ///  `_knownPrefixes` استفاده می‌کند. این باعث می‌شود اگر repo
+  ///  اسم‌گذاری asset را عوض کرد، باز هم کار کند.
+  /// ─────────────────────────────────────────────────────────
+  static Map<String, dynamic>? _pickWithPrefixes(
+    List<dynamic> assets,
+    String arch, {
+    String? preferredPrefix,
+  }) {
     if (assets.isEmpty) return null;
 
     final isWin = AppDataService.isWindows;
     final archTags = _archTags(arch);
     final osTags = isWin ? const ['windows', 'win'] : const ['linux'];
 
-    // ─── مرحله 1: نام دقیق `wireproxy_<os>_<arch>[.exe]` ───
-    for (final a in assets) {
-      final m = a as Map<String, dynamic>;
-      final name = (m['name'] as String? ?? '').toLowerCase();
-      if (_isSourceCode(name)) continue;
+    // ترتیب prefixها: اول prefix ترجیحی، بعد بقیه
+    final prefixes = <String>[
+      if (preferredPrefix != null) preferredPrefix,
+      ..._knownPrefixes.where((p) => p != preferredPrefix),
+    ];
 
-      if (name.startsWith('wireproxy_') &&
-          osTags.any(name.contains) &&
-          archTags.any(name.contains)) {
+    // ─── مرحله 1: prefix + OS + arch (با _ یا -) ───
+    for (final prefix in prefixes) {
+      for (final a in assets) {
+        final m = a as Map<String, dynamic>;
+        final name = (m['name'] as String? ?? '').toLowerCase();
+        if (_isSourceCode(name)) continue;
+        if (!name.startsWith(prefix)) continue;
+
+        // جلوگیری از match نادرست: wireproxy نباید wireproxy-awg را match کند
+        final rest = name.substring(prefix.length);
+        if (prefix == 'wireproxy' && rest.startsWith('-awg')) continue;
+
+        if (osTags.any(name.contains) && archTags.any(name.contains)) {
+          return m;
+        }
+      }
+    }
+
+    // ─── مرحله 2: prefix + OS ───
+    for (final prefix in prefixes) {
+      for (final a in assets) {
+        final m = a as Map<String, dynamic>;
+        final name = (m['name'] as String? ?? '').toLowerCase();
+        if (_isSourceCode(name)) continue;
+        if (!name.startsWith(prefix)) continue;
+
+        final rest = name.substring(prefix.length);
+        if (prefix == 'wireproxy' && rest.startsWith('-awg')) continue;
+
+        if (osTags.any(name.contains)) return m;
+      }
+    }
+
+    // ─── مرحله 3: فقط prefix ───
+    for (final prefix in prefixes) {
+      for (final a in assets) {
+        final m = a as Map<String, dynamic>;
+        final name = (m['name'] as String? ?? '').toLowerCase();
+        if (_isSourceCode(name)) continue;
+        if (!name.startsWith(prefix)) continue;
+
+        final rest = name.substring(prefix.length);
+        if (prefix == 'wireproxy' && rest.startsWith('-awg')) continue;
+
         return m;
       }
     }
 
-    // ─── مرحله 2: فقط `wireproxy` در نام + OS + arch ───
-    for (final a in assets) {
-      final m = a as Map<String, dynamic>;
-      final name = (m['name'] as String? ?? '').toLowerCase();
-      if (_isSourceCode(name)) continue;
-      if (!name.contains('wireproxy')) continue;
-
-      if (osTags.any(name.contains) && archTags.any(name.contains)) {
-        return m;
-      }
-    }
-
-    // ─── مرحله 3: فقط `wireproxy` + OS ───
-    for (final a in assets) {
-      final m = a as Map<String, dynamic>;
-      final name = (m['name'] as String? ?? '').toLowerCase();
-      if (_isSourceCode(name)) continue;
-      if (!name.contains('wireproxy')) continue;
-
-      if (osTags.any(name.contains)) {
-        return m;
-      }
-    }
-
-    // ─── مرحله 4: هر asset با `wireproxy` در نام (بدون source) ───
-    for (final a in assets) {
-      final m = a as Map<String, dynamic>;
-      final name = (m['name'] as String? ?? '').toLowerCase();
-      if (_isSourceCode(name)) continue;
-      if (name.contains('wireproxy')) {
-        return m;
-      }
-    }
-
-    // ─── مرحله 5: هر آرشیوی که source نباشه ───
+    // ─── مرحله 4: هر آرشیوی که source نباشه ───
     for (final a in assets) {
       final m = a as Map<String, dynamic>;
       final name = (m['name'] as String? ?? '').toLowerCase();
@@ -107,7 +135,7 @@ class WireGuardAssetResolver {
     }
   }
 
-  /// آیا این asset سورس کد است؟ (نباید دانلود بشه)
+  /// آیا این asset سورس کد است؟
   static bool _isSourceCode(String name) {
     return name.contains('source code') ||
         name == 'source code (zip)' ||

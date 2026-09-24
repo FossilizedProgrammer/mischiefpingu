@@ -50,7 +50,6 @@ import '../services/wireguard/wireguard_log_watcher.dart';
 import '../services/aether/retry/retry_state.dart';
 
 part 'app_provider_snapshot.dart';
-part 'app_provider_state.dart';
 part 'sstp/sstp_launch.dart';
 part 'sstp/sstp_preflight.dart';
 part 'tor/tor_launch.dart';
@@ -89,11 +88,6 @@ class AppProvider extends ChangeNotifier {
   AutoReconnectManager get reconnectManager => _reconnectManager;
 
   RetryState? get aetherRetryState => _aetherTestService.retryState;
-  String get aetherRetryStatusText {
-    final state = aetherRetryState;
-    if (state == null) return '';
-    return state.statusText;
-  }
 
 // ═══════════════════════════════════════════════════════════════
 //  WireGuard state

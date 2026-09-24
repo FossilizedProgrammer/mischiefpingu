@@ -1,6 +1,16 @@
+// lib/screens/widgets/core_update/core_update_spec.dart
+
 library;
 
-enum CoreKind { aether, tor, psiphon, sunandlion, sstp, wireguard }
+enum CoreKind {
+  aether,
+  tor,
+  psiphon,
+  sunandlion,
+  sstp,
+  wireguard,
+  wireguardAwg, // 🆕
+}
 
 class CoreUpdateSpec {
   final CoreKind kind;
@@ -38,5 +48,12 @@ const List<CoreUpdateSpec> coreUpdateSpecs = [
     kind: CoreKind.wireguard,
     displayName: 'WireGuard (wireproxy)',
     note: 'Userspace WireGuard client from windtf/wireproxy.',
+  ),
+  // 🆕 هستهٔ دوم WireGuard
+  CoreUpdateSpec(
+    kind: CoreKind.wireguardAwg,
+    displayName: 'WireGuard Amnezia (wireproxy-awg)',
+    note: 'AmneziaWG userspace client from artem-russkikh/wireproxy-awg. '
+        'Required for the "Amnezia" core type.',
   ),
 ];

@@ -9,17 +9,9 @@ import '../../app_data_service.dart';
 import '../../wireguard/wireguard_asset_resolver.dart';
 
 /// ═══════════════════════════════════════════════════════════════
-///  WireGuardUpdater — آپدیت core برای wireproxy.
+///  WireGuardUpdater — آپدیت core برای wireproxy (Standard).
 ///
 ///  مخزن: https://github.com/windtf/wireproxy
-///
-///  ⚠️ از `WireGuardAssetResolver` به عنوان picker سفارشی
-///  استفاده می‌کنه چون assetهای این repo نام‌گذاری خاصی دارن
-///  (`wireproxy_linux_amd64`, بدون پسوند آرشیو).
-///
-///  ⚠️ نکته: wireproxy در releaseهاش **باینری خام** منتشر
-///  می‌کنه (نه آرشیو). `GithubReleaseInstaller` این رو
-///  با `classifyArchive` تشخیص می‌ده و فایل رو مستقیم کپی می‌کنه.
 /// ═══════════════════════════════════════════════════════════════
 class WireGuardUpdater {
   final GithubReleaseUpdater _updater;
@@ -41,10 +33,59 @@ class WireGuardUpdater {
                 AppDataService.getBinaryPathForWrite('wireproxy'),
             tempPrefix: 'mischiefpingu_wireproxy_',
             defaultDownloadSize: 4000000,
-            // ═══════════════════════════════════════════════════
-            //  🆕 picker سفارشی برای WireGuard
-            // ═══════════════════════════════════════════════════
-            assetPicker: WireGuardAssetResolver.pick,
+            assetPicker: WireGuardAssetResolver.pickStandard,
+          ),
+          network: network,
+          pending: pending,
+          processUtils: processUtils,
+          log: log,
+        );
+
+  Future<CoreUpdateInfo> check(String? proxy, {required String installed}) =>
+      _updater.check(proxy, installed: installed);
+
+  Future<bool> update(
+    CoreUpdateInfo info, {
+    required String installed,
+    String? proxy,
+    void Function(int percent)? onProgress,
+    bool Function()? onCancelCheck,
+  }) =>
+      _updater.update(
+        info,
+        installed: installed,
+        proxy: proxy,
+        onProgress: onProgress,
+        onCancelCheck: onCancelCheck,
+      );
+}
+
+/// ═══════════════════════════════════════════════════════════════
+///  🆕 WireGuardAwgUpdater — آپدیت core برای wireproxy-awg.
+///
+///  مخزن: https://github.com/artem-russkikh/wireproxy-awg
+/// ═══════════════════════════════════════════════════════════════
+class WireGuardAwgUpdater {
+  final GithubReleaseUpdater _updater;
+
+  WireGuardAwgUpdater({
+    required CoreUpdateNetwork network,
+    required CoreUpdatePendingManager pending,
+    required CoreUpdateProcessUtils processUtils,
+    void Function(String)? log,
+  }) : _updater = GithubReleaseUpdater(
+          spec: GithubCoreSpec(
+            coreId: 'wireguard-awg',
+            displayName: 'WireGuard Amnezia (wireproxy-awg)',
+            owner: 'artem-russkikh',
+            repo: 'wireproxy-awg',
+            binaryBaseName: 'wireproxy-awg',
+            fallbackPattern: 'wireproxy',
+            destPathResolver: () =>
+                AppDataService.getBinaryPathForWrite('wireproxy-awg'),
+            tempPrefix: 'mischiefpingu_wireproxy_awg_',
+            defaultDownloadSize: 4000000,
+            assetPicker: WireGuardAssetResolver.pickAwg,
           ),
           network: network,
           pending: pending,

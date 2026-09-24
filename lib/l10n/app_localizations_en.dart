@@ -13,7 +13,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appSubtitle =>
-      'Unofficial Psiphon client, Aether client, Tor client, SSTP client';
+      'Unofficial Psiphon client, Aether client, Tor client, SSTP client, WireGuard client';
 
   @override
   String get add => 'Add';
@@ -841,6 +841,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get wireguardSettings => 'WireGuard Settings';
 
   @override
+  String get wireguardCoreTitle => 'WireGuard Core';
+
+  @override
+  String get wireguardCoreDescription =>
+      'Choose the WireGuard implementation. Amnezia adds obfuscation for heavy censorship.';
+
+  @override
+  String get wireguardCoreStandard => 'Standard (wireguard-go)';
+
+  @override
+  String get wireguardCoreAmnezia => 'Amnezia (wireguard-awg)';
+
+  @override
   String get tunnelHealth => 'Tunnel Health';
 
   @override
@@ -1054,4 +1067,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get diagnosticsReportGenerating => 'Generating report…';
+
+  @override
+  String get amneziaLinkDetected => 'Amnezia VPN link detected';
+
+  @override
+  String get amneziaLinkName => 'Name';
+
+  @override
+  String get amneziaLinkEndpoint => 'API Endpoint';
+
+  @override
+  String get amneziaLinkHint =>
+      'Click \'Fetch Config\' to retrieve the real AmneziaWG configuration from the API.';
+
+  @override
+  String get amneziaFetch => 'Fetch Config';
+
+  @override
+  String get amneziaFetching => 'Fetching…';
+
+  @override
+  String get amneziaFetchSuccess =>
+      'AmneziaWG configuration fetched successfully';
+
+  @override
+  String get amneziaFetchFailed => 'Failed to fetch AmneziaWG configuration';
+
+  @override
+  String get amneziaCoreRequired =>
+      'AmneziaWG core required for vpn:// links. The app will auto-select it.';
+
+  @override
+  String get amneziaApiError => 'Amnezia API error';
+
+  @override
+  String get amneziaInvalidLink => 'Invalid vpn:// link format';
 }

@@ -1,3 +1,5 @@
+// lib/screens/widgets/wireguard/wireguard_config_section.dart
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -6,6 +8,15 @@ import '../../../l10n/app_localizations.dart';
 import '../../../services/wireguard/wireguard_config_parser.dart';
 import '../../../services/wireguard/wireguard_uri_codec.dart';
 
+/// ═══════════════════════════════════════════════════════════════
+///  WireGuardConfigSection — بخش کانفیگ WireGuard.
+///
+///  ⚠️ نسخهٔ ساده — بدون پشتیبانی vpn:// و Amnezia API.
+///  فقط:
+///    • کانفیگ استاندارد (INI)
+///    • wireguard:// URI
+///    • دکمهٔ تبدیل فرمت
+/// ═══════════════════════════════════════════════════════════════
 class WireGuardConfigSection extends StatefulWidget {
   final ThemeData theme;
   final AppLocalizations l10n;
@@ -29,12 +40,7 @@ class _WireGuardConfigSectionState extends State<WireGuardConfigSection> {
   String? _errorText;
   bool _isStandard = true;
 
-  // ═══════════════════════════════════════════════════════════
-  //  🆕 debounce — جلوگیری از نوشتن مکرر روی SharedPreferences
-  // ═══════════════════════════════════════════════════════════
   Timer? _debounce;
-
-  /// آخرین کانفیگ پارس‌شده (برای نمایش endpoint).
   WireGuardConfig? _parsed;
 
   @override
@@ -45,12 +51,6 @@ class _WireGuardConfigSectionState extends State<WireGuardConfigSection> {
     _parsed = WireGuardConfigParser.parse(widget.initialConfig);
   }
 
-  // ═══════════════════════════════════════════════════════════
-  //  🆕 sync با parent وقتی initialConfig عوض شد
-  //
-  //  مثلاً وقتی user از dialog کانفیگ رو import می‌کنه،
-  //  یا از دکمهٔ reset استفاده می‌کنه.
-  // ═══════════════════════════════════════════════════════════
   @override
   void didUpdateWidget(covariant WireGuardConfigSection oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -58,7 +58,6 @@ class _WireGuardConfigSectionState extends State<WireGuardConfigSection> {
     final parentChanged = oldWidget.initialConfig != widget.initialConfig;
     if (!parentChanged) return;
 
-    // اگر کاربر در حال تایپ است، مداخله نکن
     if (_controller.text == widget.initialConfig) return;
 
     _debounce?.cancel();
@@ -87,7 +86,8 @@ class _WireGuardConfigSectionState extends State<WireGuardConfigSection> {
   }
 
   void _detectFormat(String raw) {
-    _isStandard = !raw.trim().toLowerCase().startsWith('wireguard://');
+    final lower = raw.trim().toLowerCase();
+    _isStandard = !lower.startsWith('wireguard://');
   }
 
   void _onChanged(String value) {
@@ -105,9 +105,6 @@ class _WireGuardConfigSectionState extends State<WireGuardConfigSection> {
       }
     });
 
-    // ═══════════════════════════════════════════════════════════
-    //  🆕 debounce 500ms — فقط بعد از توقف تایپ ذخیره کن
-    // ═══════════════════════════════════════════════════════════
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       if (mounted) {
@@ -116,7 +113,6 @@ class _WireGuardConfigSectionState extends State<WireGuardConfigSection> {
     });
   }
 
-  /// تبدیل استاندارد ↔ URI.
   void _convertFormat() {
     final raw = _controller.text.trim();
     if (raw.isEmpty) return;
@@ -135,9 +131,6 @@ class _WireGuardConfigSectionState extends State<WireGuardConfigSection> {
       _parsed = parsed;
     });
 
-    // ═══════════════════════════════════════════════════════════
-    //  🆕 تبدیل فوری ذخیره بشه (نه با debounce)
-    // ═══════════════════════════════════════════════════════════
     widget.onConfigChanged(converted);
   }
 
@@ -160,26 +153,7 @@ class _WireGuardConfigSectionState extends State<WireGuardConfigSection> {
               ),
             ),
             const Spacer(),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 3,
-              ),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                _isStandard
-                    ? l10n.wireguardFormatStandard
-                    : l10n.wireguardFormatUri,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: theme.colorScheme.primary,
-                ),
-              ),
-            ),
+            _FormatBadge(isStandard: _isStandard, l10n: l10n),
           ],
         ),
         const SizedBox(height: 8),
@@ -198,11 +172,7 @@ class _WireGuardConfigSectionState extends State<WireGuardConfigSection> {
             fontSize: 11,
           ),
           decoration: InputDecoration(
-            hintText: _isStandard
-                ? '[Interface]\nPrivateKey = ...\nAddress = ...\n\n'
-                    '[Peer]\nPublicKey = ...\nEndpoint = ...'
-                : 'wireguard://privatekey@endpoint:port/?'
-                    'publickey=...&address=...',
+            hintText: _hintText(),
             errorText: _errorText,
             border: InputBorder.none,
             alignLabelWithHint: true,
@@ -211,11 +181,11 @@ class _WireGuardConfigSectionState extends State<WireGuardConfigSection> {
         ),
         if (parsed != null && parsed.isValid) ...[
           const SizedBox(height: 12),
-          _ParsedConfigPreview(parsed: parsed, theme: theme, l10n: l10n),
+          _ParsedConfigPreview(parsed: parsed, theme: theme),
         ],
-        const SizedBox(height: 8),
-        Align(
-          alignment: Alignment.centerRight,
+        const SizedBox(height: 12),
+        SizedBox(
+          width: double.infinity,
           child: OutlinedButton.icon(
             onPressed: _controller.text.trim().isEmpty ? null : _convertFormat,
             icon: const Icon(Icons.swap_horiz, size: 16),
@@ -229,21 +199,53 @@ class _WireGuardConfigSectionState extends State<WireGuardConfigSection> {
       ],
     );
   }
+
+  String _hintText() {
+    return _isStandard
+        ? '[Interface]\nPrivateKey = ...\nAddress = ...\n\n'
+            '[Peer]\nPublicKey = ...\nEndpoint = ...'
+        : 'wireguard://privatekey@endpoint:port/?'
+            'publickey=...&address=...';
+  }
 }
 
-/// ═══════════════════════════════════════════════════════════════
-///  پیش‌نمایش read-only کانفیگ پارس‌شده.
-/// ═══════════════════════════════════════════════════════════════
+/// بج فرمت (STANDARD / URI)
+class _FormatBadge extends StatelessWidget {
+  final bool isStandard;
+  final AppLocalizations l10n;
+
+  const _FormatBadge({required this.isStandard, required this.l10n});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final label =
+        isStandard ? l10n.wireguardFormatStandard : l10n.wireguardFormatUri;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primary.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        label,
+        style: theme.textTheme.bodySmall?.copyWith(
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          color: theme.colorScheme.primary,
+        ),
+      ),
+    );
+  }
+}
+
+/// پیش‌نمایش read-only کانفیگ پارس‌شده.
 class _ParsedConfigPreview extends StatelessWidget {
   final WireGuardConfig parsed;
   final ThemeData theme;
-  final AppLocalizations l10n;
 
-  const _ParsedConfigPreview({
-    required this.parsed,
-    required this.theme,
-    required this.l10n,
-  });
+  const _ParsedConfigPreview({required this.parsed, required this.theme});
 
   @override
   Widget build(BuildContext context) {
@@ -269,6 +271,11 @@ class _ParsedConfigPreview extends StatelessWidget {
           if (parsed.dns.isNotEmpty) ...[
             const SizedBox(height: 4),
             _row('DNS', parsed.dns),
+          ],
+          if (parsed.hasAmneziaParams) ...[
+            const SizedBox(height: 4),
+            _row(
+                'AmneziaWG', 'Jc=${parsed.jc} S1=${parsed.s1} H1=${parsed.h1}'),
           ],
         ],
       ),

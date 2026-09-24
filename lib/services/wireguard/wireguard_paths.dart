@@ -5,15 +5,13 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 
 import '../app_data_service.dart';
+import '../../models/wireguard_core_type.dart'; // 🆕 import مشترک
 
 /// ═══════════════════════════════════════════════════════════════
-///  WireGuardPaths — مسیرهای فایل‌های WireGuard.
+///  WireGuardPaths — مسیرهای فایل‌های WireGuard + پشتیبانی چند هسته.
 ///
-///  ساختار:
-///    `<dataDir>/wireguard/`
-///      ├── wireproxy.conf  (فایل ورودی wireproxy)
-///      ├── wg.conf          (کانفیگ استاندارد WireGuard)
-///      └── reserved         (اختیاری)
+///  ⚠️ enum `WireGuardCoreType` از این فایل حذف شد و حالا
+///  فقط یک نسخه در `lib/models/wireguard_core_type.dart` وجود دارد.
 /// ═══════════════════════════════════════════════════════════════
 class WireGuardPaths {
   WireGuardPaths._();
@@ -25,30 +23,34 @@ class WireGuardPaths {
     return dir;
   }
 
-  /// مسیر فایل کانفیگ استاندارد WireGuard که wireproxy باید بخونه.
   static Future<String> wgConfigPath() async {
     final dir = await workDir();
     return p.join(dir, 'wg.conf');
   }
 
-  /// مسیر فایل کانفیگ wrapper که به wireproxy داده می‌شه.
   static Future<String> wireproxyConfigPath() async {
     final dir = await workDir();
     return p.join(dir, 'wireproxy.conf');
   }
 
-  /// لیست مسیرهای احتمالی باینری wireproxy.
-  static Future<List<String>> binaryCandidates() async {
-    return AppDataService.binaryCandidates('wireproxy');
+  static String binaryName(WireGuardCoreType type) {
+    switch (type) {
+      case WireGuardCoreType.standard:
+        return 'wireproxy';
+      case WireGuardCoreType.amnezia:
+        return 'wireproxy-awg';
+    }
   }
 
-  /// پیدا کردن باینری.
-  static Future<String?> resolveBinary() async {
-    return AppDataService.resolveBinaryPath('wireproxy');
+  static Future<List<String>> binaryCandidates(WireGuardCoreType type) async {
+    return AppDataService.binaryCandidates(binaryName(type));
   }
 
-  /// مسیر پیش‌فرض برای نوشتن.
-  static Future<String> binaryPathForWrite() async {
-    return AppDataService.getBinaryPathForWrite('wireproxy');
+  static Future<String?> resolveBinary(WireGuardCoreType type) async {
+    return AppDataService.resolveBinaryPath(binaryName(type));
+  }
+
+  static Future<String> binaryPathForWrite(WireGuardCoreType type) async {
+    return AppDataService.getBinaryPathForWrite(binaryName(type));
   }
 }

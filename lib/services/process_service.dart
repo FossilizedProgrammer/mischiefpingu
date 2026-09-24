@@ -5,6 +5,15 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 
+// ═══════════════════════════════════════════════════════════════
+//  ⚠️ ترتیب importها مهم است:
+//   1. همه importها اول
+//   2. همه partها بعد از importها
+//   3. سپس declarationها (کلاس، enum، typedef، …)
+//
+//  ❌ هیچ typedef یا declaration نباید قبل از partها بیاید.
+// ═══════════════════════════════════════════════════════════════
+import '../models/wireguard_core_type.dart';
 import 'app_data_service.dart';
 import 'log_line_parsers.dart';
 import 'port_manager.dart';
@@ -17,6 +26,11 @@ import 'process/process_tunnel_state.dart';
 import 'process/process_protocol_state.dart';
 import 'process/process_notification_messages.dart';
 import 'wireguard/wireguard_paths.dart';
+
+// ═══════════════════════════════════════════════════════════════
+//  ✅ همه importها اینجا تمام شدند.
+//  ✅ حالا partها (فقط یک بلوک، بدون هیچ declaration قبل از آنها)
+// ═══════════════════════════════════════════════════════════════
 
 export 'process/log_source.dart' show LogSource;
 
@@ -50,10 +64,6 @@ class ProcessService extends ChangeNotifier
   // ═══════════════════════════════════════════════════════════════
   //  Tunnel running flags
   // ═══════════════════════════════════════════════════════════════
-
-// ═══════════════════════════════════════════════════════════════
-//  WireGuard state
-// ═══════════════════════════════════════════════════════════════
 
   bool isWireGuardRunning = false;
 

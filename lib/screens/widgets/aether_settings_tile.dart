@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 import '../../widgets/aether_protocol_card.dart';
+import '../../widgets/aether/aether_status_card.dart';
 import 'aether/aether_switches_section.dart';
 
 class AetherSettingsTile extends StatelessWidget {
@@ -94,9 +95,9 @@ class AetherSettingsTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // ═══════════════════════════════════════════════
-                    //  ⚠️ جدید: نمایش وضعیت لحظه‌ای Aether
-                    //  فقط وقتی تونل در حال اجرا است نمایش داده می‌شه
+                    //  ⚠️ نمایش وضعیت لحظه‌ای Aether (اگر در حال اجراست)
                     // ═══════════════════════════════════════════════
+                    const AetherStatusCard(),
                     const SizedBox(height: 12),
                     const AetherProtocolCard(),
                     const SizedBox(height: 12),

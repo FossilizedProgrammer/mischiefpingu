@@ -109,7 +109,7 @@ abstract class AppLocalizations {
   /// No description provided for @appSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Unofficial Psiphon client, Aether client, Tor client, SSTP client'**
+  /// **'Unofficial Psiphon client, Aether client, Tor client, SSTP client, WireGuard client'**
   String get appSubtitle;
 
   /// No description provided for @add.
@@ -1714,6 +1714,30 @@ abstract class AppLocalizations {
   /// **'WireGuard Settings'**
   String get wireguardSettings;
 
+  /// No description provided for @wireguardCoreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'WireGuard Core'**
+  String get wireguardCoreTitle;
+
+  /// No description provided for @wireguardCoreDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the WireGuard implementation. Amnezia adds obfuscation for heavy censorship.'**
+  String get wireguardCoreDescription;
+
+  /// No description provided for @wireguardCoreStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard (wireguard-go)'**
+  String get wireguardCoreStandard;
+
+  /// No description provided for @wireguardCoreAmnezia.
+  ///
+  /// In en, this message translates to:
+  /// **'Amnezia (wireguard-awg)'**
+  String get wireguardCoreAmnezia;
+
   /// No description provided for @tunnelHealth.
   ///
   /// In en, this message translates to:
@@ -2097,6 +2121,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Generating report…'**
   String get diagnosticsReportGenerating;
+
+  /// No description provided for @amneziaLinkDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'Amnezia VPN link detected'**
+  String get amneziaLinkDetected;
+
+  /// No description provided for @amneziaLinkName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get amneziaLinkName;
+
+  /// No description provided for @amneziaLinkEndpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'API Endpoint'**
+  String get amneziaLinkEndpoint;
+
+  /// No description provided for @amneziaLinkHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Click \'Fetch Config\' to retrieve the real AmneziaWG configuration from the API.'**
+  String get amneziaLinkHint;
+
+  /// No description provided for @amneziaFetch.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetch Config'**
+  String get amneziaFetch;
+
+  /// No description provided for @amneziaFetching.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetching…'**
+  String get amneziaFetching;
+
+  /// No description provided for @amneziaFetchSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'AmneziaWG configuration fetched successfully'**
+  String get amneziaFetchSuccess;
+
+  /// No description provided for @amneziaFetchFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to fetch AmneziaWG configuration'**
+  String get amneziaFetchFailed;
+
+  /// No description provided for @amneziaCoreRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'AmneziaWG core required for vpn:// links. The app will auto-select it.'**
+  String get amneziaCoreRequired;
+
+  /// No description provided for @amneziaApiError.
+  ///
+  /// In en, this message translates to:
+  /// **'Amnezia API error'**
+  String get amneziaApiError;
+
+  /// No description provided for @amneziaInvalidLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid vpn:// link format'**
+  String get amneziaInvalidLink;
 }
 
 class _AppLocalizationsDelegate

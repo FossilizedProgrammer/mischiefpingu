@@ -1,4 +1,4 @@
-library;
+// lib/services/core_update/core_updater_registry.dart
 
 import 'core_update_aether.dart';
 import 'core_update_psiphon.dart';
@@ -19,6 +19,7 @@ class CoreUpdaterRegistry {
     required SunAndLionUpdater sunAndLion,
     required SstpProxyUpdater sstp,
     required WireGuardUpdater wireguard,
+    required WireGuardAwgUpdater wireguardAwg, // 🆕
   }) : _updaters = {
           'aether': aetherAdapter(aether),
           'tor': torAdapter(tor),
@@ -26,6 +27,7 @@ class CoreUpdaterRegistry {
           'sunandlion': sunAndLionAdapter(sunAndLion),
           'sstp': sstpAdapter(sstp),
           'wireguard': wireGuardAdapter(wireguard),
+          'wireguard-awg': wireGuardAwgAdapter(wireguardAwg), // 🆕
         };
 
   CoreUpdater? byId(String coreId) => _updaters[coreId];

@@ -2,7 +2,7 @@
   "@@locale": "en",
 
   "appTitle": "Mischief Pingu",
-  "appSubtitle": "Unofficial Psiphon client, Aether client, Tor client, SSTP client",
+  "appSubtitle": "Unofficial Psiphon client, Aether client, Tor client, SSTP client, WireGuard client",
 
   "add": "Add",
   "addNew": "Add new",
@@ -277,6 +277,11 @@
   "internetQualityUnstable": "Unstable",
 
   "wireguardSettings": "WireGuard Settings",
+  
+  "wireguardCoreTitle": "WireGuard Core",
+  "wireguardCoreDescription": "Choose the WireGuard implementation. Amnezia adds obfuscation for heavy censorship.",
+  "wireguardCoreStandard": "Standard (wireguard-go)",
+  "wireguardCoreAmnezia": "Amnezia (wireguard-awg)",  
 
   "tunnelHealth": "Tunnel Health",
   "tunnelHealthProbeAll": "Test all",
@@ -386,5 +391,17 @@
   "diagnosticsReportRedacted": "Sensitive data has been redacted",
   "diagnosticsReportPreview": "Preview",
   "diagnosticsReportClose": "Close",
-  "diagnosticsReportGenerating": "Generating report…"
+  "diagnosticsReportGenerating": "Generating report…",
+
+  "amneziaLinkDetected": "Amnezia VPN link detected",
+  "amneziaLinkName": "Name",
+  "amneziaLinkEndpoint": "API Endpoint",
+  "amneziaLinkHint": "Click 'Fetch Config' to retrieve the real AmneziaWG configuration from the API.",
+  "amneziaFetch": "Fetch Config",
+  "amneziaFetching": "Fetching…",
+  "amneziaFetchSuccess": "AmneziaWG configuration fetched successfully",
+  "amneziaFetchFailed": "Failed to fetch AmneziaWG configuration",
+  "amneziaCoreRequired": "AmneziaWG core required for vpn:// links. The app will auto-select it.",
+  "amneziaApiError": "Amnezia API error",
+  "amneziaInvalidLink": "Invalid vpn:// link format"
 }

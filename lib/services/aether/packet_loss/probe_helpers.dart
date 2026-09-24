@@ -41,17 +41,4 @@ class ProbeHelpers {
   static String headPreview(List<int> data) {
     return String.fromCharCodes(data.take(40));
   }
-
-  static Future<List<int>> safeReadFirst(
-    Stream<List<int>> stream,
-    Duration timeout,
-  ) async {
-    try {
-      return await stream.timeout(timeout).first;
-    } catch (_) {
-      return const [];
-    }
-  }
-
-  static List<int> asciiBytes(String s) => ascii.encode(s);
 }

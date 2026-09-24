@@ -1,31 +1,36 @@
 part of 'app_provider.dart';
 
 /// ═══════════════════════════════════════════════════════════════
-///  WireGuard Preflight.
+///  WireGuard Preflight — بررسی‌های قبل از start.
 /// ═══════════════════════════════════════════════════════════════
 extension AppProviderWireGuardPreflight on AppProvider {
   Future<bool> _preflightWireGuardBinary(String src) async {
     try {
-      final found = await WireGuardPaths.resolveBinary();
+      final coreType = settings.wireGuardCoreType;
+      final found = await WireGuardPaths.resolveBinary(coreType);
       if (found == null) {
         processService.addLog(
-          '✗ wireproxy binary not found. Searched paths:',
+          '✗ ${WireGuardPaths.binaryName(coreType)} binary not found. Searched paths:',
           source: src,
         );
         await AppDataService.logBinaryCandidates(
-          'wireproxy',
+          WireGuardPaths.binaryName(coreType),
           log: (line) => processService.addLog(line, source: src),
         );
 
-        final msg = 'wireproxy binary not found. Please place '
-            '"wireproxy${AppDataService.exeExt}" in the data folder, '
+        final msg =
+            '${WireGuardPaths.binaryName(coreType)} binary not found. Please place '
+            '"${WireGuardPaths.binaryName(coreType)}${AppDataService.exeExt}" in the data folder, '
             'or download it from "Core Updates".';
         processService.setBinaryMissingMessage(msg);
         wireGuardStatus = 'WireGuard: Binary missing';
         touch();
         return false;
       }
-      processService.addLog('✓ wireproxy binary found: $found', source: src);
+      processService.addLog(
+        '✓ ${WireGuardPaths.binaryName(coreType)} binary found: $found',
+        source: src,
+      );
       return true;
     } catch (e) {
       processService.addLog(
@@ -34,34 +39,6 @@ extension AppProviderWireGuardPreflight on AppProvider {
       );
       return false;
     }
-  }
-
-  Future<bool> _preflightWireGuardConfig(String src) async {
-    final raw = settings.wireguardConfigRaw.trim();
-    if (raw.isEmpty) {
-      final msg = 'WireGuard config is empty. Please paste a WireGuard config '
-          'or URI in the WireGuard settings.';
-      processService.setPortConflictMessage(msg);
-      processService.addLog('✗ WireGuard config is empty', source: src);
-      wireGuardStatus = 'WireGuard: Config empty';
-      touch();
-      return false;
-    }
-
-    final parsed = WireGuardConfigParser.parse(raw);
-    if (parsed == null || !parsed.isValid) {
-      final msg = 'WireGuard config is invalid. Please check PrivateKey, '
-          'PublicKey, and Endpoint.';
-      processService.setPortConflictMessage(msg);
-      processService.addLog(
-        '✗ WireGuard config is invalid',
-        source: src,
-      );
-      wireGuardStatus = 'WireGuard: Invalid config';
-      touch();
-      return false;
-    }
-    return true;
   }
 
   Future<bool> _preflightWireGuardPort(String src) async {

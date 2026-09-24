@@ -4,19 +4,10 @@ import 'wireguard_config_parser.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  WireGuardUriCodec — تبدیل بین کانفیگ استاندارد و URI.
-///
-///  URI format:
-///    `wireguard://<privateKey>@<host>:<port>/?publickey=...&address=...&allowedips=...&dns=...#<name>`
-///
-///  مثال:
-///    ```
-///    wireguard://iOXJFL6YVfjU5SAw%2BEeh83ZgB5R1bi%2FviYzMdV9Gzn8%3D@gc-wgupt-ai.ramzshadi.ir:51861/?publickey=2K6ji30yzmdnrlvcuDajHy8zPY%2BI7aiovLLvK8HJW1M%3D&address=10.0.14.47%2F32&allowedips=0.0.0.0%2F0%2C%3A%3A%2F0&dns=1.1.1.1%2C8.8.8.8#WGTorkish
-///    ```
 /// ═══════════════════════════════════════════════════════════════
 class WireGuardUriCodec {
   WireGuardUriCodec._();
 
-  /// دیکد URI به model.
   static WireGuardConfig? decode(String uri) {
     try {
       final u = Uri.parse(uri);
@@ -31,36 +22,40 @@ class WireGuardUriCodec {
       final publicKey = Uri.decodeComponent(q['publickey'] ?? '');
       if (publicKey.isEmpty) return null;
 
-      final address = Uri.decodeComponent(q['address'] ?? '10.0.0.2/32');
-      final allowedIps = Uri.decodeComponent(
-        q['allowedips'] ?? '0.0.0.0/0, ::/0',
-      );
-      final dns = Uri.decodeComponent(q['dns'] ?? '1.1.1.1');
-      final mtu = Uri.decodeComponent(q['mtu'] ?? '1280');
-      final keepalive = Uri.decodeComponent(
-        q['persistentkeepalive'] ?? '25',
-      );
-      final preshared = Uri.decodeComponent(q['presharedkey'] ?? '');
-      final reserved = Uri.decodeComponent(q['reserved'] ?? '');
-
       return WireGuardConfig(
         privateKey: privateKey,
-        address: address,
-        dns: dns,
-        mtu: mtu,
+        address: Uri.decodeComponent(q['address'] ?? '10.0.0.2/32'),
+        dns: Uri.decodeComponent(q['dns'] ?? '1.1.1.1'),
+        mtu: Uri.decodeComponent(q['mtu'] ?? '1280'),
         publicKey: publicKey,
         endpoint: '$host:$port',
-        allowedIps: allowedIps,
-        persistentKeepalive: keepalive,
-        preSharedKey: preshared,
-        reserved: reserved,
+        allowedIps: Uri.decodeComponent(q['allowedips'] ?? '0.0.0.0/0, ::/0'),
+        persistentKeepalive:
+            Uri.decodeComponent(q['persistentkeepalive'] ?? '25'),
+        preSharedKey: Uri.decodeComponent(q['presharedkey'] ?? ''),
+        reserved: Uri.decodeComponent(q['reserved'] ?? ''),
+        jc: Uri.decodeComponent(q['jc'] ?? ''),
+        jmin: Uri.decodeComponent(q['jmin'] ?? ''),
+        jmax: Uri.decodeComponent(q['jmax'] ?? ''),
+        s1: Uri.decodeComponent(q['s1'] ?? ''),
+        s2: Uri.decodeComponent(q['s2'] ?? ''),
+        s3: Uri.decodeComponent(q['s3'] ?? ''),
+        s4: Uri.decodeComponent(q['s4'] ?? ''),
+        h1: Uri.decodeComponent(q['h1'] ?? ''),
+        h2: Uri.decodeComponent(q['h2'] ?? ''),
+        h3: Uri.decodeComponent(q['h3'] ?? ''),
+        h4: Uri.decodeComponent(q['h4'] ?? ''),
+        i1: Uri.decodeComponent(q['i1'] ?? ''),
+        i2: Uri.decodeComponent(q['i2'] ?? ''),
+        i3: Uri.decodeComponent(q['i3'] ?? ''),
+        i4: Uri.decodeComponent(q['i4'] ?? ''),
+        i5: Uri.decodeComponent(q['i5'] ?? ''),
       );
     } catch (_) {
       return null;
     }
   }
 
-  /// انکد model به URI.
   static String encode(WireGuardConfig cfg) {
     final colon = cfg.endpoint.lastIndexOf(':');
     final host = colon > 0 ? cfg.endpoint.substring(0, colon) : cfg.endpoint;
@@ -78,10 +73,25 @@ class WireGuardUriCodec {
     if (cfg.persistentKeepalive.isNotEmpty) {
       qp['persistentkeepalive'] = cfg.persistentKeepalive;
     }
-    if (cfg.preSharedKey.isNotEmpty) {
-      qp['presharedkey'] = cfg.preSharedKey;
-    }
+    if (cfg.preSharedKey.isNotEmpty) qp['presharedkey'] = cfg.preSharedKey;
     if (cfg.reserved.isNotEmpty) qp['reserved'] = cfg.reserved;
+
+    if (cfg.jc.isNotEmpty) qp['jc'] = cfg.jc;
+    if (cfg.jmin.isNotEmpty) qp['jmin'] = cfg.jmin;
+    if (cfg.jmax.isNotEmpty) qp['jmax'] = cfg.jmax;
+    if (cfg.s1.isNotEmpty) qp['s1'] = cfg.s1;
+    if (cfg.s2.isNotEmpty) qp['s2'] = cfg.s2;
+    if (cfg.s3.isNotEmpty) qp['s3'] = cfg.s3;
+    if (cfg.s4.isNotEmpty) qp['s4'] = cfg.s4;
+    if (cfg.h1.isNotEmpty) qp['h1'] = cfg.h1;
+    if (cfg.h2.isNotEmpty) qp['h2'] = cfg.h2;
+    if (cfg.h3.isNotEmpty) qp['h3'] = cfg.h3;
+    if (cfg.h4.isNotEmpty) qp['h4'] = cfg.h4;
+    if (cfg.i1.isNotEmpty) qp['i1'] = cfg.i1;
+    if (cfg.i2.isNotEmpty) qp['i2'] = cfg.i2;
+    if (cfg.i3.isNotEmpty) qp['i3'] = cfg.i3;
+    if (cfg.i4.isNotEmpty) qp['i4'] = cfg.i4;
+    if (cfg.i5.isNotEmpty) qp['i5'] = cfg.i5;
 
     final query = qp.entries
         .map((e) => '${e.key}=${Uri.encodeComponent(e.value)}')

@@ -40,8 +40,6 @@ class LogoAudioManager {
     }
   }
 
-  bool get isMuted => _muted;
-
   Future<void> playHurt() => _play(_hurtPlayer, _hurtSoundAsset, 'hurt');
   Future<void> playSad() => _play(_sadPlayer, _sadSoundAsset, 'sad');
   Future<void> playHappy() => _play(_happyPlayer, _happySoundAsset, 'happy');

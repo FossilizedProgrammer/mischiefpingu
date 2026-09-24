@@ -79,7 +79,8 @@ extension AetherTestExecutorRunner on AetherTestExecutor {
     for (final c in candidates) {
       final tag = c.fromProfileCache || c.fromHistory ? ' [${c.cacheTag}]' : '';
       final pinTag = c.isCustomEndpoint ? ' [PINNED]' : '';
-      processService.addLog('   • ${c.label}$tag$pinTag', source: LogSource.aether);
+      processService.addLog('   • ${c.label}$tag$pinTag',
+          source: LogSource.aether);
     }
 
     // ═══════════════════════════════════════════════════════════

@@ -1,3 +1,5 @@
+// lib/screens/widgets/core_update/core_update_controller.dart
+
 library;
 
 import 'package:flutter/foundation.dart';
@@ -71,6 +73,9 @@ class CoreUpdateController extends ChangeNotifier {
               psiphonRev: provider.settings.psiphonBuildRev,
               psiphonBinSha: provider.settings.psiphonBinarySha,
             );
+          case CoreKind.wireguardAwg:
+            // 🆕
+            return svc.checkForUpdate('wireguard-awg', proxy: proxy);
           default:
             return svc.checkForUpdate(_coreIdFor(kind), proxy: proxy);
         }
@@ -92,6 +97,13 @@ class CoreUpdateController extends ChangeNotifier {
               proxy: proxy,
               psiphonRev: provider.settings.psiphonBuildRev,
               psiphonBinSha: provider.settings.psiphonBinarySha,
+              onProgress: onProgress,
+            );
+          case CoreKind.wireguardAwg:
+            // 🆕
+            return svc.updateCore(
+              'wireguard-awg',
+              proxy: proxy,
               onProgress: onProgress,
             );
           default:
@@ -133,6 +145,11 @@ class CoreUpdateController extends ChangeNotifier {
     );
   }
 
+  /// ═══════════════════════════════════════════════════════════════
+  ///  نگاشت CoreKind به coreId مورد استفاده در CoreUpdateService.
+  ///
+  ///  ⚠️ تمام CoreKindها یک coreId مطابق با CoreUpdaterRegistry دارند.
+  /// ═══════════════════════════════════════════════════════════════
   static String _coreIdFor(CoreKind kind) {
     switch (kind) {
       case CoreKind.aether:
@@ -147,6 +164,8 @@ class CoreUpdateController extends ChangeNotifier {
         return 'sstp';
       case CoreKind.wireguard:
         return 'wireguard';
+      case CoreKind.wireguardAwg:
+        return 'wireguard-awg'; // 🆕
     }
   }
 }

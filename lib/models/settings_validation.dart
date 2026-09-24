@@ -4,9 +4,6 @@ library;
 
 import 'settings_model.dart';
 
-/// ═══════════════════════════════════════════════════════════════
-///  SettingsValidation — اعتبارسنجی و نرمال‌سازی AppSettings.
-/// ═══════════════════════════════════════════════════════════════
 class SettingsValidation {
   SettingsValidation._();
 
@@ -53,7 +50,6 @@ class SettingsValidation {
     if (!_validEndpointPinningModes.contains(s.aetherEndpointPinning)) {
       s.aetherEndpointPinning = 'automatic';
     }
-    // اگه custom endpoint خالیه، نمیتونیم custom_only یا custom_first داشته باشیم
     if (s.aetherCustomEndpoint.trim().isEmpty &&
         s.aetherEndpointPinning != 'automatic') {
       s.aetherEndpointPinning = 'automatic';
@@ -77,7 +73,11 @@ class SettingsValidation {
 
   static void _validateWireGuard(AppSettings s) {
     if (s.wireguardSocksPort < 1 || s.wireguardSocksPort > 65535) {
-      s.wireguardSocksPort = 25344;
+      s.wireguardSocksPort = 1085;
+    }
+
+    if (s.wireguardCore != 'standard' && s.wireguardCore != 'amnezia') {
+      s.wireguardCore = 'standard';
     }
   }
 

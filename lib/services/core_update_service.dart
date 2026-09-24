@@ -1,3 +1,5 @@
+// lib/services/core_update_service.dart
+
 library;
 
 import 'core_update/core_update_aether.dart';
@@ -65,6 +67,13 @@ class CoreUpdateService {
       log: log,
     ),
     wireguard: WireGuardUpdater(
+      network: _network,
+      pending: _pending,
+      processUtils: _process,
+      log: log,
+    ),
+    // 🆕 هستهٔ دوم WireGuard (AmneziaWG)
+    wireguardAwg: WireGuardAwgUpdater(
       network: _network,
       pending: _pending,
       processUtils: _process,

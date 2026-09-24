@@ -2,6 +2,7 @@ library;
 
 import 'dart:io';
 
+import '../../models/wireguard_core_type.dart';
 import '../process_service.dart';
 import 'wireguard_config_parser.dart';
 import 'wireguard_paths.dart';
@@ -15,7 +16,7 @@ import 'wireguard_paths.dart';
 ///    WGConfig = /path/to/wg.conf
 ///
 ///    [Socks5]
-///    BindAddress = 127.0.0.1:25344
+///    BindAddress = 127.0.0.1:1085
 ///
 ///  اگر shareOnLan فعال باشه، BindAddress به 0.0.0.0 تغییر می‌کنه.
 /// ═══════════════════════════════════════════════════════════════
@@ -25,24 +26,26 @@ class WireGuardConfigBuilder {
   WireGuardConfigBuilder({required this.processService});
 
   /// ساخت فایل‌های کانفیگ و برگرداندن مسیر wrapper.
-  ///
-  /// خروجی: مسیر `wireproxy.conf` که باید به wireproxy -c داده بشه.
   Future<String> build({
     required WireGuardConfig config,
     required int socksPort,
     required bool shareOnLan,
+    required WireGuardCoreType coreType,
   }) async {
-    // ۱. نوشتن کانفیگ استاندارد WireGuard
     final wgPath = await WireGuardPaths.wgConfigPath();
-    final standardConf = WireGuardConfigParser.serialize(config);
-    await File(wgPath).writeAsString(standardConf);
+    final includeAmnezia = coreType == WireGuardCoreType.amnezia;
+    final confContent = WireGuardConfigParser.serialize(
+      config,
+      includeAmnezia: includeAmnezia,
+    );
+    await File(wgPath).writeAsString(confContent);
 
     processService.addLog(
-      '→ WireGuard standard config written: $wgPath',
+      '→ WireGuard config written: $wgPath '
+      '(core=${coreType.name}, amneziaParams=$includeAmnezia)',
       source: LogSource.wireguard,
     );
 
-    // ۲. نوشتن فایل wrapper برای wireproxy
     final bindHost = shareOnLan ? '0.0.0.0' : '127.0.0.1';
     final wrapperPath = await WireGuardPaths.wireproxyConfigPath();
 
