@@ -58,12 +58,16 @@ class ArchiveExtractor {
   ///
   /// [binaryBaseName] اسم بدون پسوند (مثل `sstp-proxy`).
   /// [fallbackPattern] الگوی جایگزین برای جستجو (مثل `wireproxy`).
+  /// [targetBinaryBaseName] نام پایه نهایی مورد انتظار (مثل `wireproxy-awg`).
+  ///   اگر داده شود، بررسی می‌کند که آیا فایل پیدا شده به این نام ختم می‌شود
+  ///   و اگر نه، آن را تغییر نام می‌دهد.
   ///
   /// ⚠️ اگر فایل `raw` باشد (بدون آرشیو)، مستقیم برگردانده می‌شه.
   Future<String> findBinary({
     required Directory extractDir,
     required String binaryBaseName,
     required String fallbackPattern,
+    String? targetBinaryBaseName,
     String? rawFilePath,
   }) async {
     // ═══════════════════════════════════════════════════════════
@@ -79,17 +83,20 @@ class ArchiveExtractor {
     }
 
     final binaryName = '$binaryBaseName$_exeExt';
+    final String? expectedName = targetBinaryBaseName != null
+        ? '$targetBinaryBaseName$_exeExt'
+        : null;
 
     var found = await CoreUpdateUtils.findFile(extractDir, binaryName);
     if (found != null) {
       _log('→ [match-1] exact name: $found');
-      return found;
+      return await _maybeRename(found, expectedName);
     }
 
     found = await CoreUpdateUtils.findFileByPrefix(extractDir, binaryBaseName);
     if (found != null) {
       _log('→ [match-2] prefix match: $found');
-      return found;
+      return await _maybeRename(found, expectedName);
     }
 
     found = await CoreUpdateUtils.findFileContaining(
@@ -98,7 +105,7 @@ class ArchiveExtractor {
     );
     if (found != null) {
       _log('→ [match-3] contains match: $found');
-      return found;
+      return await _maybeRename(found, expectedName);
     }
 
     throw StateError(
@@ -107,10 +114,35 @@ class ArchiveExtractor {
     );
   }
 
+  /// اگر [expectedName] داده شده باشد و نام فایل [found] با آن مطابقت نداشته باشد،
+  /// فایل را تغییر نام می‌دهد و مسیر جدید را برمی‌گرداند.
+  Future<String> _maybeRename(String found, String? expectedName) async {
+    if (expectedName == null || expectedName.isEmpty) return found;
+
+    final currentName = found.split(Platform.pathSeparator).last;
+    if (currentName == expectedName) return found;
+
+    final dir = File(found).parent.path;
+    final newPath = '$dir${Platform.pathSeparator}$expectedName';
+
+    _log('→ Renaming binary: $currentName → $expectedName');
+    try {
+      await File(found).rename(newPath);
+      // اطمینان از اجرایی بودن فایل جدید
+      if (!_isWin) {
+        try {
+          await Process.run('chmod', ['+x', newPath]);
+        } catch (_) {}
+      }
+      return newPath;
+    } catch (e) {
+      _log('⚠ Failed to rename $found to $expectedName: $e');
+      // اگر تغییر نام شکست خورد، همان مسیر اصلی را برگردان
+      return found;
+    }
+  }
+
   /// تشخیص نوع آرشیو از روی URL.
-  ///
-  /// ⚠️ اگر URL به آرشیو ختم نشه، `isArchive=false` و
-  /// `isRawBinary=true` برمی‌گردونه — که برای wireproxy لازمه.
   ({
     bool isZip,
     bool isTarXz,

@@ -79,7 +79,13 @@ class GithubReleaseInstaller {
       );
       onProgress?.call(80);
 
-      final binaryName = '${spec.binaryBaseName}$_exeExt';
+      // ═══════════════════════════════════════════════════════════
+      //  🆕 تعیین نام نهایی مورد انتظار
+      //  (مثلاً wireproxy-awg یا wireproxy-awg.exe)
+      // ═══════════════════════════════════════════════════════════
+      final targetBinaryName = '${spec.binaryBaseName}$_exeExt';
+
+      final binaryName = targetBinaryName; // برای استفاده در ادامه
       final dest = await spec.destPathResolver();
       _log('→ ${spec.displayName} destination: $dest');
 
@@ -100,13 +106,29 @@ class GithubReleaseInstaller {
           extractDir: extractDir,
           binaryBaseName: spec.binaryBaseName,
           fallbackPattern: spec.fallbackPattern,
+          targetBinaryBaseName: spec.binaryBaseName, // 🆕 پاس دادن نام نهایی
         );
       } else {
-        // ═══════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         //  🆕 raw binary (مثل wireproxy)
-        // ═══════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         found = archive;
         _log('→ Raw binary (not archive): $archive');
+      }
+
+      // ═══════════════════════════════════════════════════════════
+      //  🆕 اطمینان از اینکه فایل نهایی نام درست دارد
+      //  (مخصوصاً برای raw binary ها)
+      // ═══════════════════════════════════════════════════════════
+      if (cls.isRawBinary) {
+        final dir = File(found).parent.path;
+        final currentName = found.split(Platform.pathSeparator).last;
+        if (currentName != targetBinaryName) {
+          final newPath = '$dir${Platform.pathSeparator}$targetBinaryName';
+          _log('→ Renaming raw binary: $currentName → $targetBinaryName');
+          await File(found).rename(newPath);
+          found = newPath;
+        }
       }
 
       found = await _extractor.safeCopyBinary(source: found, tmpPath: tmp.path);
@@ -119,6 +141,9 @@ class GithubReleaseInstaller {
 
       onProgress?.call(90);
 
+      // ═══════════════════════════════════════════════════════════
+      //  🆕 استفاده از نام نهایی برای بررسی پروسه در حال اجرا
+      // ═══════════════════════════════════════════════════════════
       final isRunning = await processUtils.isProcessRunning(binaryName);
       if (isRunning) {
         await _deferred.defer(
