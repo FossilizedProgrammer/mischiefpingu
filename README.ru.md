@@ -1,120 +1,187 @@
-# MischiefPingu
+# 🐧 Озорной Пингвин (MischiefPingu)
 
-**Многопротокольный прокси-клиент — Psiphon • Aether • Tor • SSTP**
+<div align="center">
 
-GUI-приложение на Flutter для десктопа (Linux и Windows), объединяющее несколько ядер обхода цензуры в одном чистом интерфейсе.
+**Многопрофильный клиент — Psiphon • Aether • Tor • SSTP • WireGuard**
 
-🔗 **GitHub:** [github.com/FossilizedProgrammer/mischiefpingu](https://github.com/FossilizedProgrammer/mischiefpingu)
-📬 **Связь с разработчиком (X / Twitter):** [@tenblockperhour](https://x.com/tenblockperhour)
+Графический интерфейс Flutter для настольных ПК (Linux и Windows), объединяющий несколько ядер обхода цензуры в чистом и целостном интерфейсе.
 
-> **Правовая информация о Psiphon:**
-> Это **неофициальный клиент Psiphon**. Он **не связан с Psiphon Inc. и не одобрен ею.** Название «Psiphon» и официальное ядро Psiphon tunnel core являются собственностью Psiphon Inc.
+[![GitHub](https://img.shields.io/badge/GitHub-FossilizedProgrammer/mischiefpingu-blue?logo=github)](https://github.com/FossilizedProgrammer/mischiefpingu)
+[![X (formerly Twitter)](https://img.shields.io/badge/X-@tenblockperhour-black?logo=x)](https://x.com/tenblockperhour)
+[![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
+</div>
 
 ---
 
-## ✨ Возможности
+## ️ Правовое уведомление о Psiphon
 
-### 🔌 Четыре подключаемых ядра
-- **Psiphon** — официальные бинарники psiphon-tunnel-core и форк **Shiro Khorshid (SunAndLion)** для фронтинга через CDN.
-- **Aether** — транспорты MASQUE / MIM / WireGuard / Gool с автосканированием endpoint-ов.
-- **Tor** — интеграция expert-bundle с подключаемыми транспортами (obfs4, meek, snowflake, webtunnel, conjure).
-- **SSTP** — прокси-клиент SSTP, разработанный автором этого проекта.
+> Это **неофициальный** клиент Psiphon, не имеющий отношения к компании Psiphon Inc. и не одобренный ею.  
+> Название «Psiphon» и официальное ядро Psiphon являются товарными знаками компании Psiphon Inc.
 
-### 🧠 Умные режимы подключения (Psiphon)
-1. **Фронтинг (CDN)** — форк Shiro Khorshid / SunAndLion с `FRONTED-MEEK-CDN-OSSH`. Лучше для жёсткой цензуры.
-2. **Aether как upstream** — официальное ядро Psiphon через SOCKS5 Aether.
-3. **Conduit (WebRTC Inproxy)** — децентрализованные ретрансляторы.
-4. **Прямое** — официальное ядро Psiphon без фронтинга.
+---
+
+##  Возможности
+
+### 🔌 Пять подключаемых ядер
+
+| Ядро | Описание |
+|------|----------|
+| **Psiphon** | Официальный бинарный файл `psiphon-tunnel-core` вместе с форком SunAndLion для CDN-фронтинга |
+| **Aether** | Протоколы MASQUE / MIM / WireGuard / Gool с автоматическим сканированием конечных точек |
+| **Tor** | Интеграция expert-bundle с плагинами obfs4, meek, snowflake, webtunnel и conjure |
+| **SSTP** | SSTP-прокси клиент, разработанный автором этого приложения |
+| **WireGuard** | Пользовательский клиент на основе wireproxy с двумя ядрами: **Standard** (wireguard-go) и **AmneziaWG** (обфусцированная версия для жёсткой цензуры) |
+
+**Общие возможности:**  
+Поддержка вставки конфигов или URI, локальный SOCKS-порт, Share-on-LAN и автоматическое переподключение.
+
+---
+
+###  Умные режимы подключения (Psiphon)
+
+| Режим | Описание |
+|-------|----------|
+| **Фронтинг (CDN)** | Форк SunAndLion с настройкой `FRONTED-MEEK-CDN-OSSH`. Лучший выбор при жёсткой цензуре |
+| **Апстрим через Aether** | Официальное ядро Psiphon через SOCKS5 Aether |
+| **Conduit (WebRTC Inproxy)** | Децентрализованные пиринговые ретрансляторы |
+| **Прямой** | Официальное ядро Psiphon без фронтинга |
+
+---
 
 ### 🔗 Цепочки туннелей
+
 - Tor через Aether / Psiphon / SSTP
 - SSTP через Aether / Psiphon / Tor
 - Psiphon через Aether / Tor / SSTP / ручной прокси
 
-### 🎛️ Профили Aether — автоматический поиск маршрута
-Aether не требует от пользователя ручной настройки сложных параметров. У него есть несколько профилей, и он **автоматически перебирает их по порядку, пока не найдёт рабочий маршрут**:
+---
 
-- **Адаптивный** — баланс скорости и покрытия; MASQUE/HTTP-3 → MASQUE/HTTP-2 → WireGuard → Gool.
-- **Нестабильный сигнал** — для мобильных сетей; добавляет MIM/HTTP-3 и использует `--noize balanced`.
-- **Строгая сеть** — для ограниченного Wi-Fi / жёсткой фильтрации; fragment + masque-in-masque и `--noize gfw`.
-- **Ручной** — полный контроль для продвинутых пользователей.
+### ️ Профили Aether — автоматический поиск пути
 
-Последний успешный транспорт и endpoint запоминаются и пробуются первыми при следующем запуске.
+Aether не требует от пользователя возни со сложными настройками. В нём есть несколько готовых профилей, которые он пробует по очереди, пока не найдёт лучший работающий путь:
+
+| Профиль | Описание |
+|---------|----------|
+| **Адаптивный** | Баланс скорости и покрытия; MASQUE/HTTP-3 → MASQUE/HTTP-2 → WireGuard → Gool |
+| **Нестабильный сигнал** | Для нестабильного мобильного интернета; также пробует MIM/HTTP-3 и использует `--noize balanced` |
+| **Ограниченная сеть** | Для ограниченного Wi-Fi или жёсткой фильтрации; fragment + masque-in-masque и `--noize gfw` |
+| **Ручной** | Полный контроль для продвинутых пользователей |
+
+> 💡 Последний успешный протокол и конечная точка запоминаются и пробуются в первую очередь при следующем запуске.
+
+---
 
 ### 🛰️ Сканер IP CDN
-- Предустановки: Akamai, Cloudflare, Fastly, Google CDN, Amazon CloudFront, Microsoft Azure.
-- Расширение CIDR / диапазонов / одиночных IP (до 20 000 записей).
-- Параллельная проверка TLS handshake с оценкой задержки и надёжности.
-- Применение Top 5 / Top 20 к настройкам фронтинга.
 
-### 🌐 Загрузчик серверов VPN Gate
-- Парсит **vpngate.net** (напрямую или через любой активный прокси).
-- Автообновление каждые 15 минут.
-- Параллельная проверка здоровья через TCP + TLS ClientHello.
-- Копирование результатов списком или в CSV.
-
-### 🛠️ Обновления ядер
-Встроенный апдейтер для всех бинарников (Aether, Tor, Psiphon, SunAndLion, SSTP). Обновления откладываются и применяются при следующем запуске, если ядро запущено.
-
-### 🌍 Локализация
-Полный перевод интерфейса на **английский**, **فارسی** и **русский** с переключением на лету.
-
-### 🎨 Прочее
-- 6 цветовых тем с авто-переключением светлая/тёмная.
-- Сохранение настроек через SharedPreferences.
-- Share-on-LAN для каждого ядра.
-- Авто-переподключение для каждого ядра.
-- Живая консоль логов с копированием / очисткой.
-- Watchdog туннелей с авто-восстановлением.
-- Пингвин-маскот, реагирующий на события подключения.
+- **Готовые пресеты:** Akamai, Cloudflare, Fastly, Google CDN, Amazon CloudFront, Microsoft Azure
+- **Развёртывание CIDR / диапазонов / отдельных IP** (до 20 000 записей)
+- **Параллельные проверки TLS handshake** с оценкой задержки и стабильности
+- **Применение Top 5 / Top 20** к настройкам фронтинга
 
 ---
 
-## 🐧 Linux — предварительные требования
+###  Получатель серверов VPN Gate
 
-Перед сборкой или запуском на Linux установите пакеты разработки GStreamer:
-
-~~~bash
-sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
-~~~
+- Сбор данных с `vpngate.net` (напрямую или через любой активный прокси)
+- Автообновление каждые 15 минут
+- Параллельные проверки работоспособности через TCP + TLS ClientHello
+- Копирование результатов в виде простого списка или подробного CSV
 
 ---
 
-## 📦 Сборка
+### 🛠️ Обновление ядер
 
-~~~bash
-flutter pub get
-flutter build linux --release --no-tree-shake-icons
-# или
-flutter build windows --release --no-tree-shake-icons
-~~~
+Встроенный обновлятор для всех бинарных файлов (Aether, Tor, Psiphon, SunAndLion, SSTP, wireproxy). Обновления сохраняются и применяются при следующем запуске.
+
+---
+
+### 🌍 Многоязычность
+
+Полный перевод интерфейса на **английский**, **персидский** и **русский** языки с мгновенным переключением.
+
+---
+
+### 🎨 Другие возможности
+
+- 6 цветовых тем с автоматическим светлым/тёмным режимом
+- Сохранение настроек через SharedPreferences
+- Поддержка общего доступа в локальной сети для всех ядер (включая WireGuard)
+- Автоматическое переподключение для каждого ядра
+- Живая консоль логов с копированием / очисткой
+- Сторожевой таймер туннеля с автоматическим восстановлением
+- Пингвин, который реагирует на события подключения! 🐧
+
+---
+
+## 🚀 Установка и запуск
+
+###  Linux — зависимости
+
+Перед запуском или сборкой на Linux установите пакеты разработки GStreamer:
+
+**sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev**
+
+### 📦 Сборка
+
+Сначала выполните:
+
+**flutter pub get**
+
+Затем для Linux:
+
+**flutter build linux --release --no-tree-shake-icons**
+
+Или для Windows:
+
+**flutter build windows --release --no-tree-shake-icons**
 
 ---
 
 ## 🙏 Благодарности
 
-Этот проект не существовал бы без работы других людей. Искренняя благодарность:
+Этот проект не существовал бы без усилий других людей. Искренняя благодарность:
 
-- **Aether** — [CluvexStudio/Aether](https://github.com/CluvexStudio/Aether/releases#release-v2.0.0). Ядро Aether обеспечивает работу всех транспортов в этом приложении, кроме Psiphon, Tor и SSTP. Вся заслуга движка Aether принадлежит его автору.
-- **Форк Shiro Khorshid (SunAndLion) для Psiphon** — [shirokhorshid/psiphon-tunnel-core](https://github.com/shirokhorshid/psiphon-tunnel-core). Режим фронтинга / CDN в этом приложении полностью опирается на этот форк. **Разработкой этого ядра занимается автор Shiro Khorshid** — автор MischiefPingu лишь переопубликовал скомпилированный бинарник в своём репозитории, поскольку в upstream-проекте готового бинарника не было.
-- **Официальный Psiphon** — [Psiphon-Labs/psiphon-tunnel-core-binaries](https://github.com/Psiphon-Labs/psiphon-tunnel-core-binaries). Официальное ядро Psiphon используется для режимов Direct, Aether upstream, Conduit, Tor upstream и SSTP upstream.
-- **Tor Project** — за Tor Expert Bundle и подключаемые транспорты.
-- **Flutter** — [flutter.dev](https://flutter.dev). Весь этот GUI построен на Flutter.
-- **FossilizedProgrammer/sstp-proxy** — [github.com/FossilizedProgrammer/sstp-proxy](https://github.com/FossilizedProgrammer/sstp-proxy). **Прокси-клиент SSTP, поставляемый с этим приложением, разработан автором MischiefPingu.** Исторически SSTP использовался другими проектами как системный VPN-протокол; реализация sstp-proxy предоставляет его как **локальный прокси**, и именно это делает возможными цепочки туннелей.
-
-### Замечание о бинарнике Shiro Khorshid
-
-Файл `psiphon-tunnel-core-sunandlion` внутри приложения — это локально выбранное имя для форка Shiro Khorshid / SunAndLion. Это **не** upstream-название проекта. Вся разработка, поддержка и исправление ошибок этого ядра происходит в [shirokhorshid/psiphon-tunnel-core](https://github.com/shirokhorshid/psiphon-tunnel-core). Этот репозиторий лишь зеркалит скомпилированный бинарник, чтобы приложение могло загрузить его через свой встроенный апдейтер.
-
----
-
-## 📬 Связь с разработчиком
-
-Вопросы, отчёты об ошибках или отзывы — свяжитесь с разработчиком в X:
-**[@tenblockperhour](https://x.com/tenblockperhour)**
+| Проект | Описание |
+|--------|----------|
+| [**Aether**](https://github.com/CluvexStudio/Aether) | Ядро Aether обеспечивает все транспорты в этом приложении, кроме Psiphon, Tor и SSTP. Все заслуги ядра Aether принадлежат его автору |
+| [**Форк SunAndLion Psiphon**](https://github.com/shirokhorshid/psiphon-tunnel-core) | Режим фронтинга / CDN в этом приложении полностью основан на этом форке. Разработка этого ядра ведётся автором SunAndLion |
+| [**Официальный Psiphon**](https://github.com/Psiphon-Labs/psiphon-tunnel-core-binaries) | Официальное ядро Psiphon используется для режимов Direct, Aether Upstream, Conduit, Tor Upstream и SSTP Upstream |
+| [**Проект Tor**](https://www.torproject.org/) | За специализированный бандл Tor и плагины транспорта |
+| [**wireproxy**](https://github.com/nwtgck/wireproxy) | Пользовательский клиент WireGuard, предоставляющий SOCKS5/HTTP прокси |
+| [**AmneziaWG**](https://github.com/amnezia-vpn/amneziawg-go) | Обфусцированный форк WireGuard для сопротивления DPI |
+| [**Flutter**](https://flutter.dev/) | Весь графический интерфейс построен на Flutter |
+| [**sstp-proxy**](https://github.com/FossilizedProgrammer/sstp-proxy) | SSTP-прокси клиент в этом приложении разработан автором MischiefPingu. Эта реализация предоставляет протокол в виде локального прокси, что делает возможным цепочку туннелей |
 
 ---
 
-## 📜 Лицензия
+### 📝 Примечание о бинарном файле SunAndLion
 
-GNU General Public License v3.0 — см. [LICENSE](LICENSE).
+> Файл `psiphon-tunnel-core-sunandlion` внутри приложения — это локально выбранное имя для форка SunAndLion. Это не оригинальное название проекта. Вся разработка, поддержка и исправление ошибок этого ядра ведутся в репозитории [`shirokhorshid/psiphon-tunnel-core`](https://github.com/shirokhorshid/psiphon-tunnel-core). Данный репозиторий лишь зеркалирует скомпилированный бинарный файл, чтобы приложение могло загрузить его через встроенный обновлятор.
+
+---
+
+##  Связь с разработчиком
+
+Вопросы, отчёты об ошибках или обратная связь — свяжитесь с разработчиком в X:
+
+<div align="center">
+
+[![X (formerly Twitter)](https://img.shields.io/badge/X-@tenblockperhour-black?logo=x&style=for-the-badge)](https://x.com/tenblockperhour)
+
+</div>
+
+---
+
+## 📄 Лицензия
+
+Этот проект распространяется под лицензией **GNU General Public License v3.0**.  
+Подробности см. в файле [`LICENSE`](LICENSE).
+
+---
+
+<div align="center">
+
+**Сделано с ❤️ [FossilizedProgrammer](https://github.com/FossilizedProgrammer)**
+
+</div>
