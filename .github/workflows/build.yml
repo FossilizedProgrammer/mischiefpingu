@@ -1,3 +1,133 @@
+name: "Build mischiefpingu Desktop Apps"
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - "*.*.*"
+      - "v*.*.*"
+
+  pull_request:
+    branches:
+      - main
+      - master
+
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version (e.g. 1.0.1)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux:
+    name: "Build Linux"
+    runs-on: ubuntu-24.04
+
+    env:
+      PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Fetch Git LFS files
+        run: git lfs pull
+
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            clang \
+            cmake \
+            ninja-build \
+            pkg-config \
+            zip \
+            libgtk-3-dev \
+            liblzma-dev \
+            libstdc++-12-dev \
+            libayatana-appindicator3-dev \
+            libunwind-dev \
+            libgstreamer1.0-dev \
+            libgstreamer-plugins-base1.0-dev \
+            gstreamer1.0-plugins-base \
+            gstreamer1.0-plugins-good \
+            gstreamer1.0-plugins-bad \
+            fuse \
+            libfuse2 \
+            file \
+            wget
+
+      - name: Verify GStreamer
+        run: |
+          echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
+          pkg-config --variable pc_path pkg-config
+          test -f /usr/lib/x86_64-linux-gnu/pkgconfig/gstreamer-1.0.pc
+          pkg-config --exists gstreamer-1.0
+          pkg-config --modversion gstreamer-1.0
+          pkg-config --cflags gstreamer-1.0
+          pkg-config --libs gstreamer-1.0
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: "3.47.1"
+          cache: true
+
+      - name: Enable Linux desktop
+        run: flutter config --enable-linux-desktop
+
+      - name: Flutter doctor
+        run: flutter doctor -v
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Build Linux release
+        run: flutter build linux --release
+
+      - name: Copy bundled binaries and data (Linux)
+        run: |
+          BUNDLE_DIR="build/linux/x64/release/bundle"
+          PLATFORM_DIR="$BUNDLE_DIR/linux"
+
+          mkdir -p "$PLATFORM_DIR"
+
+          if [ -d "bundled/linux" ]; then
+            echo "Copying bundled/linux to $PLATFORM_DIR"
+            cp -a bundled/linux/. "$PLATFORM_DIR/"
+          else
+            echo "Warning: bundled/linux not found"
+          fi
+
+          for f in server_list.dat geoip geoip6; do
+            if [ -f "bundled/linux/$f" ]; then
+              cp -f "bundled/linux/$f" "$BUNDLE_DIR/"
+              echo "Copied $f next to binary"
+            elif [ -f "bundled/$f" ]; then
+              cp -f "bundled/$f" "$BUNDLE_DIR/"
+              echo "Copied $f next to binary from bundled/"
+            fi
+          done
+
+          ls -la "$BUNDLE_DIR"
+          ls -la "$PLATFORM_DIR" || true
+
+      - name: Package Linux bundle zip
+        run: |
+          cd build/linux/x64/release
+          zip -r ../../../../mischiefpingu-linux-x64.zip bundle
+          cd ../../../..
+          ls -lh mischiefpingu-linux-x64.zip
+
       - name: Build Linux AppImage
         shell: bash
         run: |
@@ -7,30 +137,27 @@
           APPDIR="AppDir"
           APP_NAME="mischiefpingu"
 
-          # پیدا کردن باینری اصلی Flutter
           BINARY_NAME=""
           if [ -x "$BUNDLE_DIR/mischiefpingu" ]; then
             BINARY_NAME="mischiefpingu"
           else
-            BINARY_NAME="$(find "$BUNDLE_DIR" -maxdepth 1 -type f -executable ! -name "*.so*" | head -n1 | xargs -r basename || true)"
+            BINARY_NAME="$(find "$BUNDLE_DIR" -maxdepth 1 -type f -executable ! -name '*.so*' | head -n1 | xargs -r basename || true)"
           fi
 
           if [ -z "$BINARY_NAME" ]; then
-            echo "❌ Could not find Flutter binary inside $BUNDLE_DIR"
+            echo "Could not find Flutter binary inside $BUNDLE_DIR"
             ls -la "$BUNDLE_DIR"
             exit 1
           fi
-          echo "→ Binary: $BINARY_NAME"
+          echo "Binary: $BINARY_NAME"
 
           rm -rf "$APPDIR"
           mkdir -p "$APPDIR/usr/bin"
           mkdir -p "$APPDIR/usr/share/applications"
           mkdir -p "$APPDIR/usr/share/icons/hicolor/256x256/apps"
 
-          # کل bundle باید کنار هم بماند (lib/ و data/ نسبت به باینری)
           cp -a "$BUNDLE_DIR"/. "$APPDIR/usr/bin/"
 
-          # AppRun
           cat > "$APPDIR/AppRun" << EOF
           #!/bin/bash
           HERE="\$(dirname "\$(readlink -f "\${0}")")"
@@ -38,11 +165,9 @@
           export LD_LIBRARY_PATH="\${HERE}/usr/bin/lib:\${LD_LIBRARY_PATH:-}"
           exec "./${BINARY_NAME}" "\$@"
           EOF
-          # حذف فاصله‌های اضافی احتمالی ابتدای خطوط (به‌خاطر YAML)
           sed -i 's/^[[:space:]]*//' "$APPDIR/AppRun"
           chmod +x "$APPDIR/AppRun"
 
-          # .desktop
           cat > "$APPDIR/${APP_NAME}.desktop" << EOF
           [Desktop Entry]
           Type=Application
@@ -56,14 +181,12 @@
           EOF
           sed -i 's/^[[:space:]]*//' "$APPDIR/${APP_NAME}.desktop"
 
-          # آیکون
           if [ -f "assets/images/logo.png" ]; then
             cp "assets/images/logo.png" "$APPDIR/usr/share/icons/hicolor/256x256/apps/${APP_NAME}.png"
             cp "assets/images/logo.png" "$APPDIR/${APP_NAME}.png"
             cp "assets/images/logo.png" "$APPDIR/.DirIcon"
           fi
 
-          # appimagetool (نسخهٔ کلاسیک AppImageKit برای CI پایدارتر است)
           wget -q "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" -O appimagetool.AppImage
           chmod +x appimagetool.AppImage
           ./appimagetool.AppImage --appimage-extract
@@ -81,3 +204,148 @@
           chmod +x "mischiefpingu-linux-x86_64.AppImage"
           ls -lh "mischiefpingu-linux-x86_64.AppImage"
           file "mischiefpingu-linux-x86_64.AppImage"
+
+      - name: Upload Linux zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: mischiefpingu-linux-x64
+          path: mischiefpingu-linux-x64.zip
+          if-no-files-found: error
+
+      - name: Upload Linux AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: mischiefpingu-linux-appimage
+          path: mischiefpingu-linux-x86_64.AppImage
+          if-no-files-found: error
+
+  build-windows:
+    name: "Build Windows"
+    runs-on: windows-2022
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Fetch Git LFS files
+        shell: pwsh
+        run: git lfs pull
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: "3.47.1"
+          cache: true
+
+      - name: Enable Windows desktop
+        run: flutter config --enable-windows-desktop
+
+      - name: Flutter doctor
+        run: flutter doctor -v
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Build Windows release
+        run: flutter build windows --release
+
+      - name: Copy bundled binaries and data (Windows)
+        shell: pwsh
+        run: |
+          $ReleaseDir = "build/windows/x64/runner/Release"
+          $PlatformDir = Join-Path $ReleaseDir "windows"
+
+          New-Item -ItemType Directory -Force -Path $PlatformDir | Out-Null
+
+          if (Test-Path "bundled/windows") {
+            Write-Host "Copying bundled/windows to $PlatformDir"
+            Copy-Item -Path "bundled/windows\*" -Destination $PlatformDir -Recurse -Force
+          } else {
+            Write-Host "Warning: bundled/windows not found"
+          }
+
+          $sharedFiles = @("server_list.dat", "geoip", "geoip6")
+          foreach ($f in $sharedFiles) {
+            $src1 = "bundled/windows/$f"
+            $src2 = "bundled/$f"
+            if (Test-Path $src1) {
+              Copy-Item -Path $src1 -Destination $ReleaseDir -Force
+              Write-Host "Copied $f next to binary"
+            } elseif (Test-Path $src2) {
+              Copy-Item -Path $src2 -Destination $ReleaseDir -Force
+              Write-Host "Copied $f next to binary from bundled/"
+            }
+          }
+
+          Get-ChildItem $ReleaseDir | Format-Table Name, Length
+
+      - name: Package Windows bundle
+        shell: pwsh
+        run: |
+          Compress-Archive `
+            -Path "build/windows/x64/runner/Release/*" `
+            -DestinationPath "mischiefpingu-windows-x64.zip" `
+            -Force
+          Get-Item "mischiefpingu-windows-x64.zip"
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mischiefpingu-windows-x64
+          path: mischiefpingu-windows-x64.zip
+          if-no-files-found: error
+
+  create-release:
+    name: "Create GitHub Release"
+    if: ${{ startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && github.event.inputs.version != '') }}
+    needs:
+      - build-linux
+      - build-windows
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: mischiefpingu-*
+          path: release-files
+          merge-multiple: true
+
+      - name: Verify release files
+        run: |
+          set -e
+          ls -lah release-files
+          test -f release-files/mischiefpingu-linux-x64.zip
+          test -f release-files/mischiefpingu-linux-x86_64.AppImage
+          test -f release-files/mischiefpingu-windows-x64.zip
+
+      - name: Determine version tag
+        id: ver
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION="${{ github.ref_name }}"
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Release version: $VERSION"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.version }}
+          name: "mischiefpingu ${{ steps.ver.outputs.version }}"
+          generate_release_notes: true
+          files: |
+            release-files/mischiefpingu-linux-x64.zip
+            release-files/mischiefpingu-linux-x86_64.AppImage
+            release-files/mischiefpingu-windows-x64.zip
+          fail_on_unmatched_files: true
