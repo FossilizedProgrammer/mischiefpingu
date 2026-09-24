@@ -18,7 +18,8 @@ mixin WindowCloseHandler<T extends StatefulWidget> on State<T> {
     final hasActiveTunnel = ps.isPsiphonRunning ||
         ps.isAetherRunning ||
         ps.isTorRunning ||
-        ps.isSstpRunning;
+        ps.isSstpRunning ||
+        ps.isWireGuardRunning; // ← اضافه شد
 
     if (!hasActiveTunnel) {
       await _fastClose(provider);
