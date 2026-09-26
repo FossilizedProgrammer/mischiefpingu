@@ -2187,6 +2187,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Invalid vpn:// link format'**
   String get amneziaInvalidLink;
+
+  /// No description provided for @bridgeScanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Bridge Scanner'**
+  String get bridgeScanner;
+
+  /// No description provided for @bridgeScannerDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetch and test Tor bridges (obfs4, webtunnel, snowflake, meek, conjure). Color-coded latency helps you pick the ones that actually work on your network.'**
+  String get bridgeScannerDescription;
+
+  /// No description provided for @bridgeLines.
+  ///
+  /// In en, this message translates to:
+  /// **'Bridge Lines (one per line)'**
+  String get bridgeLines;
+
+  /// No description provided for @bridgeLinesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0'**
+  String get bridgeLinesHint;
+
+  /// No description provided for @bridgeThreads.
+  ///
+  /// In en, this message translates to:
+  /// **'Threads'**
+  String get bridgeThreads;
+
+  /// No description provided for @bridgeStartScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Scan'**
+  String get bridgeStartScan;
+
+  /// No description provided for @bridgeStopScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get bridgeStopScan;
+
+  /// No description provided for @bridgeResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Results'**
+  String get bridgeResults;
+
+  /// No description provided for @bridgeApplyWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Working ({count})'**
+  String bridgeApplyWorking(int count);
+
+  /// No description provided for @bridgeApplyWorkingSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied {count} working bridges to Tor settings'**
+  String bridgeApplyWorkingSnackbar(int count);
+
+  /// No description provided for @bridgeApplyWorkingRestarting.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied {count} bridges — restarting Tor to apply'**
+  String bridgeApplyWorkingRestarting(int count);
+
+  /// No description provided for @bridgeApplyWorkingTorNotRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied {count} bridges — start Tor to use them'**
+  String bridgeApplyWorkingTorNotRunning(int count);
+
+  /// No description provided for @bridgeFetch.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetch {transport}'**
+  String bridgeFetch(String transport);
+
+  /// No description provided for @bridgeSaveWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Working'**
+  String get bridgeSaveWorking;
+
+  /// No description provided for @bridgeLoadSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Load Saved'**
+  String get bridgeLoadSaved;
+
+  /// No description provided for @bridgeRescanSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Rescan Saved'**
+  String get bridgeRescanSaved;
+
+  /// No description provided for @bridgeClearSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Saved'**
+  String get bridgeClearSaved;
+
+  /// No description provided for @bridgeSavedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved: {count}'**
+  String bridgeSavedCount(int count);
+
+  /// No description provided for @bridgeNoSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved bridges yet'**
+  String get bridgeNoSaved;
+
+  /// No description provided for @bridgeSavedBridges.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Bridges'**
+  String get bridgeSavedBridges;
+
+  /// No description provided for @bridgeSaveSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} bridges saved'**
+  String bridgeSaveSuccess(int count);
+
+  /// No description provided for @bridgeLoadedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Loaded {count} saved bridges'**
+  String bridgeLoadedSuccess(int count);
+
+  /// No description provided for @bridgeRescanStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Rescanning {count} saved bridges'**
+  String bridgeRescanStarted(int count);
+
+  /// No description provided for @bridgeClearedSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved bridges cleared'**
+  String get bridgeClearedSaved;
+
+  /// No description provided for @bridgeNothingToSave.
+  ///
+  /// In en, this message translates to:
+  /// **'No working bridges to save'**
+  String get bridgeNothingToSave;
+
+  /// No description provided for @bridgeLoadFromScanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Load from Bridge Scanner'**
+  String get bridgeLoadFromScanner;
+
+  /// No description provided for @bridgeLoadFromScannerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Load saved working bridges from the Bridge Scanner section below'**
+  String get bridgeLoadFromScannerSubtitle;
+
+  /// No description provided for @bridgeNoSavedInScanner.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved bridges in Bridge Scanner yet'**
+  String get bridgeNoSavedInScanner;
 }
 
 class _AppLocalizationsDelegate

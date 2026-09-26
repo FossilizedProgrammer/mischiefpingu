@@ -83,9 +83,8 @@ class ArchiveExtractor {
     }
 
     final binaryName = '$binaryBaseName$_exeExt';
-    final String? expectedName = targetBinaryBaseName != null
-        ? '$targetBinaryBaseName$_exeExt'
-        : null;
+    final String? expectedName =
+        targetBinaryBaseName != null ? '$targetBinaryBaseName$_exeExt' : null;
 
     var found = await CoreUpdateUtils.findFile(extractDir, binaryName);
     if (found != null) {

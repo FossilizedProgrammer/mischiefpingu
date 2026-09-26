@@ -1,9 +1,7 @@
 // lib/services/aether_auto_test_service.dart
-
 library;
 
 import 'dart:async';
-
 import '../models/settings_model.dart';
 import 'aether/aether_test_executor.dart';
 import 'aether/aether_test_helpers.dart';
@@ -22,12 +20,23 @@ import 'process_service.dart';
 import 'aether/retry/retry_state.dart';
 
 part 'aether/auto_test/store_attacher.dart';
+part 'aether/auto_test/collaborators_builder.dart';
+part 'aether/auto_test/endpoint_accessors.dart';
 
+/// ═══════════════════════════════════════════════════════════════
+///  AetherAutoTestService — مدیریت تست خودکار Aether.
+///
+///  ⚠️ بازآرایی: منطق به فایل‌های part منتقل شد:
+///    • store_attacher.dart         → پیوستن storeها
+///    • collaborators_builder.dart  → ساخت collaborators
+///    • endpoint_accessors.dart     → دسترسی به endpoint
+/// ═══════════════════════════════════════════════════════════════
 class AetherAutoTestService {
   final ProcessService processService;
   AppSettings settings;
 
   RetryState? get retryState => _executor.retryState;
+
   GatewayHistoryStore? gatewayHistoryStore;
   ProfilePerformanceStore? profilePerformanceStore;
   AetherLogger? aetherLogger;
@@ -55,58 +64,12 @@ class AetherAutoTestService {
     rebuildCollaborators();
   }
 
-  void rebuildCollaborators() {
-    _prober = SocksProber(
-      processService,
-      isCancelled: () => _executor.isCancelRequested,
-    );
-
-    _planner = AetherAttemptPlanner(
-      settings,
-      historyStore: gatewayHistoryStore,
-      profileStore: profilePerformanceStore,
-      decisionEngine: decisionEngine,
-    );
-
-    _store = AetherEndpointStore(
-      settings: settings,
-      log: processService.addLog,
-    );
-
-    _runner = AetherAttemptRunner(
-      processService: processService,
-      prober: _prober,
-    );
-
-    _cacheManager = AetherCacheManager(processService: processService);
-    _helpers = AetherTestHelpers(processService: processService);
-
-    final store = gatewayHistoryStore;
-    _performanceTracker = store == null
-        ? null
-        : GatewayPerformanceTracker(store: store, log: processService.addLog);
-
-    _executor = AetherTestExecutor(
-      processService: processService,
-      settings: settings,
-      planner: _planner,
-      store: _store,
-      runner: _runner,
-      cacheManager: _cacheManager,
-      helpers: _helpers,
-      historyStore: gatewayHistoryStore,
-      performanceTracker: _performanceTracker,
-      profilePerformanceStore: profilePerformanceStore,
-      logger: aetherLogger,
-      decisionEngine: decisionEngine,
-    );
-  }
-
-  void updateSettings(AppSettings newSettings) {
-    settings = newSettings;
-    rebuildCollaborators();
-  }
-
+  /// ═══════════════════════════════════════════════════════════════
+  ///  ✅ متد attachAllStores — delegate به extension در store_attacher.dart
+  ///
+  ///  این متد در کلاس اصلی تعریف شده تا از app_provider_constructor.dart
+  ///  قابل فراخوانی باشد. پیاده‌سازی واقعی در store_attacher.dart است.
+  /// ═══════════════════════════════════════════════════════════════
   void attachAllStores({
     GatewayHistoryStore? historyStore,
     ProfilePerformanceStore? profileStore,
@@ -120,49 +83,24 @@ class AetherAutoTestService {
         decisionEngine: decisionEngine,
       );
 
-  bool get isCancelRequested => _executor.isCancelRequested;
-  void requestCancel() => _executor.requestCancel();
-
-  /// ═══════════════════════════════════════════════════════════════
-  ///  ensureHealthy — اجرای auto-test.
-  /// ═══════════════════════════════════════════════════════════════
+  /// اجرای auto-test.
   Future<bool> ensureHealthy({bool showUi = true}) {
     final existing = _testFuture;
     if (existing != null) return existing;
 
     final future = _runAutoTest();
     _testFuture = future;
+
     future.whenComplete(() {
       if (identical(_testFuture, future)) _testFuture = null;
     });
+
     return future;
   }
 
-  Future<String?> getLastSuccessfulEndpoint() =>
-      _store.getLastSuccessfulEndpoint();
+  bool get isCancelRequested => _executor.isCancelRequested;
 
-  Future<MapEntry<String, String>?> loadAutoWinner() => _store.loadAutoWinner();
-
-  Future<void> clearLastEndpoint() => _store.clearLastEndpoint();
-
-  Future<void> saveRealEndpointFromLog(
-    String endpoint, {
-    required String protocol,
-    required String masque,
-  }) =>
-      _store.saveRealEndpointFromLog(
-        endpoint,
-        protocol: protocol,
-        masque: masque,
-      );
-
-  String? extractRealEndpointFromLog(String line) =>
-      _store.extractRealEndpointFromLog(line);
-
-  PerformanceReport? get lastPerformanceReport =>
-      _performanceTracker?.lastReport;
-
-  GatewayPerformanceTracker? get performanceTracker => _performanceTracker;
+  void requestCancel() => _executor.requestCancel();
 
   AetherAttemptRunner get internalRunner => _runner;
 

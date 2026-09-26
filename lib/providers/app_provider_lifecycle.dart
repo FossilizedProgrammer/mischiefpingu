@@ -1,14 +1,18 @@
 part of 'app_provider.dart';
 
+/// ═══════════════════════════════════════════════════════════════
+///  AppProviderLifecycle — startup + DB init + privilege.
+///
+///  ⚠️ منطق shutdown به
+///  `app_provider_lifecycle_shutdown.dart` منتقل شد.
+/// ═══════════════════════════════════════════════════════════════
 extension AppProviderLifecycle on AppProvider {
   Future<void> initializeProvider() async {
     try {
       await loadSettingsInternal();
       await checkPrivilegeInternal();
-
       // ─── مقداردهی اولیه دیتابیس ───
       await _initializeGatewayDatabase();
-
       final coreUpdateService = CoreUpdateService(log: processService.addLog);
       await coreUpdateService.applyPendingUpdates();
       touch();
@@ -26,28 +30,24 @@ extension AppProviderLifecycle on AppProvider {
   Future<void> _initializeGatewayDatabase() async {
     try {
       DatabaseInitializer.ensureInitialized();
-
       // ─── Gateway history (فاز ۱) ───
       final count = await _gatewayHistoryStore.count();
       processService.addLog(
         '→ Gateway history DB ready ($count record(s))',
         source: LogSource.app,
       );
-
       // ─── Structured Logging (فاز v2) ───
       final eventCount = await _aetherEventStore.count();
       processService.addLog(
         '→ Aether event log: $eventCount event(s)',
         source: LogSource.app,
       );
-
       // ─── Smart Cache (فاز v3) ───
       final profileCount = await _profilePerformanceStore.count();
       processService.addLog(
         '→ Profile performance cache: $profileCount entry(ies)',
         source: LogSource.app,
       );
-
       // ─── پاک‌سازی خودکار در startup ───
       await _runStartupPrune();
     } catch (e) {
@@ -79,7 +79,6 @@ extension AppProviderLifecycle on AppProvider {
         source: LogSource.app,
       );
     }
-
     // Profile performance
     try {
       final pruned = await _profilePerformanceStore.pruneWeakEntries(
@@ -104,104 +103,5 @@ extension AppProviderLifecycle on AppProvider {
   Future<void> checkPrivilegeInternal() async {
     isElevated = await PrivilegeService.isElevated();
     touch();
-  }
-
-  Future<void> shutdownAllInternal() async {
-    if (isShuttingDown) return;
-    isShuttingDown = true;
-
-    try {
-      watchdogManager?.disposeAll();
-    } catch (_) {}
-
-    processService.addLog(
-      '→ App is closing — disconnecting all active tunnels…',
-      source: LogSource.app,
-    );
-
-    reconnectManager.cancelAll();
-
-    try {
-      aetherTestService.requestCancel();
-    } catch (_) {}
-
-    try {
-      if (processService.isPsiphonRunning || isPsiphonBusy) {
-        processService.addLog('→ Stopping Psiphon…', source: LogSource.app);
-        await processService.stopPsiphon();
-      }
-    } catch (e) {
-      processService.addLog(
-        '⚠ Psiphon shutdown error: $e',
-        source: LogSource.app,
-      );
-    }
-
-    try {
-      if (processService.isTorRunning || isTorBusy) {
-        processService.addLog('→ Stopping Tor…', source: LogSource.app);
-        await processService.stopTor();
-      }
-    } catch (e) {
-      processService.addLog('⚠ Tor shutdown error: $e', source: LogSource.app);
-    }
-
-    try {
-      if (processService.isSstpRunning || isSstpBusy) {
-        processService.addLog('→ Stopping SSTP…', source: LogSource.app);
-        await processService.stopSstp();
-      }
-    } catch (e) {
-      processService.addLog('⚠ SSTP shutdown error: $e', source: LogSource.app);
-    }
-
-    try {
-      if (processService.isAetherRunning || isAutoTesting) {
-        processService.addLog('→ Stopping Aether…', source: LogSource.app);
-        await processService.stopAether();
-      }
-    } catch (e) {
-      processService.addLog(
-        '⚠ Aether shutdown error: $e',
-        source: LogSource.app,
-      );
-    }
-
-    try {
-      if (processService.isWireGuardRunning || isWireGuardBusy) {
-        processService.addLog('→ Stopping WireGuard…', source: LogSource.app);
-        await processService.stopWireGuard();
-      }
-    } catch (e) {
-      processService.addLog(
-        '⚠ WireGuard shutdown error: $e',
-        source: LogSource.app,
-      );
-    }
-
-    try {
-      await processService.closeAllForwardSockets();
-    } catch (_) {}
-
-    // ─── بستن دیتابیس ───
-    try {
-      await GatewayDatabase.close();
-      processService.addLog(
-        '→ Gateway history database closed',
-        source: LogSource.app,
-      );
-    } catch (e) {
-      processService.addLog(
-        '⚠ Failed to close gateway DB: $e',
-        source: LogSource.app,
-      );
-    }
-
-    await Future.delayed(const Duration(milliseconds: 300));
-
-    processService.addLog(
-      '★ All tunnels disconnected. Safe to exit.',
-      source: LogSource.app,
-    );
   }
 }

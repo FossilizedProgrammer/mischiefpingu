@@ -402,5 +402,63 @@
   "amneziaFetchFailed": "Не удалось получить конфигурацию AmneziaWG",
   "amneziaCoreRequired": "Для ссылок vpn:// требуется ядро AmneziaWG. Приложение выберет его автоматически.",
   "amneziaApiError": "Ошибка API Amnezia",
-  "amneziaInvalidLink": "Неверный формат ссылки vpn://"
+
+"amneziaInvalidLink": "Неверный формат ссылки vpn://",
+
+"bridgeScanner": "Сканер мостов",
+"bridgeScannerDescription": "Получение и тестирование мостов Tor (obfs4, webtunnel, snowflake, meek, conjure). Цветовая индикация задержки помогает выбрать те, что реально работают в вашей сети.",
+"bridgeLines": "Строки мостов (по одной на строку)",
+"bridgeLinesHint": "obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0",
+"bridgeThreads": "Потоки",
+"bridgeStartScan": "Начать сканирование",
+"bridgeStopScan": "Стоп",
+"bridgeResults": "Результаты",
+"bridgeApplyWorking": "Применить рабочие ({count})",
+"bridgeApplyWorkingSnackbar": "Применено {count} рабочих мостов к настройкам Tor",
+"bridgeApplyWorkingRestarting": "Применено {count} мостов — перезапуск Tor для применения",
+"bridgeApplyWorkingTorNotRunning": "Применено {count} мостов — запустите Tor для использования",
+"@bridgeApplyWorking": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"@bridgeApplyWorkingSnackbar": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"@bridgeApplyWorkingRestarting": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"@bridgeApplyWorkingTorNotRunning": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"bridgeFetch": "Получить {transport}",
+"@bridgeFetch": {
+  "placeholders": { "transport": { "type": "String" } }
+},
+"bridgeSaveWorking": "Сохранить рабочие",
+"bridgeLoadSaved": "Загрузить сохранённые",
+"bridgeRescanSaved": "Пересканировать сохранённые",
+"bridgeClearSaved": "Очистить сохранённые",
+"bridgeSavedCount": "Сохранено: {count}",
+"@bridgeSavedCount": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"bridgeNoSaved": "Нет сохранённых мостов",
+"bridgeSavedBridges": "Сохранённые мосты",
+"bridgeSaveSuccess": "Сохранено мостов: {count}",
+"@bridgeSaveSuccess": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"bridgeLoadedSuccess": "Загружено сохранённых мостов: {count}",
+"@bridgeLoadedSuccess": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"bridgeRescanStarted": "Пересканирование {count} сохранённых мостов",
+"@bridgeRescanStarted": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"bridgeClearedSaved": "Сохранённые мосты очищены",
+"bridgeNothingToSave": "Нет рабочих мостов для сохранения",
+
+"bridgeLoadFromScanner": "Загрузить из сканера мостов",
+"bridgeLoadFromScannerSubtitle": "Загрузить сохранённые рабочие мосты из раздела сканера мостов ниже",
+"bridgeNoSavedInScanner": "В сканере мостов пока нет сохранённых мостов"
 }

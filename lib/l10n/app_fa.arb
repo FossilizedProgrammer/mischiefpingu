@@ -390,6 +390,63 @@
   "amneziaFetchFailed": "دریافت کانفیگ AmneziaWG ناموفق بود",
   "amneziaCoreRequired": "برای لینک‌های vpn://، هسته AmneziaWG لازم است. برنامه به صورت خودکار آن را انتخاب می‌کند.",
   "amneziaApiError": "خطای API آمنزیا",
-  "amneziaInvalidLink": "فرمت لینک vpn:// نامعتبر است"
-  
+
+"amneziaInvalidLink": "فرمت لینک vpn:// نامعتبر است",
+
+"bridgeScanner": "اسکنر بریج",
+"bridgeScannerDescription": "دریافت و تست بریج‌های تور (obfs4، webtunnel، snowflake، meek، conjure). رنگ‌بندی پینگ کمک می‌کند بریج‌هایی که واقعاً روی شبکه شما کار می‌کنند را انتخاب کنید.",
+"bridgeLines": "خطوط بریج (هر خط یکی)",
+"bridgeLinesHint": "obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0",
+"bridgeThreads": "تعداد رشته",
+"bridgeStartScan": "شروع اسکن",
+"bridgeStopScan": "توقف",
+"bridgeResults": "نتایج",
+"bridgeApplyWorking": "اعمال موارد کارکننده ({count})",
+"bridgeApplyWorkingSnackbar": "{count} بریج کارکننده به تنظیمات تور اعمال شد",
+"bridgeApplyWorkingRestarting": "{count} بریج اعمال شد — تور در حال راه‌اندازی مجدد برای اعمال تغییرات",
+"bridgeApplyWorkingTorNotRunning": "{count} بریج اعمال شد — تور را شروع کنید تا استفاده شوند",
+"@bridgeApplyWorking": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"@bridgeApplyWorkingSnackbar": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"@bridgeApplyWorkingRestarting": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"@bridgeApplyWorkingTorNotRunning": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"bridgeFetch": "دریافت {transport}",
+"@bridgeFetch": {
+  "placeholders": { "transport": { "type": "String" } }
+},
+"bridgeSaveWorking": "ذخیره موارد کارکننده",
+"bridgeLoadSaved": "بارگذاری ذخیره‌شده",
+"bridgeRescanSaved": "اسکن مجدد ذخیره‌شده",
+"bridgeClearSaved": "پاک کردن ذخیره‌شده",
+"bridgeSavedCount": "ذخیره‌شده: {count}",
+"@bridgeSavedCount": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"bridgeNoSaved": "هنوز بریجی ذخیره نشده",
+"bridgeSavedBridges": "بریج‌های ذخیره‌شده",
+"bridgeSaveSuccess": "{count} بریج ذخیره شد",
+"@bridgeSaveSuccess": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"bridgeLoadedSuccess": "{count} بریج ذخیره‌شده بارگذاری شد",
+"@bridgeLoadedSuccess": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"bridgeRescanStarted": "اسکن مجدد {count} بریج ذخیره‌شده",
+"@bridgeRescanStarted": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"bridgeClearedSaved": "بریج‌های ذخیره‌شده پاک شدند",
+"bridgeNothingToSave": "بریج کارکننده‌ای برای ذخیره نیست",
+
+"bridgeLoadFromScanner": "بارگذاری از اسکنر بریج",
+"bridgeLoadFromScannerSubtitle": "بارگذاری بریج‌های کارکنندهٔ ذخیره‌شده از بخش اسکنر بریج در پایین",
+"bridgeNoSavedInScanner": "هنوز بریجی در اسکنر بریج ذخیره نشده"
 }

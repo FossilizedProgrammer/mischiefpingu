@@ -1,134 +1,145 @@
 part of 'app_provider.dart';
 
+/// ═══════════════════════════════════════════════════════════════
+///  AppProviderReconnect — مدیریت auto-reconnect و status.
+///
+///  ⚠️ بازآرایی:
+///  منطق مشترک schedule برای هر تونل به فایل جداگانه منتقل شد:
+///    • app_provider_reconnect_scheduler.dart
+///        → _scheduleReconnectFor (helper مشترک)
+///
+///  این فایل حالا فقط orchestrator است: برای هر تونل صدا می‌زنه
+///  و statusها رو آپدیت می‌کنه.
+///
+///  ⚠️ این متد فقط از `handleProcessServiceChange` صدا زده می‌شود،
+///  و آن هم فقط وقتی state واقعی تغییر کرده باشد.
+/// ═══════════════════════════════════════════════════════════════
 extension AppProviderReconnect on AppProvider {
-  /// ⚠️ این متد فقط از `handleProcessServiceChange` صدا زده می‌شود،
-  /// و آن هم فقط وقتی state واقعی تغییر کرده باشد.
   void checkAutoReconnects() {
-    if (!processService.isPsiphonRunning &&
-        !isPsiphonBusy &&
-        !isLoading &&
-        processService.psiphonPid == null &&
-        !userStoppedPsiphon &&
-        settings.autoReconnectPsiphon &&
-        !isAutoTesting &&
-        !restartingPsiphon) {
-      _reconnectManager.schedulePsiphonReconnect(
-        shouldReconnect: () =>
-            !processService.isPsiphonRunning &&
-            !isPsiphonBusy &&
-            !isLoading &&
-            processService.psiphonPid == null &&
-            !userStoppedPsiphon &&
-            settings.autoReconnectPsiphon &&
-            !isAutoTesting &&
-            !restartingPsiphon &&
-            !isShuttingDown,
-        onReconnect: () => connectPsiphon(fromAutoReconnect: true),
-        log: processService.addLog,
-      );
-    } else if (processService.isPsiphonRunning ||
-        isPsiphonBusy ||
-        userStoppedPsiphon) {
-      _reconnectManager.cancelPsiphonTimer();
-    }
+    // ═══════════════════════════════════════════════════════════
+    //  Psiphon
+    // ═══════════════════════════════════════════════════════════
+    _scheduleReconnectFor(
+      tunnel: 'psiphon',
+      isRunning: processService.isPsiphonRunning,
+      isBusy: isPsiphonBusy,
+      isLoading: isLoading,
+      hasPid: processService.psiphonPid != null,
+      userStopped: userStoppedPsiphon,
+      autoReconnectEnabled: settings.autoReconnectPsiphon,
+      isAutoTesting: isAutoTesting,
+      isRestarting: restartingPsiphon,
+      shouldReconnect: () =>
+          !processService.isPsiphonRunning &&
+          !isPsiphonBusy &&
+          !isLoading &&
+          processService.psiphonPid == null &&
+          !userStoppedPsiphon &&
+          settings.autoReconnectPsiphon &&
+          !isAutoTesting &&
+          !restartingPsiphon &&
+          !isShuttingDown,
+      onReconnect: () => connectPsiphon(fromAutoReconnect: true),
+    );
 
-    if (!processService.isAetherRunning &&
-        !isAutoTesting &&
-        processService.aetherPid == null &&
-        !userStoppedAether &&
-        settings.autoReconnectAether &&
-        !restartingAether) {
-      _reconnectManager.scheduleAetherReconnect(
-        shouldReconnect: () =>
-            !processService.isAetherRunning &&
-            !isAutoTesting &&
-            processService.aetherPid == null &&
-            !userStoppedAether &&
-            settings.autoReconnectAether &&
-            !restartingAether &&
-            !isShuttingDown,
-        onReconnect: () => connectAether(fromAutoReconnect: true),
-        log: processService.addLog,
-      );
-    } else if (processService.isAetherRunning ||
-        isAutoTesting ||
-        userStoppedAether) {
-      _reconnectManager.cancelAetherTimer();
-    }
+    // ═══════════════════════════════════════════════════════════
+    //  Aether
+    // ═══════════════════════════════════════════════════════════
+    _scheduleReconnectFor(
+      tunnel: 'aether',
+      isRunning: processService.isAetherRunning,
+      isBusy: isAutoTesting,
+      isLoading: false,
+      hasPid: processService.aetherPid != null,
+      userStopped: userStoppedAether,
+      autoReconnectEnabled: settings.autoReconnectAether,
+      isAutoTesting: isAutoTesting,
+      isRestarting: restartingAether,
+      shouldReconnect: () =>
+          !processService.isAetherRunning &&
+          !isAutoTesting &&
+          processService.aetherPid == null &&
+          !userStoppedAether &&
+          settings.autoReconnectAether &&
+          !restartingAether &&
+          !isShuttingDown,
+      onReconnect: () => connectAether(fromAutoReconnect: true),
+    );
 
-    if (!processService.isTorRunning &&
-        !isTorBusy &&
-        processService.torPid == null &&
-        !userStoppedTor &&
-        settings.autoReconnectTor &&
-        !isAutoTesting &&
-        !restartingTor) {
-      _reconnectManager.scheduleTorReconnect(
-        shouldReconnect: () =>
-            !processService.isTorRunning &&
-            !isTorBusy &&
-            processService.torPid == null &&
-            !userStoppedTor &&
-            settings.autoReconnectTor &&
-            !isAutoTesting &&
-            !restartingTor &&
-            !isShuttingDown,
-        onReconnect: () => connectTor(fromAutoReconnect: true),
-        log: processService.addLog,
-      );
-    } else if (processService.isTorRunning || isTorBusy || userStoppedTor) {
-      _reconnectManager.cancelTorTimer();
-    }
+    // ═══════════════════════════════════════════════════════════
+    //  Tor
+    // ═══════════════════════════════════════════════════════════
+    _scheduleReconnectFor(
+      tunnel: 'tor',
+      isRunning: processService.isTorRunning,
+      isBusy: isTorBusy,
+      isLoading: false,
+      hasPid: processService.torPid != null,
+      userStopped: userStoppedTor,
+      autoReconnectEnabled: settings.autoReconnectTor,
+      isAutoTesting: isAutoTesting,
+      isRestarting: restartingTor,
+      shouldReconnect: () =>
+          !processService.isTorRunning &&
+          !isTorBusy &&
+          processService.torPid == null &&
+          !userStoppedTor &&
+          settings.autoReconnectTor &&
+          !isAutoTesting &&
+          !restartingTor &&
+          !isShuttingDown,
+      onReconnect: () => connectTor(fromAutoReconnect: true),
+    );
 
-    if (!processService.isSstpRunning &&
-        !isSstpBusy &&
-        processService.sstpPid == null &&
-        !userStoppedSstp &&
-        settings.autoReconnectSstp &&
-        !isAutoTesting &&
-        !restartingSstp) {
-      _reconnectManager.scheduleSstpReconnect(
-        shouldReconnect: () =>
-            !processService.isSstpRunning &&
-            !isSstpBusy &&
-            processService.sstpPid == null &&
-            !userStoppedSstp &&
-            settings.autoReconnectSstp &&
-            !isAutoTesting &&
-            !restartingSstp &&
-            !isShuttingDown,
-        onReconnect: () => connectSstp(fromAutoReconnect: true),
-        log: processService.addLog,
-      );
-    } else if (processService.isSstpRunning || isSstpBusy || userStoppedSstp) {
-      _reconnectManager.cancelSstpTimer();
-    }
+    // ═══════════════════════════════════════════════════════════
+    //  SSTP
+    // ═══════════════════════════════════════════════════════════
+    _scheduleReconnectFor(
+      tunnel: 'sstp',
+      isRunning: processService.isSstpRunning,
+      isBusy: isSstpBusy,
+      isLoading: false,
+      hasPid: processService.sstpPid != null,
+      userStopped: userStoppedSstp,
+      autoReconnectEnabled: settings.autoReconnectSstp,
+      isAutoTesting: isAutoTesting,
+      isRestarting: restartingSstp,
+      shouldReconnect: () =>
+          !processService.isSstpRunning &&
+          !isSstpBusy &&
+          processService.sstpPid == null &&
+          !userStoppedSstp &&
+          settings.autoReconnectSstp &&
+          !isAutoTesting &&
+          !restartingSstp &&
+          !isShuttingDown,
+      onReconnect: () => connectSstp(fromAutoReconnect: true),
+    );
 
-    if (!processService.isWireGuardRunning &&
-        !isWireGuardBusy &&
-        processService.wireGuardPid == null &&
-        !userStoppedWireGuard &&
-        settings.wireguardAutoReconnect &&
-        !isAutoTesting &&
-        !restartingWireGuard) {
-      _reconnectManager.scheduleWireGuardReconnect(
-        shouldReconnect: () =>
-            !processService.isWireGuardRunning &&
-            !isWireGuardBusy &&
-            processService.wireGuardPid == null &&
-            !userStoppedWireGuard &&
-            settings.wireguardAutoReconnect &&
-            !isAutoTesting &&
-            !restartingWireGuard &&
-            !isShuttingDown,
-        onReconnect: () => connectWireGuard(fromAutoReconnect: true),
-        log: processService.addLog,
-      );
-    } else if (processService.isWireGuardRunning ||
-        isWireGuardBusy ||
-        userStoppedWireGuard) {
-      _reconnectManager.cancelWireGuardTimer();
-    }
+    // ═══════════════════════════════════════════════════════════
+    //  WireGuard
+    // ═══════════════════════════════════════════════════════════
+    _scheduleReconnectFor(
+      tunnel: 'wireguard',
+      isRunning: processService.isWireGuardRunning,
+      isBusy: isWireGuardBusy,
+      isLoading: false,
+      hasPid: processService.wireGuardPid != null,
+      userStopped: userStoppedWireGuard,
+      autoReconnectEnabled: settings.wireguardAutoReconnect,
+      isAutoTesting: isAutoTesting,
+      isRestarting: restartingWireGuard,
+      shouldReconnect: () =>
+          !processService.isWireGuardRunning &&
+          !isWireGuardBusy &&
+          processService.wireGuardPid == null &&
+          !userStoppedWireGuard &&
+          settings.wireguardAutoReconnect &&
+          !isAutoTesting &&
+          !restartingWireGuard &&
+          !isShuttingDown,
+      onReconnect: () => connectWireGuard(fromAutoReconnect: true),
+    );
   }
 
   void updateTunnelStatuses() {

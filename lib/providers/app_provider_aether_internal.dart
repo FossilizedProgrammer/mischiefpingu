@@ -1,17 +1,21 @@
 part of 'app_provider.dart';
 
+/// ═══════════════════════════════════════════════════════════════
+///  _startAetherInternal — start یا restart داخلی.
+///
+///  ⚠️ بازآرایی: این فایل حالا فقط orchestrator هست.
+///  منطق در فایل‌های part جداگانه:
+///    • aether/aether_start_guards.dart → _checkAetherStartGuards
+///    • aether/aether_fast_path.dart    → _tryFastPath و helperها
+///    • aether/aether_restart.dart      → restartAetherInternal
+///
+///  ⚠️ تغییرات این نسخه:
+///   • fast-path حالا به تابع جدا منتقل شده
+///   • guardها در یک تابع متمرکز شدن
+///   • isAutoTesting در try/finally — جلوگیری از گیر کردن دکمه
+///   • چک userStoppedAether بعد از ensureHealthy
+/// ═══════════════════════════════════════════════════════════════
 extension AppProviderAetherInternal on AppProvider {
-  /// ═══════════════════════════════════════════════════════════════
-  ///  _startAetherInternal — start یا restart داخلی.
-  ///
-  ///  ⚠️ تغییرات این نسخه:
-  ///   • fast-path برای هر start اجرا می‌شود (نه فقط auto-reconnect)
-  ///   • بعد از fail شدن fast-path، endpoint ذخیره‌شده پاک می‌شود
-  ///   • آخرین endpoint واقعی از لاگ Aether استخراج و ذخیره می‌شود
-  ///   • checkHappyTransition هنگام اتصال موفق
-  ///   • ⚠️ FIX: isAutoTesting در try/finally — جلوگیری از گیر کردن دکمه
-  ///   • ⚠️ FIX: چک userStoppedAether بعد از ensureHealthy
-  /// ═══════════════════════════════════════════════════════════════
   Future<void> _startAetherInternal({required bool fromAutoReconnect}) async {
     const src = LogSource.aether;
 
@@ -19,29 +23,11 @@ extension AppProviderAetherInternal on AppProvider {
       _reconnectManager.cancelAetherTimer();
     }
 
-    if (fromAutoReconnect && userStoppedAether) {
-      processService.addLog(
-        '→ Aether auto-reconnect skipped (stopped by user)',
-        source: src,
-      );
-      return;
-    }
-
-    if (fromAutoReconnect && isAutoTesting) {
-      processService.addLog(
-        '→ Aether auto-reconnect skipped (already auto-testing)',
-        source: src,
-      );
-      return;
-    }
-
-    if (processService.isAetherRunning && !fromAutoReconnect) {
-      processService.addLog(
-        '→ Aether is already running — ignoring redundant start',
-        source: src,
-      );
-      return;
-    }
+    // ═══════════════════════════════════════════════════════════
+    //  Guardها — بررسی می‌کنن که آیا باید ادامه بدیم
+    // ═══════════════════════════════════════════════════════════
+    final guards = _checkAetherStartGuards(src, fromAutoReconnect);
+    if (!guards.proceed) return;
 
     if (!await _preflightAetherBinary(src)) return;
     if (!await _preflightAetherPtDir(src)) return;
@@ -65,7 +51,7 @@ extension AppProviderAetherInternal on AppProvider {
           settings.aetherCustomEndpoint.trim().isEmpty) {
         final fastResult = await _tryFastPath(src);
 
-        // ⚠️ FIX: چک cancel بعد از fast-path
+        // چک cancel بعد از fast-path
         if (userStoppedAether) {
           processService.addLog(
             '→ Aether start cancelled by user (after fast-path)',
@@ -75,23 +61,11 @@ extension AppProviderAetherInternal on AppProvider {
         }
 
         if (fastResult.success) {
-          aetherStatus = 'Aether: Healthy (fast-path)';
-          processService.setAetherProtocolNotification(
-            settings.aetherProtocol == 'auto'
-                ? 'auto'
-                : settings.aetherProtocol,
-          );
-
-          _recordAetherSessionState();
-
-          processService.checkHappyTransition(
-            tunnelName: 'Aether',
+          _finalizeAetherSuccess(
+            src: src,
             wasConnected: wasConnected,
-            isConnected: true,
+            statusText: 'Aether: Healthy (fast-path)',
           );
-
-          await AppDataService.fixDataDirOwnership();
-          touch();
           return;
         }
 
@@ -113,17 +87,9 @@ extension AppProviderAetherInternal on AppProvider {
       //  اگر auto-reconnect است، orchestrator با ranked candidates
       // ═══════════════════════════════════════════════════════════
       if (fromAutoReconnect) {
-        _aetherLogger.reconnectAttempt(
-          settings: settings,
-          attemptNumber: aetherReconnectCount + 1,
-          protocol: lastAetherConnectedProtocol ?? 'unknown',
-          masque: settings.masqueOption,
-          endpoint: lastAetherConnectedGatewayKey ?? '',
-        );
+        final smartResult = await _trySmartReconnectWithLogging(src);
 
-        final smartOk = await _trySmartReconnect();
-
-        // ⚠️ FIX: چک cancel بعد از smart reconnect
+        // چک cancel بعد از smart reconnect
         if (userStoppedAether) {
           processService.addLog(
             '→ Aether start cancelled by user (after smart reconnect)',
@@ -132,24 +98,12 @@ extension AppProviderAetherInternal on AppProvider {
           return;
         }
 
-        if (smartOk) {
-          aetherStatus = 'Aether: Healthy';
-          processService.setAetherProtocolNotification(
-            settings.aetherProtocol == 'auto'
-                ? 'auto'
-                : settings.aetherProtocol,
-          );
-
-          _recordAetherSessionState();
-
-          processService.checkHappyTransition(
-            tunnelName: 'Aether',
+        if (smartResult) {
+          _finalizeAetherSuccess(
+            src: src,
             wasConnected: wasConnected,
-            isConnected: true,
+            statusText: 'Aether: Healthy',
           );
-
-          await AppDataService.fixDataDirOwnership();
-          touch();
           return;
         }
 
@@ -162,8 +116,8 @@ extension AppProviderAetherInternal on AppProvider {
       // ═══════════════════════════════════════════════════════════
       //  مسیر نهایی: scan کامل
       //
-      //  ⚠️ FIX مهم: isAutoTesting در try/finally ریست می‌شه
-      //  تا اگر user cancel کرد یا exception رخ داد، flag گیر نکنه.
+      //  isAutoTesting در try/finally ریست می‌شه تا اگر user
+      //  cancel کرد یا exception رخ داد، flag گیر نکنه.
       // ═══════════════════════════════════════════════════════════
       aetherStatus = settings.aetherProtocol == 'auto'
           ? 'Aether: Auto-testing protocols…'
@@ -175,11 +129,10 @@ extension AppProviderAetherInternal on AppProvider {
       try {
         ok = await _aetherTestService.ensureHealthy(showUi: true);
       } finally {
-        // ⚠️ FIX: تضمین ریست در هر شرایطی
         isAutoTesting = false;
       }
 
-      // ⚠️ FIX: چک cancel — اگر کاربر وسط کار cancel کرد، برنگردون موفق
+      // چک cancel — اگر کاربر وسط کار cancel کرد، برنگردون موفق
       if (userStoppedAether) {
         processService.addLog(
           '→ Aether start cancelled by user (after ensureHealthy)',
@@ -215,7 +168,6 @@ extension AppProviderAetherInternal on AppProvider {
       processService.addLog('✗ connectAether error: $e', source: src);
       aetherStatus = 'Aether: Error';
     } finally {
-      // ⚠️ FIX: تضمین ریست flag حتی در exception
       if (isAutoTesting) {
         isAutoTesting = false;
       }
@@ -225,111 +177,46 @@ extension AppProviderAetherInternal on AppProvider {
     touch();
   }
 
-  /// نتیجهٔ تلاش fast-path.
-  Future<({bool success, bool endpointWasInvalid})> _tryFastPath(
-    String src,
-  ) async {
-    final orchestrator = _gatewayReconnectOrchestrator;
-    if (orchestrator == null) {
-      processService.addLog(
-        '→ Fast-path skipped (no orchestrator)',
-        source: src,
-      );
-      return (success: false, endpointWasInvalid: false);
-    }
-
-    processService.addLog(
-      '→ Fast-path: trying last successful endpoint…',
-      source: src,
+  /// ═══════════════════════════════════════════════════════════════
+  ///  Smart reconnect با لاگ شروع.
+  ///
+  ///  این متد فقط پوشش لاگ و فراخوانی _trySmartReconnect هست.
+  ///  منطق اصلی در `aether/aether_smart_reconnect.dart` قرار داره.
+  /// ═══════════════════════════════════════════════════════════════
+  Future<bool> _trySmartReconnectWithLogging(String src) async {
+    _aetherLogger.reconnectAttempt(
+      settings: settings,
+      attemptNumber: aetherReconnectCount + 1,
+      protocol: lastAetherConnectedProtocol ?? 'unknown',
+      masque: settings.masqueOption,
+      endpoint: lastAetherConnectedGatewayKey ?? '',
     );
 
-    final port = settings.aetherLocalPort;
+    return _trySmartReconnect();
+  }
 
-    try {
-      // ─── تلاش ۱: آخرین gateway موفق از DB ───
-      final last = await orchestrator.getLastSuccessfulGateway();
-      if (last != null && last.endpoint.trim().isNotEmpty) {
-        processService.addLog(
-          '→ Fast-path [1/2]: trying ${last.uniqueKey} '
-          '(score=${last.score.toStringAsFixed(0)})',
-          source: src,
-        );
+  /// ═══════════════════════════════════════════════════════════════
+  ///  نهایی‌سازی موفقیت (fast-path یا smart reconnect).
+  ///
+  ///  این متد مشترک بین دو مسیر هست تا کد تکراری حذف بشه.
+  /// ═══════════════════════════════════════════════════════════════
+  void _finalizeAetherSuccess({
+    required String src,
+    required bool wasConnected,
+    required String statusText,
+  }) {
+    aetherStatus = statusText;
+    processService.setAetherProtocolNotification(
+      settings.aetherProtocol == 'auto' ? 'auto' : settings.aetherProtocol,
+    );
 
-        final ok = await orchestrator.tryGateway(
-          record: last,
-          port: port,
-          isCancelRequested: () => userStoppedAether || isShuttingDown,
-        );
+    _recordAetherSessionState();
 
-        if (ok) {
-          processService.addLog(
-            '★ Fast-path: connected via last successful gateway',
-            source: src,
-          );
-          return (success: true, endpointWasInvalid: false);
-        }
-
-        processService.addLog(
-          '→ Fast-path [1/2]: last gateway failed',
-          source: src,
-        );
-      } else {
-        processService.addLog(
-          '→ Fast-path [1/2]: no gateway history',
-          source: src,
-        );
-      }
-
-      // ⚠️ FIX: چک cancel بین دو تلاش
-      if (userStoppedAether) {
-        return (success: false, endpointWasInvalid: false);
-      }
-
-      // ─── تلاش ۲: آخرین endpoint از SharedPreferences ───
-      final endpoint = await _aetherTestService.getLastSuccessfulEndpoint();
-      if (endpoint == null || endpoint.trim().isEmpty) {
-        processService.addLog(
-          '→ Fast-path [2/2]: no saved endpoint',
-          source: src,
-        );
-        return (success: false, endpointWasInvalid: false);
-      }
-
-      final winner = await _aetherTestService.loadAutoWinner();
-      final protocol = winner?.key ?? 'masque';
-      final masque = winner?.value ?? 'HTTP-3';
-
-      processService.addLog(
-        '→ Fast-path [2/2]: trying saved endpoint $endpoint '
-        '($protocol${masque.isNotEmpty ? "/$masque" : ""})',
-        source: src,
-      );
-
-      final ok = await orchestrator.tryEndpointDirect(
-        endpoint: endpoint,
-        protocol: protocol,
-        masque: masque,
-        port: port,
-        isCancelRequested: () => userStoppedAether || isShuttingDown,
-      );
-
-      if (ok) {
-        processService.addLog(
-          '★ Fast-path: connected via saved endpoint',
-          source: src,
-        );
-        return (success: true, endpointWasInvalid: false);
-      }
-
-      processService.addLog(
-        '→ Fast-path [2/2]: saved endpoint failed',
-        source: src,
-      );
-      return (success: false, endpointWasInvalid: true);
-    } catch (e) {
-      processService.addLog('⚠ Fast-path threw: $e', source: src);
-      return (success: false, endpointWasInvalid: false);
-    }
+    processService.checkHappyTransition(
+      tunnelName: 'Aether',
+      wasConnected: wasConnected,
+      isConnected: true,
+    );
   }
 
   /// ثبت session state برای UI status card (فاز ۶).
@@ -340,65 +227,5 @@ extension AppProviderAetherInternal on AppProvider {
         '${settings.ip}:${settings.aetherLocalPort}';
     lastAetherConnectedAt = DateTime.now();
     touch();
-  }
-
-  /// restartAetherInternal — برای استفاده watchdog.
-  Future<void> restartAetherInternal({required String reason}) async {
-    const src = LogSource.aether;
-
-    if (userStoppedAether || isShuttingDown) {
-      processService.addLog(
-        '→ restartAetherInternal skipped '
-        '(userStopped=$userStoppedAether, shutdown=$isShuttingDown)',
-        source: src,
-      );
-      return;
-    }
-
-    if (restartingAether) {
-      processService.addLog(
-        '→ restartAetherInternal skipped (already restarting)',
-        source: src,
-      );
-      return;
-    }
-
-    restartingAether = true;
-    try {
-      processService.addLog(
-        '↻ Restarting Aether — reason: $reason',
-        source: src,
-      );
-      processService.setSadNotification('Aether');
-
-      if (lastAetherConnectedAt != null) {
-        _aetherLogger.connectionLost(
-          settings: settings,
-          protocol: lastAetherConnectedProtocol ?? 'unknown',
-          masque: settings.masqueOption,
-          uptime: DateTime.now().difference(lastAetherConnectedAt!),
-          reason: reason,
-          reconnectCount: aetherReconnectCount,
-        );
-      }
-
-      aetherReconnectCount++;
-
-      try {
-        await _aetherTestService.performanceTracker?.cancel();
-      } catch (_) {}
-
-      _reconnectManager.cancelAetherTimer();
-      nextAetherGeneration();
-
-      await processService.stopAether();
-      await Future.delayed(const Duration(seconds: 3));
-
-      if (!userStoppedAether && !isShuttingDown) {
-        await _startAetherInternal(fromAutoReconnect: true);
-      }
-    } finally {
-      restartingAether = false;
-    }
   }
 }

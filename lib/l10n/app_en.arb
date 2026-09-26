@@ -403,5 +403,63 @@
   "amneziaFetchFailed": "Failed to fetch AmneziaWG configuration",
   "amneziaCoreRequired": "AmneziaWG core required for vpn:// links. The app will auto-select it.",
   "amneziaApiError": "Amnezia API error",
-  "amneziaInvalidLink": "Invalid vpn:// link format"
+
+"amneziaInvalidLink": "Invalid vpn:// link format",
+
+"bridgeScanner": "Bridge Scanner",
+"bridgeScannerDescription": "Fetch and test Tor bridges (obfs4, webtunnel, snowflake, meek, conjure). Color-coded latency helps you pick the ones that actually work on your network.",
+"bridgeLines": "Bridge Lines (one per line)",
+"bridgeLinesHint": "obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0",
+"bridgeThreads": "Threads",
+"bridgeStartScan": "Start Scan",
+"bridgeStopScan": "Stop",
+"bridgeResults": "Results",
+"bridgeApplyWorking": "Apply Working ({count})",
+"bridgeApplyWorkingSnackbar": "Applied {count} working bridges to Tor settings",
+"bridgeApplyWorkingRestarting": "Applied {count} bridges — restarting Tor to apply",
+"bridgeApplyWorkingTorNotRunning": "Applied {count} bridges — start Tor to use them",
+"@bridgeApplyWorking": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"@bridgeApplyWorkingSnackbar": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"@bridgeApplyWorkingRestarting": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"@bridgeApplyWorkingTorNotRunning": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"bridgeFetch": "Fetch {transport}",
+"@bridgeFetch": {
+  "placeholders": { "transport": { "type": "String" } }
+},
+"bridgeSaveWorking": "Save Working",
+"bridgeLoadSaved": "Load Saved",
+"bridgeRescanSaved": "Rescan Saved",
+"bridgeClearSaved": "Clear Saved",
+"bridgeSavedCount": "Saved: {count}",
+"@bridgeSavedCount": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"bridgeNoSaved": "No saved bridges yet",
+"bridgeSavedBridges": "Saved Bridges",
+"bridgeSaveSuccess": "{count} bridges saved",
+"@bridgeSaveSuccess": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"bridgeLoadedSuccess": "Loaded {count} saved bridges",
+"@bridgeLoadedSuccess": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"bridgeRescanStarted": "Rescanning {count} saved bridges",
+"@bridgeRescanStarted": {
+  "placeholders": { "count": { "type": "int" } }
+},
+"bridgeClearedSaved": "Saved bridges cleared",
+"bridgeNothingToSave": "No working bridges to save",
+
+"bridgeLoadFromScanner": "Load from Bridge Scanner",
+"bridgeLoadFromScannerSubtitle": "Load saved working bridges from the Bridge Scanner section below",
+"bridgeNoSavedInScanner": "No saved bridges in Bridge Scanner yet"
 }

@@ -1106,4 +1106,110 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get amneziaInvalidLink => 'Неверный формат ссылки vpn://';
+
+  @override
+  String get bridgeScanner => 'Сканер мостов';
+
+  @override
+  String get bridgeScannerDescription =>
+      'Получение и тестирование мостов Tor (obfs4, webtunnel, snowflake, meek, conjure). Цветовая индикация задержки помогает выбрать те, что реально работают в вашей сети.';
+
+  @override
+  String get bridgeLines => 'Строки мостов (по одной на строку)';
+
+  @override
+  String get bridgeLinesHint =>
+      'obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0';
+
+  @override
+  String get bridgeThreads => 'Потоки';
+
+  @override
+  String get bridgeStartScan => 'Начать сканирование';
+
+  @override
+  String get bridgeStopScan => 'Стоп';
+
+  @override
+  String get bridgeResults => 'Результаты';
+
+  @override
+  String bridgeApplyWorking(int count) {
+    return 'Применить рабочие ($count)';
+  }
+
+  @override
+  String bridgeApplyWorkingSnackbar(int count) {
+    return 'Применено $count рабочих мостов к настройкам Tor';
+  }
+
+  @override
+  String bridgeApplyWorkingRestarting(int count) {
+    return 'Применено $count мостов — перезапуск Tor для применения';
+  }
+
+  @override
+  String bridgeApplyWorkingTorNotRunning(int count) {
+    return 'Применено $count мостов — запустите Tor для использования';
+  }
+
+  @override
+  String bridgeFetch(String transport) {
+    return 'Получить $transport';
+  }
+
+  @override
+  String get bridgeSaveWorking => 'Сохранить рабочие';
+
+  @override
+  String get bridgeLoadSaved => 'Загрузить сохранённые';
+
+  @override
+  String get bridgeRescanSaved => 'Пересканировать сохранённые';
+
+  @override
+  String get bridgeClearSaved => 'Очистить сохранённые';
+
+  @override
+  String bridgeSavedCount(int count) {
+    return 'Сохранено: $count';
+  }
+
+  @override
+  String get bridgeNoSaved => 'Нет сохранённых мостов';
+
+  @override
+  String get bridgeSavedBridges => 'Сохранённые мосты';
+
+  @override
+  String bridgeSaveSuccess(int count) {
+    return 'Сохранено мостов: $count';
+  }
+
+  @override
+  String bridgeLoadedSuccess(int count) {
+    return 'Загружено сохранённых мостов: $count';
+  }
+
+  @override
+  String bridgeRescanStarted(int count) {
+    return 'Пересканирование $count сохранённых мостов';
+  }
+
+  @override
+  String get bridgeClearedSaved => 'Сохранённые мосты очищены';
+
+  @override
+  String get bridgeNothingToSave => 'Нет рабочих мостов для сохранения';
+
+  @override
+  String get bridgeLoadFromScanner => 'Загрузить из сканера мостов';
+
+  @override
+  String get bridgeLoadFromScannerSubtitle =>
+      'Загрузить сохранённые рабочие мосты из раздела сканера мостов ниже';
+
+  @override
+  String get bridgeNoSavedInScanner =>
+      'В сканере мостов пока нет сохранённых мостов';
 }

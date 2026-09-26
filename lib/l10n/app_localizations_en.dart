@@ -1103,4 +1103,109 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get amneziaInvalidLink => 'Invalid vpn:// link format';
+
+  @override
+  String get bridgeScanner => 'Bridge Scanner';
+
+  @override
+  String get bridgeScannerDescription =>
+      'Fetch and test Tor bridges (obfs4, webtunnel, snowflake, meek, conjure). Color-coded latency helps you pick the ones that actually work on your network.';
+
+  @override
+  String get bridgeLines => 'Bridge Lines (one per line)';
+
+  @override
+  String get bridgeLinesHint =>
+      'obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0';
+
+  @override
+  String get bridgeThreads => 'Threads';
+
+  @override
+  String get bridgeStartScan => 'Start Scan';
+
+  @override
+  String get bridgeStopScan => 'Stop';
+
+  @override
+  String get bridgeResults => 'Results';
+
+  @override
+  String bridgeApplyWorking(int count) {
+    return 'Apply Working ($count)';
+  }
+
+  @override
+  String bridgeApplyWorkingSnackbar(int count) {
+    return 'Applied $count working bridges to Tor settings';
+  }
+
+  @override
+  String bridgeApplyWorkingRestarting(int count) {
+    return 'Applied $count bridges — restarting Tor to apply';
+  }
+
+  @override
+  String bridgeApplyWorkingTorNotRunning(int count) {
+    return 'Applied $count bridges — start Tor to use them';
+  }
+
+  @override
+  String bridgeFetch(String transport) {
+    return 'Fetch $transport';
+  }
+
+  @override
+  String get bridgeSaveWorking => 'Save Working';
+
+  @override
+  String get bridgeLoadSaved => 'Load Saved';
+
+  @override
+  String get bridgeRescanSaved => 'Rescan Saved';
+
+  @override
+  String get bridgeClearSaved => 'Clear Saved';
+
+  @override
+  String bridgeSavedCount(int count) {
+    return 'Saved: $count';
+  }
+
+  @override
+  String get bridgeNoSaved => 'No saved bridges yet';
+
+  @override
+  String get bridgeSavedBridges => 'Saved Bridges';
+
+  @override
+  String bridgeSaveSuccess(int count) {
+    return '$count bridges saved';
+  }
+
+  @override
+  String bridgeLoadedSuccess(int count) {
+    return 'Loaded $count saved bridges';
+  }
+
+  @override
+  String bridgeRescanStarted(int count) {
+    return 'Rescanning $count saved bridges';
+  }
+
+  @override
+  String get bridgeClearedSaved => 'Saved bridges cleared';
+
+  @override
+  String get bridgeNothingToSave => 'No working bridges to save';
+
+  @override
+  String get bridgeLoadFromScanner => 'Load from Bridge Scanner';
+
+  @override
+  String get bridgeLoadFromScannerSubtitle =>
+      'Load saved working bridges from the Bridge Scanner section below';
+
+  @override
+  String get bridgeNoSavedInScanner => 'No saved bridges in Bridge Scanner yet';
 }

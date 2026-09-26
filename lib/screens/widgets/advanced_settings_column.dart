@@ -1,27 +1,19 @@
 // lib/screens/widgets/advanced_settings_column.dart
-
 library;
 
 import 'package:flutter/material.dart';
+import 'advanced_settings/settings_group_general.dart';
+import 'advanced_settings/settings_group_tunnels.dart';
+import 'advanced_settings/settings_group_tools.dart';
 
-import '../../l10n/language_selector_tile.dart';
-import 'theme_selector_tile.dart';
-import '../../widgets/notifications_settings_tile.dart';
-import 'aether_settings_tile.dart';
-import 'psiphon_settings_tile.dart';
-import 'tor_settings_tile.dart';
-import 'sstp_settings_tile.dart';
-import 'sstp_fetcher_section.dart';
-import 'core_update_tile.dart';
-import 'app_update_tile.dart';
-import 'log_tile.dart';
-import 'diagnostics_report_tile.dart';
-import '../../widgets/cdn_scanner_section.dart';
-import '../../widgets/internet_quality_tile.dart';
-import '../../widgets/diagnostics/connection_health_section.dart';
-import '../../widgets/watchdog_settings_tile.dart';
-import 'wireguard_settings_tile.dart';
-
+/// ═══════════════════════════════════════════════════════════════
+///  AdvancedSettingsColumn — orchestrator برای سه گروه تنظیمات.
+///
+///  ⚠️ بازآرایی: ویجت‌ها به سه فایل جدا منتقل شدند:
+///    • SettingsGroupGeneral  → ظاهر، زبان، اعلان‌ها، کیفیت
+///    • SettingsGroupTunnels  → Aether, Psiphon, Tor, SSTP, WG
+///    • SettingsGroupTools    → اسکنرها، آپدیت، واچ‌داگ، لاگ
+/// ═══════════════════════════════════════════════════════════════
 class AdvancedSettingsColumn extends StatelessWidget {
   const AdvancedSettingsColumn({super.key});
 
@@ -29,23 +21,9 @@ class AdvancedSettingsColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Column(
       children: [
-        InternetQualityTile(),
-        ConnectionHealthSection(),
-        ThemeSelectorTile(),
-        LanguageSelectorTile(),
-        NotificationsSettingsTile(),
-        AetherSettingsTile(),
-        PsiphonSettingsTile(),
-        TorSettingsTile(),
-        SstpSettingsTile(),
-        WireGuardSettingsTile(),
-        CdnScannerSection(),
-        SstpFetcherSection(),
-        CoreUpdateTile(),
-        AppUpdateTile(),
-        WatchdogSettingsTile(),
-        DiagnosticsReportTile(),
-        LogTile(),
+        SettingsGroupGeneral(),
+        SettingsGroupTunnels(),
+        SettingsGroupTools(),
       ],
     );
   }

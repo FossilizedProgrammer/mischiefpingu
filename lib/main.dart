@@ -11,6 +11,7 @@ import 'providers/sstp_fetcher_provider.dart';
 import 'screens/main_screen.dart';
 import 'services/database/database_initializer.dart';
 import 'theme/theme_builder.dart';
+import 'providers/bridge_scanner_provider.dart';
 
 export 'theme/app_theme_info.dart' show AppThemeInfo, appThemes, getThemeInfo;
 
@@ -70,6 +71,7 @@ void main() async {
         ChangeNotifierProvider.value(value: appProvider),
         ChangeNotifierProvider.value(value: qualityProvider),
         ChangeNotifierProvider(create: (_) => CdnScannerProvider()),
+        ChangeNotifierProvider(create: (_) => BridgeScannerProvider()),
         ChangeNotifierProvider(
           create: (_) =>
               SstpFetcherProvider(processService: appProvider.processService),

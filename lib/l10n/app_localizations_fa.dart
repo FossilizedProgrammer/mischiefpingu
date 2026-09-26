@@ -1100,4 +1100,109 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get amneziaInvalidLink => 'فرمت لینک vpn:// نامعتبر است';
+
+  @override
+  String get bridgeScanner => 'اسکنر بریج';
+
+  @override
+  String get bridgeScannerDescription =>
+      'دریافت و تست بریج‌های تور (obfs4، webtunnel، snowflake، meek، conjure). رنگ‌بندی پینگ کمک می‌کند بریج‌هایی که واقعاً روی شبکه شما کار می‌کنند را انتخاب کنید.';
+
+  @override
+  String get bridgeLines => 'خطوط بریج (هر خط یکی)';
+
+  @override
+  String get bridgeLinesHint =>
+      'obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0';
+
+  @override
+  String get bridgeThreads => 'تعداد رشته';
+
+  @override
+  String get bridgeStartScan => 'شروع اسکن';
+
+  @override
+  String get bridgeStopScan => 'توقف';
+
+  @override
+  String get bridgeResults => 'نتایج';
+
+  @override
+  String bridgeApplyWorking(int count) {
+    return 'اعمال موارد کارکننده ($count)';
+  }
+
+  @override
+  String bridgeApplyWorkingSnackbar(int count) {
+    return '$count بریج کارکننده به تنظیمات تور اعمال شد';
+  }
+
+  @override
+  String bridgeApplyWorkingRestarting(int count) {
+    return '$count بریج اعمال شد — تور در حال راه‌اندازی مجدد برای اعمال تغییرات';
+  }
+
+  @override
+  String bridgeApplyWorkingTorNotRunning(int count) {
+    return '$count بریج اعمال شد — تور را شروع کنید تا استفاده شوند';
+  }
+
+  @override
+  String bridgeFetch(String transport) {
+    return 'دریافت $transport';
+  }
+
+  @override
+  String get bridgeSaveWorking => 'ذخیره موارد کارکننده';
+
+  @override
+  String get bridgeLoadSaved => 'بارگذاری ذخیره‌شده';
+
+  @override
+  String get bridgeRescanSaved => 'اسکن مجدد ذخیره‌شده';
+
+  @override
+  String get bridgeClearSaved => 'پاک کردن ذخیره‌شده';
+
+  @override
+  String bridgeSavedCount(int count) {
+    return 'ذخیره‌شده: $count';
+  }
+
+  @override
+  String get bridgeNoSaved => 'هنوز بریجی ذخیره نشده';
+
+  @override
+  String get bridgeSavedBridges => 'بریج‌های ذخیره‌شده';
+
+  @override
+  String bridgeSaveSuccess(int count) {
+    return '$count بریج ذخیره شد';
+  }
+
+  @override
+  String bridgeLoadedSuccess(int count) {
+    return '$count بریج ذخیره‌شده بارگذاری شد';
+  }
+
+  @override
+  String bridgeRescanStarted(int count) {
+    return 'اسکن مجدد $count بریج ذخیره‌شده';
+  }
+
+  @override
+  String get bridgeClearedSaved => 'بریج‌های ذخیره‌شده پاک شدند';
+
+  @override
+  String get bridgeNothingToSave => 'بریج کارکننده‌ای برای ذخیره نیست';
+
+  @override
+  String get bridgeLoadFromScanner => 'بارگذاری از اسکنر بریج';
+
+  @override
+  String get bridgeLoadFromScannerSubtitle =>
+      'بارگذاری بریج‌های کارکنندهٔ ذخیره‌شده از بخش اسکنر بریج در پایین';
+
+  @override
+  String get bridgeNoSavedInScanner => 'هنوز بریجی در اسکنر بریج ذخیره نشده';
 }

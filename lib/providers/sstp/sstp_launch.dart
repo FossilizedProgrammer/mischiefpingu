@@ -3,7 +3,12 @@ part of '../app_provider.dart';
 /// ═══════════════════════════════════════════════════════════════
 ///  منطق start SSTP.
 ///
-///  ⚠️ FIX:
+///  ⚠️ بازآرایی: guardها و آماده‌سازی config به فایل‌های
+///  part جداگانه منتقل شدن:
+///    • sstp/sstp_launch_guards.dart  → _checkSstpStartGuards
+///    • sstp/sstp_launch_prepare.dart → _prepareSstpConfig
+///
+///  ⚠️ نکات مهم:
 ///   • isSstpBusy با generation check در finally
 ///   • چک userStoppedSstp بعد از هر await طولانی
 ///   • چک cancel بعد از resolveSstpUpstream
@@ -16,37 +21,11 @@ extension AppProviderSstpLaunch on AppProvider {
       _reconnectManager.cancelSstpTimer();
     }
 
-    if (fromAutoReconnect && userStoppedSstp) {
-      processService.addLog(
-        '→ SSTP auto-reconnect skipped (stopped by user)',
-        source: src,
-      );
-      return;
-    }
-
-    if (fromAutoReconnect && isSstpBusy) {
-      processService.addLog(
-        '→ SSTP auto-reconnect skipped (already busy)',
-        source: src,
-      );
-      return;
-    }
-
-    if (!fromAutoReconnect && isSstpBusy) {
-      processService.addLog(
-        '→ SSTP start ignored — already starting',
-        source: src,
-      );
-      return;
-    }
-
-    if (processService.isSstpRunning && !fromAutoReconnect) {
-      processService.addLog(
-        '→ SSTP is already running — ignoring redundant start',
-        source: src,
-      );
-      return;
-    }
+    // ═══════════════════════════════════════════════════════════
+    //  Guardها
+    // ═══════════════════════════════════════════════════════════
+    final guards = _checkSstpStartGuards(src, fromAutoReconnect);
+    if (!guards.proceed) return;
 
     if (!await checkSstpBinaryAndServer()) return;
     if (!await checkSstpPorts()) return;
@@ -62,16 +41,15 @@ extension AppProviderSstpLaunch on AppProvider {
     final myGeneration = nextSstpGeneration();
 
     try {
+      // ═══════════════════════════════════════════════════════════
+      //  resolve upstream
+      // ═══════════════════════════════════════════════════════════
       final upstreamOk = await resolveSstpUpstream(
         fromAutoReconnect: fromAutoReconnect,
       );
 
-      // ⚠️ FIX: چک cancel بعد از resolveSstpUpstream
       if (userStoppedSstp) {
-        processService.addLog(
-          'SSTP start cancelled by user (after upstream resolve)',
-          source: src,
-        );
+        _logSstpCancel(src, 'after upstream resolve');
         sstpStatus = 'SSTP: Stopped';
         touch();
         return;
@@ -79,50 +57,38 @@ extension AppProviderSstpLaunch on AppProvider {
 
       if (!upstreamOk) return;
 
+      // ═══════════════════════════════════════════════════════════
+      //  آماده‌سازی config (شامل build + notification)
+      // ═══════════════════════════════════════════════════════════
       await saveSettings();
 
-      // ⚠️ FIX: چک cancel
       if (userStoppedSstp) {
-        processService.addLog(
-          'SSTP start cancelled by user (after saveSettings)',
-          source: src,
-        );
+        _logSstpCancel(src, 'after saveSettings');
         return;
       }
 
-      final builder = SstpConfigBuilder(
-        settings: settings,
-        processService: processService,
-      );
-      final args = builder.buildArgs();
+      final prep = await _prepareSstpConfig(src);
+      if (prep == null) return; // cancel شده
 
-      // ⚠️ FIX: چک cancel قبل از start نهایی
       if (userStoppedSstp) {
-        processService.addLog(
-          'SSTP start cancelled by user (before process start)',
-          source: src,
-        );
+        _logSstpCancel(src, 'before process start');
         sstpStatus = 'SSTP: Stopped';
         touch();
         return;
       }
 
-      final serverInfo = '${settings.sstpServer}:${settings.sstpPort}';
-      processService.prepareSstpNotification(serverInfo, 'Server: $serverInfo');
-
+      // ═══════════════════════════════════════════════════════════
+      //  start process
+      // ═══════════════════════════════════════════════════════════
       final ok = await processService.startSstp(
-        args: args,
+        args: prep.args,
         shareLan: settings.sstpShareLan,
         socksPort: settings.sstpSocksPort,
         httpPort: settings.sstpHttpPort,
       );
 
-      // ⚠️ FIX: چک cancel بعد از start
       if (userStoppedSstp) {
-        processService.addLog(
-          'SSTP start cancelled by user (after process start) — stopping',
-          source: src,
-        );
+        _logSstpCancel(src, 'after process start — stopping');
         try {
           await processService.stopSstp();
         } catch (_) {}
@@ -143,12 +109,19 @@ extension AppProviderSstpLaunch on AppProvider {
       processService.addLog('✗ connectSstp error: $e', source: src);
       sstpStatus = 'SSTP: Error';
     } finally {
-      // ⚠️ FIX: generation check
       if (myGeneration == _sstpGeneration) {
         isSstpBusy = false;
       }
       await AppDataService.fixDataDirOwnership();
       touch();
     }
+  }
+
+  /// لاگ cancel SSTP.
+  void _logSstpCancel(String src, String phase) {
+    processService.addLog(
+      'SSTP start cancelled by user ($phase)',
+      source: src,
+    );
   }
 }

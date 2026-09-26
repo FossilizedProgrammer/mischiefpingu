@@ -1,19 +1,11 @@
+// lib/services/aether/auto_test/store_attacher.dart
 part of '../../aether_auto_test_service.dart';
 
 /// ═══════════════════════════════════════════════════════════════
-///  منطق attach کردن storeها به AetherAutoTestService.
-///
-///  این منطق قبلاً مستقیماً روی کلاس بود. حالا در یه extension
-///  جدا قرار گرفته تا کلاس اصلی فقط lifecycle رو نگه داره.
-///
-///  ⚠️ این extension از `part of` استفاده می‌کنه، پس به
-///  فیلدهای private AetherAutoTestService دسترسی داره.
+///  Logic attach کردن storeها به AetherAutoTestService.
 /// ═══════════════════════════════════════════════════════════════
 extension AetherAutoTestStoreAttacher on AetherAutoTestService {
   /// پیاده‌سازی واقعی `attachAllStores`.
-  ///
-  /// اگه هیچ‌کدوم از پارامترها null نباشن، `rebuildCollaborators`
-  /// صدا زده می‌شه.
   void attachAllStoresInternal({
     GatewayHistoryStore? historyStore,
     ProfilePerformanceStore? profileStore,
@@ -21,7 +13,6 @@ extension AetherAutoTestStoreAttacher on AetherAutoTestService {
     AetherDecisionEngine? decisionEngine,
   }) {
     var changed = false;
-
     if (historyStore != null) {
       gatewayHistoryStore = historyStore;
       changed = true;
@@ -38,7 +29,6 @@ extension AetherAutoTestStoreAttacher on AetherAutoTestService {
       this.decisionEngine = decisionEngine;
       changed = true;
     }
-
     if (changed) rebuildCollaborators();
   }
 }

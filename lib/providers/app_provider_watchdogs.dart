@@ -1,111 +1,38 @@
 part of 'app_provider.dart';
 
+/// ═══════════════════════════════════════════════════════════════
+///  AppProviderWatchdogs — ساخت و sync کردن watchdogها.
+///
+///  ⚠️ بازآرایی: منطق پیچیده به فایل‌های جداگانه منتقل شده:
+///    • app_provider_watchdogs_leases.dart
+///        → همهٔ acquireXLease callbackها
+///    • app_provider_watchdogs_factory.dart
+///        → ساخت TunnelWatchdogManager با پارامترها
+///
+///  این فایل حالا فقط orchestrator + sync logic است.
+/// ═══════════════════════════════════════════════════════════════
 extension AppProviderWatchdogs on AppProvider {
+  /// ساخت watchdog manager (idempotent).
+  ///
+  /// اگه قبلاً ساخته شده باشه، کاری نمی‌کنه.
   void ensureWatchdogs() {
     if (_watchdogManager != null) return;
 
-    Future<bool> internetAliveCheck() async {
-      final q = _qualityProvider;
-      if (q != null) {
-        try {
-          return await q.isInternetAlive();
-        } catch (e) {
-          processService.addLog(
-            '⚠ qualityProvider.isInternetAlive threw: $e — '
-            'falling back to ConnectivityProbe',
-            source: LogSource.app,
-          );
-        }
-      }
-      return _connectivityProbe.isInternetAlive();
-    }
+    // ─── internet check ───
+    final internetAliveCheck = _buildInternetAliveCheck(this);
 
-    Future<RecoveryLeaseResult> acquirePsiphonLease() async {
-      final lease = _recoveryCoordinator.tryAcquire(
-        tunnel: 'Psiphon',
-        action: RecoveryAction.watchdogRestart,
-        reason: 'watchdog detected dead tunnel',
-      );
-      if (lease == null) {
-        return const RecoveryLeaseResult.denied(
-          'another recovery is in progress',
-        );
-      }
-      return RecoveryLeaseResult(
-        granted: true,
-        lease: _LeaseHandleWrapper(lease, _recoveryCoordinator),
-      );
-    }
+    // ─── lease acquirerها ───
+    final acquirePsiphonLease =
+        _makePsiphonLeaseAcquirer(this, _recoveryCoordinator);
+    final acquireAetherLease =
+        _makeAetherLeaseAcquirer(this, _recoveryCoordinator);
+    final acquireTorLease = _makeTorLeaseAcquirer(this, _recoveryCoordinator);
+    final acquireSstpLease = _makeSstpLeaseAcquirer(this, _recoveryCoordinator);
+    final acquireWireGuardLease =
+        _makeWireGuardLeaseAcquirer(this, _recoveryCoordinator);
 
-    Future<RecoveryLeaseResult> acquireAetherLease() async {
-      final lease = _recoveryCoordinator.tryAcquire(
-        tunnel: 'Aether',
-        action: RecoveryAction.watchdogRestart,
-        reason: 'watchdog detected dead tunnel',
-      );
-      if (lease == null) {
-        return const RecoveryLeaseResult.denied(
-          'another recovery is in progress',
-        );
-      }
-      return RecoveryLeaseResult(
-        granted: true,
-        lease: _LeaseHandleWrapper(lease, _recoveryCoordinator),
-      );
-    }
-
-    Future<RecoveryLeaseResult> acquireTorLease() async {
-      final lease = _recoveryCoordinator.tryAcquire(
-        tunnel: 'Tor',
-        action: RecoveryAction.watchdogRestart,
-        reason: 'watchdog detected dead tunnel',
-      );
-      if (lease == null) {
-        return const RecoveryLeaseResult.denied(
-          'another recovery is in progress',
-        );
-      }
-      return RecoveryLeaseResult(
-        granted: true,
-        lease: _LeaseHandleWrapper(lease, _recoveryCoordinator),
-      );
-    }
-
-    Future<RecoveryLeaseResult> acquireSstpLease() async {
-      final lease = _recoveryCoordinator.tryAcquire(
-        tunnel: 'SSTP',
-        action: RecoveryAction.watchdogRestart,
-        reason: 'watchdog detected dead tunnel',
-      );
-      if (lease == null) {
-        return const RecoveryLeaseResult.denied(
-          'another recovery is in progress',
-        );
-      }
-      return RecoveryLeaseResult(
-        granted: true,
-        lease: _LeaseHandleWrapper(lease, _recoveryCoordinator),
-      );
-    }
-
-    Future<RecoveryLeaseResult> acquireWireGuardLease() async {
-      final lease = _recoveryCoordinator.tryAcquire(
-        tunnel: 'WireGuard',
-        action: RecoveryAction.watchdogRestart,
-        reason: 'watchdog detected dead tunnel',
-      );
-      if (lease == null) {
-        return const RecoveryLeaseResult.denied(
-          'another recovery is in progress',
-        );
-      }
-      return RecoveryLeaseResult(
-        granted: true,
-        lease: _LeaseHandleWrapper(lease, _recoveryCoordinator),
-      );
-    }
-
-    _watchdogManager = TunnelWatchdogFactory.build(
+    // ─── build ───
+    _watchdogManager = _buildWatchdogManager(
       provider: this,
       processService: processService,
       isInternetAlive: internetAliveCheck,
@@ -114,22 +41,12 @@ extension AppProviderWatchdogs on AppProvider {
       acquireTorLease: acquireTorLease,
       acquireSstpLease: acquireSstpLease,
       acquireWireGuardLease: acquireWireGuardLease,
-      restartPsiphon: () =>
-          restartPsiphonInternal(reason: 'watchdog detected dead tunnel'),
-      restartAether: () =>
-          restartAetherInternal(reason: 'watchdog detected dead tunnel'),
-      restartTor: () =>
-          restartTorInternal(reason: 'watchdog detected dead tunnel'),
-      restartSstp: () =>
-          restartSstpInternal(reason: 'watchdog detected dead tunnel'),
-      restartWireGuard: () =>
-          restartWireGuardInternal(reason: 'watchdog detected dead tunnel'),
     );
   }
 
   /// ═══════════════════════════════════════════════════════════════
-  ///  ⚠️ syncWatchdogs — حالا به settings.watchdogEnabled احترام
-  ///  می‌گذارد.
+  ///  syncWatchdogs — حالا به settings.watchdogEnabled و تغییر
+  ///  پروفایل احترام می‌گذارد.
   ///
   ///  وقتی user واچ‌داگ را غیرفعال می‌کند:
   ///    • همهٔ watchdogها stop() می‌شوند
@@ -139,10 +56,6 @@ extension AppProviderWatchdogs on AppProvider {
   ///  وقتی دوباره فعال می‌کند:
   ///    • ensureWatchdogs دوباره صدا زده می‌شود
   ///    • syncWithConnectionState وضعیت را reset می‌کند
-  /// ═══════════════════════════════════════════════════════════════
-  /// ═══════════════════════════════════════════════════════════════
-  ///  ⚠️ syncWatchdogs — حالا به settings.watchdogEnabled
-  ///  و تغییر پروفایل احترام می‌گذارد.
   /// ═══════════════════════════════════════════════════════════════
   void syncWatchdogs() {
     // ─── واچ‌داگ غیرفعال است → همه را متوقف کن ───
@@ -154,9 +67,6 @@ extension AppProviderWatchdogs on AppProvider {
     // ═══════════════════════════════════════════════════════════
     //  بررسی تغییر پروفایل: اگر پروفایل عوض شده باشد،
     //  watchdog manager را دوباره می‌سازیم.
-    //
-    //  ⚠️ به جای restart فوری، فقط manager را rebuild می‌کنیم
-    //  و failure countها reset می‌شوند.
     // ═══════════════════════════════════════════════════════════
     final currentProfile = settings.watchdogNetworkProfile;
     if (_lastBuiltProfile != null && _lastBuiltProfile != currentProfile) {
