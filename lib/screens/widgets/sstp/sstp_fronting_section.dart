@@ -48,16 +48,23 @@ class SstpFrontingSection extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
               child: DropdownButtonFormField<String>(
-                initialValue: sstpFingerprint.isEmpty ? null : sstpFingerprint,
+                // ═══════════════════════════════════════════════════
+                //  🆕 گزینهٔ 'None' برای وقتی سرور با fingerprint
+                //  مشکل داره
+                // ═══════════════════════════════════════════════════
+                initialValue: sstpFingerprint,
                 decoration: InputDecoration(
                   labelText: l10n.fingerprint,
                   isDense: true,
                 ),
                 items: const [
+                  DropdownMenuItem(value: '', child: Text('None')),
                   DropdownMenuItem(value: 'chrome', child: Text('Chrome')),
                   DropdownMenuItem(value: 'firefox', child: Text('Firefox')),
                   DropdownMenuItem(value: 'safari', child: Text('Safari')),
                   DropdownMenuItem(value: 'edge', child: Text('Edge')),
+                  DropdownMenuItem(value: 'ios', child: Text('iOS')),
+                  DropdownMenuItem(value: 'android', child: Text('Android')),
                   DropdownMenuItem(value: 'random', child: Text('Random')),
                 ],
                 onChanged: onFingerprintChanged,

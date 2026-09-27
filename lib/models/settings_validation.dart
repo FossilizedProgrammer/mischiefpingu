@@ -161,6 +161,10 @@ class SettingsValidation {
     if (s.sstpProxyPort < 0 || s.sstpProxyPort > 65535) {
       s.sstpProxyPort = 0;
     }
+
+    if (s.sstpMtu < 576 || s.sstpMtu > 1500) {
+      s.sstpMtu = 1400;
+    }
   }
 
   static void _validateConduit(AppSettings s) {
@@ -172,7 +176,10 @@ class SettingsValidation {
   static void _validateWatchdogProfile(AppSettings s) {
     const valid = {'stable', 'normal', 'harsh'};
     if (!valid.contains(s.watchdogNetworkProfile)) {
-      s.watchdogNetworkProfile = 'normal';
+      // ═══════════════════════════════════════════════════════════
+      //  🆕 fallback از 'normal' به 'harsh' تغییر کرد
+      // ═══════════════════════════════════════════════════════════
+      s.watchdogNetworkProfile = 'harsh';
     }
   }
 }

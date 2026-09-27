@@ -102,9 +102,17 @@ extension AppSettingsSerialization on AppSettings {
       sstpProxyUser: _s(m, 'sstpProxyUser', ''),
       sstpProxyPass: _s(m, 'sstpProxyPass', ''),
       sstpSni: _s(m, 'sstpSni', ''),
-      sstpFingerprint: _s(m, 'sstpFingerprint', ''),
+      // ═══════════════════════════════════════════════════════════
+      //  🆕 fallback به 'chrome'
+      //
+      //  ⚠️ نکته: کاربرانی که قبلاً settings داشتن بدون این فیلد،
+      //  الان 'chrome' می‌گیرن. اگه سرورشون با fingerprint
+      //  مشکل داره، باید دستی 'None' انتخاب کنن.
+      // ═══════════════════════════════════════════════════════════
+      sstpFingerprint: _s(m, 'sstpFingerprint', 'chrome'),
       sstpShareLan: _b(m, 'sstpShareLan', false),
       sstpVerbose: _b(m, 'sstpVerbose', true),
+      sstpMtu: _i(m, 'sstpMtu', 1400),
       psiphonBuildRev: _s(m, 'psiphonBuildRev', ''),
       psiphonBinarySha: _s(m, 'psiphonBinarySha', ''),
       aetherCustomEndpoint: _s(m, 'aetherCustomEndpoint', ''),
@@ -118,7 +126,14 @@ extension AppSettingsSerialization on AppSettings {
       wireguardCore: _s(m, 'wireguard_core', 'standard'),
       wireguardAutoReconnect: _b(m, 'wireguardAutoReconnect', true),
       watchdogEnabled: _b(m, 'watchdogEnabled', true),
-      watchdogNetworkProfile: _s(m, 'watchdogNetworkProfile', 'normal'),
+      // ═══════════════════════════════════════════════════════════
+      //  🆕 fallback از 'normal' به 'harsh' تغییر کرد
+      //
+      //  ⚠️ کاربران قبلی که فیلد watchdogNetworkProfile رو نداشتن،
+      //  الان 'harsh' می‌گیرن. اگه می‌خوان برگردن به 'normal'،
+      //  باید از UI تغییر بدن.
+      // ═══════════════════════════════════════════════════════════
+      watchdogNetworkProfile: _s(m, 'watchdogNetworkProfile', 'harsh'),
       enabledLogSources: _list(m, 'enabledLogSources', [
         'Psiphon',
         'Aether',
@@ -195,6 +210,7 @@ extension AppSettingsSerialization on AppSettings {
         'sstpFingerprint': sstpFingerprint,
         'sstpShareLan': sstpShareLan,
         'sstpVerbose': sstpVerbose,
+        'sstpMtu': sstpMtu,
         'psiphonBuildRev': psiphonBuildRev,
         'psiphonBinarySha': psiphonBinarySha,
         'aetherCustomEndpoint': aetherCustomEndpoint,

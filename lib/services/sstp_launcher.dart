@@ -21,6 +21,11 @@ extension ProcessServiceSstpLauncher on ProcessService {
       addLog('Starting SSTP with args: ${args.join(' ')}', source: src);
       addLog('→ SSTP binary: $binaryPath', source: src);
 
+      // ═══════════════════════════════════════════════════════════
+      //  🆕 ریست flag هنگام start جدید
+      // ═══════════════════════════════════════════════════════════
+      sstpStoppedIntentionally = false;
+
       sstpProcess = await Process.start(
         binaryPath,
         args,
@@ -53,7 +58,7 @@ extension ProcessServiceSstpLauncher on ProcessService {
       addLog('SSTP is running (PID: ${sstpProcess!.pid})', source: src);
       touch();
 
-      _attachSstpListeners();
+      _attachSstpListeners(socksPort);
       return true;
     } catch (e) {
       addLog('Failed to start SSTP: $e', source: LogSource.sstp);
@@ -64,7 +69,7 @@ extension ProcessServiceSstpLauncher on ProcessService {
     }
   }
 
-  void _attachSstpListeners() {
+  void _attachSstpListeners(int socksPort) {
     const src = LogSource.sstp;
 
     void handleLine(String line) {
@@ -75,6 +80,7 @@ extension ProcessServiceSstpLauncher on ProcessService {
       if (trimmed.contains('tunnel is UP') ||
           trimmed.contains('proxies ready')) {
         final wasConnected = isSstpConnected;
+        final wasReady = isSstpTunnelReady;
         isSstpTunnelReady = true;
         isSstpConnected = true;
 
@@ -96,6 +102,13 @@ extension ProcessServiceSstpLauncher on ProcessService {
           wasConnected: wasConnected,
           isConnected: true,
         );
+
+        // ═══════════════════════════════════════════════════════════
+        //  🆕 شروع keepalive — فقط یکبار، وقتی tunnel اولین بار UP شد
+        // ═══════════════════════════════════════════════════════════
+        if (!wasReady) {
+          onSstpTunnelReady?.call(socksPort);
+        }
 
         touch();
       }
@@ -123,15 +136,28 @@ extension ProcessServiceSstpLauncher on ProcessService {
       pendingSstpNotification = null;
       sstpProcess = null;
 
+      // ═══════════════════════════════════════════════════════════
+      //  🆕 توقف keepalive — ولی فقط اگر stop عمدی نبوده باشه
+      //
+      //  چرا؟ چون در stopSstp خودمان onSstpStopped را صدا زدیم
+      //  و اینجا دوباره صدا زدن باعث duplicate می‌شه.
+      // ═══════════════════════════════════════════════════════════
+      if (sstpStoppedIntentionally) {
+        sstpStoppedIntentionally = false;
+        addLog(
+          '→ SSTP exit handled (intentional stop — skipped duplicate callback)',
+          source: src,
+        );
+      } else {
+        onSstpStopped?.call();
+      }
+
       checkHappyTransition(
         tunnelName: 'SSTP',
         wasConnected: wasConnected,
         isConnected: false,
       );
 
-      // ═══════════════════════════════════════════════════════════
-      //  ⚠️ sad notification هنگام خروج غیرمنتظره
-      // ═══════════════════════════════════════════════════════════
       if (wasConnected && !suppressSadNotification) {
         addLog('⚠ SSTP exited unexpectedly (code=$code)', source: src);
         setSadNotification('SSTP');

@@ -11,7 +11,8 @@ extension AppProviderHealthHelpers on AppProvider {
     if (h.reconnectCount != prev.reconnectCount) return true;
     if (h.errorCount != prev.errorCount) return true;
     if (h.trend != prev.trend) return true;
-    final uptimeChanged = h.uptime.inSeconds ~/ 10 != prev.uptime.inSeconds ~/ 10;
+    final uptimeChanged =
+        h.uptime.inSeconds ~/ 10 != prev.uptime.inSeconds ~/ 10;
     if (uptimeChanged) return true;
     return false;
   }
@@ -25,22 +26,30 @@ extension AppProviderHealthHelpers on AppProvider {
     try {
       _connectivityProbe.invalidateCache();
     } catch (e) {
-      processService.addLog('⚠ Failed to invalidate ConnectivityProbe cache: $e', source: LogSource.app);
+      processService.addLog(
+          '⚠ Failed to invalidate ConnectivityProbe cache: $e',
+          source: LogSource.app);
     }
     try {
       _qualityProvider?.invalidateCache();
     } catch (e) {
-      processService.addLog('⚠ Failed to invalidate InternetQuality cache: $e', source: LogSource.app);
+      processService.addLog('⚠ Failed to invalidate InternetQuality cache: $e',
+          source: LogSource.app);
     }
   }
 
   String? _nextProfile(String current) {
     switch (current) {
-      case 'adaptive': return 'patchy';
-      case 'patchy': return 'strict';
-      case 'strict': return null;
-      case 'manual': return null;
-      default: return 'strict';
+      case 'adaptive':
+        return 'patchy';
+      case 'patchy':
+        return 'strict';
+      case 'strict':
+        return null;
+      case 'manual':
+        return null;
+      default:
+        return 'strict';
     }
   }
 
@@ -48,16 +57,21 @@ extension AppProviderHealthHelpers on AppProvider {
     try {
       await Future.delayed(const Duration(milliseconds: 500));
       if (userStoppedAether || isShuttingDown) {
-        processService.addLog('→ Escalation restart skipped (user stopped or shutting down)', source: LogSource.aether);
+        processService.addLog(
+            '→ Escalation restart skipped (user stopped or shutting down)',
+            source: LogSource.aether);
         return;
       }
       if (!settings.watchdogEnabled) {
-        processService.addLog('→ Escalation restart skipped (watchdog disabled mid-flight)', source: LogSource.aether);
+        processService.addLog(
+            '→ Escalation restart skipped (watchdog disabled mid-flight)',
+            source: LogSource.aether);
         return;
       }
       await restartAetherInternal(reason: 'profile escalation: $reason');
     } catch (e) {
-      processService.addLog('⚠ Escalation restart failed: $e', source: LogSource.aether);
+      processService.addLog('⚠ Escalation restart failed: $e',
+          source: LogSource.aether);
     } finally {
       await Future.delayed(const Duration(seconds: 30));
       _escalationInProgress = false;

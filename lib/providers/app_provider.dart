@@ -45,6 +45,7 @@ import '../services/wireguard/wireguard_config_parser.dart';
 import '../services/wireguard/wireguard_config_builder.dart';
 import '../services/wireguard/wireguard_paths.dart';
 import '../services/wireguard/wireguard_log_watcher.dart';
+import '../services/sstp/sstp_keepalive.dart';
 
 part 'app_provider_snapshot.dart';
 part 'sstp/sstp_launch.dart';
@@ -98,6 +99,8 @@ class AppProvider extends ChangeNotifier {
 
   late AetherAutoTestService _aetherTestService;
   AetherAutoTestService get aetherTestService => _aetherTestService;
+  late final SstpKeepalive _sstpKeepalive;
+  SstpKeepalive get sstpKeepalive => _sstpKeepalive;
 
   final SettingsPersistenceService persistence = SettingsPersistenceService();
   final AutoReconnectManager _reconnectManager = AutoReconnectManager();
@@ -131,7 +134,8 @@ class AppProvider extends ChangeNotifier {
   AetherLogger get aetherLogger => _aetherLogger;
 
   late ProfilePerformanceStore _profilePerformanceStore;
-  ProfilePerformanceStore get profilePerformanceStore => _profilePerformanceStore;
+  ProfilePerformanceStore get profilePerformanceStore =>
+      _profilePerformanceStore;
 
   late AetherDecisionEngine _decisionEngine;
   AetherDecisionEngine get decisionEngine => _decisionEngine;
@@ -155,7 +159,8 @@ class AppProvider extends ChangeNotifier {
   final Duration healthPollInterval = const Duration(seconds: 3);
 
   GatewayReconnectOrchestrator? _gatewayReconnectOrchestrator;
-  GatewayReconnectOrchestrator? get gatewayReconnectOrchestrator => _gatewayReconnectOrchestrator;
+  GatewayReconnectOrchestrator? get gatewayReconnectOrchestrator =>
+      _gatewayReconnectOrchestrator;
 
   InternetQualityProvider? _qualityProvider;
   InternetQualityProvider? get qualityProvider => _qualityProvider;

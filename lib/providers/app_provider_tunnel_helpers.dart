@@ -61,11 +61,16 @@ extension AppProviderTunnelHelpers on AppProvider {
 
   String _tunnelDisplayName(String key) {
     switch (key.toLowerCase()) {
-      case 'psiphon': return 'Psiphon';
-      case 'aether': return 'Aether';
-      case 'tor': return 'Tor';
-      case 'sstp': return 'SSTP';
-      default: return key;
+      case 'psiphon':
+        return 'Psiphon';
+      case 'aether':
+        return 'Aether';
+      case 'tor':
+        return 'Tor';
+      case 'sstp':
+        return 'SSTP';
+      default:
+        return key;
     }
   }
 

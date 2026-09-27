@@ -18,6 +18,42 @@ class SstpSwitchesSection extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Column(
       children: [
+        // ═══════════════════════════════════════════════════════════
+        //  InfoBox — توضیح رفتار auto-retry
+        // ═══════════════════════════════════════════════════════════
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.green.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.check_circle_outline,
+                size: 16,
+                color: Colors.green.shade700,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Auto-retry is always on. When the tunnel drops, '
+                  'sstp-proxy reconnects itself in 3-5s without restarting '
+                  'the process. Keepalive pings every 18-25s keep the '
+                  'connection alive.',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.green.shade800,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           dense: true,

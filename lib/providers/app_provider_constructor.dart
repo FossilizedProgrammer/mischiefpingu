@@ -22,7 +22,18 @@ void initializeAppProvider(AppProvider p) {
   p._psiphonLog = PsiphonLogWatcher(log: p.processService.addLog);
   p._torLog = TorLogWatcher(log: p.processService.addLog);
   p._sstpLog = SstpLogWatcher(log: p.processService.addLog);
+  p._sstpKeepalive = SstpKeepalive(log: p.processService.addLog);
   p._wireGuardLog = WireGuardLogWatcher(log: p.processService.addLog);
+
+  // ═══════════════════════════════════════════════════════════
+  //  🆕 اتصال callbackهای SSTP keepalive به ProcessService
+  // ═══════════════════════════════════════════════════════════
+  p.processService.onSstpTunnelReady = (socksPort) {
+    p._sstpKeepalive.start(socksPort);
+  };
+  p.processService.onSstpStopped = () {
+    p._sstpKeepalive.stop();
+  };
 
   p._logSubscription = p.processService.logStream.listen(
     p.feedLogWatchers,

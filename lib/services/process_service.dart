@@ -111,6 +111,15 @@ class ProcessService extends ChangeNotifier
   bool suppressSadNotification = false;
 
   // ═══════════════════════════════════════════════════════════════
+  //  🆕 SSTP intentional stop flag
+  //
+  //  جلوگیری از دوبار صدا زدن onSstpStopped:
+  //    • stopSstp() آن را true می‌کند
+  //    • exitCode listener آن را چک و reset می‌کند
+  // ═══════════════════════════════════════════════════════════════
+  bool sstpStoppedIntentionally = false;
+
+  // ═══════════════════════════════════════════════════════════════
   //  Psiphon protocol state
   // ═══════════════════════════════════════════════════════════════
 
@@ -398,6 +407,12 @@ class ProcessService extends ChangeNotifier
   // ═══════════════════════════════════════════════════════════════
 
   void touch() => notifyListeners();
+
+  /// callback برای شروع keepalive (از AppProvider ست می‌شه).
+  void Function(int socksPort)? onSstpTunnelReady;
+
+  /// callback برای توقف keepalive.
+  void Function()? onSstpStopped;
 
   Future<void> ensureInitialized() async {
     if (_initialized) return;

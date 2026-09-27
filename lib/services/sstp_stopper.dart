@@ -4,10 +4,13 @@ extension ProcessServiceSstpStopper on ProcessService {
   Future<void> stopSstp() async {
     const src = LogSource.sstp;
 
-    // ═══════════════════════════════════════════════════════════
-    //  ⚠️ سرکوب sad notification چون کاربر دستی stop کرده
-    // ═══════════════════════════════════════════════════════════
     suppressSadNotification = true;
+
+    // ═══════════════════════════════════════════════════════════
+    //  🆕 علامت‌گذاری: این stop عمدی است — از دوبار صدا زدن
+    //  onSstpStopped جلوگیری می‌کند
+    // ═══════════════════════════════════════════════════════════
+    sstpStoppedIntentionally = true;
 
     final proc = sstpProcess;
     if (proc != null) {
@@ -37,6 +40,12 @@ extension ProcessServiceSstpStopper on ProcessService {
     pendingSstpTransportType = null;
     pendingSstpTransportDetail = null;
     pendingSstpNotification = null;
+
+    // ═══════════════════════════════════════════════════════════
+    //  🆕 توقف keepalive
+    // ═══════════════════════════════════════════════════════════
+    onSstpStopped?.call();
+
     addLog('SSTP stopped', source: src);
     touch();
   }

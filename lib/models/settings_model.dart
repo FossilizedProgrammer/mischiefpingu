@@ -100,6 +100,7 @@ class AppSettings {
   String sstpFingerprint;
   bool sstpShareLan;
   bool sstpVerbose;
+  int sstpMtu;
 
   String themeId;
   bool muted;
@@ -169,15 +170,35 @@ class AppSettings {
     this.sstpProxyUser = '',
     this.sstpProxyPass = '',
     this.sstpSni = '',
-    this.sstpFingerprint = '',
+    // ═══════════════════════════════════════════════════════════
+    //  🆕 پیش‌فرض 'chrome' برای DPI evasion
+    //  اگه سرور VPN Gate با fingerprint مشکل داشت، user
+    //  می‌تونه از UI به 'None' تغییرش بده.
+    // ═══════════════════════════════════════════════════════════
+    this.sstpFingerprint = 'chrome',
     this.sstpShareLan = false,
     this.sstpVerbose = true,
+    this.sstpMtu = 1400,
     this.psiphonBuildRev = '',
     this.psiphonBinarySha = '',
     this.themeId = 'ocean',
     this.muted = false,
     this.watchdogEnabled = true,
-    this.watchdogNetworkProfile = 'normal',
+    // ═══════════════════════════════════════════════════════════
+    //  🆕 پیش‌فرض از 'normal' به 'harsh' تغییر کرد
+    //
+    //  دلیل: کاربران گزارش دادن که در شبکه‌های فیلترشده
+    //  (ایران، چین، روسیه) پروفایل normal خیلی سریع restart
+    //  می‌کنه و باعث می‌شه تونل‌ها اصلاً فرصت recover نداشته باشن.
+    //
+    //  harsh:
+    //    • maxFailures = 9 (به جای 5)
+    //    • interval = 105s (به جای 75s)
+    //    • circuitBreakerCooldown = 20min (به جای 12min)
+    //    • requireHttpSuccess = false
+    //    • includeCloudflareTarget = false
+    // ═══════════════════════════════════════════════════════════
+    this.watchdogNetworkProfile = 'harsh',
     this.wireguardConfigRaw = '',
     this.wireguardSocksPort = 1085,
     this.wireguardShareLan = false,
