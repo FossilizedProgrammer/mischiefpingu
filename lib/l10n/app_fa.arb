@@ -36,6 +36,84 @@
   "cancelBtn": "لغو",
   "cdnPreset": "پیش‌تنظیم CDN",
   "cdnScanner": "اسکنر آی‌پی برای سایفون شیر و خورشید",
+  "cdnScanModeQuick": "سریع",
+  "cdnScanModeBalanced": "متعادل",
+  "cdnScanModeDeep": "عمیق",
+  "cdnScanModeQuickDesc": "سریع · {samples} آی‌پی در هر CIDR · حداکثر {max} آی‌پی در مجموع · حدود 1-2 دقیقه",
+  "@cdnScanModeQuickDesc": {
+    "placeholders": {
+      "samples": { "type": "String" },
+      "max": { "type": "String" }
+    }
+  },
+  "cdnScanModeBalancedDesc": "متعادل · {samples} آی‌پی در هر CIDR · حداکثر {max} آی‌پی در مجموع · حدود 5-10 دقیقه",
+  "@cdnScanModeBalancedDesc": {
+    "placeholders": {
+      "samples": { "type": "String" },
+      "max": { "type": "String" }
+    }
+  },
+  "cdnScanModeDeepDesc": "عمیق · گسترش کامل · حداکثر {max} آی‌پی در مجموع · حدود 30-60 دقیقه",
+  "@cdnScanModeDeepDesc": {
+    "placeholders": {
+      "max": { "type": "String" }
+    }
+  },
+  "cdnScoutTitle": "یافتن SNIهای کارکننده (پیشنهادی)",
+  "cdnScoutProgress": "در حال کاوش {done}/{total}…",
+  "@cdnScoutProgress": {
+    "placeholders": {
+      "done": { "type": "String" },
+      "total": { "type": "String" }
+    }
+  },
+  "cdnScoutHint": "SNIهای Discord/Reddit در ایران فیلتر هستند. قابلیت کاوش، موارد کارکننده را پیدا می‌کند.",
+  "cdnScoutButton": "کاوش",
+  "cdnScanPreview": "{lines} خط · {ips} آی‌پی اسکن خواهد شد",
+  "@cdnScanPreview": {
+    "placeholders": {
+      "lines": { "type": "String" },
+      "ips": { "type": "String" }
+    }
+  },
+  "cdnScanWarningsMore": "…و {count} مورد دیگر",
+  "@cdnScanWarningsMore": {
+    "placeholders": {
+      "count": { "type": "String" }
+    }
+  },
+  "cdnApplyIpsToPsiphon": "اعمال {count} آی‌پی روی Psiphon",
+  "@cdnApplyIpsToPsiphon": {
+    "placeholders": {
+      "count": { "type": "String" }
+    }
+  },
+  "cdnApplyIpsSnack": "{count} آی‌پی → Psiphon\nآی‌پی فرانتینگ: {ip}\nSNI: {sni}",
+  "@cdnApplyIpsSnack": {
+    "placeholders": {
+      "count": { "type": "String" },
+      "ip": { "type": "String" },
+      "sni": { "type": "String" }
+    }
+  },
+  "cdnSendToPsiphon": "ارسال به Psiphon",
+  "cdnCustomIpsSent": "{count} آی‌پی سفارشی → Psiphon (فرانتینگ: {ip})",
+  "@cdnCustomIpsSent": {
+    "placeholders": {
+      "count": { "type": "String" },
+      "ip": { "type": "String" }
+    }
+  },
+  "cdnResultSubtitle": "امتیاز {score} · پایداری {reliability}/5 · {latency}ms · دانلود {download}ms · {sni}",
+  "@cdnResultSubtitle": {
+    "placeholders": {
+      "score": { "type": "String" },
+      "reliability": { "type": "String" },
+      "latency": { "type": "String" },
+      "download": { "type": "String" },
+      "sni": { "type": "String" }
+    }
+  },
   "check": "بررسی",
   "checkHealth": "بررسی سلامت",
   "checking": "در حال بررسی…",
@@ -50,6 +128,11 @@
   "connecting": "در حال اتصال…",
   "connectionMode": "حالت اتصال",
   "copiedToClipboard": "در کلیپ‌بورد کپی شد",
+  "copyAllToClipboard": "کپی همه",
+  "importFromClipboard": "ورود از کلیپ‌بورد",
+  "importedFromClipboard": "از کلیپ‌بورد وارد شد",
+  "nothingToImport": "کلیپ‌بورد خالی است",
+  "itemsAddedCount": "آیتم‌های افزوده‌شده",
   "copy": "کپی",
   "copyAllCsv": "کپی همه (CSV با جزئیات)",
   "copyAllIpPort": "کپی همه (ip:port)",
@@ -321,6 +404,10 @@
   "wireguardFormatUri": "URI",
   "wireguardConvertToUri": "تبدیل به URI",
   "wireguardConvertToStandard": "تبدیل به استاندارد",
+  "wireguardLoadConfFile": "بارگذاری فایل .conf",
+  "wireguardConfFileLoaded": "کانفیگ WireGuard از فایل بارگذاری شد",
+  "wireguardConfFileEmpty": "فایل انتخاب‌شده خالی است",
+  "wireguardConfFileReadError": "خواندن فایل انتخاب‌شده ممکن نشد",
   "wireguardConnected": "وایرگارد متصل شد",
   "autoReconnectWireGuard": "اتصال مجدد خودکار وایرگارد",
   "logSourceWireGuard": "وایرگارد",

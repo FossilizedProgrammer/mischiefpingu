@@ -1,9 +1,7 @@
 // lib/models/settings_serialization.dart
-
 library;
 
 import 'dart:convert';
-
 import 'settings_model.dart';
 import 'settings_validation.dart';
 
@@ -47,6 +45,9 @@ extension AppSettingsSerialization on AppSettings {
       onlyIpv4: _b(m, 'onlyIpv4', false),
       autoFindIpAndSni: _b(m, 'autoFindIpAndSni', false),
       saveFoundIpsAndSni: _b(m, 'saveFoundIpsAndSni', false),
+      // ═══════════════════════════════════════════════════════════
+      //  🆕 بارگذاری تنظیم جدید
+      // ═══════════════════════════════════════════════════════════
       upstreamType: _i(m, 'upstreamType', 0),
       socksPort: _i(m, 'socksPort', 1080),
       httpPort: _i(m, 'httpPort', 8080),
@@ -102,13 +103,6 @@ extension AppSettingsSerialization on AppSettings {
       sstpProxyUser: _s(m, 'sstpProxyUser', ''),
       sstpProxyPass: _s(m, 'sstpProxyPass', ''),
       sstpSni: _s(m, 'sstpSni', ''),
-      // ═══════════════════════════════════════════════════════════
-      //  🆕 fallback به 'chrome'
-      //
-      //  ⚠️ نکته: کاربرانی که قبلاً settings داشتن بدون این فیلد،
-      //  الان 'chrome' می‌گیرن. اگه سرورشون با fingerprint
-      //  مشکل داره، باید دستی 'None' انتخاب کنن.
-      // ═══════════════════════════════════════════════════════════
       sstpFingerprint: _s(m, 'sstpFingerprint', 'chrome'),
       sstpShareLan: _b(m, 'sstpShareLan', false),
       sstpVerbose: _b(m, 'sstpVerbose', true),
@@ -126,13 +120,6 @@ extension AppSettingsSerialization on AppSettings {
       wireguardCore: _s(m, 'wireguard_core', 'standard'),
       wireguardAutoReconnect: _b(m, 'wireguardAutoReconnect', true),
       watchdogEnabled: _b(m, 'watchdogEnabled', true),
-      // ═══════════════════════════════════════════════════════════
-      //  🆕 fallback از 'normal' به 'harsh' تغییر کرد
-      //
-      //  ⚠️ کاربران قبلی که فیلد watchdogNetworkProfile رو نداشتن،
-      //  الان 'harsh' می‌گیرن. اگه می‌خوان برگردن به 'normal'،
-      //  باید از UI تغییر بدن.
-      // ═══════════════════════════════════════════════════════════
       watchdogNetworkProfile: _s(m, 'watchdogNetworkProfile', 'harsh'),
       enabledLogSources: _list(m, 'enabledLogSources', [
         'Psiphon',
@@ -143,6 +130,7 @@ extension AppSettingsSerialization on AppSettings {
         'System',
       ]),
     );
+
     SettingsValidation.validateAndNormalize(s);
     return s;
   }
@@ -156,6 +144,9 @@ extension AppSettingsSerialization on AppSettings {
         'onlyIpv4': onlyIpv4,
         'autoFindIpAndSni': autoFindIpAndSni,
         'saveFoundIpsAndSni': saveFoundIpsAndSni,
+        // ═══════════════════════════════════════════════════════════
+        //  🆕 ذخیره تنظیم جدید
+        // ═══════════════════════════════════════════════════════════
         'upstreamType': upstreamType,
         'socksPort': socksPort,
         'httpPort': httpPort,

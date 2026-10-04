@@ -113,6 +113,79 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cdnScanner => 'Сканер IP CDN';
 
   @override
+  String get cdnScanModeQuick => 'Быстро';
+
+  @override
+  String get cdnScanModeBalanced => 'Сбалансированно';
+
+  @override
+  String get cdnScanModeDeep => 'Глубоко';
+
+  @override
+  String cdnScanModeQuickDesc(String samples, String max) {
+    return 'Быстро · $samples IP на CIDR · до $max всего · ~1-2 мин';
+  }
+
+  @override
+  String cdnScanModeBalancedDesc(String samples, String max) {
+    return 'Сбалансированно · $samples IP на CIDR · до $max всего · ~5-10 мин';
+  }
+
+  @override
+  String cdnScanModeDeepDesc(String max) {
+    return 'Глубоко · полное расширение · до $max всего · ~30-60 мин';
+  }
+
+  @override
+  String get cdnScoutTitle => 'Найти рабочие SNI (рекомендуется)';
+
+  @override
+  String cdnScoutProgress(String done, String total) {
+    return 'Разведка $done/$total…';
+  }
+
+  @override
+  String get cdnScoutHint =>
+      'SNI Discord/Reddit заблокированы в Иране. Разведка найдёт рабочие.';
+
+  @override
+  String get cdnScoutButton => 'Разведка';
+
+  @override
+  String cdnScanPreview(String lines, String ips) {
+    return 'Строк: $lines · будет сканировано IP: $ips';
+  }
+
+  @override
+  String cdnScanWarningsMore(String count) {
+    return '…и ещё $count';
+  }
+
+  @override
+  String cdnApplyIpsToPsiphon(String count) {
+    return 'Применить $count IP к Psiphon';
+  }
+
+  @override
+  String cdnApplyIpsSnack(String count, String ip, String sni) {
+    return '$count IP → Psiphon\nFronting IP: $ip\nSNI: $sni';
+  }
+
+  @override
+  String get cdnSendToPsiphon => 'Отправить в Psiphon';
+
+  @override
+  String cdnCustomIpsSent(String count, String ip) {
+    return '$count пользовательских IP → Psiphon (Fronting: $ip)';
+  }
+
+  @override
+  String cdnResultSubtitle(String score, String reliability, String latency,
+      String download, String sni) {
+    return 'Оценка $score · Надёжность $reliability/5 · ${latency}ms · загр. ${download}ms · $sni';
+  }
+
+  @override
   String get check => 'Проверить';
 
   @override
@@ -154,6 +227,21 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get copiedToClipboard => 'Скопировано в буфер обмена';
+
+  @override
+  String get copyAllToClipboard => 'Копировать все';
+
+  @override
+  String get importFromClipboard => 'Импорт из буфера обмена';
+
+  @override
+  String get importedFromClipboard => 'Импортировано из буфера обмена';
+
+  @override
+  String get nothingToImport => 'Буфер обмена пуст';
+
+  @override
+  String get itemsAddedCount => 'Добавлено элементов';
 
   @override
   String get copy => 'Копировать';
@@ -971,6 +1059,19 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get wireguardConvertToStandard => 'Преобразовать в стандарт';
+
+  @override
+  String get wireguardLoadConfFile => 'Загрузить файл .conf';
+
+  @override
+  String get wireguardConfFileLoaded => 'Конфиг WireGuard загружен из файла';
+
+  @override
+  String get wireguardConfFileEmpty => 'Выбранный файл пуст';
+
+  @override
+  String get wireguardConfFileReadError =>
+      'Не удалось прочитать выбранный файл';
 
   @override
   String get wireguardConnected => 'WireGuard подключён';

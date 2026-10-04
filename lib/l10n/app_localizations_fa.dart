@@ -113,6 +113,79 @@ class AppLocalizationsFa extends AppLocalizations {
   String get cdnScanner => 'اسکنر آی‌پی برای سایفون شیر و خورشید';
 
   @override
+  String get cdnScanModeQuick => 'سریع';
+
+  @override
+  String get cdnScanModeBalanced => 'متعادل';
+
+  @override
+  String get cdnScanModeDeep => 'عمیق';
+
+  @override
+  String cdnScanModeQuickDesc(String samples, String max) {
+    return 'سریع · $samples آی‌پی در هر CIDR · حداکثر $max آی‌پی در مجموع · حدود 1-2 دقیقه';
+  }
+
+  @override
+  String cdnScanModeBalancedDesc(String samples, String max) {
+    return 'متعادل · $samples آی‌پی در هر CIDR · حداکثر $max آی‌پی در مجموع · حدود 5-10 دقیقه';
+  }
+
+  @override
+  String cdnScanModeDeepDesc(String max) {
+    return 'عمیق · گسترش کامل · حداکثر $max آی‌پی در مجموع · حدود 30-60 دقیقه';
+  }
+
+  @override
+  String get cdnScoutTitle => 'یافتن SNIهای کارکننده (پیشنهادی)';
+
+  @override
+  String cdnScoutProgress(String done, String total) {
+    return 'در حال کاوش $done/$total…';
+  }
+
+  @override
+  String get cdnScoutHint =>
+      'SNIهای Discord/Reddit در ایران فیلتر هستند. قابلیت کاوش، موارد کارکننده را پیدا می‌کند.';
+
+  @override
+  String get cdnScoutButton => 'کاوش';
+
+  @override
+  String cdnScanPreview(String lines, String ips) {
+    return '$lines خط · $ips آی‌پی اسکن خواهد شد';
+  }
+
+  @override
+  String cdnScanWarningsMore(String count) {
+    return '…و $count مورد دیگر';
+  }
+
+  @override
+  String cdnApplyIpsToPsiphon(String count) {
+    return 'اعمال $count آی‌پی روی Psiphon';
+  }
+
+  @override
+  String cdnApplyIpsSnack(String count, String ip, String sni) {
+    return '$count آی‌پی → Psiphon\nآی‌پی فرانتینگ: $ip\nSNI: $sni';
+  }
+
+  @override
+  String get cdnSendToPsiphon => 'ارسال به Psiphon';
+
+  @override
+  String cdnCustomIpsSent(String count, String ip) {
+    return '$count آی‌پی سفارشی → Psiphon (فرانتینگ: $ip)';
+  }
+
+  @override
+  String cdnResultSubtitle(String score, String reliability, String latency,
+      String download, String sni) {
+    return 'امتیاز $score · پایداری $reliability/5 · ${latency}ms · دانلود ${download}ms · $sni';
+  }
+
+  @override
   String get check => 'بررسی';
 
   @override
@@ -153,6 +226,21 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get copiedToClipboard => 'در کلیپ‌بورد کپی شد';
+
+  @override
+  String get copyAllToClipboard => 'کپی همه';
+
+  @override
+  String get importFromClipboard => 'ورود از کلیپ‌بورد';
+
+  @override
+  String get importedFromClipboard => 'از کلیپ‌بورد وارد شد';
+
+  @override
+  String get nothingToImport => 'کلیپ‌بورد خالی است';
+
+  @override
+  String get itemsAddedCount => 'آیتم‌های افزوده‌شده';
 
   @override
   String get copy => 'کپی';
@@ -965,6 +1053,18 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get wireguardConvertToStandard => 'تبدیل به استاندارد';
+
+  @override
+  String get wireguardLoadConfFile => 'بارگذاری فایل .conf';
+
+  @override
+  String get wireguardConfFileLoaded => 'کانفیگ WireGuard از فایل بارگذاری شد';
+
+  @override
+  String get wireguardConfFileEmpty => 'فایل انتخاب‌شده خالی است';
+
+  @override
+  String get wireguardConfFileReadError => 'خواندن فایل انتخاب‌شده ممکن نشد';
 
   @override
   String get wireguardConnected => 'وایرگارد متصل شد';

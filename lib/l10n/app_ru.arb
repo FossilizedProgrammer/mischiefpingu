@@ -36,6 +36,84 @@
   "cancelBtn": "Отмена",
   "cdnPreset": "Предустановка CDN",
   "cdnScanner": "Сканер IP CDN",
+  "cdnScanModeQuick": "Быстро",
+  "cdnScanModeBalanced": "Сбалансированно",
+  "cdnScanModeDeep": "Глубоко",
+  "cdnScanModeQuickDesc": "Быстро · {samples} IP на CIDR · до {max} всего · ~1-2 мин",
+  "@cdnScanModeQuickDesc": {
+    "placeholders": {
+      "samples": { "type": "String" },
+      "max": { "type": "String" }
+    }
+  },
+  "cdnScanModeBalancedDesc": "Сбалансированно · {samples} IP на CIDR · до {max} всего · ~5-10 мин",
+  "@cdnScanModeBalancedDesc": {
+    "placeholders": {
+      "samples": { "type": "String" },
+      "max": { "type": "String" }
+    }
+  },
+  "cdnScanModeDeepDesc": "Глубоко · полное расширение · до {max} всего · ~30-60 мин",
+  "@cdnScanModeDeepDesc": {
+    "placeholders": {
+      "max": { "type": "String" }
+    }
+  },
+  "cdnScoutTitle": "Найти рабочие SNI (рекомендуется)",
+  "cdnScoutProgress": "Разведка {done}/{total}…",
+  "@cdnScoutProgress": {
+    "placeholders": {
+      "done": { "type": "String" },
+      "total": { "type": "String" }
+    }
+  },
+  "cdnScoutHint": "SNI Discord/Reddit заблокированы в Иране. Разведка найдёт рабочие.",
+  "cdnScoutButton": "Разведка",
+  "cdnScanPreview": "Строк: {lines} · будет сканировано IP: {ips}",
+  "@cdnScanPreview": {
+    "placeholders": {
+      "lines": { "type": "String" },
+      "ips": { "type": "String" }
+    }
+  },
+  "cdnScanWarningsMore": "…и ещё {count}",
+  "@cdnScanWarningsMore": {
+    "placeholders": {
+      "count": { "type": "String" }
+    }
+  },
+  "cdnApplyIpsToPsiphon": "Применить {count} IP к Psiphon",
+  "@cdnApplyIpsToPsiphon": {
+    "placeholders": {
+      "count": { "type": "String" }
+    }
+  },
+  "cdnApplyIpsSnack": "{count} IP → Psiphon\nFronting IP: {ip}\nSNI: {sni}",
+  "@cdnApplyIpsSnack": {
+    "placeholders": {
+      "count": { "type": "String" },
+      "ip": { "type": "String" },
+      "sni": { "type": "String" }
+    }
+  },
+  "cdnSendToPsiphon": "Отправить в Psiphon",
+  "cdnCustomIpsSent": "{count} пользовательских IP → Psiphon (Fronting: {ip})",
+  "@cdnCustomIpsSent": {
+    "placeholders": {
+      "count": { "type": "String" },
+      "ip": { "type": "String" }
+    }
+  },
+  "cdnResultSubtitle": "Оценка {score} · Надёжность {reliability}/5 · {latency}ms · загр. {download}ms · {sni}",
+  "@cdnResultSubtitle": {
+    "placeholders": {
+      "score": { "type": "String" },
+      "reliability": { "type": "String" },
+      "latency": { "type": "String" },
+      "download": { "type": "String" },
+      "sni": { "type": "String" }
+    }
+  },
   "check": "Проверить",
   "checkHealth": "Проверить здоровье",
   "checking": "Проверка…",
@@ -50,6 +128,11 @@
   "connecting": "Подключение…",
   "connectionMode": "Режим подключения",
   "copiedToClipboard": "Скопировано в буфер обмена",
+  "copyAllToClipboard": "Копировать все",
+  "importFromClipboard": "Импорт из буфера обмена",
+  "importedFromClipboard": "Импортировано из буфера обмена",
+  "nothingToImport": "Буфер обмена пуст",
+  "itemsAddedCount": "Добавлено элементов",
   "copy": "Копировать",
   "copyAllCsv": "Копировать все (CSV с деталями)",
   "copyAllIpPort": "Копировать все (ip:port)",
@@ -333,6 +416,10 @@
   "wireguardFormatUri": "URI",
   "wireguardConvertToUri": "Преобразовать в URI",
   "wireguardConvertToStandard": "Преобразовать в стандарт",
+  "wireguardLoadConfFile": "Загрузить файл .conf",
+  "wireguardConfFileLoaded": "Конфиг WireGuard загружен из файла",
+  "wireguardConfFileEmpty": "Выбранный файл пуст",
+  "wireguardConfFileReadError": "Не удалось прочитать выбранный файл",
   "wireguardConnected": "WireGuard подключён",
   "autoReconnectWireGuard": "Авто-переподключение WireGuard",
   "logSourceWireGuard": "WireGuard",

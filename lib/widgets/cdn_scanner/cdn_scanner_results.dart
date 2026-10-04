@@ -31,6 +31,25 @@ class CdnScannerResults extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.green.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Colors.green.withValues(alpha: 0.4),
+                ),
+              ),
+              child: Text(
+                '${scan.good.length}',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.green.shade700,
+                ),
+              ),
+            ),
             const Spacer(),
             IconButton(
               icon: const Icon(Icons.copy_all, size: 20),
@@ -49,7 +68,7 @@ class CdnScannerResults extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Container(
-          height: 200,
+          height: 240,
           decoration: BoxDecoration(
             border: Border.all(
               color: theme.colorScheme.outline.withValues(alpha: 0.3),
@@ -60,30 +79,66 @@ class CdnScannerResults extends StatelessWidget {
             itemCount: scan.good.length,
             itemBuilder: (ctx, i) {
               final r = scan.good[i];
+              final scoreColor = _scoreColor(r.score);
               return ListTile(
                 dense: true,
                 leading: CircleAvatar(
                   radius: 14,
-                  backgroundColor: theme.colorScheme.primaryContainer,
+                  backgroundColor: scoreColor.withValues(alpha: 0.2),
                   child: Text(
                     '${i + 1}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
+                      color: scoreColor,
                     ),
                   ),
                 ),
-                title: Text(
-                  r.ip,
-                  style: const TextStyle(
-                    fontFamily: 'monospace',
-                    fontWeight: FontWeight.w600,
-                  ),
+                title: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        r.ip,
+                        style: const TextStyle(
+                          fontFamily: 'monospace',
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    if (r.httpStatus > 0)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 1,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _statusColor(r.httpStatus)
+                              .withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          '${r.httpStatus}',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: _statusColor(r.httpStatus),
+                            fontFamily: 'monospace',
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
                 subtitle: Text(
-                  'Score ${r.score} · Rel ${r.reliability}/5 · ${r.latencyMs}ms · ${r.sni}',
+                  l10n.cdnResultSubtitle(
+                    r.score.toString(),
+                    r.reliability.toString(),
+                    r.latencyMs.toString(),
+                    r.downloadMs.toString(),
+                    r.sni,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 11),
                 ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -163,5 +218,18 @@ class CdnScannerResults extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Color _scoreColor(double score) {
+    if (score >= 70) return Colors.green;
+    if (score >= 40) return Colors.orange;
+    return Colors.red;
+  }
+
+  Color _statusColor(int status) {
+    if (status >= 200 && status < 300) return Colors.green;
+    if (status >= 300 && status < 400) return Colors.blue;
+    if (status >= 400 && status < 500) return Colors.orange;
+    return Colors.red;
   }
 }

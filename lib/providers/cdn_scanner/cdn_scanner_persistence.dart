@@ -6,10 +6,31 @@ extension CdnScannerPersistence on CdnScannerProvider {
       final prefs = await SharedPreferences.getInstance();
       customIpsInternal =
           prefs.getStringList(CdnScannerProvider.prefsCustomIps) ?? [];
-      final savedSnis = prefs.getStringList(CdnScannerProvider.prefsCustomSnis);
+
+      final savedMode = prefs.getString(CdnScannerProvider.prefsScanMode);
+      scanMode = savedMode != null
+          ? IpScanMode.fromId(savedMode)
+          : IpScanMode.balanced;
+
+      final savedSnis =
+          prefs.getStringList(CdnScannerProvider.prefsCustomSnis);
       final savedPreset = prefs.getString(
         CdnScannerProvider.prefsSelectedPreset,
       );
+
+      if (savedPreset == 'custom' && customIps.isEmpty) {
+        // اگه custom خالیه، به cloudflare برگرد
+        selectedPresetId = 'cloudflare';
+        applyPreset('cloudflare');
+        customInput = '';
+        try {
+          await prefs.setString(
+            CdnScannerProvider.prefsSelectedPreset,
+            'cloudflare',
+          );
+        } catch (_) {}
+        return;
+      }
 
       if (savedPreset != null) {
         selectedPresetId = savedPreset;
@@ -18,7 +39,7 @@ extension CdnScannerPersistence on CdnScannerProvider {
           if (savedSnis != null && savedSnis.isNotEmpty) {
             snis = List.from(savedSnis);
           } else {
-            snis = List.from(CdnPresets.akamaiSnis);
+            snis = List.from(CdnPresets.cloudflareSnis);
           }
         } else {
           final preset = CdnPresets.byId(savedPreset);
@@ -26,11 +47,11 @@ extension CdnScannerPersistence on CdnScannerProvider {
             snis = List.from(preset.snis);
             customInput = preset.ranges.join('\n');
           } else {
-            applyPreset('akamai');
+            applyPreset('cloudflare');
           }
         }
       } else {
-        applyPreset('akamai');
+        applyPreset('cloudflare');
       }
     } catch (_) {
     } finally {

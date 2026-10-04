@@ -31,9 +31,31 @@ class PsiphonFrontingBuilder {
       "FRONTED-MEEK-CDN-QUIC-OSSH",
     ];
 
-    final dialAddresses = <String>{};
-    if (settings.ip.isNotEmpty) dialAddresses.add(settings.ip);
-    dialAddresses.addAll(ipList);
+    // ═══════════════════════════════════════════════════════════
+    //  🆕 Smart Fronting: اولویت‌بندی سرورهای موفق قبلی
+    //  
+    //  اگر settings.ip و settings.tlsSni ست شده باشند (یعنی
+    //  از اتصال قبلی ذخیره شده‌اند)، آن‌ها را در ابتدای لیست
+    //  قرار می‌دهیم تا Psiphon اول آن‌ها را امتحان کند.
+    // ═══════════════════════════════════════════════════════════
+    final dialAddresses = <String>[];
+    
+    // اول IP+SNI موفق قبلی (اگر موجود باشد)
+    if (settings.ip.isNotEmpty && settings.tlsSni.isNotEmpty) {
+      dialAddresses.add(settings.ip);
+      processService.addLog(
+        '→ Smart Fronting: prioritizing last successful IP ${settings.ip}',
+        source: LogSource.psiphon,
+      );
+    }
+    
+    // بعد بقیه IPها از ipList
+    for (final ip in ipList) {
+      if (!dialAddresses.contains(ip)) {
+        dialAddresses.add(ip);
+      }
+    }
+
     final addresses = dialAddresses.take(20).toList();
 
     config["FrontedMeekDialOverrides"] = [
@@ -41,7 +63,9 @@ class PsiphonFrontingBuilder {
         "OverrideID": "user-fronting",
         "MatchDialAddressRegexes": [".*"],
         "DialAddresses": addresses,
-        "SNIServerName": settings.tlsSni,
+        "SNIServerName": settings.tlsSni.isNotEmpty 
+            ? settings.tlsSni 
+            : (ipList.isNotEmpty ? settings.tlsSni : "a248.e.akamai.net"),
         "VerifyServerNames": [
           settings.tlsSni,
           settings.httpHost,
@@ -49,8 +73,9 @@ class PsiphonFrontingBuilder {
         ],
         "ALPNProtocols": ["h2", "http/1.1"],
         "TLSProfile": "Chrome-83",
-      },
+      }
     ];
+
     config["FrontedMeekDialOverridesProbability"] = 1.0;
     config["FrontedMeekCDNScanUseBuiltInSpec"] = settings.autoFindIpAndSni;
 

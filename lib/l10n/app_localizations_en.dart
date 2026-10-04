@@ -114,6 +114,79 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cdnScanner => 'CDN IP Scanner';
 
   @override
+  String get cdnScanModeQuick => 'Quick';
+
+  @override
+  String get cdnScanModeBalanced => 'Balanced';
+
+  @override
+  String get cdnScanModeDeep => 'Deep';
+
+  @override
+  String cdnScanModeQuickDesc(String samples, String max) {
+    return 'Fast · $samples IPs per CIDR · up to $max total · ~1-2 min';
+  }
+
+  @override
+  String cdnScanModeBalancedDesc(String samples, String max) {
+    return 'Balanced · $samples IPs per CIDR · up to $max total · ~5-10 min';
+  }
+
+  @override
+  String cdnScanModeDeepDesc(String max) {
+    return 'Deep · full expansion · up to $max total · ~30-60 min';
+  }
+
+  @override
+  String get cdnScoutTitle => 'Find working SNIs (recommended)';
+
+  @override
+  String cdnScoutProgress(String done, String total) {
+    return 'Scouting $done/$total…';
+  }
+
+  @override
+  String get cdnScoutHint =>
+      'Discord/Reddit SNIs are blocked in Iran. Scout finds working ones.';
+
+  @override
+  String get cdnScoutButton => 'Scout';
+
+  @override
+  String cdnScanPreview(String lines, String ips) {
+    return '$lines lines · $ips IP(s) will be scanned';
+  }
+
+  @override
+  String cdnScanWarningsMore(String count) {
+    return '…and $count more';
+  }
+
+  @override
+  String cdnApplyIpsToPsiphon(String count) {
+    return 'Apply $count IPs to Psiphon';
+  }
+
+  @override
+  String cdnApplyIpsSnack(String count, String ip, String sni) {
+    return '$count IPs → Psiphon\nFronting IP: $ip\nSNI: $sni';
+  }
+
+  @override
+  String get cdnSendToPsiphon => 'Send to Psiphon';
+
+  @override
+  String cdnCustomIpsSent(String count, String ip) {
+    return '$count custom IPs → Psiphon (Fronting: $ip)';
+  }
+
+  @override
+  String cdnResultSubtitle(String score, String reliability, String latency,
+      String download, String sni) {
+    return 'Score $score · Rel $reliability/5 · ${latency}ms · dl ${download}ms · $sni';
+  }
+
+  @override
   String get check => 'Check';
 
   @override
@@ -154,6 +227,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get copiedToClipboard => 'Copied to clipboard';
+
+  @override
+  String get copyAllToClipboard => 'Copy all';
+
+  @override
+  String get importFromClipboard => 'Import from clipboard';
+
+  @override
+  String get importedFromClipboard => 'Imported from clipboard';
+
+  @override
+  String get nothingToImport => 'Clipboard is empty';
+
+  @override
+  String get itemsAddedCount => 'Added items';
 
   @override
   String get copy => 'Copy';
@@ -967,6 +1055,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get wireguardConvertToStandard => 'Convert to Standard';
+
+  @override
+  String get wireguardLoadConfFile => 'Load .conf file';
+
+  @override
+  String get wireguardConfFileLoaded => 'WireGuard config loaded from file';
+
+  @override
+  String get wireguardConfFileEmpty => 'The selected file is empty';
+
+  @override
+  String get wireguardConfFileReadError => 'Could not read the selected file';
 
   @override
   String get wireguardConnected => 'WireGuard Connected';

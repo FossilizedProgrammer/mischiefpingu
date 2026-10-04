@@ -8,6 +8,8 @@ extension CdnScannerPresets on CdnScannerProvider {
     selectedPresetId = presetId;
 
     if (presetId == 'custom') {
+      // ✅ منبع حقیقت customIps است — customInput همگام می‌شود
+      // فقط برای نمایش در TextField
       customInput = customIps.join('\n');
       if (snis.isEmpty) {
         snis = List.from(CdnPresets.akamaiSnis);
@@ -26,6 +28,7 @@ extension CdnScannerPresets on CdnScannerProvider {
         ips.map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
     await persistCustomIps();
     if (selectedPresetId == 'custom') {
+      // ✅ فقط برای نمایش در TextField — نه به عنوان منبع اسکن
       customInput = customIps.join('\n');
     }
     touch();

@@ -22,6 +22,8 @@ class CdnScannerInputs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isCustom = scan.selectedPresetId == 'custom';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -37,9 +39,9 @@ class CdnScannerInputs extends StatelessWidget {
           runSpacing: 8,
           children: CdnPresets.all.map((preset) {
             final selected = scan.selectedPresetId == preset.id;
-            final isCustom = preset.id == 'custom';
+            final isCustomChip = preset.id == 'custom';
 
-            final Widget? avatar = isCustom
+            final Widget? avatar = isCustomChip
                 ? _CustomAvatar(selected: selected, theme: theme)
                 : null;
 
@@ -51,6 +53,21 @@ class CdnScannerInputs extends StatelessWidget {
                   ? null
                   : (v) {
                       if (v) {
+                        if (preset.id == 'custom') {
+                          final customText = scan.customIps.join('\n');
+                          if (inputCtrl.text != customText) {
+                            inputCtrl.text = customText;
+                          }
+                        } else {
+                          final presetText = preset.ranges.join('\n');
+                          if (inputCtrl.text != presetText) {
+                            inputCtrl.text = presetText;
+                          }
+                          final sniText = preset.snis.join('\n');
+                          if (sniCtrl.text != sniText) {
+                            sniCtrl.text = sniText;
+                          }
+                        }
                         scan.applyPreset(preset.id);
                       }
                     },
@@ -58,6 +75,121 @@ class CdnScannerInputs extends StatelessWidget {
           }).toList(),
         ),
         const SizedBox(height: 12),
+
+        // ═══════════════════════════════════════════════════════════
+        //  🆕 دکمه Scout SNIs
+        //
+        //  این دکمه SNIهای فیلترنشده رو در شبکه فعلی پیدا می‌کنه.
+        //  ⚠️ قبل از اسکن، حتماً Scout بزنید اگه IP پیدا نمی‌کنید.
+        // ═══════════════════════════════════════════════════════════
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.tertiaryContainer.withValues(alpha: 0.25),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: theme.colorScheme.tertiary.withValues(alpha: 0.3),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.radar,
+                    size: 16,
+                    color: theme.colorScheme.tertiary,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.cdnScoutTitle,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: theme.colorScheme.tertiary,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          scan.isScouting
+                              ? l10n.cdnScoutProgress(
+                                  scan.scoutDone.toString(),
+                                  scan.scoutTotal.toString(),
+                                )
+                              : l10n.cdnScoutHint,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontSize: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (scan.isScouting)
+                    const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  else
+                    FilledButton.tonalIcon(
+                      onPressed: scan.isRunning ? null : scan.scoutSnis,
+                      icon: const Icon(Icons.search, size: 16),
+                      label: Text(l10n.cdnScoutButton),
+                      style: FilledButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        if (isCustom) ...[
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.tertiaryContainer.withValues(
+                alpha: 0.35,
+              ),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: theme.colorScheme.tertiary.withValues(alpha: 0.4),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  size: 16,
+                  color: theme.colorScheme.tertiary,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    '${scan.customIps.length} ${l10n.customIps} '
+                    '(${l10n.save} → ${l10n.startScan})',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.tertiary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
+
         TextField(
           controller: inputCtrl,
           maxLines: 6,
@@ -68,7 +200,9 @@ class CdnScannerInputs extends StatelessWidget {
             alignLabelWithHint: true,
           ),
           enabled: !scan.isRunning,
-          onChanged: (v) => scan.customInput = v,
+          onChanged: (v) {
+            scan.customInput = v;
+          },
         ),
         const SizedBox(height: 12),
         TextField(
@@ -105,7 +239,8 @@ class CdnScannerInputs extends StatelessWidget {
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 enabled: !scan.isRunning,
                 onChanged: (v) {
-                  scan.concurrency = int.tryParse(v) ?? 12;
+                  final c = int.tryParse(v) ?? 8;
+                  scan.concurrency = c.clamp(1, 15);
                 },
               ),
             ),

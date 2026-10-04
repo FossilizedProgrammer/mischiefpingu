@@ -1,5 +1,4 @@
 // lib/models/settings_model.dart
-
 library;
 
 import 'settings_serialization.dart';
@@ -17,13 +16,17 @@ class AppSettings {
   bool onlyIpv4;
   bool autoFindIpAndSni;
   bool saveFoundIpsAndSni;
+  
+  // ═══════════════════════════════════════════════════════════════
+  //  🆕 تنظیمات جدید برای کنترل جستجوی سرور فرانتینگ
+  // ═══════════════════════════════════════════════════════════════
+
   bool watchdogEnabled;
   String watchdogNetworkProfile;
 
-// ═══════════════════════════════════════════════════════════════
-//  WireGuard settings
-// ═══════════════════════════════════════════════════════════════
-
+  // ═══════════════════════════════════════════════════════════════
+  //  WireGuard settings
+  // ═══════════════════════════════════════════════════════════════
   String wireguardConfigRaw;
   int wireguardSocksPort;
   bool wireguardShareLan;
@@ -31,7 +34,6 @@ class AppSettings {
   bool wireguardAutoReconnect;
 
   int upstreamType;
-
   int socksPort;
   int httpPort;
   String egressRegion;
@@ -40,16 +42,12 @@ class AppSettings {
   int proxyPort;
   String proxyUser;
   String proxyPass;
-
   bool autoReconnectPsiphon;
   bool autoReconnectAether;
   bool autoReconnectTor;
   bool autoReconnectSstp;
-
   String aetherProfile;
-
   String aetherProtocol;
-
   String masqueOption;
   int aetherLocalPort;
   String aetherScanMode;
@@ -59,31 +57,25 @@ class AppSettings {
   bool aetherQuickReconnect;
   String aetherCustomEndpoint;
   bool aetherTryLastEndpointFirst;
-
   String aetherEndpointPinning;
-
   bool psiphonShareLan;
   String psiphonBuildRev;
   String psiphonBinarySha;
-
   String conduitMode;
   String conduitCompartmentId;
   bool conduitRejectCensoredCountries;
   String conduitBrokerSpecsJson;
-
   String torTransport;
   String torBridges;
   String torExitCountry;
   int torSocksPort;
   int torHttpPort;
   bool torShareLan;
-
   String torProxyType;
   String torProxyIp;
   int torProxyPort;
   String torProxyUser;
   String torProxyPass;
-
   String sstpServer;
   int sstpPort;
   String sstpUser;
@@ -101,10 +93,8 @@ class AppSettings {
   bool sstpShareLan;
   bool sstpVerbose;
   int sstpMtu;
-
   String themeId;
   bool muted;
-
   List<String> enabledLogSources;
 
   AppSettings({
@@ -116,6 +106,9 @@ class AppSettings {
     this.onlyIpv4 = false,
     this.autoFindIpAndSni = true,
     this.saveFoundIpsAndSni = true,
+    // ═══════════════════════════════════════════════════════════
+    //  🆕 پیش‌فرض: جستجوی کامل (نه فقط سرورهای پیدا شده)
+    // ═══════════════════════════════════════════════════════════
     this.upstreamType = 0,
     this.socksPort = 1080,
     this.httpPort = 8080,
@@ -170,11 +163,6 @@ class AppSettings {
     this.sstpProxyUser = '',
     this.sstpProxyPass = '',
     this.sstpSni = '',
-    // ═══════════════════════════════════════════════════════════
-    //  🆕 پیش‌فرض 'chrome' برای DPI evasion
-    //  اگه سرور VPN Gate با fingerprint مشکل داشت، user
-    //  می‌تونه از UI به 'None' تغییرش بده.
-    // ═══════════════════════════════════════════════════════════
     this.sstpFingerprint = 'chrome',
     this.sstpShareLan = false,
     this.sstpVerbose = true,
@@ -184,20 +172,6 @@ class AppSettings {
     this.themeId = 'ocean',
     this.muted = false,
     this.watchdogEnabled = true,
-    // ═══════════════════════════════════════════════════════════
-    //  🆕 پیش‌فرض از 'normal' به 'harsh' تغییر کرد
-    //
-    //  دلیل: کاربران گزارش دادن که در شبکه‌های فیلترشده
-    //  (ایران، چین، روسیه) پروفایل normal خیلی سریع restart
-    //  می‌کنه و باعث می‌شه تونل‌ها اصلاً فرصت recover نداشته باشن.
-    //
-    //  harsh:
-    //    • maxFailures = 9 (به جای 5)
-    //    • interval = 105s (به جای 75s)
-    //    • circuitBreakerCooldown = 20min (به جای 12min)
-    //    • requireHttpSuccess = false
-    //    • includeCloudflareTarget = false
-    // ═══════════════════════════════════════════════════════════
     this.watchdogNetworkProfile = 'harsh',
     this.wireguardConfigRaw = '',
     this.wireguardSocksPort = 1085,
@@ -216,7 +190,9 @@ class AppSettings {
   String toJsonString() => AppSettingsSerialization(this).toJsonString();
 
   bool get isConduit => upstreamType == 3;
+
   bool get effectiveUseSunAndLion => useSunAndLion && isFronted && !isConduit;
+
   bool get isDirectPsiphon =>
       (upstreamType == 0 || upstreamType == 4 || upstreamType == 6) &&
       !isFronted;

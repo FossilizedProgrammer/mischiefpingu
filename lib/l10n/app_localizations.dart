@@ -304,6 +304,109 @@ abstract class AppLocalizations {
   /// **'CDN IP Scanner'**
   String get cdnScanner;
 
+  /// No description provided for @cdnScanModeQuick.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick'**
+  String get cdnScanModeQuick;
+
+  /// No description provided for @cdnScanModeBalanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced'**
+  String get cdnScanModeBalanced;
+
+  /// No description provided for @cdnScanModeDeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep'**
+  String get cdnScanModeDeep;
+
+  /// No description provided for @cdnScanModeQuickDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast · {samples} IPs per CIDR · up to {max} total · ~1-2 min'**
+  String cdnScanModeQuickDesc(String samples, String max);
+
+  /// No description provided for @cdnScanModeBalancedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced · {samples} IPs per CIDR · up to {max} total · ~5-10 min'**
+  String cdnScanModeBalancedDesc(String samples, String max);
+
+  /// No description provided for @cdnScanModeDeepDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep · full expansion · up to {max} total · ~30-60 min'**
+  String cdnScanModeDeepDesc(String max);
+
+  /// No description provided for @cdnScoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find working SNIs (recommended)'**
+  String get cdnScoutTitle;
+
+  /// No description provided for @cdnScoutProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Scouting {done}/{total}…'**
+  String cdnScoutProgress(String done, String total);
+
+  /// No description provided for @cdnScoutHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Discord/Reddit SNIs are blocked in Iran. Scout finds working ones.'**
+  String get cdnScoutHint;
+
+  /// No description provided for @cdnScoutButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Scout'**
+  String get cdnScoutButton;
+
+  /// No description provided for @cdnScanPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'{lines} lines · {ips} IP(s) will be scanned'**
+  String cdnScanPreview(String lines, String ips);
+
+  /// No description provided for @cdnScanWarningsMore.
+  ///
+  /// In en, this message translates to:
+  /// **'…and {count} more'**
+  String cdnScanWarningsMore(String count);
+
+  /// No description provided for @cdnApplyIpsToPsiphon.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply {count} IPs to Psiphon'**
+  String cdnApplyIpsToPsiphon(String count);
+
+  /// No description provided for @cdnApplyIpsSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} IPs → Psiphon\nFronting IP: {ip}\nSNI: {sni}'**
+  String cdnApplyIpsSnack(String count, String ip, String sni);
+
+  /// No description provided for @cdnSendToPsiphon.
+  ///
+  /// In en, this message translates to:
+  /// **'Send to Psiphon'**
+  String get cdnSendToPsiphon;
+
+  /// No description provided for @cdnCustomIpsSent.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} custom IPs → Psiphon (Fronting: {ip})'**
+  String cdnCustomIpsSent(String count, String ip);
+
+  /// No description provided for @cdnResultSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Score {score} · Rel {reliability}/5 · {latency}ms · dl {download}ms · {sni}'**
+  String cdnResultSubtitle(String score, String reliability, String latency,
+      String download, String sni);
+
   /// No description provided for @check.
   ///
   /// In en, this message translates to:
@@ -387,6 +490,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Copied to clipboard'**
   String get copiedToClipboard;
+
+  /// No description provided for @copyAllToClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy all'**
+  String get copyAllToClipboard;
+
+  /// No description provided for @importFromClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from clipboard'**
+  String get importFromClipboard;
+
+  /// No description provided for @importedFromClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported from clipboard'**
+  String get importedFromClipboard;
+
+  /// No description provided for @nothingToImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Clipboard is empty'**
+  String get nothingToImport;
+
+  /// No description provided for @itemsAddedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Added items'**
+  String get itemsAddedCount;
 
   /// No description provided for @copy.
   ///
@@ -1947,6 +2080,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Convert to Standard'**
   String get wireguardConvertToStandard;
+
+  /// No description provided for @wireguardLoadConfFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Load .conf file'**
+  String get wireguardLoadConfFile;
+
+  /// No description provided for @wireguardConfFileLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'WireGuard config loaded from file'**
+  String get wireguardConfFileLoaded;
+
+  /// No description provided for @wireguardConfFileEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected file is empty'**
+  String get wireguardConfFileEmpty;
+
+  /// No description provided for @wireguardConfFileReadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read the selected file'**
+  String get wireguardConfFileReadError;
 
   /// No description provided for @wireguardConnected.
   ///

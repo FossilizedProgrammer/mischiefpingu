@@ -59,6 +59,7 @@ class _EditableListDropdownState extends State<EditableListDropdown> {
   }
 
   Future<void> _showManageDialog() async {
+    final l10n = AppLocalizations.of(context);
     while (true) {
       if (!mounted) return;
 
@@ -92,8 +93,38 @@ class _EditableListDropdownState extends State<EditableListDropdown> {
           if (!mounted) return;
           await _showAddDialog();
           return;
+
+        case 'import':
+          // آیتم‌ها از قبل داخل dialog اضافه شده‌اند؛ فقط persist می‌کنیم.
+          setState(() => _items = List<String>.from(widget.items));
+          widget.onListChanged(List.from(_items));
+          _snack('${l10n.itemsAddedCount}: ${_items.length}');
+          return;
+
+        case 'clear':
+          setState(() {
+            _items = [];
+            _currentValue = '';
+          });
+          widget.onListChanged([]);
+          widget.onChanged('');
+          _snack(l10n.clearAll);
+          return;
       }
     }
+  }
+
+  void _snack(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+          duration: const Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
   }
 
   @override

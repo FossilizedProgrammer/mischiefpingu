@@ -1,7 +1,10 @@
 // lib/screens/widgets/wireguard/wireguard_config_section.dart
 
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../../../l10n/app_localizations.dart';
@@ -15,6 +18,7 @@ import '../../../services/wireguard/wireguard_uri_codec.dart';
 ///  فقط:
 ///    • کانفیگ استاندارد (INI)
 ///    • wireguard:// URI
+///    • بارگذاری فایل با پسوند .conf
 ///    • دکمهٔ تبدیل فرمت
 /// ═══════════════════════════════════════════════════════════════
 class WireGuardConfigSection extends StatefulWidget {
@@ -134,6 +138,89 @@ class _WireGuardConfigSectionState extends State<WireGuardConfigSection> {
     widget.onConfigChanged(converted);
   }
 
+  /// ═══════════════════════════════════════════════════════════════
+  ///  بارگذاری کانفیگ از فایل با پسوند .conf
+  /// ═══════════════════════════════════════════════════════════════
+  Future<void> _loadConfFile() async {
+    final l10n = widget.l10n;
+
+    final result = await FilePicker.platform.pickFiles(
+      dialogTitle: l10n.wireguardLoadConfFile,
+      type: FileType.custom,
+      allowedExtensions: const ['conf'],
+      withData: true,
+    );
+
+    if (!mounted) return;
+    if (result == null || result.files.isEmpty) return; // کاربر انصراف داد
+
+    final messenger = ScaffoldMessenger.of(context);
+    final picked = result.files.single;
+
+    String content;
+    try {
+      if (picked.path != null) {
+        content = await File(picked.path!).readAsString();
+      } else if (picked.bytes != null) {
+        content = utf8.decode(picked.bytes!, allowMalformed: true);
+      } else {
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(l10n.wireguardConfFileReadError),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        return;
+      }
+    } catch (_) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(l10n.wireguardConfFileReadError),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+
+    if (content.trim().isEmpty) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(l10n.wireguardConfFileEmpty),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    final parsed = WireGuardConfigParser.parse(content);
+
+    _debounce?.cancel();
+    setState(() {
+      _controller.text = content;
+      _detectFormat(content);
+      _parsed = parsed;
+      _errorText =
+          (parsed == null || !parsed.isValid) ? l10n.wireguardConfigInvalid : null;
+    });
+
+    widget.onConfigChanged(content);
+
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          parsed != null && parsed.isValid
+              ? l10n.wireguardConfFileLoaded
+              : l10n.wireguardConfigInvalid,
+        ),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = widget.theme;
@@ -184,17 +271,28 @@ class _WireGuardConfigSectionState extends State<WireGuardConfigSection> {
           _ParsedConfigPreview(parsed: parsed, theme: theme),
         ],
         const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton.icon(
-            onPressed: _controller.text.trim().isEmpty ? null : _convertFormat,
-            icon: const Icon(Icons.swap_horiz, size: 16),
-            label: Text(
-              _isStandard
-                  ? l10n.wireguardConvertToUri
-                  : l10n.wireguardConvertToStandard,
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: _loadConfFile,
+                icon: const Icon(Icons.file_open_outlined, size: 16),
+                label: Text(l10n.wireguardLoadConfFile),
+              ),
             ),
-          ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: _controller.text.trim().isEmpty ? null : _convertFormat,
+                icon: const Icon(Icons.swap_horiz, size: 16),
+                label: Text(
+                  _isStandard
+                      ? l10n.wireguardConvertToUri
+                      : l10n.wireguardConvertToStandard,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
