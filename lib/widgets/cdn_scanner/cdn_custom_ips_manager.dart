@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/app_provider.dart';
 import '../../providers/cdn_scanner_provider.dart';
+import '../../cdn_presets.dart';
 import 'cdn_custom_ips_dialogs.dart';
 
 class CdnCustomIpsManager extends StatelessWidget {
@@ -20,24 +21,40 @@ class CdnCustomIpsManager extends StatelessWidget {
 
   Future<void> _saveCurrentAsCustom(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
-    final raw = inputCtrl.text.trim();
-    if (raw.isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(l10n.listIsEmpty)));
-      return;
-    }
-    final lines = raw
+    var lines = inputCtrl.text
         .split('\n')
         .map((e) => e.trim())
         .where((e) => e.isNotEmpty)
         .toList();
+
+    // اگر preset غیر از custom انتخاب شده، رنج‌های خودِ preset را
+    // حذف کن تا فقط چیزی که کاربر وارد کرده ذخیره شود.
+    final presetId = scan.selectedPresetId;
+    if (presetId != null && presetId != 'custom') {
+      final preset = CdnPresets.byId(presetId);
+      if (preset != null) {
+        final presetRanges = preset.ranges.toSet();
+        lines = lines.where((l) => !presetRanges.contains(l)).toList();
+      }
+    }
+
+    if (lines.isEmpty) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(l10n.listIsEmpty)));
+      return;
+    }
 
     await scan.addCustomIps(lines);
 
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${lines.length} → ${scan.customIps.length}'),
+        content: Text(
+          l10n.cdnIpsSavedSnack(
+            lines.length.toString(),
+            scan.customIps.length.toString(),
+          ),
+        ),
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),

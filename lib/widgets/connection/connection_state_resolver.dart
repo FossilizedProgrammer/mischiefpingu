@@ -8,29 +8,6 @@ class ConnectionStateResolver {
 
   const ConnectionStateResolver(this.provider);
 
-  static bool _aetherHealthy(String status) {
-    final s = status.toLowerCase();
-    if (s.contains('unverified')) return false;
-    if (s.contains('healthy')) return true;
-    if (s.contains('upstream') && s.contains('running')) return true;
-    return false;
-  }
-
-  ConnectionButtonData resolveAether(ConnectionButtonBuilder builder) {
-    final ps = provider.processService;
-    final aetherBusy = provider.isAutoTesting;
-    final aetherHealthy = ps.isAetherRunning &&
-        !aetherBusy &&
-        _aetherHealthy(provider.aetherStatus);
-    final aetherRunningForButton = ps.isAetherRunning || aetherBusy;
-    return builder.forAether(
-      isRunning: aetherRunningForButton,
-      isConnected: aetherHealthy,
-      isBusy: aetherBusy,
-      progress: null,
-    );
-  }
-
   ConnectionButtonData resolvePsiphon(ConnectionButtonBuilder builder) {
     final ps = provider.processService;
     final psiphonOn = ps.isPsiphonConnected;
@@ -89,6 +66,20 @@ class ConnectionStateResolver {
       isRunning: wgRunningForButton,
       isConnected: wgConnected,
       isBusy: wgBusy,
+    );
+  }
+
+  ConnectionButtonData resolveFfvpn(ConnectionButtonBuilder builder) {
+    final ps = provider.processService;
+    final ffvpnOn = ps.isFfvpnConnected;
+    final ffvpnBusy = provider.isFfvpnBusy && !ps.isFfvpnRunning;
+    final ffvpnRunningForButton =
+        ps.isFfvpnRunning || (provider.isFfvpnBusy && !ffvpnOn);
+
+    return builder.forSstp(
+      isRunning: ffvpnRunningForButton,
+      isConnected: ffvpnOn,
+      isBusy: ffvpnBusy,
     );
   }
 }

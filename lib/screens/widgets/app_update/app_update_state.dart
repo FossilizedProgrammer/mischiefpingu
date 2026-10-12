@@ -78,7 +78,6 @@ class AppUpdateStateManager {
     final ps = app.processService;
 
     if (ps.isPsiphonConnected) return '127.0.0.1:${app.settings.socksPort}';
-    if (ps.isAetherRunning) return '127.0.0.1:${app.settings.aetherLocalPort}';
     if (ps.isTorConnected) return '127.0.0.1:${app.settings.torSocksPort}';
     if (ps.isSstpConnected) return '127.0.0.1:${app.settings.sstpSocksPort}';
     // ═══════════════════════════════════════════════════════════

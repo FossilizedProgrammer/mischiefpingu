@@ -21,7 +21,6 @@ class WatchdogConfig {
       WatchdogProfileParams.forProfile(WatchdogNetworkProfile.normal);
 
   static Duration get psiphonInterval => _default.psiphonInterval;
-  static Duration get aetherInterval => _default.aetherInterval;
   static Duration get torInterval => _default.torInterval;
   static Duration get sstpInterval => _default.sstpInterval;
 

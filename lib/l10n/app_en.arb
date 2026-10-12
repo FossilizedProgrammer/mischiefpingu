@@ -1,15 +1,9 @@
 {
   "@@locale": "en",
-
   "appTitle": "Mischief Pingu",
-  "appSubtitle": "Unofficial Psiphon client, Aether client, Tor client, SSTP client, WireGuard client",
-
+  "appSubtitle": "Unofficial Psiphon client, Tor client, SSTP client, WireGuard client, Firefox VPN client",
   "add": "Add",
   "addNew": "Add new",
-  "aetherConnected": "Aether Connected",
-  "aetherSettings": "Aether Settings",
-  "aetherSocksUpstream": "Aether (SOCKS upstream)",
-  "aetherUpstream": "Aether (SOCKS upstream)",
   "allServers": "All servers",
   "any": "Any",
   "appearance": "Appearance",
@@ -21,14 +15,12 @@
   "autoFindIpSni": "Auto-find IP & SNI",
   "autoFirstProxy": "Auto (first running proxy)",
   "autoFirstRunningProxy": "Auto (first running proxy)",
-  "autoReconnectAether": "Auto-reconnect Aether",
   "autoReconnectPsiphon": "Auto-reconnect Psiphon",
   "autoReconnectSstp": "Auto-reconnect SSTP",
   "autoReconnectTor": "Auto-reconnect Tor",
   "autoRefresh15Min": "Auto-refresh every 15 minutes",
   "autoRefreshSubtitle": "Fetches new servers and re-checks health automatically",
   "binaryNotFound": "Binary Not Found",
-  "both": "Both",
   "bridgePresets": "Bridge presets (optional)",
   "bridges": "Bridges (one per line, custom supported — incl. webtunnel)",
   "bridgesHint": "obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0",
@@ -42,29 +34,43 @@
   "cdnScanModeQuickDesc": "Fast · {samples} IPs per CIDR · up to {max} total · ~1-2 min",
   "@cdnScanModeQuickDesc": {
     "placeholders": {
-      "samples": { "type": "String" },
-      "max": { "type": "String" }
+      "samples": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
     }
   },
   "cdnScanModeBalancedDesc": "Balanced · {samples} IPs per CIDR · up to {max} total · ~5-10 min",
   "@cdnScanModeBalancedDesc": {
     "placeholders": {
-      "samples": { "type": "String" },
-      "max": { "type": "String" }
+      "samples": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
     }
   },
   "cdnScanModeDeepDesc": "Deep · full expansion · up to {max} total · ~30-60 min",
   "@cdnScanModeDeepDesc": {
     "placeholders": {
-      "max": { "type": "String" }
+      "max": {
+        "type": "String"
+      }
     }
   },
   "cdnScoutTitle": "Find working SNIs (recommended)",
   "cdnScoutProgress": "Scouting {done}/{total}…",
   "@cdnScoutProgress": {
     "placeholders": {
-      "done": { "type": "String" },
-      "total": { "type": "String" }
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
     }
   },
   "cdnScoutHint": "Discord/Reddit SNIs are blocked in Iran. Scout finds working ones.",
@@ -72,46 +78,86 @@
   "cdnScanPreview": "{lines} lines · {ips} IP(s) will be scanned",
   "@cdnScanPreview": {
     "placeholders": {
-      "lines": { "type": "String" },
-      "ips": { "type": "String" }
+      "lines": {
+        "type": "String"
+      },
+      "ips": {
+        "type": "String"
+      }
     }
   },
   "cdnScanWarningsMore": "…and {count} more",
   "@cdnScanWarningsMore": {
     "placeholders": {
-      "count": { "type": "String" }
+      "count": {
+        "type": "String"
+      }
     }
   },
   "cdnApplyIpsToPsiphon": "Apply {count} IPs to Psiphon",
   "@cdnApplyIpsToPsiphon": {
     "placeholders": {
-      "count": { "type": "String" }
+      "count": {
+        "type": "String"
+      }
     }
   },
   "cdnApplyIpsSnack": "{count} IPs → Psiphon\nFronting IP: {ip}\nSNI: {sni}",
   "@cdnApplyIpsSnack": {
     "placeholders": {
-      "count": { "type": "String" },
-      "ip": { "type": "String" },
-      "sni": { "type": "String" }
+      "count": {
+        "type": "String"
+      },
+      "ip": {
+        "type": "String"
+      },
+      "sni": {
+        "type": "String"
+      }
     }
   },
   "cdnSendToPsiphon": "Send to Psiphon",
+  "cdnSaveEnteredIps": "Save entered IPs",
+  "cdnIpsSavedSnack": "{count} IPs saved ({total} in list)",
+  "@cdnIpsSavedSnack": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
   "cdnCustomIpsSent": "{count} custom IPs → Psiphon (Fronting: {ip})",
   "@cdnCustomIpsSent": {
     "placeholders": {
-      "count": { "type": "String" },
-      "ip": { "type": "String" }
+      "count": {
+        "type": "String"
+      },
+      "ip": {
+        "type": "String"
+      }
     }
   },
   "cdnResultSubtitle": "Score {score} · Rel {reliability}/5 · {latency}ms · dl {download}ms · {sni}",
   "@cdnResultSubtitle": {
     "placeholders": {
-      "score": { "type": "String" },
-      "reliability": { "type": "String" },
-      "latency": { "type": "String" },
-      "download": { "type": "String" },
-      "sni": { "type": "String" }
+      "score": {
+        "type": "String"
+      },
+      "reliability": {
+        "type": "String"
+      },
+      "latency": {
+        "type": "String"
+      },
+      "download": {
+        "type": "String"
+      },
+      "sni": {
+        "type": "String"
+      }
     }
   },
   "check": "Check",
@@ -126,7 +172,6 @@
   "conduitWebrtc": "Conduit (WebRTC Inproxy)",
   "connected": "Connected",
   "connecting": "Connecting…",
-  "connectionMode": "Connection Mode",
   "copiedToClipboard": "Copied to clipboard",
   "copyAllToClipboard": "Copy all",
   "importFromClipboard": "Import from clipboard",
@@ -138,8 +183,6 @@
   "copyAllIpPort": "Copy all (ip:port)",
   "copyLog": "Copy",
   "coreUpdates": "Core Updates",
-  "customEndpoint": "Custom Endpoint (optional)",
-  "customEndpointHint": "Leave empty for auto-scan",
   "customIps": "Custom IPs",
   "delete": "Delete",
   "directNoProxy": "Direct (no proxy)",
@@ -164,11 +207,8 @@
   "httpHostHeader": "HTTP Host Header (e.g. aparat.com, snapp.ir)",
   "httpPort": "HTTP port",
   "installed": "Installed",
-  "ipType": "IP Type",
   "ipsCidrRanges": "IPs / CIDR / Ranges",
-  "ipv4": "IPv4",
   "ipv4Only": "IPv4 only",
-  "ipv6": "IPv6",
   "language": "Language",
   "languageEnglish": "English",
   "languageFarsi": "فارسی",
@@ -177,11 +217,9 @@
   "lines": "lines",
   "listIsEmpty": "List is empty",
   "localProxyPorts": "Local proxy ports",
-  "localSocksPort": "Local SOCKS port",
   "log": "Log",
   "logSourceFilter": "Filter Log Sources",
   "logSourcePsiphon": "Psiphon",
-  "logSourceAether": "Aether",
   "logSourceTor": "Tor",
   "logSourceSstp": "SSTP",
   "logSourceApp": "App",
@@ -196,38 +234,18 @@
   "noUpstreamDirect": "No upstream (direct)",
   "notInstalled": "Not installed",
   "notifications": "Notifications",
-  "obfAggressive": "Aggressive",
-  "obfBalanced": "Balanced",
-  "obfFirewall": "Firewall",
-  "obfGfw": "GFW",
-  "obfLight": "Light",
   "obfOff": "Off",
-  "obfuscation": "Obfuscation (--noize)",
   "officialCore": "official psiphon tunnel core",
   "password": "Password",
   "passwordOptional": "Password (optional)",
   "port": "Port",
   "preset1Subtitle": "Uses the SunAndLion Psiphon Tunnel Core (Unofficial fork of Psiphon tunnel core).",
   "preset1Title": "1 · Fronting (CDN). Best for heavy censorship.",
-  "preset2Subtitle": "Uses official Psiphon Tunnel Core with Aether upstream.",
-  "preset2Title": "2 · Aether traffic as upstream. Suitable when Aether works.",
-  "preset3Subtitle": "Uses Psiphon INPROXY-WEBRTC protocols via volunteer stations.",
-  "preset3Title": "3 · Conduit (WebRTC Inproxy). Decentralized peer relays.",
-  "preset4Subtitle": "Uses the official Psiphon Tunnel Core directly.",
-  "preset4Title": "4 · Direct connection. Suitable for mild censorship.",
+  "preset2Subtitle": "Uses Psiphon INPROXY-WEBRTC protocols via volunteer stations.",
+  "preset2Title": "2 · Conduit (WebRTC Inproxy). Decentralized peer relays.",
+  "preset3Subtitle": "Uses the official Psiphon Tunnel Core directly.",
+  "preset3Title": "3 · Direct connection. Suitable for mild censorship.",
   "profile": "Profile",
-  "profileAdaptive": "Adaptive",
-  "profileAdaptiveDesc": "Balance of speed and coverage — suitable for most networks",
-  "profileManual": "Manual",
-  "profileManualDesc": "All options manual — for advanced users",
-  "profilePatchy": "Patchy signal",
-  "profilePatchyDesc": "Unstable mobile data — harder and more resilient search",
-  "profileStrict": "Strict network",
-  "profileStrictDesc": "Restricted Wi-Fi or heavy filtering — fragment + masque-in-masque + noize gfw",
-  "protoGool": "Gool (WARP-in-WARP)",
-  "protoMasque": "MASQUE (HTTP/3 or HTTP/2)",
-  "protoMim": "MIM (masque-in-masque)",
-  "protoWireguard": "WireGuard",
   "protocol": "Protocol",
   "proxyIp": "Proxy IP",
   "proxyType": "Proxy type",
@@ -237,12 +255,7 @@
   "psiphonUpstream": "Psiphon (SOCKS upstream)",
   "save": "Save",
   "saveFoundIpsSni": "Save found IPs & SNI automatically",
-  "scanBalanced": "Balanced",
-  "scanIronclad": "Ironclad",
   "scanMode": "Scan mode",
-  "scanStealth": "Stealth",
-  "scanThorough": "Thorough",
-  "scanTurbo": "Turbo",
   "select": "Select...",
   "selectAll": "Select all",
   "server": "Server",
@@ -253,7 +266,7 @@
   "showLess": "Show less",
   "showLessSubtitle": "Hide advanced settings & logs",
   "showMore": "Show more",
-  "showMoreSubtitle": "Appearance, Aether, Psiphon, Tor, SSTP, WireGuard, Scanner, Updates, Log",
+  "showMoreSubtitle": "Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Scanner, Updates, Log",
   "sni": "SNI",
   "sniList": "SNI list (one per line, order = priority)",
   "socksPort": "SOCKS port",
@@ -276,11 +289,8 @@
   "torSettings": "Tor Settings",
   "torSocksUpstream": "Tor (SOCKS upstream)",
   "torUpstream": "Tor (SOCKS upstream)",
-  "torViaAether": "Via Aether (Tor-over-Aether)",
   "torViaPsiphon": "Via Psiphon (Tor-over-Psiphon)",
   "torViaSstp": "Via SSTP (Tor-over-SSTP)",
-  "tryLastEndpointFirst": "Try last successful endpoint first",
-  "tryLastEndpointFirstSubtitle": "If enabled, will try the last working endpoint before scanning",
   "tunnelCore": "Tunnel core",
   "update": "Update",
   "upstream": "Upstream",
@@ -293,15 +303,11 @@
   "verboseLoggingSubtitle": "Enable detailed debug output from sstp-proxy",
   "vpngateServers": "VPN Gate SSTP Servers",
   "working": "Working",
-
   "watchdog": "Watchdog",
   "watchdogEnabled": "Enable watchdog",
   "watchdogEnabledSubtitle": "Automatically restart tunnels when they become unresponsive",
   "watchdogSettings": "Watchdog Settings",
-
   "backToPresets": "Back to presets",
-  "aetherManualHint": "Manual mode: Protocol, obfuscation, scan mode, and custom endpoint are fully under your control below.",
-
   "watchdogNetworkProfile": "Network Profile",
   "watchdogNetworkProfileSubtitle": "Adjusts how aggressively the watchdog probes. Choose based on your network conditions.",
   "watchdogProfileStable": "Stable",
@@ -310,7 +316,6 @@
   "watchdogProfileNormalDesc": "Balanced settings for most networks (default).",
   "watchdogProfileHarsh": "Harsh filtering",
   "watchdogProfileHarshDesc": "Heavy filtering or unstable network — lenient probing, fewer false restarts.",
-
   "appUpdate": "App Update",
   "appUpdateChecking": "Checking for updates...",
   "appUpdateFailed": "Update check failed",
@@ -325,7 +330,6 @@
   "appUpdateCheck": "Check for Updates",
   "appUpdateDownload": "Download Update",
   "appUpdateUpToDate": "You are up to date",
-
   "internetQuality": "Internet Quality",
   "internetQualityAvg": "Avg",
   "internetQualityDeep": "Deep (5m)",
@@ -358,21 +362,20 @@
   "internetQualityTcp": "TCP",
   "internetQualityTest": "Test",
   "internetQualityUnstable": "Unstable",
-
   "wireguardSettings": "WireGuard Settings",
-  
   "wireguardCoreTitle": "WireGuard Core",
   "wireguardCoreDescription": "Choose the WireGuard implementation. Amnezia adds obfuscation for heavy censorship.",
   "wireguardCoreStandard": "Standard (wireguard-go)",
-  "wireguardCoreAmnezia": "Amnezia (wireguard-awg)",  
-
+  "wireguardCoreAmnezia": "Amnezia (wireguard-awg)",
   "tunnelHealth": "Tunnel Health",
   "tunnelHealthProbeAll": "Test all",
   "tunnelHealthProbeAgain": "Retest",
   "tunnelHealthNotRunning": "{tunnel} is not running",
   "@tunnelHealthNotRunning": {
     "placeholders": {
-      "tunnel": { "type": "String" }
+      "tunnel": {
+        "type": "String"
+      }
     }
   },
   "tunnelHealthNoTunnelRunning": "No tunnel is running",
@@ -397,13 +400,17 @@
   "tunnelHealthLastProbeOk": "Last probe: {latency}ms — OK",
   "@tunnelHealthLastProbeOk": {
     "placeholders": {
-      "latency": { "type": "int" }
+      "latency": {
+        "type": "int"
+      }
     }
   },
   "tunnelHealthLastProbeFailed": "Last probe failed: {error}",
   "@tunnelHealthLastProbeFailed": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "tunnelHealthNoDataWarning": "Tunnel is up but no data is flowing",
@@ -411,10 +418,11 @@
   "tunnelHealthTitle": "{tunnel} Health",
   "@tunnelHealthTitle": {
     "placeholders": {
-      "tunnel": { "type": "String" }
+      "tunnel": {
+        "type": "String"
+      }
     }
   },
-
   "wireguardConfig": "WireGuard Config",
   "wireguardConfigHint": "Paste a standard WireGuard config (INI format) or a wireguard:// URI. The app auto-detects the format.",
   "wireguardConfigInvalid": "Invalid WireGuard config — check PrivateKey, PublicKey, and Endpoint.",
@@ -432,37 +440,6 @@
   "torViaWireGuard": "Via WireGuard (Tor-over-WireGuard)",
   "psiphonWireGuardUpstream": "WireGuard (SOCKS upstream)",
   "sstpWireGuardUpstream": "WireGuard (SOCKS upstream)",
-
-  "endpointPinning": "Endpoint Pinning",
-  "endpointPinningSubtitle": "Control how Aether chooses its endpoint",
-  "endpointPinningAutomatic": "Auto",
-  "endpointPinningCustomFirst": "Custom first",
-  "endpointPinningCustomOnly": "Custom only",
-  "endpointPinningAutomaticDesc": "Always auto-scan for the best endpoint. Recommended for most users.",
-  "endpointPinningCustomFirstDesc": "Try your custom endpoint first. If it fails, fall back to auto-scan.",
-  "endpointPinningCustomOnlyDesc": "Only use your custom endpoint. No auto-scan fallback. Use for testing a specific server.",
-  "endpointPinningNeedsCustom": "Set a custom endpoint below to enable Custom-first and Custom-only modes.",
-
-  "aetherAttemptProgress": "Attempt {current} of {max}",
-  "@aetherAttemptProgress": {
-    "placeholders": {
-      "current": { "type": "int" },
-      "max": { "type": "int" }
-    }
-  },
-  "aetherAttemptProtocol": "Protocol: {protocol}",
-  "@aetherAttemptProtocol": {
-    "placeholders": {
-      "protocol": { "type": "String" }
-    }
-  },
-  "aetherAttemptWaiting": "Waiting {seconds}s before next attempt…",
-  "@aetherAttemptWaiting": {
-    "placeholders": {
-      "seconds": { "type": "int" }
-    }
-  },
-
   "diagnosticsReport": "Diagnostics Report",
   "diagnosticsReportGenerate": "Generate Report",
   "diagnosticsReportCopy": "Copy Report",
@@ -472,14 +449,15 @@
   "diagnosticsReportSaved": "Report saved to: {path}",
   "@diagnosticsReportSaved": {
     "placeholders": {
-      "path": { "type": "String" }
+      "path": {
+        "type": "String"
+      }
     }
   },
   "diagnosticsReportRedacted": "Sensitive data has been redacted",
   "diagnosticsReportPreview": "Preview",
   "diagnosticsReportClose": "Close",
   "diagnosticsReportGenerating": "Generating report…",
-
   "amneziaLinkDetected": "Amnezia VPN link detected",
   "amneziaLinkName": "Name",
   "amneziaLinkEndpoint": "API Endpoint",
@@ -490,63 +468,167 @@
   "amneziaFetchFailed": "Failed to fetch AmneziaWG configuration",
   "amneziaCoreRequired": "AmneziaWG core required for vpn:// links. The app will auto-select it.",
   "amneziaApiError": "Amnezia API error",
-
-"amneziaInvalidLink": "Invalid vpn:// link format",
-
-"bridgeScanner": "Bridge Scanner",
-"bridgeScannerDescription": "Fetch and test Tor bridges (obfs4, webtunnel, snowflake, meek, conjure). Color-coded latency helps you pick the ones that actually work on your network.",
-"bridgeLines": "Bridge Lines (one per line)",
-"bridgeLinesHint": "obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0",
-"bridgeThreads": "Threads",
-"bridgeStartScan": "Start Scan",
-"bridgeStopScan": "Stop",
-"bridgeResults": "Results",
-"bridgeApplyWorking": "Apply Working ({count})",
-"bridgeApplyWorkingSnackbar": "Applied {count} working bridges to Tor settings",
-"bridgeApplyWorkingRestarting": "Applied {count} bridges — restarting Tor to apply",
-"bridgeApplyWorkingTorNotRunning": "Applied {count} bridges — start Tor to use them",
-"@bridgeApplyWorking": {
-  "placeholders": { "count": { "type": "int" } }
-},
-"@bridgeApplyWorkingSnackbar": {
-  "placeholders": { "count": { "type": "int" } }
-},
-"@bridgeApplyWorkingRestarting": {
-  "placeholders": { "count": { "type": "int" } }
-},
-"@bridgeApplyWorkingTorNotRunning": {
-  "placeholders": { "count": { "type": "int" } }
-},
-"bridgeFetch": "Fetch {transport}",
-"@bridgeFetch": {
-  "placeholders": { "transport": { "type": "String" } }
-},
-"bridgeSaveWorking": "Save Working",
-"bridgeLoadSaved": "Load Saved",
-"bridgeRescanSaved": "Rescan Saved",
-"bridgeClearSaved": "Clear Saved",
-"bridgeSavedCount": "Saved: {count}",
-"@bridgeSavedCount": {
-  "placeholders": { "count": { "type": "int" } }
-},
-"bridgeNoSaved": "No saved bridges yet",
-"bridgeSavedBridges": "Saved Bridges",
-"bridgeSaveSuccess": "{count} bridges saved",
-"@bridgeSaveSuccess": {
-  "placeholders": { "count": { "type": "int" } }
-},
-"bridgeLoadedSuccess": "Loaded {count} saved bridges",
-"@bridgeLoadedSuccess": {
-  "placeholders": { "count": { "type": "int" } }
-},
-"bridgeRescanStarted": "Rescanning {count} saved bridges",
-"@bridgeRescanStarted": {
-  "placeholders": { "count": { "type": "int" } }
-},
-"bridgeClearedSaved": "Saved bridges cleared",
-"bridgeNothingToSave": "No working bridges to save",
-
-"bridgeLoadFromScanner": "Load from Bridge Scanner",
-"bridgeLoadFromScannerSubtitle": "Load saved working bridges from the Bridge Scanner section below",
-"bridgeNoSavedInScanner": "No saved bridges in Bridge Scanner yet"
+  "amneziaInvalidLink": "Invalid vpn:// link format",
+  "bridgeScanner": "Bridge Scanner",
+  "bridgeScannerDescription": "Fetch and test Tor bridges (obfs4, webtunnel, snowflake, meek, conjure). Color-coded latency helps you pick the ones that actually work on your network.",
+  "bridgeLines": "Bridge Lines (one per line)",
+  "bridgeLinesHint": "obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0",
+  "bridgeThreads": "Threads",
+  "bridgeStartScan": "Start Scan",
+  "bridgeStopScan": "Stop",
+  "bridgeResults": "Results",
+  "bridgeApplyWorking": "Apply Working ({count})",
+  "bridgeApplyWorkingSnackbar": "Applied {count} working bridges to Tor settings",
+  "bridgeApplyWorkingRestarting": "Applied {count} bridges — restarting Tor to apply",
+  "bridgeApplyWorkingTorNotRunning": "Applied {count} bridges — start Tor to use them",
+  "@bridgeApplyWorking": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@bridgeApplyWorkingSnackbar": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@bridgeApplyWorkingRestarting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@bridgeApplyWorkingTorNotRunning": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeFetch": "Fetch {transport}",
+  "@bridgeFetch": {
+    "placeholders": {
+      "transport": {
+        "type": "String"
+      }
+    }
+  },
+  "bridgeSaveWorking": "Save Working",
+  "bridgeLoadSaved": "Load Saved",
+  "bridgeRescanSaved": "Rescan Saved",
+  "bridgeClearSaved": "Clear Saved",
+  "bridgeSavedCount": "Saved: {count}",
+  "@bridgeSavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeNoSaved": "No saved bridges yet",
+  "bridgeSavedBridges": "Saved Bridges",
+  "bridgeSaveSuccess": "{count} bridges saved",
+  "@bridgeSaveSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeLoadedSuccess": "Loaded {count} saved bridges",
+  "@bridgeLoadedSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeRescanStarted": "Rescanning {count} saved bridges",
+  "@bridgeRescanStarted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeClearedSaved": "Saved bridges cleared",
+  "bridgeNothingToSave": "No working bridges to save",
+  "bridgeLoadFromScanner": "Load from Bridge Scanner",
+  "bridgeLoadFromScannerSubtitle": "Load saved working bridges from the Bridge Scanner section below",
+  "bridgeNoSavedInScanner": "No saved bridges in Bridge Scanner yet",
+  "logSourceFfvpn": "Firefox VPN",
+  "ffvpnSettings": "Firefox VPN Settings",
+  "ffvpnGuideTitle": "Firefox Account session token",
+  "ffvpnGuideIntro": "This proxy uses the built-in IP Protection VPN of the Firefox browser (powered by Mozilla VPN). It needs the session token of your Firefox Account:",
+  "ffvpnGuideStep1": "1. Create a Firefox account or sign in inside the Firefox browser itself, so the browser stores your session.",
+  "ffvpnGuideStep2": "2. Open about:profiles in Firefox to find the root folder of your default profile.",
+  "ffvpnGuideStep3": "3. Open signedInUser.json in that folder and copy the value of accountData.sessionToken (a 64-character hex string), then paste it below.",
+  "ffvpnPathWindows": "Windows: %APPDATA%\\Mozilla\\Firefox\\Profiles\\<profile>\\signedInUser.json",
+  "ffvpnPathLinux": "Linux: ~/.mozilla/firefox/<profile>/signedInUser.json",
+  "ffvpnTokenLabel": "Firefox Account session token",
+  "ffvpnTokenHint": "64 hex characters — accountData.sessionToken from signedInUser.json",
+  "ffvpnPortSocks": "SOCKS port",
+  "ffvpnPortHttp": "HTTP port (0 = off)",
+  "ffvpnSniLabel": "TLS SNI",
+  "ffvpnSniHint": "Hostname sent in the TLS ClientHello to the Firefox proxy edge — leave empty to use the edge hostname",
+  "ffvpnUpstreamSection": "Upstream SOCKS proxy",
+  "ffvpnUpstreamDesc": "Firefox VPN first connects to this SOCKS5 hop and only then to the Firefox proxy edge. Use it when the edge is blocked or not directly reachable.",
+  "ffvpnUpstreamDirect": "Direct (no upstream)",
+  "ffvpnUpstreamManual": "Manual SOCKS5 proxy",
+  "ffvpnUpstreamPsiphon": "Psiphon (SOCKS)",
+  "ffvpnUpstreamTor": "Tor (SOCKS)",
+  "ffvpnUpstreamSstp": "SSTP (SOCKS)",
+  "ffvpnUpstreamWireguard": "WireGuard (SOCKS)",
+  "ffvpnUpstreamVia": "{name} is the upstream hop (SOCKS on 127.0.0.1:{port}) and is started automatically if it is not running yet.",
+  "@ffvpnUpstreamVia": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "port": { "type": "String" }
+    }
+  },
+  "ffvpnUpstreamManualNote": "The hostname is always sent to the proxy, so DNS is resolved there.",
+  "ffvpnCountrySection": "Exit country",
+  "ffvpnCountryAuto": "Automatic (server-recommended)",
+  "ffvpnLoadCountries": "Load country list",
+  "ffvpnCountriesLoading": "Loading country list…",
+  "ffvpnCountriesEmpty": "No countries loaded yet — press \"Load country list\".",
+  "ffvpnShowPremium": "Show premium-only countries",
+  "ffvpnShowPremiumDesc": "Countries locked behind a Mozilla VPN subscription are hidden by default, like in Firefox.",
+  "ffvpnPremiumTag": "premium",
+  "ffvpnQuotaSection": "Monthly bandwidth quota",
+  "ffvpnCheckQuota": "Check quota",
+  "ffvpnQuotaLoading": "Checking quota…",
+  "ffvpnQuotaUsedOf": "{used} of {total} used ({percent}%)",
+  "@ffvpnQuotaUsedOf": {
+    "placeholders": {
+      "used": { "type": "String" },
+      "total": { "type": "String" },
+      "percent": { "type": "String" }
+    }
+  },
+  "ffvpnQuotaLeft": "{remaining} remaining",
+  "@ffvpnQuotaLeft": {
+    "placeholders": {
+      "remaining": { "type": "String" }
+    }
+  },
+  "ffvpnQuotaResets": "Resets on {date}",
+  "@ffvpnQuotaResets": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "ffvpnQuotaUnlimited": "Unlimited bandwidth — no monthly quota applies to this account.",
+  "ffvpnQuotaNoToken": "Enter the session token above to check the quota.",
+  "ffvpnErrNotEntitled": "This Firefox account has no Mozilla VPN subscription (HTTP 403) — the proxy service requires one.",
+  "ffvpnErrRegion": "The service is not available in your region (HTTP 451).",
+  "ffvpnErrBadToken": "The session token is invalid or expired. Sign in again in Firefox and copy a fresh token from signedInUser.json.",
+  "ffvpnErrQuota": "Monthly bandwidth quota is exhausted — wait for the reset date.",
+  "ffvpnErrBinaryMissing": "The ffvpn binary was not found in the app data folder.",
+  "ffvpnErrNetwork": "Network error while reaching Mozilla — check your connection (a tunnel may be needed) and try again.",
+  "ffvpnErrOther": "ffvpn error"
 }

@@ -15,10 +15,6 @@ class CoreUpdateProxyResolver {
           return p.processService.isPsiphonConnected
               ? '127.0.0.1:${p.settings.socksPort}'
               : null;
-        case 'aether':
-          return p.processService.isAetherRunning
-              ? '127.0.0.1:${p.settings.aetherLocalPort}'
-              : null;
         case 'tor':
           return p.processService.isTorConnected
               ? '127.0.0.1:${p.settings.torSocksPort}'
@@ -50,7 +46,7 @@ class CoreUpdateProxyResolver {
     // ═══════════════════════════════════════════════════════════
     //  🆕 wireguard در لیست auto اضافه شد
     // ═══════════════════════════════════════════════════════════
-    for (final m in ['psiphon', 'aether', 'tor', 'sstp', 'wireguard']) {
+    for (final m in ['psiphon', 'tor', 'sstp', 'wireguard']) {
       final v = pick(m);
       if (v != null) return v;
     }
@@ -63,7 +59,6 @@ List<DropdownMenuItem<String>> buildCoreUpdateProxyItems(dynamic l10n) {
     DropdownMenuItem(value: 'auto', child: Text(l10n.autoFirstProxy)),
     DropdownMenuItem(value: 'direct', child: Text(l10n.directNoProxyOption)),
     const DropdownMenuItem(value: 'psiphon', child: Text('Psiphon')),
-    const DropdownMenuItem(value: 'aether', child: Text('Aether')),
     const DropdownMenuItem(value: 'tor', child: Text('Tor')),
     const DropdownMenuItem(value: 'sstp', child: Text('SSTP')),
     const DropdownMenuItem(value: 'wireguard', child: Text('WireGuard')),
@@ -74,7 +69,6 @@ const List<DropdownMenuItem<String>> coreUpdateProxyItems = [
   DropdownMenuItem(value: 'auto', child: Text('Auto')),
   DropdownMenuItem(value: 'direct', child: Text('Direct')),
   DropdownMenuItem(value: 'psiphon', child: Text('Psiphon')),
-  DropdownMenuItem(value: 'aether', child: Text('Aether')),
   DropdownMenuItem(value: 'tor', child: Text('Tor')),
   DropdownMenuItem(value: 'sstp', child: Text('SSTP')),
   DropdownMenuItem(value: 'wireguard', child: Text('WireGuard')),

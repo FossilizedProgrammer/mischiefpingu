@@ -5,7 +5,6 @@ extension AppProviderLifecyclePersistence on AppProvider {
     loggingEnabled = await persistence.loadLoggingEnabled();
     processService.loggingEnabled = loggingEnabled;
     settings = await persistence.loadSettings();
-    aetherTestService.updateSettings(settings);
 
     // ─── انتقال منابع فعال لاگ به ProcessService ───
     processService.setEnabledLogSources(settings.enabledLogSources.toSet());
@@ -29,14 +28,6 @@ extension AppProviderLifecyclePersistence on AppProvider {
     }
     if (settings.tlsSni.isEmpty || !tlsSniList.contains(settings.tlsSni)) {
       if (tlsSniList.isNotEmpty) settings.tlsSni = tlsSniList.first;
-    }
-
-    if (settings.aetherLocalPort > 40000) {
-      processService.addLog(
-        '⚠ Saved Aether port ${settings.aetherLocalPort} is in the ephemeral range → resetting to 1819',
-        source: LogSource.aether,
-      );
-      settings.aetherLocalPort = 1819;
     }
   }
 

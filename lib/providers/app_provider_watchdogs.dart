@@ -24,8 +24,6 @@ extension AppProviderWatchdogs on AppProvider {
     // ─── lease acquirerها ───
     final acquirePsiphonLease =
         _makePsiphonLeaseAcquirer(this, _recoveryCoordinator);
-    final acquireAetherLease =
-        _makeAetherLeaseAcquirer(this, _recoveryCoordinator);
     final acquireTorLease = _makeTorLeaseAcquirer(this, _recoveryCoordinator);
     final acquireSstpLease = _makeSstpLeaseAcquirer(this, _recoveryCoordinator);
     final acquireWireGuardLease =
@@ -37,7 +35,6 @@ extension AppProviderWatchdogs on AppProvider {
       processService: processService,
       isInternetAlive: internetAliveCheck,
       acquirePsiphonLease: acquirePsiphonLease,
-      acquireAetherLease: acquireAetherLease,
       acquireTorLease: acquireTorLease,
       acquireSstpLease: acquireSstpLease,
       acquireWireGuardLease: acquireWireGuardLease,
@@ -86,7 +83,6 @@ extension AppProviderWatchdogs on AppProvider {
 
     _watchdogManager!.syncWithConnectionState(
       psiphonConnected: processService.isPsiphonConnected,
-      aetherConnected: processService.isAetherRunning && !isAutoTesting,
       torConnected: processService.isTorConnected,
       sstpConnected: processService.isSstpConnected,
       wireGuardConnected: processService.isWireGuardConnected,

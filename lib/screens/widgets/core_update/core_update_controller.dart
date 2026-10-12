@@ -152,8 +152,6 @@ class CoreUpdateController extends ChangeNotifier {
   /// ═══════════════════════════════════════════════════════════════
   static String _coreIdFor(CoreKind kind) {
     switch (kind) {
-      case CoreKind.aether:
-        return 'aether';
       case CoreKind.tor:
         return 'tor';
       case CoreKind.psiphon:
@@ -166,6 +164,8 @@ class CoreUpdateController extends ChangeNotifier {
         return 'wireguard';
       case CoreKind.wireguardAwg:
         return 'wireguard-awg'; // 🆕
+      case CoreKind.ffvpn:
+        return 'ffvpn'; // 🆕 Firefox VPN
     }
   }
 }

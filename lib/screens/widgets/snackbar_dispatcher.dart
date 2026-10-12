@@ -46,20 +46,6 @@ void dispatchPendingSnackBars(
   }
   if (!processService.isPsiphonConnected) mixin.lastShownProtocol = null;
 
-  final pendingAether = processService.pendingAetherProtocolNotification;
-  if (pendingAether != null && pendingAether != mixin.lastShownAetherProtocol) {
-    mixin.lastShownAetherProtocol = pendingAether;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (context.mounted) {
-        mixin.showAetherProtocolSnackBar(pendingAether);
-        processService.clearPendingAetherProtocolNotification();
-      }
-    });
-  }
-  if (!processService.isAetherRunning) {
-    mixin.lastShownAetherProtocol = null;
-  }
-
   final pendingTor = processService.pendingTorNotification;
   final pendingTorDetail = processService.pendingTorTransportDetail;
   if (pendingTor != null && pendingTor != mixin.lastShownTorTransport) {

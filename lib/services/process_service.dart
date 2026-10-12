@@ -15,6 +15,7 @@ import 'package:path/path.dart' as p;
 // ═══════════════════════════════════════════════════════════════
 import '../models/wireguard_core_type.dart';
 import 'app_data_service.dart';
+import 'ffvpn/ffvpn_upstream_builder.dart';
 import 'log_line_parsers.dart';
 import 'port_manager.dart';
 import 'process/log_source.dart';
@@ -35,16 +36,12 @@ import 'wireguard/wireguard_paths.dart';
 export 'process/log_source.dart' show LogSource;
 
 part 'process_service_helpers.dart';
-part 'process_service_aether_lan.dart';
 part 'process_service_lan.dart';
 
 part 'psiphon/psiphon_process_starter.dart';
 part 'psiphon/psiphon_log_listener.dart';
 part 'psiphon_stopper.dart';
 part 'process_service_psiphon.dart';
-
-part 'aether_starter.dart';
-part 'aether_stopper.dart';
 
 part 'tor_launcher.dart';
 part 'tor_stopper.dart';
@@ -54,6 +51,7 @@ part 'sstp_launcher.dart';
 part 'sstp_stopper.dart';
 part 'process_service_sstp.dart';
 part 'process_service_wireguard.dart';
+part 'process_service_ffvpn.dart';
 
 class ProcessService extends ChangeNotifier
     with ProcessNotifications
@@ -79,16 +77,14 @@ class ProcessService extends ChangeNotifier
   bool isPsiphonRunning = false;
 
   @override
-  bool isAetherRunning = false;
-
-  @override
-  bool isAetherTunnelReady = false;
-
-  @override
   bool isTorRunning = false;
 
   @override
   bool isSstpRunning = false;
+
+  bool isFfvpnRunning = false;
+
+  bool isFfvpnConnected = false;
 
   @override
   bool isPsiphonConnected = false;
@@ -139,27 +135,6 @@ class ProcessService extends ChangeNotifier
   void clearPendingProtocolNotification() {
     pendingProtocolNotification = null;
     pendingProtocolBinary = null;
-  }
-
-  // ═══════════════════════════════════════════════════════════════
-  //  Aether protocol state
-  // ═══════════════════════════════════════════════════════════════
-
-  @override
-  String? lastAetherProtocol;
-
-  @override
-  String? pendingAetherProtocolNotification;
-
-  @override
-  void clearPendingAetherProtocolNotification() {
-    pendingAetherProtocolNotification = null;
-  }
-
-  @override
-  void setAetherProtocolNotification(String protocol) {
-    lastAetherProtocol = protocol;
-    pendingAetherProtocolNotification = protocol;
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -332,9 +307,9 @@ class ProcessService extends ChangeNotifier
   // ═══════════════════════════════════════════════════════════════
 
   Process? psiphonProcess;
-  Process? aetherProcess;
   Process? torProcess;
   Process? sstpProcess;
+  Process? ffvpnProcess;
 
   // ═══════════════════════════════════════════════════════════════
   //  Forwarder sockets
@@ -397,10 +372,10 @@ class ProcessService extends ChangeNotifier
   //  PID getters
   // ═══════════════════════════════════════════════════════════════
 
-  int? get aetherPid => aetherProcess?.pid;
   int? get psiphonPid => psiphonProcess?.pid;
   int? get torPid => torProcess?.pid;
   int? get sstpPid => sstpProcess?.pid;
+  int? get ffvpnPid => ffvpnProcess?.pid;
 
   // ═══════════════════════════════════════════════════════════════
   //  Lifecycle

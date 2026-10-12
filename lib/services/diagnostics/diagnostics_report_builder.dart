@@ -5,7 +5,6 @@ library;
 import 'dart:convert';
 
 import '../../models/settings_model.dart';
-import '../database/gateway_history_store.dart';
 import '../process_service.dart';
 import 'diagnostics_report_redactor.dart';
 
@@ -19,7 +18,6 @@ part 'diagnostics_report_json.dart';
 ///    • اطلاعات نسخه و پلتفرم
 ///    • تنظیمات فعلی (با redaction)
 ///    • آخرین لاگ‌ها (با redaction)
-///    • آخرین gatewayهای موفق
 ///    • وضعیت فعلی تونل‌ها
 ///
 ///  ⚠️ همه اطلاعات حساس قبل از نوشتن redact میشن.
@@ -30,13 +28,11 @@ part 'diagnostics_report_json.dart';
 /// ═══════════════════════════════════════════════════════════════
 class DiagnosticsReportBuilder {
   final ProcessService processService;
-  final GatewayHistoryStore? gatewayHistoryStore;
   final AppSettings settings;
 
   DiagnosticsReportBuilder({
     required this.processService,
     required this.settings,
-    this.gatewayHistoryStore,
   });
 
   /// ساخت گزارش کامل به صورت یک رشته.
@@ -46,9 +42,8 @@ class DiagnosticsReportBuilder {
   ///   2. Timestamp
   ///   3. Tunnel states (وضعیت تونل‌ها)
   ///   4. Settings (تنظیمات)
-  ///   5. Recent gateways (تاریخچه)
-  ///   6. Recent logs (لاگ‌ها)
-  ///   7. Footer
+  ///   5. Recent logs (لاگ‌ها)
+  ///   6. Footer
   ///
   /// در نهایت همه‌ی اطلاعات حساس redact میشن.
   Future<String> build() async {
@@ -58,7 +53,6 @@ class DiagnosticsReportBuilder {
     writeReportTimestamp(sb);
     writeTunnelStates(sb, processService);
     writeSettingsSection(sb, settings);
-    await writeRecentGateways(sb, gatewayHistoryStore);
     writeRecentLogs(sb, processService);
     writeReportFooter(sb);
 

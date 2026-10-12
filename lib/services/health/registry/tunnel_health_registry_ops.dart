@@ -22,9 +22,6 @@ extension TunnelHealthRegistryOps on TunnelHealthRegistry {
       case TunnelKind.sstp:
         _sstpAdapter?.start();
         break;
-      case TunnelKind.aether:
-        // Aether از tracker خودش استفاده می‌کنه
-        break;
       case TunnelKind.wireguard:
         _wireguardAdapter?.start();
         break;
@@ -44,8 +41,6 @@ extension TunnelHealthRegistryOps on TunnelHealthRegistry {
         break;
       case TunnelKind.sstp:
         _sstpAdapter?.reset();
-        break;
-      case TunnelKind.aether:
         break;
       case TunnelKind.wireguard:
         _wireguardAdapter?.reset();

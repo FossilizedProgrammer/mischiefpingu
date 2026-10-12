@@ -16,7 +16,6 @@ mixin WindowCloseHandler<T extends StatefulWidget> on State<T> {
     final ps = provider.processService;
 
     final hasActiveTunnel = ps.isPsiphonRunning ||
-        ps.isAetherRunning ||
         ps.isTorRunning ||
         ps.isSstpRunning ||
         ps.isWireGuardRunning; // ← اضافه شد

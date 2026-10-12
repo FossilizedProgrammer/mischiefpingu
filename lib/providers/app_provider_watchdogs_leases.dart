@@ -63,29 +63,6 @@ Future<RecoveryLeaseResult> Function() _makePsiphonLeaseAcquirer(
   };
 }
 
-/// ساخت callback acquire Aether lease.
-Future<RecoveryLeaseResult> Function() _makeAetherLeaseAcquirer(
-  AppProvider p,
-  RecoveryCoordinator coordinator,
-) {
-  return () async {
-    final lease = coordinator.tryAcquire(
-      tunnel: 'Aether',
-      action: RecoveryAction.watchdogRestart,
-      reason: 'watchdog detected dead tunnel',
-    );
-    if (lease == null) {
-      return const RecoveryLeaseResult.denied(
-        'another recovery is in progress',
-      );
-    }
-    return RecoveryLeaseResult(
-      granted: true,
-      lease: _LeaseHandleWrapper(lease, coordinator),
-    );
-  };
-}
-
 /// ساخت callback acquire Tor lease.
 Future<RecoveryLeaseResult> Function() _makeTorLeaseAcquirer(
   AppProvider p,

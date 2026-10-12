@@ -6,8 +6,8 @@ import 'dart:math';
 class PortManager {
   PortManager._();
 
-  /// پورت‌های ترجیحی برای Aether (به ترتیب اولویت).
-  static const List<int> preferredAetherPorts = [
+  /// پورت‌های ترجیحی (به ترتیب اولویت).
+  static const List<int> preferredPorts = [
     1819,
     1820,
     1821,
@@ -61,7 +61,7 @@ class PortManager {
   /// اولین پورت آزاد از لیست ترجیحی را برمی‌گرداند،
   /// در غیر این صورت یک پورت تصادفی آزاد.
   static Future<int> findFree({List<int>? preferred}) async {
-    final candidates = preferred ?? preferredAetherPorts;
+    final candidates = preferred ?? preferredPorts;
 
     for (final port in candidates) {
       if (await isFree(port)) return port;

@@ -18,13 +18,6 @@ class CoreUpdateVersionChecker {
     String psiphonRev = '',
   }) async {
     try {
-      if (coreId == 'aether') {
-        final exe = await AppDataService.resolveBinaryPath('aether') ??
-            await AppDataService.getBinaryPath('aether');
-        final v = await _queryExeVersion(exe, ['--version']);
-        return CoreUpdateUtils.parseAetherVersion(v) ?? 'unknown';
-      }
-
       if (coreId == 'tor') {
         final exe = await AppDataService.findTorBinary() ??
             await AppDataService.getTorBinaryPath();
@@ -58,6 +51,20 @@ class CoreUpdateVersionChecker {
         final v = await _queryExeVersion(exe, ['-v']);
         final parsed = CoreUpdateUtils.parsePsiphonVersion(v);
         if (parsed != null) return parsed;
+        return 'installed';
+      }
+
+      if (coreId == 'ffvpn') {
+        // ═══════════════════════════════════════════════════
+        //  Firefox VPN (ffvpn)
+        //
+        //  باینری ffvpn پرچم `--version` ندارد، پس نسخهٔ دقیق از
+        //  روی اندازهٔ فایل در برابر asset منتشرشده سنجیده می‌شود
+        //  (نگاه کن به GithubCoreSpec.sizeBasedVersion).
+        // ═══════════════════════════════════════════════════
+        final exe = await AppDataService.resolveBinaryPath('ffvpn') ??
+            await AppDataService.getBinaryPath('ffvpn');
+        if (!await File(exe).exists()) return 'not installed';
         return 'installed';
       }
 
@@ -107,6 +114,7 @@ class CoreUpdateVersionChecker {
       _log('⚠ Could not detect $coreId version: $e');
       if (coreId == 'tor' ||
           coreId == 'sunandlion' ||
+          coreId == 'ffvpn' ||
           coreId == 'sstp' ||
           coreId == 'wireguard' ||
           coreId == 'wireguard-awg') {

@@ -6,13 +6,10 @@ import 'package:path/path.dart' as p;
 
 import '../../app_data_service.dart';
 
-part 'aether_pt_installer.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  DirectoryCopier — کپی درخت دایرکتوری.
 ///
-///  نصب پوشه `pt` مخصوص Aether به `aether_pt_installer.dart`
-///  منتقل شده و از طریق extension `AetherPtInstaller`
 ///  در دسترسه.
 /// ═══════════════════════════════════════════════════════════════
 class DirectoryCopier {
@@ -58,12 +55,8 @@ class DirectoryCopier {
 
         if (!_isWin) {
           final base = p.basename(destPath).toLowerCase();
-          final relParts = p.split(rel);
-          final isInsidePt = relParts.contains('pt');
-          final shouldChmod = base == 'aether' ||
-              base == 'aether.exe' ||
-              !base.contains('.') ||
-              isInsidePt;
+          final shouldChmod =
+              base == 'psiphon-tunnel-core' || !base.contains('.');
           if (shouldChmod) {
             try {
               await Process.run('chmod', ['+x', destPath]);

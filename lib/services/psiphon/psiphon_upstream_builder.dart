@@ -15,7 +15,6 @@ class PsiphonUpstreamBuilder {
   /// آیا upstream override فعال است؟
   bool get hasOverride =>
       settings.upstreamType == 1 ||
-      settings.upstreamType == 2 ||
       settings.upstreamType == 4 ||
       settings.upstreamType == 5 ||
       settings.upstreamType == 6;
@@ -25,9 +24,6 @@ class PsiphonUpstreamBuilder {
     switch (settings.upstreamType) {
       case 1:
         _applyManual(config);
-        break;
-      case 2:
-        _applySocks(config, settings.aetherLocalPort, 'Aether');
         break;
       case 4:
         _applySocks(config, settings.torSocksPort, 'Tor');

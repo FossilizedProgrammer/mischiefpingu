@@ -32,7 +32,6 @@ extension AppProviderSstp on AppProvider {
     userStoppedSstp = true;
     _reconnectManager.cancelSstpTimer();
     _reconnectManager.resetRetries('sstp');
-    _aetherTestService.requestCancel();
     _recoveryCoordinator.releaseLeaseByTunnel('SSTP');
 
     nextSstpGeneration();

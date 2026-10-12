@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**Многопрофильный клиент — Psiphon • Aether • Tor • SSTP • WireGuard**
+**Многопрофильный клиент — Psiphon • Tor • SSTP • WireGuard • Firefox VPN**
 
 Графический интерфейс Flutter для настольных ПК (Linux и Windows), объединяющий несколько ядер обхода цензуры в чистом и целостном интерфейсе.
 
@@ -21,17 +21,24 @@
 
 ---
 
+## ️ Правовое уведомление о Firefox VPN
+
+> Это **неофициальный** клиент Firefox VPN, не имеющий отношения к Mozilla и не одобренный ею.  
+> Названия «Firefox» и «Mozilla» являются товарными знаками Mozilla Foundation. Данный проект не спонсируется, не поддерживается и не одобряется Mozilla и не является официальным продуктом Mozilla.
+
+---
+
 ##  Возможности
 
-### 🔌 Пять подключаемых ядер
+### 🔌 Шесть подключаемых ядер
 
 | Ядро | Описание |
 |------|----------|
 | **Psiphon** | Официальный бинарный файл `psiphon-tunnel-core` вместе с форком SunAndLion для CDN-фронтинга |
-| **Aether** | Протоколы MASQUE / MIM / WireGuard / Gool с автоматическим сканированием конечных точек |
 | **Tor** | Интеграция expert-bundle с плагинами obfs4, meek, snowflake, webtunnel и conjure |
 | **SSTP** | SSTP-прокси клиент, разработанный автором этого приложения |
 | **WireGuard** | Пользовательский клиент на основе wireproxy с двумя ядрами: **Standard** (wireguard-go) и **AmneziaWG** (обфусцированная версия для жёсткой цензуры) |
+| **Firefox VPN** | Встроенный клиент **IP Protection** в Firefox (`ffvpn` на базе Mozilla VPN) — вход через аккаунт Firefox и локальный SOCKS5/HTTP-прокси |
 
 **Общие возможности:**  
 Поддержка вставки конфигов или URI, локальный SOCKS-порт, Share-on-LAN и автоматическое переподключение.
@@ -43,7 +50,6 @@
 | Режим | Описание |
 |-------|----------|
 | **Фронтинг (CDN)** | Форк SunAndLion с настройкой `FRONTED-MEEK-CDN-OSSH`. Лучший выбор при жёсткой цензуре |
-| **Апстрим через Aether** | Официальное ядро Psiphon через SOCKS5 Aether |
 | **Conduit (WebRTC Inproxy)** | Децентрализованные пиринговые ретрансляторы |
 | **Прямой** | Официальное ядро Psiphon без фронтинга |
 
@@ -51,26 +57,12 @@
 
 ### 🔗 Цепочки туннелей
 
-- Tor через Aether / Psiphon / SSTP
-- SSTP через Aether / Psiphon / Tor
-- Psiphon через Aether / Tor / SSTP / ручной прокси
+- Tor через Psiphon / SSTP
+- SSTP через Psiphon / Tor
+- Psiphon через Tor / SSTP / ручной прокси
 
 ---
 
-### ️ Профили Aether — автоматический поиск пути
-
-Aether не требует от пользователя возни со сложными настройками. В нём есть несколько готовых профилей, которые он пробует по очереди, пока не найдёт лучший работающий путь:
-
-| Профиль | Описание |
-|---------|----------|
-| **Адаптивный** | Баланс скорости и покрытия; MASQUE/HTTP-3 → MASQUE/HTTP-2 → WireGuard → Gool |
-| **Нестабильный сигнал** | Для нестабильного мобильного интернета; также пробует MIM/HTTP-3 и использует `--noize balanced` |
-| **Ограниченная сеть** | Для ограниченного Wi-Fi или жёсткой фильтрации; fragment + masque-in-masque и `--noize gfw` |
-| **Ручной** | Полный контроль для продвинутых пользователей |
-
-> 💡 Последний успешный протокол и конечная точка запоминаются и пробуются в первую очередь при следующем запуске.
-
----
 
 ### 🛰️ Сканер IP CDN
 
@@ -92,7 +84,7 @@ Aether не требует от пользователя возни со сло�
 
 ### 🛠️ Обновление ядер
 
-Встроенный обновлятор для всех бинарных файлов (Aether, Tor, Psiphon, SunAndLion, SSTP, wireproxy). Обновления сохраняются и применяются при следующем запуске.
+Встроенный обновлятор для всех бинарных файлов (Tor, Psiphon, SunAndLion, SSTP, wireproxy, Firefox VPN). Обновления сохраняются и применяются при следующем запуске.
 
 ---
 
@@ -144,14 +136,14 @@ Aether не требует от пользователя возни со сло�
 
 | Проект | Описание |
 |--------|----------|
-| [**Aether**](https://github.com/CluvexStudio/Aether) | Ядро Aether обеспечивает все транспорты в этом приложении, кроме Psiphon, Tor и SSTP. Все заслуги ядра Aether принадлежат его автору |
 | [**Форк SunAndLion Psiphon**](https://github.com/shirokhorshid/psiphon-tunnel-core) | Режим фронтинга / CDN в этом приложении полностью основан на этом форке. Разработка этого ядра ведётся автором SunAndLion |
-| [**Официальный Psiphon**](https://github.com/Psiphon-Labs/psiphon-tunnel-core-binaries) | Официальное ядро Psiphon используется для режимов Direct, Aether Upstream, Conduit, Tor Upstream и SSTP Upstream |
+| [**Официальный Psiphon**](https://github.com/Psiphon-Labs/psiphon-tunnel-core-binaries) | Официальное ядро Psiphon используется для режимов Direct, Conduit, Tor Upstream и SSTP Upstream |
 | [**Проект Tor**](https://www.torproject.org/) | За специализированный бандл Tor и плагины транспорта |
 | [**wireproxy**](https://github.com/nwtgck/wireproxy) | Пользовательский клиент WireGuard, предоставляющий SOCKS5/HTTP прокси |
 | [**AmneziaWG**](https://github.com/amnezia-vpn/amneziawg-go) | Обфусцированный форк WireGuard для сопротивления DPI |
 | [**Flutter**](https://flutter.dev/) | Весь графический интерфейс построен на Flutter |
 | [**sstp-proxy**](https://github.com/FossilizedProgrammer/sstp-proxy) | SSTP-прокси клиент в этом приложении разработан автором MischiefPingu. Эта реализация предоставляет протокол в виде локального прокси, что делает возможным цепочку туннелей |
+| [**firefox-vpn-go**](https://github.com/FossilizedProgrammer/firefox-vpn-go) | Ядро Firefox VPN в этом приложении — самостоятельный Go-клиент для встроенного VPN-прокси Firefox (IP Protection на базе Mozilla VPN), распространяемый в виде готовых бинарных файлов release |
 
 ---
 

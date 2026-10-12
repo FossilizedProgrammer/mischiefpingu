@@ -37,7 +37,6 @@ class SstpFetcherControls extends StatelessWidget {
             ),
             DropdownMenuItem(value: 'direct', child: Text(l10n.directNoProxy)),
             const DropdownMenuItem(value: 'psiphon', child: Text('Psiphon')),
-            const DropdownMenuItem(value: 'aether', child: Text('Aether')),
             const DropdownMenuItem(value: 'tor', child: Text('Tor')),
             const DropdownMenuItem(value: 'sstp', child: Text('SSTP')),
           ],

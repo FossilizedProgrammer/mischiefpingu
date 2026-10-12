@@ -43,25 +43,6 @@ class AutoReconnectManager {
     );
   }
 
-  void scheduleAetherReconnect({
-    Duration delay = defaultDelay,
-    required bool Function() shouldReconnect,
-    required void Function() onReconnect,
-    required ReconnectLogFn log,
-  }) {
-    _scheduler.schedule(
-      key: 'aether',
-      baseDelay: delay,
-      shouldReconnect: shouldReconnect,
-      onReconnect: onReconnect,
-      log: log,
-      logSource: LogSource.aether,
-      backoff: _backoff,
-      acquireLease: acquireLease,
-      releaseLease: releaseLease,
-    );
-  }
-
   void scheduleTorReconnect({
     Duration delay = slowTunnelDelay,
     required bool Function() shouldReconnect,
@@ -120,7 +101,6 @@ class AutoReconnectManager {
   }
 
   void cancelPsiphonTimer() => _scheduler.cancel('psiphon');
-  void cancelAetherTimer() => _scheduler.cancel('aether');
   void cancelTorTimer() => _scheduler.cancel('tor');
   void cancelSstpTimer() => _scheduler.cancel('sstp');
   void cancelWireGuardTimer() => _scheduler.cancel('wireguard');

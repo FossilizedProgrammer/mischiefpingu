@@ -13,25 +13,13 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get appSubtitle =>
-      'کلاینت غیر رسمی سایفون، اتر، تور، اس‌اس‌تی‌پی، وایرگارد';
+      'کلاینت غیر رسمی سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس VPN';
 
   @override
   String get add => 'افزودن';
 
   @override
   String get addNew => 'افزودن جدید';
-
-  @override
-  String get aetherConnected => 'اتر متصل شد';
-
-  @override
-  String get aetherSettings => 'تنظیمات اتر';
-
-  @override
-  String get aetherSocksUpstream => 'اتر (آپ‌استریم SOCKS)';
-
-  @override
-  String get aetherUpstream => 'اتر (آپ‌استریم SOCKS)';
 
   @override
   String get allServers => 'همه سرورها';
@@ -67,9 +55,6 @@ class AppLocalizationsFa extends AppLocalizations {
   String get autoFirstRunningProxy => 'خودکار (اولین پروکسی فعال)';
 
   @override
-  String get autoReconnectAether => 'اتصال مجدد خودکار اتر';
-
-  @override
   String get autoReconnectPsiphon => 'اتصال مجدد خودکار سایفون';
 
   @override
@@ -87,9 +72,6 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get binaryNotFound => 'فایل اجرایی پیدا نشد';
-
-  @override
-  String get both => 'هر دو';
 
   @override
   String get bridgePresets => 'پیش‌تنظیم‌های بریج (اختیاری)';
@@ -175,6 +157,14 @@ class AppLocalizationsFa extends AppLocalizations {
   String get cdnSendToPsiphon => 'ارسال به Psiphon';
 
   @override
+  String get cdnSaveEnteredIps => 'ذخیره آی‌پی‌های واردشده';
+
+  @override
+  String cdnIpsSavedSnack(String count, String total) {
+    return '$count آی‌پی ذخیره شد ($total در لیست)';
+  }
+
+  @override
   String cdnCustomIpsSent(String count, String ip) {
     return '$count آی‌پی سفارشی → Psiphon (فرانتینگ: $ip)';
   }
@@ -222,9 +212,6 @@ class AppLocalizationsFa extends AppLocalizations {
   String get connecting => 'در حال اتصال…';
 
   @override
-  String get connectionMode => 'حالت اتصال';
-
-  @override
   String get copiedToClipboard => 'در کلیپ‌بورد کپی شد';
 
   @override
@@ -256,12 +243,6 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get coreUpdates => 'آپدیت هسته‌ها';
-
-  @override
-  String get customEndpoint => 'اندپوینت سفارشی (اختیاری)';
-
-  @override
-  String get customEndpointHint => 'برای اسکن خودکار خالی بگذارید';
 
   @override
   String get customIps => 'آی‌پی‌های سفارشی';
@@ -338,19 +319,10 @@ class AppLocalizationsFa extends AppLocalizations {
   String get installed => 'نصب‌شده';
 
   @override
-  String get ipType => 'نوع IP';
-
-  @override
   String get ipsCidrRanges => 'آی‌پی‌ها / CIDR / محدوده‌ها';
 
   @override
-  String get ipv4 => 'IPv4';
-
-  @override
   String get ipv4Only => 'فقط IPv4';
-
-  @override
-  String get ipv6 => 'IPv6';
 
   @override
   String get language => 'زبان';
@@ -377,9 +349,6 @@ class AppLocalizationsFa extends AppLocalizations {
   String get localProxyPorts => 'پورت‌های پروکسی محلی';
 
   @override
-  String get localSocksPort => 'پورت SOCKS محلی';
-
-  @override
   String get log => 'لاگ';
 
   @override
@@ -387,9 +356,6 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get logSourcePsiphon => 'سایفون';
-
-  @override
-  String get logSourceAether => 'اتر';
 
   @override
   String get logSourceTor => 'تور';
@@ -435,25 +401,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get notifications => 'اعلان‌ها';
 
   @override
-  String get obfAggressive => 'تهاجمی';
-
-  @override
-  String get obfBalanced => 'متعادل';
-
-  @override
-  String get obfFirewall => 'فایروال';
-
-  @override
-  String get obfGfw => 'GFW';
-
-  @override
-  String get obfLight => 'سبک';
-
-  @override
   String get obfOff => 'خاموش';
-
-  @override
-  String get obfuscation => 'مبهم‌سازی (--noize)';
 
   @override
   String get officialCore => 'هسته رسمی سایفون';
@@ -476,66 +424,20 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get preset2Subtitle =>
-      'از هسته رسمی سایفون با آپ‌استریم اتر استفاده می‌کند.';
-
-  @override
-  String get preset2Title =>
-      '۲ · ترافیک اتر به‌عنوان آپ‌استریم. مناسب وقتی اتر کار می‌کند.';
-
-  @override
-  String get preset3Subtitle =>
       'از پروتکل‌های INPROXY-WEBRTC سایفون استفاده می‌کند.';
 
   @override
-  String get preset3Title =>
-      '۳ · Conduit (WebRTC Inproxy). رله‌های غیرمتمرکز همتا.';
+  String get preset2Title =>
+      '2 · Conduit (WebRTC Inproxy). رله‌های غیرمتمرکز همتا.';
 
   @override
-  String get preset4Subtitle => 'مستقیماً از هسته رسمی سایفون استفاده می‌کند.';
+  String get preset3Subtitle => 'مستقیماً از هسته رسمی سایفون استفاده می‌کند.';
 
   @override
-  String get preset4Title => '۴ · اتصال مستقیم. مناسب برای سانسور خفیف.';
+  String get preset3Title => '3 · اتصال مستقیم. مناسب برای سانسور خفیف.';
 
   @override
   String get profile => 'پروفایل';
-
-  @override
-  String get profileAdaptive => 'تطبیقی';
-
-  @override
-  String get profileAdaptiveDesc => 'تعادل سرعت و پوشش — مناسب اکثر شبکه‌ها';
-
-  @override
-  String get profileManual => 'دستی';
-
-  @override
-  String get profileManualDesc => 'همه گزینه‌ها دستی — برای کاربران حرفه‌ای';
-
-  @override
-  String get profilePatchy => 'سیگنال ناپایدار';
-
-  @override
-  String get profilePatchyDesc =>
-      'دیتای موبایل ناپایدار — جستجوی سخت‌تر و مقاوم‌تر';
-
-  @override
-  String get profileStrict => 'شبکه محدود';
-
-  @override
-  String get profileStrictDesc =>
-      'وای‌فای محدود یا فیلتر سنگین — fragment + masque-in-masque + noize gfw';
-
-  @override
-  String get protoGool => 'Gool (WARP-in-WARP)';
-
-  @override
-  String get protoMasque => 'MASQUE (HTTP/3 یا HTTP/2)';
-
-  @override
-  String get protoMim => 'MIM (masque-in-masque)';
-
-  @override
-  String get protoWireguard => 'WireGuard';
 
   @override
   String get protocol => 'پروتکل';
@@ -565,22 +467,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get saveFoundIpsSni => 'ذخیره خودکار IPها و SNIهای یافت‌شده';
 
   @override
-  String get scanBalanced => 'متعادل';
-
-  @override
-  String get scanIronclad => 'آهنین';
-
-  @override
   String get scanMode => 'حالت اسکن';
-
-  @override
-  String get scanStealth => 'مخفیانه';
-
-  @override
-  String get scanThorough => 'دقیق';
-
-  @override
-  String get scanTurbo => 'توربو';
 
   @override
   String get select => 'انتخاب…';
@@ -615,7 +502,7 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get showMoreSubtitle =>
-      'ظاهر، اتر، سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، اسکنر، آپدیت‌ها، لاگ';
+      'ظاهر، سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس VPN، اسکنر، آپدیت‌ها، لاگ';
 
   @override
   String get sni => 'SNI';
@@ -684,20 +571,10 @@ class AppLocalizationsFa extends AppLocalizations {
   String get torUpstream => 'تور (آپ‌استریم SOCKS)';
 
   @override
-  String get torViaAether => 'از طریق اتر (Tor-over-Aether)';
-
-  @override
   String get torViaPsiphon => 'از طریق سایفون (Tor-over-Psiphon)';
 
   @override
   String get torViaSstp => 'از طریق اس‌اس‌تی‌پی (Tor-over-SSTP)';
-
-  @override
-  String get tryLastEndpointFirst => 'اول آخرین اندپوینت موفق را امتحان کن';
-
-  @override
-  String get tryLastEndpointFirstSubtitle =>
-      'اگر فعال باشد، قبل از اسکن آخرین اندپوینت کارکننده امتحان می‌شود';
 
   @override
   String get tunnelCore => 'هسته تونل';
@@ -751,10 +628,6 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get backToPresets => 'بازگشت به پروفایل‌های آماده';
-
-  @override
-  String get aetherManualHint =>
-      'حالت دستی: پروتکل، مبهم‌سازی، scan mode و اندپوینت سفارشی در پایین کاملاً در اختیار شماست.';
 
   @override
   String get watchdogNetworkProfile => 'پروفایل شبکه';
@@ -1085,53 +958,6 @@ class AppLocalizationsFa extends AppLocalizations {
   String get sstpWireGuardUpstream => 'وایرگارد (آپ‌استریم SOCKS)';
 
   @override
-  String get endpointPinning => 'پین کردن اندپوینت';
-
-  @override
-  String get endpointPinningSubtitle =>
-      'کنترل کنید Aether چطور اندپوینت خود را انتخاب کند';
-
-  @override
-  String get endpointPinningAutomatic => 'خودکار';
-
-  @override
-  String get endpointPinningCustomFirst => 'اول سفارشی';
-
-  @override
-  String get endpointPinningCustomOnly => 'فقط سفارشی';
-
-  @override
-  String get endpointPinningAutomaticDesc =>
-      'همیشه اسکن خودکار برای بهترین اندپوینت. توصیه‌شده برای اکثر کاربران.';
-
-  @override
-  String get endpointPinningCustomFirstDesc =>
-      'اول اندپوینت سفارشی را امتحان کن. اگر شکست خورد، به اسکن خودکار برگرد.';
-
-  @override
-  String get endpointPinningCustomOnlyDesc =>
-      'فقط اندپوینت سفارشی. بدون fallback. برای تست یک سرور خاص.';
-
-  @override
-  String get endpointPinningNeedsCustom =>
-      'برای فعال‌سازی حالت‌های «اول سفارشی» و «فقط سفارشی»، یک اندپوینت سفارشی پایین تعیین کنید.';
-
-  @override
-  String aetherAttemptProgress(int current, int max) {
-    return 'تلاش $current از $max';
-  }
-
-  @override
-  String aetherAttemptProtocol(String protocol) {
-    return 'پروتکل: $protocol';
-  }
-
-  @override
-  String aetherAttemptWaiting(int seconds) {
-    return 'انتظار $seconds ثانیه قبل از تلاش بعدی…';
-  }
-
-  @override
   String get diagnosticsReport => 'گزارش تشخیصی';
 
   @override
@@ -1305,4 +1131,175 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get bridgeNoSavedInScanner => 'هنوز بریجی در اسکنر بریج ذخیره نشده';
+
+  @override
+  String get logSourceFfvpn => 'وی‌پی‌ان فایرفاکس';
+
+  @override
+  String get ffvpnSettings => 'تنظیمات وی‌پی‌ان فایرفاکس';
+
+  @override
+  String get ffvpnGuideTitle => 'توکن نشست حساب فایرفاکس';
+
+  @override
+  String get ffvpnGuideIntro =>
+      'این پروکسی از وی‌پی‌ان داخلی مرورگر فایرفاکس (IP Protection، مبتنی بر Mozilla VPN) استفاده می‌کند و به توکن نشست حساب فایرفاکس شما نیاز دارد:';
+
+  @override
+  String get ffvpnGuideStep1 =>
+      '۱. داخل خود مرورگر فایرفاکس یک حساب فایرفاکس بسازید یا وارد آن شوید تا نشست در مرورگر ذخیره شود.';
+
+  @override
+  String get ffvpnGuideStep2 =>
+      '۲. در فایرفاکس صفحهٔ about:profiles را باز کنید تا پوشهٔ ریشهٔ پروفایل پیش‌فرض را پیدا کنید.';
+
+  @override
+  String get ffvpnGuideStep3 =>
+      '۳. فایل signedInUser.json را در همان پوشه باز کنید و مقدار accountData.sessionToken (رشتهٔ ۶۴ کاراکتری هگز) را بردارید و در پایین بچسبانید.';
+
+  @override
+  String get ffvpnPathWindows =>
+      'ویندوز: %APPDATA%\\Mozilla\\Firefox\\Profiles\\<profile>\\signedInUser.json';
+
+  @override
+  String get ffvpnPathLinux =>
+      'لینوکس: ~/.mozilla/firefox/<profile>/signedInUser.json';
+
+  @override
+  String get ffvpnTokenLabel => 'توکن نشست حساب فایرفاکس';
+
+  @override
+  String get ffvpnTokenHint =>
+      '۶۴ کاراکتر هگز — accountData.sessionToken از signedInUser.json';
+
+  @override
+  String get ffvpnPortSocks => 'پورت SOCKS';
+
+  @override
+  String get ffvpnPortHttp => 'پورت HTTP (0 = خاموش)';
+
+  @override
+  String get ffvpnSniLabel => 'SNI در TLS';
+
+  @override
+  String get ffvpnSniHint =>
+      'نام میزبانی که در ClientHello به لبهٔ پروکسی فایرفاکس فرستاده می‌شود — خالی بگذارید تا نام دامنهٔ لبه استفاده شود';
+
+  @override
+  String get ffvpnUpstreamSection => 'پروکسی آپ‌استریم SOCKS';
+
+  @override
+  String get ffvpnUpstreamDesc =>
+      'Firefox VPN اول به این hop از SOCKS5 وصل می‌شود و بعد به لبهٔ پروکسی فایرفاکس. وقتی لبه فیلتر شده یا مستقیم در دسترس نیست به کار می‌رود.';
+
+  @override
+  String get ffvpnUpstreamDirect => 'مستقیم (بدون آپ‌استریم)';
+
+  @override
+  String get ffvpnUpstreamManual => 'پروکسی SOCKS5 دستی';
+
+  @override
+  String get ffvpnUpstreamPsiphon => 'سایفون (SOCKS)';
+
+  @override
+  String get ffvpnUpstreamTor => 'تور (SOCKS)';
+
+  @override
+  String get ffvpnUpstreamSstp => 'SSTP (SOCKS)';
+
+  @override
+  String get ffvpnUpstreamWireguard => 'وایرگارد (SOCKS)';
+
+  @override
+  String ffvpnUpstreamVia(String name, String port) {
+    return '$name به‌عنوان hop آپ‌استریم استفاده می‌شود (SOCKS روی 127.0.0.1:$port) و اگر هنوز بالا نیست به‌صورت خودکار بالا می‌آید.';
+  }
+
+  @override
+  String get ffvpnUpstreamManualNote =>
+      'نام میزبان همیشه به پروکسی فرستاده می‌شود تا DNS همان‌جا حل شود.';
+
+  @override
+  String get ffvpnCountrySection => 'کشور خروجی';
+
+  @override
+  String get ffvpnCountryAuto => 'خودکار (پیشنهاد سرور)';
+
+  @override
+  String get ffvpnLoadCountries => 'دریافت فهرست کشورها';
+
+  @override
+  String get ffvpnCountriesLoading => 'در حال دریافت فهرست کشورها…';
+
+  @override
+  String get ffvpnCountriesEmpty =>
+      'هنوز کشوری بارگذاری نشده — «دریافت فهرست کشورها» را بزنید.';
+
+  @override
+  String get ffvpnShowPremium => 'نمایش کشورهای مخصوص اکانت پرمیوم';
+
+  @override
+  String get ffvpnShowPremiumDesc =>
+      'کشورهای قفل‌شده که اشتراک Mozilla VPN می‌خواهند؛ مثل خود فایرفاکس، به‌صورت پیش‌فرض پنهان‌اند.';
+
+  @override
+  String get ffvpnPremiumTag => 'پرمیوم';
+
+  @override
+  String get ffvpnQuotaSection => 'سهمیهٔ ماهانهٔ پهنای باند';
+
+  @override
+  String get ffvpnCheckQuota => 'بررسی سهمیه';
+
+  @override
+  String get ffvpnQuotaLoading => 'در حال بررسی سهمیه…';
+
+  @override
+  String ffvpnQuotaUsedOf(String used, String total, String percent) {
+    return '$used از $total مصرف شده ($percent٪)';
+  }
+
+  @override
+  String ffvpnQuotaLeft(String remaining) {
+    return '$remaining باقی مانده';
+  }
+
+  @override
+  String ffvpnQuotaResets(String date) {
+    return 'ریست در $date';
+  }
+
+  @override
+  String get ffvpnQuotaUnlimited =>
+      'پهنای باند نامحدود — این حساب سهمیهٔ ماهانه ندارد.';
+
+  @override
+  String get ffvpnQuotaNoToken =>
+      'برای بررسی سهمیه، اول توکن نشست را در بالا وارد کنید.';
+
+  @override
+  String get ffvpnErrNotEntitled =>
+      'این حساب فایرفاکس اشتراک Mozilla VPN ندارد (HTTP 403) — سرویس پروکسی به اشتراک نیاز دارد.';
+
+  @override
+  String get ffvpnErrRegion => 'سرویس در منطقهٔ شما ارائه نمی‌شود (HTTP 451).';
+
+  @override
+  String get ffvpnErrBadToken =>
+      'توکن نشست نامعتبر یا منقضی است. دوباره در فایرفاکس وارد شوید و توکن تازه‌ای از signedInUser.json بردارید.';
+
+  @override
+  String get ffvpnErrQuota =>
+      'سهمیهٔ ماهانهٔ پهنای باند تمام شده — صبر کنید تا تاریخ ریست برسد.';
+
+  @override
+  String get ffvpnErrBinaryMissing =>
+      'باینری ffvpn در پوشهٔ دادهٔ برنامه پیدا نشد.';
+
+  @override
+  String get ffvpnErrNetwork =>
+      'خطای شبکه در اتصال به موزیلا — اتصال را بررسی کنید (شاید لازم باشد تونل دیگری فعال باشد) و دوباره تلاش کنید.';
+
+  @override
+  String get ffvpnErrOther => 'خطای ffvpn';
 }

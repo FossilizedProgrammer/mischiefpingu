@@ -48,7 +48,6 @@ class _DiagnosticsReportTileState extends State<DiagnosticsReportTile> {
       final builder = DiagnosticsReportBuilder(
         processService: app.processService,
         settings: app.settings,
-        gatewayHistoryStore: app.gatewayHistoryStore,
       );
 
       final report = await builder.build();

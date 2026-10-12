@@ -3,7 +3,7 @@ library;
 import '../core_update_models.dart';
 
 abstract class CoreUpdater {
-  /// شناسهٔ core (aether / tor / psiphon / sunandlion / sstp).
+  /// شناسهٔ core (tor / psiphon / sunandlion / sstp / wireguard).
   String get coreId;
 
   /// بررسی وجود آپدیت.

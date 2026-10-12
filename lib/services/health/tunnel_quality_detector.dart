@@ -13,13 +13,13 @@ import 'tunnel_health_models.dart';
 ///
 ///  و دو callback:
 ///    • onDegradationDetected  → restart کن
-///    • onEscalateProfile      → profile رو سخت‌گیرتر کن (فقط Aether)
+///    • onEscalateProfile      → profile رو سخت‌گیرتر کن
 /// ═══════════════════════════════════════════════════════════════
 class TunnelQualityDetector {
   final TunnelKind kind;
   final void Function(String reason) onDegradationDetected;
 
-  /// اختیاری: برای Aether که profile داره.
+  /// اختیاری: برای تونل‌هایی که profile دارند.
   final void Function(String reason)? onEscalateProfile;
 
   final void Function(String message, {String source}) log;
@@ -56,7 +56,7 @@ class TunnelQualityDetector {
     if (_history.length > _maxHistory) _history.removeAt(0);
 
     // ═══════════════════════════════════════════════════════════
-    //  اگر 100% packet loss داریم و Aether هست و escalate می‌تونیم
+    //  اگر 100% packet loss داریم و escalate ممکن است
     // ═══════════════════════════════════════════════════════════
     if (report.packetLossPct >= 99.0 &&
         onEscalateProfile != null &&

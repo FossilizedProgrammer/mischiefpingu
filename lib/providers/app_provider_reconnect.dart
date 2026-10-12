@@ -43,30 +43,6 @@ extension AppProviderReconnect on AppProvider {
     );
 
     // ═══════════════════════════════════════════════════════════
-    //  Aether
-    // ═══════════════════════════════════════════════════════════
-    _scheduleReconnectFor(
-      tunnel: 'aether',
-      isRunning: processService.isAetherRunning,
-      isBusy: isAutoTesting,
-      isLoading: false,
-      hasPid: processService.aetherPid != null,
-      userStopped: userStoppedAether,
-      autoReconnectEnabled: settings.autoReconnectAether,
-      isAutoTesting: isAutoTesting,
-      isRestarting: restartingAether,
-      shouldReconnect: () =>
-          !processService.isAetherRunning &&
-          !isAutoTesting &&
-          processService.aetherPid == null &&
-          !userStoppedAether &&
-          settings.autoReconnectAether &&
-          !restartingAether &&
-          !isShuttingDown,
-      onReconnect: () => connectAether(fromAutoReconnect: true),
-    );
-
-    // ═══════════════════════════════════════════════════════════
     //  Tor
     // ═══════════════════════════════════════════════════════════
     _scheduleReconnectFor(
@@ -156,6 +132,15 @@ extension AppProviderReconnect on AppProvider {
         sstpStatus = 'SSTP: Connected';
       } else if (sstpStatus == 'SSTP: Ready' || sstpStatus == 'SSTP: Stopped') {
         sstpStatus = 'SSTP: Connecting…';
+      }
+    }
+
+    if (processService.isFfvpnRunning) {
+      if (processService.isFfvpnConnected) {
+        ffvpnStatus = 'Firefox VPN: Connected';
+      } else if (ffvpnStatus == 'Firefox VPN: Ready' ||
+          ffvpnStatus == 'Firefox VPN: Stopped') {
+        ffvpnStatus = 'Firefox VPN: Connecting…';
       }
     }
   }

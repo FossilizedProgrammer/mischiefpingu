@@ -11,7 +11,7 @@ import 'advanced_settings/settings_group_tools.dart';
 ///
 ///  ⚠️ بازآرایی: ویجت‌ها به سه فایل جدا منتقل شدند:
 ///    • SettingsGroupGeneral  → ظاهر، زبان، اعلان‌ها، کیفیت
-///    • SettingsGroupTunnels  → Aether, Psiphon, Tor, SSTP, WG
+///    • SettingsGroupTunnels  → Psiphon, Tor, SSTP, WG
 ///    • SettingsGroupTools    → اسکنرها، آپدیت، واچ‌داگ، لاگ
 /// ═══════════════════════════════════════════════════════════════
 class AdvancedSettingsColumn extends StatelessWidget {

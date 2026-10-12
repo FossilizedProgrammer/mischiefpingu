@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**Multi-core client — Psiphon • Aether • Tor • SSTP • WireGuard**
+**Multi-core client — Psiphon • Tor • SSTP • WireGuard • Firefox VPN**
 
 A Flutter GUI for desktop (Linux and Windows) that unifies multiple censorship-circumvention cores in a clean, integrated interface.
 
@@ -21,17 +21,24 @@ A Flutter GUI for desktop (Linux and Windows) that unifies multiple censorship-c
 
 ---
 
+## ⚠️ Legal Notice Regarding Firefox VPN
+
+> This is an **unofficial** Firefox VPN client and has no affiliation with or endorsement from Firefox / Mozilla.  
+> "Firefox" and "Mozilla" are trademarks of the Mozilla Foundation. This project is not sponsored, supported, or endorsed by Mozilla and is not an official Mozilla product.
+
+---
+
 ## ✨ Features
 
-### 🔌 Five Connectable Cores
+### 🔌 Connectable Cores
 
 | Core | Description |
 |------|-------------|
 | **Psiphon** | Official `psiphon-tunnel-core` binary along with the SunAndLion fork for CDN fronting |
-| **Aether** | MASQUE / MIM / WireGuard / Gool protocols with automatic endpoint scanning |
 | **Tor** | expert-bundle integration with obfs4, meek, snowflake, webtunnel, and conjure plugins |
 | **SSTP** | SSTP proxy client, developed by the author of this application |
 | **WireGuard** | Userspace client based on wireproxy with two cores: **Standard** (wireguard-go) and **AmneziaWG** (obfuscated version for heavy censorship) |
+| **Firefox VPN** | Firefox's built-in **IP Protection** client (`ffvpn`, powered by Mozilla VPN) — signs in with your Firefox Account and exposes a local SOCKS5/HTTP proxy |
 
 **Common features:**  
 Supports pasting configs or URIs, local SOCKS port, Share-on-LAN, and automatic reconnection.
@@ -43,7 +50,6 @@ Supports pasting configs or URIs, local SOCKS port, Share-on-LAN, and automatic 
 | Mode | Description |
 |------|-------------|
 | **Fronting (CDN)** | SunAndLion fork with `FRONTED-MEEK-CDN-OSSH` setting. Best for heavy censorship |
-| **Aether Upstream** | Official Psiphon core via Aether's SOCKS5 |
 | **Conduit (WebRTC Inproxy)** | Decentralized peer relays |
 | **Direct** | Official Psiphon core without fronting |
 
@@ -51,26 +57,12 @@ Supports pasting configs or URIs, local SOCKS port, Share-on-LAN, and automatic 
 
 ### 🔗 Chained Tunnels
 
-- Tor over Aether / Psiphon / SSTP
-- SSTP over Aether / Psiphon / Tor
-- Psiphon over Aether / Tor / SSTP / manual proxy
+- Tor over Psiphon / SSTP
+- SSTP over Psiphon / Tor
+- Psiphon over Tor / SSTP / manual proxy
 
 ---
 
-### 🎛️ Aether Profiles — Automatic Path Discovery
-
-Aether does not require the user to fiddle with complex settings. It comes with several ready-made profiles and tries them in order until it finds the best working path:
-
-| Profile | Description |
-|---------|-------------|
-| **Adaptive** | Balance of speed and coverage; MASQUE/HTTP-3 → MASQUE/HTTP-2 → WireGuard → Gool |
-| **Unstable Signal** | For unstable mobile data; also tries MIM/HTTP-3 and uses `--noize balanced` |
-| **Restricted Network** | For restricted Wi-Fi or heavy filtering; fragment + masque-in-masque and `--noize gfw` |
-| **Manual** | Full control for advanced users |
-
-> 💡 The last successful protocol and endpoint are remembered and tried first on the next run.
-
----
 
 ### 🛰️ CDN IP Scanner
 
@@ -92,7 +84,7 @@ Aether does not require the user to fiddle with complex settings. It comes with 
 
 ### ️ Core Updater
 
-Built-in updater for all binaries (Aether, Tor, Psiphon, SunAndLion, SSTP, wireproxy). Updates are saved and applied on the next start.
+Built-in updater for all binaries (Tor, Psiphon, SunAndLion, SSTP, wireproxy, Firefox VPN). Updates are saved and applied on the next start.
 
 ---
 
@@ -144,14 +136,14 @@ This project would not exist without the efforts of others. Sincere thanks to:
 
 | Project | Description |
 |---------|-------------|
-| [**Aether**](https://github.com/CluvexStudio/Aether) | The Aether core powers all transports in this app except Psiphon, Tor, and SSTP. All credit for the Aether core belongs to its author |
 | [**SunAndLion Psiphon Fork**](https://github.com/shirokhorshid/psiphon-tunnel-core) | The fronting / CDN mode in this app is entirely based on this fork. Development of this core is handled by the SunAndLion author |
-| [**Official Psiphon**](https://github.com/Psiphon-Labs/psiphon-tunnel-core-binaries) | The official Psiphon core is used for Direct, Aether Upstream, Conduit, Tor Upstream, and SSTP Upstream modes |
+| [**Official Psiphon**](https://github.com/Psiphon-Labs/psiphon-tunnel-core-binaries) | The official Psiphon core is used for Direct, Conduit, Tor Upstream, and SSTP Upstream modes |
 | [**Tor Project**](https://www.torproject.org/) | For the specialized Tor bundle and transport plugins |
 | [**wireproxy**](https://github.com/nwtgck/wireproxy) | Userspace WireGuard client that provides a SOCKS5/HTTP proxy |
 | [**AmneziaWG**](https://github.com/amnezia-vpn/amneziawg-go) | Obfuscated WireGuard fork for DPI resistance |
 | [**Flutter**](https://flutter.dev/) | The entire GUI is built on Flutter |
 | [**sstp-proxy**](https://github.com/FossilizedProgrammer/sstp-proxy) | The SSTP proxy client in this app was developed by the author of MischiefPingu. This implementation provides the protocol as a local proxy, enabling tunnel chaining |
+| [**firefox-vpn-go**](https://github.com/FossilizedProgrammer/firefox-vpn-go) | The Firefox VPN core of this app — a standalone Go client for the browser's built-in IP Protection VPN (Mozilla VPN), distributed as prebuilt release binaries |
 
 ---
 

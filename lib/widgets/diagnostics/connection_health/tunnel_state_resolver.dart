@@ -7,9 +7,6 @@ import '../../../services/health/tunnel_health_models.dart';
 ///  TunnelStateResolver — resolve وضعیت running و SOCKS port
 ///  برای هر TunnelKind.
 ///
-///  ⚠️ برای Aether از isAetherTunnelReady استفاده می‌کنیم نه
-///  isAetherRunning. دلیل: SOCKS Aether فقط وقتی قابل استفاده
-///  است که tunnel validate شده باشد.
 /// ═══════════════════════════════════════════════════════════════
 class TunnelStateResolver {
   final AppProvider provider;
@@ -20,7 +17,6 @@ class TunnelStateResolver {
     final ps = provider.processService;
     return {
       TunnelKind.psiphon: ps.isPsiphonConnected,
-      TunnelKind.aether: ps.isAetherTunnelReady,
       TunnelKind.tor: ps.isTorConnected,
       TunnelKind.sstp: ps.isSstpConnected,
       TunnelKind.wireguard: ps.isWireGuardConnected,
@@ -35,8 +31,6 @@ class TunnelStateResolver {
     switch (kind) {
       case TunnelKind.psiphon:
         return s.socksPort;
-      case TunnelKind.aether:
-        return s.aetherLocalPort;
       case TunnelKind.tor:
         return s.torSocksPort;
       case TunnelKind.sstp:

@@ -2,7 +2,7 @@
 
 library;
 
-import 'core_update/core_update_aether.dart';
+import 'core_update/core_update_ffvpn.dart';
 import 'core_update/core_update_network.dart';
 import 'core_update/core_update_pending.dart';
 import 'core_update/core_update_process_utils.dart';
@@ -36,12 +36,6 @@ class CoreUpdateService {
   );
 
   late final CoreUpdaterRegistry _registry = CoreUpdaterRegistry(
-    aether: AetherUpdater(
-      network: _network,
-      pending: _pending,
-      processUtils: _process,
-      log: log,
-    ),
     tor: TorUpdater(
       network: _network,
       pending: _pending,
@@ -74,6 +68,13 @@ class CoreUpdateService {
     ),
     // 🆕 هستهٔ دوم WireGuard (AmneziaWG)
     wireguardAwg: WireGuardAwgUpdater(
+      network: _network,
+      pending: _pending,
+      processUtils: _process,
+      log: log,
+    ),
+    // 🆕 هستهٔ Firefox VPN (ffvpn)
+    ffvpn: FfvpnUpdater(
       network: _network,
       pending: _pending,
       processUtils: _process,

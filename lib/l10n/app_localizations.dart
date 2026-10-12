@@ -109,7 +109,7 @@ abstract class AppLocalizations {
   /// No description provided for @appSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Unofficial Psiphon client, Aether client, Tor client, SSTP client, WireGuard client'**
+  /// **'Unofficial Psiphon client, Tor client, SSTP client, WireGuard client, Firefox VPN client'**
   String get appSubtitle;
 
   /// No description provided for @add.
@@ -123,30 +123,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add new'**
   String get addNew;
-
-  /// No description provided for @aetherConnected.
-  ///
-  /// In en, this message translates to:
-  /// **'Aether Connected'**
-  String get aetherConnected;
-
-  /// No description provided for @aetherSettings.
-  ///
-  /// In en, this message translates to:
-  /// **'Aether Settings'**
-  String get aetherSettings;
-
-  /// No description provided for @aetherSocksUpstream.
-  ///
-  /// In en, this message translates to:
-  /// **'Aether (SOCKS upstream)'**
-  String get aetherSocksUpstream;
-
-  /// No description provided for @aetherUpstream.
-  ///
-  /// In en, this message translates to:
-  /// **'Aether (SOCKS upstream)'**
-  String get aetherUpstream;
 
   /// No description provided for @allServers.
   ///
@@ -214,12 +190,6 @@ abstract class AppLocalizations {
   /// **'Auto (first running proxy)'**
   String get autoFirstRunningProxy;
 
-  /// No description provided for @autoReconnectAether.
-  ///
-  /// In en, this message translates to:
-  /// **'Auto-reconnect Aether'**
-  String get autoReconnectAether;
-
   /// No description provided for @autoReconnectPsiphon.
   ///
   /// In en, this message translates to:
@@ -255,12 +225,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Binary Not Found'**
   String get binaryNotFound;
-
-  /// No description provided for @both.
-  ///
-  /// In en, this message translates to:
-  /// **'Both'**
-  String get both;
 
   /// No description provided for @bridgePresets.
   ///
@@ -394,6 +358,18 @@ abstract class AppLocalizations {
   /// **'Send to Psiphon'**
   String get cdnSendToPsiphon;
 
+  /// No description provided for @cdnSaveEnteredIps.
+  ///
+  /// In en, this message translates to:
+  /// **'Save entered IPs'**
+  String get cdnSaveEnteredIps;
+
+  /// No description provided for @cdnIpsSavedSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} IPs saved ({total} in list)'**
+  String cdnIpsSavedSnack(String count, String total);
+
   /// No description provided for @cdnCustomIpsSent.
   ///
   /// In en, this message translates to:
@@ -479,12 +455,6 @@ abstract class AppLocalizations {
   /// **'Connecting…'**
   String get connecting;
 
-  /// No description provided for @connectionMode.
-  ///
-  /// In en, this message translates to:
-  /// **'Connection Mode'**
-  String get connectionMode;
-
   /// No description provided for @copiedToClipboard.
   ///
   /// In en, this message translates to:
@@ -550,18 +520,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Core Updates'**
   String get coreUpdates;
-
-  /// No description provided for @customEndpoint.
-  ///
-  /// In en, this message translates to:
-  /// **'Custom Endpoint (optional)'**
-  String get customEndpoint;
-
-  /// No description provided for @customEndpointHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Leave empty for auto-scan'**
-  String get customEndpointHint;
 
   /// No description provided for @customIps.
   ///
@@ -707,35 +665,17 @@ abstract class AppLocalizations {
   /// **'Installed'**
   String get installed;
 
-  /// No description provided for @ipType.
-  ///
-  /// In en, this message translates to:
-  /// **'IP Type'**
-  String get ipType;
-
   /// No description provided for @ipsCidrRanges.
   ///
   /// In en, this message translates to:
   /// **'IPs / CIDR / Ranges'**
   String get ipsCidrRanges;
 
-  /// No description provided for @ipv4.
-  ///
-  /// In en, this message translates to:
-  /// **'IPv4'**
-  String get ipv4;
-
   /// No description provided for @ipv4Only.
   ///
   /// In en, this message translates to:
   /// **'IPv4 only'**
   String get ipv4Only;
-
-  /// No description provided for @ipv6.
-  ///
-  /// In en, this message translates to:
-  /// **'IPv6'**
-  String get ipv6;
 
   /// No description provided for @language.
   ///
@@ -785,12 +725,6 @@ abstract class AppLocalizations {
   /// **'Local proxy ports'**
   String get localProxyPorts;
 
-  /// No description provided for @localSocksPort.
-  ///
-  /// In en, this message translates to:
-  /// **'Local SOCKS port'**
-  String get localSocksPort;
-
   /// No description provided for @log.
   ///
   /// In en, this message translates to:
@@ -808,12 +742,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Psiphon'**
   String get logSourcePsiphon;
-
-  /// No description provided for @logSourceAether.
-  ///
-  /// In en, this message translates to:
-  /// **'Aether'**
-  String get logSourceAether;
 
   /// No description provided for @logSourceTor.
   ///
@@ -899,47 +827,11 @@ abstract class AppLocalizations {
   /// **'Notifications'**
   String get notifications;
 
-  /// No description provided for @obfAggressive.
-  ///
-  /// In en, this message translates to:
-  /// **'Aggressive'**
-  String get obfAggressive;
-
-  /// No description provided for @obfBalanced.
-  ///
-  /// In en, this message translates to:
-  /// **'Balanced'**
-  String get obfBalanced;
-
-  /// No description provided for @obfFirewall.
-  ///
-  /// In en, this message translates to:
-  /// **'Firewall'**
-  String get obfFirewall;
-
-  /// No description provided for @obfGfw.
-  ///
-  /// In en, this message translates to:
-  /// **'GFW'**
-  String get obfGfw;
-
-  /// No description provided for @obfLight.
-  ///
-  /// In en, this message translates to:
-  /// **'Light'**
-  String get obfLight;
-
   /// No description provided for @obfOff.
   ///
   /// In en, this message translates to:
   /// **'Off'**
   String get obfOff;
-
-  /// No description provided for @obfuscation.
-  ///
-  /// In en, this message translates to:
-  /// **'Obfuscation (--noize)'**
-  String get obfuscation;
 
   /// No description provided for @officialCore.
   ///
@@ -980,116 +872,32 @@ abstract class AppLocalizations {
   /// No description provided for @preset2Subtitle.
   ///
   /// In en, this message translates to:
-  /// **'Uses official Psiphon Tunnel Core with Aether upstream.'**
+  /// **'Uses Psiphon INPROXY-WEBRTC protocols via volunteer stations.'**
   String get preset2Subtitle;
 
   /// No description provided for @preset2Title.
   ///
   /// In en, this message translates to:
-  /// **'2 · Aether traffic as upstream. Suitable when Aether works.'**
+  /// **'2 · Conduit (WebRTC Inproxy). Decentralized peer relays.'**
   String get preset2Title;
 
   /// No description provided for @preset3Subtitle.
   ///
   /// In en, this message translates to:
-  /// **'Uses Psiphon INPROXY-WEBRTC protocols via volunteer stations.'**
+  /// **'Uses the official Psiphon Tunnel Core directly.'**
   String get preset3Subtitle;
 
   /// No description provided for @preset3Title.
   ///
   /// In en, this message translates to:
-  /// **'3 · Conduit (WebRTC Inproxy). Decentralized peer relays.'**
+  /// **'3 · Direct connection. Suitable for mild censorship.'**
   String get preset3Title;
-
-  /// No description provided for @preset4Subtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Uses the official Psiphon Tunnel Core directly.'**
-  String get preset4Subtitle;
-
-  /// No description provided for @preset4Title.
-  ///
-  /// In en, this message translates to:
-  /// **'4 · Direct connection. Suitable for mild censorship.'**
-  String get preset4Title;
 
   /// No description provided for @profile.
   ///
   /// In en, this message translates to:
   /// **'Profile'**
   String get profile;
-
-  /// No description provided for @profileAdaptive.
-  ///
-  /// In en, this message translates to:
-  /// **'Adaptive'**
-  String get profileAdaptive;
-
-  /// No description provided for @profileAdaptiveDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Balance of speed and coverage — suitable for most networks'**
-  String get profileAdaptiveDesc;
-
-  /// No description provided for @profileManual.
-  ///
-  /// In en, this message translates to:
-  /// **'Manual'**
-  String get profileManual;
-
-  /// No description provided for @profileManualDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'All options manual — for advanced users'**
-  String get profileManualDesc;
-
-  /// No description provided for @profilePatchy.
-  ///
-  /// In en, this message translates to:
-  /// **'Patchy signal'**
-  String get profilePatchy;
-
-  /// No description provided for @profilePatchyDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Unstable mobile data — harder and more resilient search'**
-  String get profilePatchyDesc;
-
-  /// No description provided for @profileStrict.
-  ///
-  /// In en, this message translates to:
-  /// **'Strict network'**
-  String get profileStrict;
-
-  /// No description provided for @profileStrictDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Restricted Wi-Fi or heavy filtering — fragment + masque-in-masque + noize gfw'**
-  String get profileStrictDesc;
-
-  /// No description provided for @protoGool.
-  ///
-  /// In en, this message translates to:
-  /// **'Gool (WARP-in-WARP)'**
-  String get protoGool;
-
-  /// No description provided for @protoMasque.
-  ///
-  /// In en, this message translates to:
-  /// **'MASQUE (HTTP/3 or HTTP/2)'**
-  String get protoMasque;
-
-  /// No description provided for @protoMim.
-  ///
-  /// In en, this message translates to:
-  /// **'MIM (masque-in-masque)'**
-  String get protoMim;
-
-  /// No description provided for @protoWireguard.
-  ///
-  /// In en, this message translates to:
-  /// **'WireGuard'**
-  String get protoWireguard;
 
   /// No description provided for @protocol.
   ///
@@ -1145,41 +953,11 @@ abstract class AppLocalizations {
   /// **'Save found IPs & SNI automatically'**
   String get saveFoundIpsSni;
 
-  /// No description provided for @scanBalanced.
-  ///
-  /// In en, this message translates to:
-  /// **'Balanced'**
-  String get scanBalanced;
-
-  /// No description provided for @scanIronclad.
-  ///
-  /// In en, this message translates to:
-  /// **'Ironclad'**
-  String get scanIronclad;
-
   /// No description provided for @scanMode.
   ///
   /// In en, this message translates to:
   /// **'Scan mode'**
   String get scanMode;
-
-  /// No description provided for @scanStealth.
-  ///
-  /// In en, this message translates to:
-  /// **'Stealth'**
-  String get scanStealth;
-
-  /// No description provided for @scanThorough.
-  ///
-  /// In en, this message translates to:
-  /// **'Thorough'**
-  String get scanThorough;
-
-  /// No description provided for @scanTurbo.
-  ///
-  /// In en, this message translates to:
-  /// **'Turbo'**
-  String get scanTurbo;
 
   /// No description provided for @select.
   ///
@@ -1244,7 +1022,7 @@ abstract class AppLocalizations {
   /// No description provided for @showMoreSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Appearance, Aether, Psiphon, Tor, SSTP, WireGuard, Scanner, Updates, Log'**
+  /// **'Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Scanner, Updates, Log'**
   String get showMoreSubtitle;
 
   /// No description provided for @sni.
@@ -1379,12 +1157,6 @@ abstract class AppLocalizations {
   /// **'Tor (SOCKS upstream)'**
   String get torUpstream;
 
-  /// No description provided for @torViaAether.
-  ///
-  /// In en, this message translates to:
-  /// **'Via Aether (Tor-over-Aether)'**
-  String get torViaAether;
-
   /// No description provided for @torViaPsiphon.
   ///
   /// In en, this message translates to:
@@ -1396,18 +1168,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Via SSTP (Tor-over-SSTP)'**
   String get torViaSstp;
-
-  /// No description provided for @tryLastEndpointFirst.
-  ///
-  /// In en, this message translates to:
-  /// **'Try last successful endpoint first'**
-  String get tryLastEndpointFirst;
-
-  /// No description provided for @tryLastEndpointFirstSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'If enabled, will try the last working endpoint before scanning'**
-  String get tryLastEndpointFirstSubtitle;
 
   /// No description provided for @tunnelCore.
   ///
@@ -1510,12 +1270,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to presets'**
   String get backToPresets;
-
-  /// No description provided for @aetherManualHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Manual mode: Protocol, obfuscation, scan mode, and custom endpoint are fully under your control below.'**
-  String get aetherManualHint;
 
   /// No description provided for @watchdogNetworkProfile.
   ///
@@ -2141,78 +1895,6 @@ abstract class AppLocalizations {
   /// **'WireGuard (SOCKS upstream)'**
   String get sstpWireGuardUpstream;
 
-  /// No description provided for @endpointPinning.
-  ///
-  /// In en, this message translates to:
-  /// **'Endpoint Pinning'**
-  String get endpointPinning;
-
-  /// No description provided for @endpointPinningSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Control how Aether chooses its endpoint'**
-  String get endpointPinningSubtitle;
-
-  /// No description provided for @endpointPinningAutomatic.
-  ///
-  /// In en, this message translates to:
-  /// **'Auto'**
-  String get endpointPinningAutomatic;
-
-  /// No description provided for @endpointPinningCustomFirst.
-  ///
-  /// In en, this message translates to:
-  /// **'Custom first'**
-  String get endpointPinningCustomFirst;
-
-  /// No description provided for @endpointPinningCustomOnly.
-  ///
-  /// In en, this message translates to:
-  /// **'Custom only'**
-  String get endpointPinningCustomOnly;
-
-  /// No description provided for @endpointPinningAutomaticDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Always auto-scan for the best endpoint. Recommended for most users.'**
-  String get endpointPinningAutomaticDesc;
-
-  /// No description provided for @endpointPinningCustomFirstDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Try your custom endpoint first. If it fails, fall back to auto-scan.'**
-  String get endpointPinningCustomFirstDesc;
-
-  /// No description provided for @endpointPinningCustomOnlyDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Only use your custom endpoint. No auto-scan fallback. Use for testing a specific server.'**
-  String get endpointPinningCustomOnlyDesc;
-
-  /// No description provided for @endpointPinningNeedsCustom.
-  ///
-  /// In en, this message translates to:
-  /// **'Set a custom endpoint below to enable Custom-first and Custom-only modes.'**
-  String get endpointPinningNeedsCustom;
-
-  /// No description provided for @aetherAttemptProgress.
-  ///
-  /// In en, this message translates to:
-  /// **'Attempt {current} of {max}'**
-  String aetherAttemptProgress(int current, int max);
-
-  /// No description provided for @aetherAttemptProtocol.
-  ///
-  /// In en, this message translates to:
-  /// **'Protocol: {protocol}'**
-  String aetherAttemptProtocol(String protocol);
-
-  /// No description provided for @aetherAttemptWaiting.
-  ///
-  /// In en, this message translates to:
-  /// **'Waiting {seconds}s before next attempt…'**
-  String aetherAttemptWaiting(int seconds);
-
   /// No description provided for @diagnosticsReport.
   ///
   /// In en, this message translates to:
@@ -2512,6 +2194,294 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No saved bridges in Bridge Scanner yet'**
   String get bridgeNoSavedInScanner;
+
+  /// No description provided for @logSourceFfvpn.
+  ///
+  /// In en, this message translates to:
+  /// **'Firefox VPN'**
+  String get logSourceFfvpn;
+
+  /// No description provided for @ffvpnSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Firefox VPN Settings'**
+  String get ffvpnSettings;
+
+  /// No description provided for @ffvpnGuideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Firefox Account session token'**
+  String get ffvpnGuideTitle;
+
+  /// No description provided for @ffvpnGuideIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'This proxy uses the built-in IP Protection VPN of the Firefox browser (powered by Mozilla VPN). It needs the session token of your Firefox Account:'**
+  String get ffvpnGuideIntro;
+
+  /// No description provided for @ffvpnGuideStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Create a Firefox account or sign in inside the Firefox browser itself, so the browser stores your session.'**
+  String get ffvpnGuideStep1;
+
+  /// No description provided for @ffvpnGuideStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Open about:profiles in Firefox to find the root folder of your default profile.'**
+  String get ffvpnGuideStep2;
+
+  /// No description provided for @ffvpnGuideStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Open signedInUser.json in that folder and copy the value of accountData.sessionToken (a 64-character hex string), then paste it below.'**
+  String get ffvpnGuideStep3;
+
+  /// No description provided for @ffvpnPathWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Windows: %APPDATA%\\Mozilla\\Firefox\\Profiles\\<profile>\\signedInUser.json'**
+  String get ffvpnPathWindows;
+
+  /// No description provided for @ffvpnPathLinux.
+  ///
+  /// In en, this message translates to:
+  /// **'Linux: ~/.mozilla/firefox/<profile>/signedInUser.json'**
+  String get ffvpnPathLinux;
+
+  /// No description provided for @ffvpnTokenLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Firefox Account session token'**
+  String get ffvpnTokenLabel;
+
+  /// No description provided for @ffvpnTokenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'64 hex characters — accountData.sessionToken from signedInUser.json'**
+  String get ffvpnTokenHint;
+
+  /// No description provided for @ffvpnPortSocks.
+  ///
+  /// In en, this message translates to:
+  /// **'SOCKS port'**
+  String get ffvpnPortSocks;
+
+  /// No description provided for @ffvpnPortHttp.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTP port (0 = off)'**
+  String get ffvpnPortHttp;
+
+  /// No description provided for @ffvpnSniLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'TLS SNI'**
+  String get ffvpnSniLabel;
+
+  /// No description provided for @ffvpnSniHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hostname sent in the TLS ClientHello to the Firefox proxy edge — leave empty to use the edge hostname'**
+  String get ffvpnSniHint;
+
+  /// No description provided for @ffvpnUpstreamSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Upstream SOCKS proxy'**
+  String get ffvpnUpstreamSection;
+
+  /// No description provided for @ffvpnUpstreamDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Firefox VPN first connects to this SOCKS5 hop and only then to the Firefox proxy edge. Use it when the edge is blocked or not directly reachable.'**
+  String get ffvpnUpstreamDesc;
+
+  /// No description provided for @ffvpnUpstreamDirect.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct (no upstream)'**
+  String get ffvpnUpstreamDirect;
+
+  /// No description provided for @ffvpnUpstreamManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual SOCKS5 proxy'**
+  String get ffvpnUpstreamManual;
+
+  /// No description provided for @ffvpnUpstreamPsiphon.
+  ///
+  /// In en, this message translates to:
+  /// **'Psiphon (SOCKS)'**
+  String get ffvpnUpstreamPsiphon;
+
+  /// No description provided for @ffvpnUpstreamTor.
+  ///
+  /// In en, this message translates to:
+  /// **'Tor (SOCKS)'**
+  String get ffvpnUpstreamTor;
+
+  /// No description provided for @ffvpnUpstreamSstp.
+  ///
+  /// In en, this message translates to:
+  /// **'SSTP (SOCKS)'**
+  String get ffvpnUpstreamSstp;
+
+  /// No description provided for @ffvpnUpstreamWireguard.
+  ///
+  /// In en, this message translates to:
+  /// **'WireGuard (SOCKS)'**
+  String get ffvpnUpstreamWireguard;
+
+  /// No description provided for @ffvpnUpstreamVia.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is the upstream hop (SOCKS on 127.0.0.1:{port}) and is started automatically if it is not running yet.'**
+  String ffvpnUpstreamVia(String name, String port);
+
+  /// No description provided for @ffvpnUpstreamManualNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The hostname is always sent to the proxy, so DNS is resolved there.'**
+  String get ffvpnUpstreamManualNote;
+
+  /// No description provided for @ffvpnCountrySection.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit country'**
+  String get ffvpnCountrySection;
+
+  /// No description provided for @ffvpnCountryAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic (server-recommended)'**
+  String get ffvpnCountryAuto;
+
+  /// No description provided for @ffvpnLoadCountries.
+  ///
+  /// In en, this message translates to:
+  /// **'Load country list'**
+  String get ffvpnLoadCountries;
+
+  /// No description provided for @ffvpnCountriesLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading country list…'**
+  String get ffvpnCountriesLoading;
+
+  /// No description provided for @ffvpnCountriesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No countries loaded yet — press \"Load country list\".'**
+  String get ffvpnCountriesEmpty;
+
+  /// No description provided for @ffvpnShowPremium.
+  ///
+  /// In en, this message translates to:
+  /// **'Show premium-only countries'**
+  String get ffvpnShowPremium;
+
+  /// No description provided for @ffvpnShowPremiumDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Countries locked behind a Mozilla VPN subscription are hidden by default, like in Firefox.'**
+  String get ffvpnShowPremiumDesc;
+
+  /// No description provided for @ffvpnPremiumTag.
+  ///
+  /// In en, this message translates to:
+  /// **'premium'**
+  String get ffvpnPremiumTag;
+
+  /// No description provided for @ffvpnQuotaSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly bandwidth quota'**
+  String get ffvpnQuotaSection;
+
+  /// No description provided for @ffvpnCheckQuota.
+  ///
+  /// In en, this message translates to:
+  /// **'Check quota'**
+  String get ffvpnCheckQuota;
+
+  /// No description provided for @ffvpnQuotaLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking quota…'**
+  String get ffvpnQuotaLoading;
+
+  /// No description provided for @ffvpnQuotaUsedOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{used} of {total} used ({percent}%)'**
+  String ffvpnQuotaUsedOf(String used, String total, String percent);
+
+  /// No description provided for @ffvpnQuotaLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{remaining} remaining'**
+  String ffvpnQuotaLeft(String remaining);
+
+  /// No description provided for @ffvpnQuotaResets.
+  ///
+  /// In en, this message translates to:
+  /// **'Resets on {date}'**
+  String ffvpnQuotaResets(String date);
+
+  /// No description provided for @ffvpnQuotaUnlimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited bandwidth — no monthly quota applies to this account.'**
+  String get ffvpnQuotaUnlimited;
+
+  /// No description provided for @ffvpnQuotaNoToken.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the session token above to check the quota.'**
+  String get ffvpnQuotaNoToken;
+
+  /// No description provided for @ffvpnErrNotEntitled.
+  ///
+  /// In en, this message translates to:
+  /// **'This Firefox account has no Mozilla VPN subscription (HTTP 403) — the proxy service requires one.'**
+  String get ffvpnErrNotEntitled;
+
+  /// No description provided for @ffvpnErrRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'The service is not available in your region (HTTP 451).'**
+  String get ffvpnErrRegion;
+
+  /// No description provided for @ffvpnErrBadToken.
+  ///
+  /// In en, this message translates to:
+  /// **'The session token is invalid or expired. Sign in again in Firefox and copy a fresh token from signedInUser.json.'**
+  String get ffvpnErrBadToken;
+
+  /// No description provided for @ffvpnErrQuota.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly bandwidth quota is exhausted — wait for the reset date.'**
+  String get ffvpnErrQuota;
+
+  /// No description provided for @ffvpnErrBinaryMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'The ffvpn binary was not found in the app data folder.'**
+  String get ffvpnErrBinaryMissing;
+
+  /// No description provided for @ffvpnErrNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Network error while reaching Mozilla — check your connection (a tunnel may be needed) and try again.'**
+  String get ffvpnErrNetwork;
+
+  /// No description provided for @ffvpnErrOther.
+  ///
+  /// In en, this message translates to:
+  /// **'ffvpn error'**
+  String get ffvpnErrOther;
 }
 
 class _AppLocalizationsDelegate

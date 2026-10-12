@@ -1,7 +1,7 @@
 part of 'app_provider.dart';
 
 /// ═══════════════════════════════════════════════════════════════
-///  هندل upstream (Aether / Psiphon / Tor) برای SSTP
+///  هندل upstream (Psiphon / Tor) برای SSTP
 ///
 ///  ⚠️ FIX:
 ///   • isAutoTesting در try/finally
@@ -10,62 +10,6 @@ part of 'app_provider.dart';
 extension AppProviderSstpUpstream on AppProvider {
   Future<bool> resolveSstpUpstream({required bool fromAutoReconnect}) async {
     const src = LogSource.sstp;
-
-    if (settings.sstpUpstreamType == 2) {
-      if (processService.isAetherRunning) {
-        processService.addLog(
-          '→ SSTP upstream: Aether already running',
-          source: src,
-        );
-        return true;
-      }
-
-      if (fromAutoReconnect && userStoppedAether) {
-        sstpStatus = 'SSTP: upstream Aether stopped by user — skipped';
-        processService.addLog(
-          '→ SSTP auto-reconnect skipped (upstream Aether was stopped by user)',
-          source: src,
-        );
-        touch();
-        return false;
-      }
-
-      sstpStatus = 'SSTP: starting Aether upstream…';
-      touch();
-
-      // ⚠️ FIX: isAutoTesting در try/finally
-      bool ok = false;
-      isAutoTesting = true;
-      try {
-        ok = await _aetherTestService.ensureHealthy(showUi: false);
-      } finally {
-        isAutoTesting = false;
-      }
-
-      // ⚠️ FIX: چک cancel بعد از await
-      if (userStoppedSstp) {
-        processService.addLog(
-          'SSTP start cancelled by user (during Aether upstream)',
-          source: src,
-        );
-        return false;
-      }
-
-      if (!ok && !processService.isAetherRunning) {
-        sstpStatus = 'SSTP: Aether unavailable — SSTP not started';
-        processService.addLog(
-          '✗ Aether unavailable → SSTP not started',
-          source: src,
-        );
-        return false;
-      }
-
-      processService.addLog(
-        '→ SSTP will use Aether as upstream proxy',
-        source: src,
-      );
-      return true;
-    }
 
     if (settings.sstpUpstreamType == 3) {
       if (processService.isPsiphonRunning) {

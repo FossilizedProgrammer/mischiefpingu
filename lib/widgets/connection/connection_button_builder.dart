@@ -18,19 +18,6 @@ class ConnectionButtonBuilder {
     required this.l10n,
   });
 
-  ConnectionButtonData forAether({
-    required bool isRunning,
-    required bool isConnected,
-    required bool isBusy,
-    required int? progress,
-  }) =>
-      _build(
-        isRunning: isRunning,
-        isConnected: isConnected,
-        isBusy: isBusy,
-        progress: progress,
-      );
-
   ConnectionButtonData forPsiphon({
     required bool isRunning,
     required bool isConnected,

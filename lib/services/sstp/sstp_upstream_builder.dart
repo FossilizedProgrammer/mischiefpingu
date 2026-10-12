@@ -15,9 +15,6 @@ class SstpUpstreamBuilder {
       case 1:
         _applyManual(args);
         break;
-      case 2:
-        _applyAether(args);
-        break;
       case 3:
         _applyPsiphon(args);
         break;
@@ -46,14 +43,6 @@ class SstpUpstreamBuilder {
         source: LogSource.sstp,
       );
     }
-  }
-
-  void _applyAether(List<String> args) {
-    args.addAll(['-proxy', 'socks5://127.0.0.1:${settings.aetherLocalPort}']);
-    processService.addLog(
-      '→ SSTP upstream: Aether (127.0.0.1:${settings.aetherLocalPort})',
-      source: LogSource.sstp,
-    );
   }
 
   void _applyPsiphon(List<String> args) {

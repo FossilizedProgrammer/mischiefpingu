@@ -62,57 +62,6 @@ extension AppProviderPsiphonLaunch on AppProvider {
     final myGeneration = nextPsiphonGeneration();
 
     try {
-      if (settings.upstreamType == 2) {
-        if (processService.isAetherRunning) {
-          aetherStatus = 'Aether: Running (upstream)';
-          touch();
-        } else {
-          if (fromAutoReconnect && userStoppedAether) {
-            processService.addLog(
-              '→ Psiphon auto-reconnect skipped '
-              '(upstream Aether was stopped by user)',
-              source: src,
-            );
-            return;
-          }
-
-          aetherStatus = settings.aetherProtocol == 'auto'
-              ? 'Aether: Auto-testing protocols…'
-              : 'Aether: Testing ${settings.aetherProtocol.toUpperCase()}…';
-          touch();
-
-          // ⚠️ FIX: isAutoTesting در try/finally
-          bool aetherOk = false;
-          isAutoTesting = true;
-          try {
-            aetherOk = await _aetherTestService.ensureHealthy(showUi: false);
-          } finally {
-            isAutoTesting = false;
-          }
-
-          // ⚠️ FIX: چک cancel بعد از await
-          if (userStoppedPsiphon || _aetherTestService.isCancelRequested) {
-            processService.addLog(
-              'Psiphon start cancelled by user (during Aether upstream)',
-              source: src,
-            );
-            return;
-          }
-
-          if (!aetherOk && !processService.isAetherRunning) {
-            aetherStatus = 'Aether: not available — Psiphon not started';
-            processService.addLog(
-              '✗ Aether unavailable → Psiphon not started',
-              source: src,
-            );
-            return;
-          }
-
-          aetherStatus = 'Aether: Running (upstream)';
-          touch();
-        }
-      }
-
       if (userStoppedPsiphon) {
         processService.addLog('Psiphon start cancelled by user', source: src);
         return;

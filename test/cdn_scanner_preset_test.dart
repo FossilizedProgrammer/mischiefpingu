@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:mischiefpingu/cdn_ip_checker.dart';
+import 'package:mischiefpingu/cdn_presets.dart';
 import 'package:mischiefpingu/l10n/app_localizations.dart';
 import 'package:mischiefpingu/providers/app_provider.dart';
 import 'package:mischiefpingu/providers/cdn_scanner_provider.dart';
@@ -185,5 +186,61 @@ void main() {
     await tester.tap(find.text('Start Scan'));
     await finishScan(tester, h.scan, h.app);
     expect(checker.scanned, ['7.7.7.7', '4.4.4.4']);
+  });
+
+  // باگ گزارش‌شده: آی‌پی‌های تایپ‌شده با هر rebuild از فیلد پاک می‌شدند
+  // و دکمه ذخیره، لیستِ قدیمی را ذخیره می‌کرد (یا چیزی ذخیره نمی‌شد).
+  testWidgets(
+    'REG6: typed custom IPs survive rebuilds and are saved by Save button',
+    (tester) async {
+      final h = await pumpSection(
+        tester,
+        customIps: _kSaved,
+        savedPreset: 'custom',
+      );
+      expect(fieldText(tester), '7.7.7.7\n4.4.4.4');
+
+      // کاربر آی‌پی جدید تایپ می‌کند
+      await tester.enterText(
+        find.byType(TextField).first,
+        '7.7.7.7\n4.4.4.4\n9.9.9.9',
+      );
+      await tester.pump();
+
+      // دو rebuild پیاپی از provider (قبلاً تایپ کاربر را پاک می‌کرد)
+      h.scan.touch();
+      await tester.pump();
+      h.scan.touch();
+      await tester.pumpAndSettle();
+
+      expect(fieldText(tester), '7.7.7.7\n4.4.4.4\n9.9.9.9');
+
+      // ذخیره بدون اسکن — باید همان چیزی که تایپ شده ذخیره شود
+      await tester.tap(find.text('Save entered IPs'));
+      await tester.pumpAndSettle();
+
+      expect(h.scan.customIps, containsAll(['7.7.7.7', '4.4.4.4', '9.9.9.9']));
+      h.app.dispose();
+    },
+  );
+
+  testWidgets('REG7: Save entered IPs on preset mode keeps only user lines', (
+    tester,
+  ) async {
+    final h = await pumpSection(tester, savedPreset: 'akamai');
+    final akamaiRange = CdnPresets.akamaiRanges.first;
+
+    await tester.enterText(
+      find.byType(TextField).first,
+      '$akamaiRange\n1.2.3.4',
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('Save entered IPs'));
+    await tester.pumpAndSettle();
+
+    // رنج خودِ preset نباید وارد لیست کاستوم شود
+    expect(h.scan.customIps, ['1.2.3.4']);
+    h.app.dispose();
   });
 }

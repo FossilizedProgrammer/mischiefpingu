@@ -15,15 +15,6 @@ mixin ProcessProtocolState {
 
   void clearPendingProtocolNotification();
 
-  String? get lastAetherProtocol;
-  set lastAetherProtocol(String? v);
-
-  String? get pendingAetherProtocolNotification;
-  set pendingAetherProtocolNotification(String? v);
-
-  void clearPendingAetherProtocolNotification();
-  void setAetherProtocolNotification(String protocol);
-
   String? get lastTorTransport;
   set lastTorTransport(String? v);
 

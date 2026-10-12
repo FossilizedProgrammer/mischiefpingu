@@ -9,7 +9,6 @@ import '../app_data_service.dart';
 import '../core_update_models.dart';
 import 'core_update_process_utils.dart';
 import 'pending/tor_bundle_deferred_applier.dart';
-import 'pending/aether_pt_deferred_applier.dart';
 
 /// مدیریت آپدیت‌های معلق (deferred) که در startup بعدی اعمال می‌شوند.
 class CoreUpdatePendingManager {
@@ -17,11 +16,6 @@ class CoreUpdatePendingManager {
   final CoreUpdateProcessUtils processUtils;
 
   late final TorBundleDeferredApplier _torApplier = TorBundleDeferredApplier(
-    processUtils: processUtils,
-    log: log,
-  );
-
-  late final AetherPtDeferredApplier _aetherApplier = AetherPtDeferredApplier(
     processUtils: processUtils,
     log: log,
   );
@@ -103,8 +97,6 @@ class CoreUpdatePendingManager {
           _log('→ Applying pending update for ${update.coreId}…');
           if (update.coreId == 'tor') {
             await _torApplier.apply(update);
-          } else if (update.coreId == 'aether') {
-            await _aetherApplier.apply(update);
           } else {
             await processUtils.replaceBinary(
               update.stagingPath,

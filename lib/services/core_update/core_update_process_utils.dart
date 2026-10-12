@@ -10,9 +10,6 @@ import 'core_update_archive_extractor.dart';
 ///  Facade — API عمومی CoreUpdateProcessUtils حفظ می‌شود،
 ///  پیاده‌سازی به زیرسرویس‌ها delegate شده است.
 ///
-///  ⚠️ `installAetherPtDirectory` از extension `AetherPtInstaller`
-///  روی `DirectoryCopier` استفاده می‌کنه (روش پیاده‌سازی نامش
-///  `installAetherPtDirectoryImpl` هست).
 /// ═══════════════════════════════════════════════════════════════
 class CoreUpdateProcessUtils {
   final void Function(String)? log;
@@ -54,21 +51,6 @@ class CoreUpdateProcessUtils {
         src: src,
         dest: dest,
         skipIfExists: skipIfExists,
-      );
-
-  /// نصب پوشه `pt` مخصوص Aether.
-  ///
-  /// ⚠️ پیاده‌سازی در `AetherPtInstaller.installAetherPtDirectoryImpl`
-  /// هست. این متد فقط یک facade عمومی هست تا API حفظ بشه.
-  Future<void> installAetherPtDirectory({
-    required String dataDir,
-    String? stagingSource,
-    String? fallbackSource,
-  }) =>
-      _copier.installAetherPtDirectoryImpl(
-        dataDir: dataDir,
-        stagingSource: stagingSource,
-        fallbackSource: fallbackSource,
       );
 
   Future<void> updateExecutableDirBinary(String coreId, String stagingPath) =>

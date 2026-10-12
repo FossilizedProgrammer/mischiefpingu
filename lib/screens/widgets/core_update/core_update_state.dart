@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../../../services/core_update_service.dart';
 
 /// ═══════════════════════════════════════════════════════════════
-///  State قابل استفاده برای هر core (aether / tor / psiphon)
+///  State قابل استفاده برای هر core (tor / psiphon / sstp / wireguard)
 ///  منطق مشترک check/update را یک‌جا جمع می‌کند.
 /// ═══════════════════════════════════════════════════════════════
 class CoreUpdateEntryState extends ChangeNotifier {

@@ -13,25 +13,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appSubtitle =>
-      'Unofficial Psiphon client, Aether client, Tor client, SSTP client, WireGuard client';
+      'Unofficial Psiphon client, Tor client, SSTP client, WireGuard client, Firefox VPN client';
 
   @override
   String get add => 'Add';
 
   @override
   String get addNew => 'Add new';
-
-  @override
-  String get aetherConnected => 'Aether Connected';
-
-  @override
-  String get aetherSettings => 'Aether Settings';
-
-  @override
-  String get aetherSocksUpstream => 'Aether (SOCKS upstream)';
-
-  @override
-  String get aetherUpstream => 'Aether (SOCKS upstream)';
 
   @override
   String get allServers => 'All servers';
@@ -67,9 +55,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get autoFirstRunningProxy => 'Auto (first running proxy)';
 
   @override
-  String get autoReconnectAether => 'Auto-reconnect Aether';
-
-  @override
   String get autoReconnectPsiphon => 'Auto-reconnect Psiphon';
 
   @override
@@ -87,9 +72,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get binaryNotFound => 'Binary Not Found';
-
-  @override
-  String get both => 'Both';
 
   @override
   String get bridgePresets => 'Bridge presets (optional)';
@@ -176,6 +158,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cdnSendToPsiphon => 'Send to Psiphon';
 
   @override
+  String get cdnSaveEnteredIps => 'Save entered IPs';
+
+  @override
+  String cdnIpsSavedSnack(String count, String total) {
+    return '$count IPs saved ($total in list)';
+  }
+
+  @override
   String cdnCustomIpsSent(String count, String ip) {
     return '$count custom IPs → Psiphon (Fronting: $ip)';
   }
@@ -223,9 +213,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get connecting => 'Connecting…';
 
   @override
-  String get connectionMode => 'Connection Mode';
-
-  @override
   String get copiedToClipboard => 'Copied to clipboard';
 
   @override
@@ -257,12 +244,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get coreUpdates => 'Core Updates';
-
-  @override
-  String get customEndpoint => 'Custom Endpoint (optional)';
-
-  @override
-  String get customEndpointHint => 'Leave empty for auto-scan';
 
   @override
   String get customIps => 'Custom IPs';
@@ -338,19 +319,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get installed => 'Installed';
 
   @override
-  String get ipType => 'IP Type';
-
-  @override
   String get ipsCidrRanges => 'IPs / CIDR / Ranges';
 
   @override
-  String get ipv4 => 'IPv4';
-
-  @override
   String get ipv4Only => 'IPv4 only';
-
-  @override
-  String get ipv6 => 'IPv6';
 
   @override
   String get language => 'Language';
@@ -377,9 +349,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get localProxyPorts => 'Local proxy ports';
 
   @override
-  String get localSocksPort => 'Local SOCKS port';
-
-  @override
   String get log => 'Log';
 
   @override
@@ -387,9 +356,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logSourcePsiphon => 'Psiphon';
-
-  @override
-  String get logSourceAether => 'Aether';
 
   @override
   String get logSourceTor => 'Tor';
@@ -435,25 +401,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifications => 'Notifications';
 
   @override
-  String get obfAggressive => 'Aggressive';
-
-  @override
-  String get obfBalanced => 'Balanced';
-
-  @override
-  String get obfFirewall => 'Firewall';
-
-  @override
-  String get obfGfw => 'GFW';
-
-  @override
-  String get obfLight => 'Light';
-
-  @override
   String get obfOff => 'Off';
-
-  @override
-  String get obfuscation => 'Obfuscation (--noize)';
 
   @override
   String get officialCore => 'official psiphon tunnel core';
@@ -476,69 +424,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get preset2Subtitle =>
-      'Uses official Psiphon Tunnel Core with Aether upstream.';
-
-  @override
-  String get preset2Title =>
-      '2 · Aether traffic as upstream. Suitable when Aether works.';
-
-  @override
-  String get preset3Subtitle =>
       'Uses Psiphon INPROXY-WEBRTC protocols via volunteer stations.';
 
   @override
-  String get preset3Title =>
-      '3 · Conduit (WebRTC Inproxy). Decentralized peer relays.';
+  String get preset2Title =>
+      '2 · Conduit (WebRTC Inproxy). Decentralized peer relays.';
 
   @override
-  String get preset4Subtitle =>
+  String get preset3Subtitle =>
       'Uses the official Psiphon Tunnel Core directly.';
 
   @override
-  String get preset4Title =>
-      '4 · Direct connection. Suitable for mild censorship.';
+  String get preset3Title =>
+      '3 · Direct connection. Suitable for mild censorship.';
 
   @override
   String get profile => 'Profile';
-
-  @override
-  String get profileAdaptive => 'Adaptive';
-
-  @override
-  String get profileAdaptiveDesc =>
-      'Balance of speed and coverage — suitable for most networks';
-
-  @override
-  String get profileManual => 'Manual';
-
-  @override
-  String get profileManualDesc => 'All options manual — for advanced users';
-
-  @override
-  String get profilePatchy => 'Patchy signal';
-
-  @override
-  String get profilePatchyDesc =>
-      'Unstable mobile data — harder and more resilient search';
-
-  @override
-  String get profileStrict => 'Strict network';
-
-  @override
-  String get profileStrictDesc =>
-      'Restricted Wi-Fi or heavy filtering — fragment + masque-in-masque + noize gfw';
-
-  @override
-  String get protoGool => 'Gool (WARP-in-WARP)';
-
-  @override
-  String get protoMasque => 'MASQUE (HTTP/3 or HTTP/2)';
-
-  @override
-  String get protoMim => 'MIM (masque-in-masque)';
-
-  @override
-  String get protoWireguard => 'WireGuard';
 
   @override
   String get protocol => 'Protocol';
@@ -568,22 +469,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveFoundIpsSni => 'Save found IPs & SNI automatically';
 
   @override
-  String get scanBalanced => 'Balanced';
-
-  @override
-  String get scanIronclad => 'Ironclad';
-
-  @override
   String get scanMode => 'Scan mode';
-
-  @override
-  String get scanStealth => 'Stealth';
-
-  @override
-  String get scanThorough => 'Thorough';
-
-  @override
-  String get scanTurbo => 'Turbo';
 
   @override
   String get select => 'Select...';
@@ -618,7 +504,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get showMoreSubtitle =>
-      'Appearance, Aether, Psiphon, Tor, SSTP, WireGuard, Scanner, Updates, Log';
+      'Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Scanner, Updates, Log';
 
   @override
   String get sni => 'SNI';
@@ -687,20 +573,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get torUpstream => 'Tor (SOCKS upstream)';
 
   @override
-  String get torViaAether => 'Via Aether (Tor-over-Aether)';
-
-  @override
   String get torViaPsiphon => 'Via Psiphon (Tor-over-Psiphon)';
 
   @override
   String get torViaSstp => 'Via SSTP (Tor-over-SSTP)';
-
-  @override
-  String get tryLastEndpointFirst => 'Try last successful endpoint first';
-
-  @override
-  String get tryLastEndpointFirstSubtitle =>
-      'If enabled, will try the last working endpoint before scanning';
 
   @override
   String get tunnelCore => 'Tunnel core';
@@ -754,10 +630,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backToPresets => 'Back to presets';
-
-  @override
-  String get aetherManualHint =>
-      'Manual mode: Protocol, obfuscation, scan mode, and custom endpoint are fully under your control below.';
 
   @override
   String get watchdogNetworkProfile => 'Network Profile';
@@ -1087,53 +959,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sstpWireGuardUpstream => 'WireGuard (SOCKS upstream)';
 
   @override
-  String get endpointPinning => 'Endpoint Pinning';
-
-  @override
-  String get endpointPinningSubtitle =>
-      'Control how Aether chooses its endpoint';
-
-  @override
-  String get endpointPinningAutomatic => 'Auto';
-
-  @override
-  String get endpointPinningCustomFirst => 'Custom first';
-
-  @override
-  String get endpointPinningCustomOnly => 'Custom only';
-
-  @override
-  String get endpointPinningAutomaticDesc =>
-      'Always auto-scan for the best endpoint. Recommended for most users.';
-
-  @override
-  String get endpointPinningCustomFirstDesc =>
-      'Try your custom endpoint first. If it fails, fall back to auto-scan.';
-
-  @override
-  String get endpointPinningCustomOnlyDesc =>
-      'Only use your custom endpoint. No auto-scan fallback. Use for testing a specific server.';
-
-  @override
-  String get endpointPinningNeedsCustom =>
-      'Set a custom endpoint below to enable Custom-first and Custom-only modes.';
-
-  @override
-  String aetherAttemptProgress(int current, int max) {
-    return 'Attempt $current of $max';
-  }
-
-  @override
-  String aetherAttemptProtocol(String protocol) {
-    return 'Protocol: $protocol';
-  }
-
-  @override
-  String aetherAttemptWaiting(int seconds) {
-    return 'Waiting ${seconds}s before next attempt…';
-  }
-
-  @override
   String get diagnosticsReport => 'Diagnostics Report';
 
   @override
@@ -1308,4 +1133,176 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bridgeNoSavedInScanner => 'No saved bridges in Bridge Scanner yet';
+
+  @override
+  String get logSourceFfvpn => 'Firefox VPN';
+
+  @override
+  String get ffvpnSettings => 'Firefox VPN Settings';
+
+  @override
+  String get ffvpnGuideTitle => 'Firefox Account session token';
+
+  @override
+  String get ffvpnGuideIntro =>
+      'This proxy uses the built-in IP Protection VPN of the Firefox browser (powered by Mozilla VPN). It needs the session token of your Firefox Account:';
+
+  @override
+  String get ffvpnGuideStep1 =>
+      '1. Create a Firefox account or sign in inside the Firefox browser itself, so the browser stores your session.';
+
+  @override
+  String get ffvpnGuideStep2 =>
+      '2. Open about:profiles in Firefox to find the root folder of your default profile.';
+
+  @override
+  String get ffvpnGuideStep3 =>
+      '3. Open signedInUser.json in that folder and copy the value of accountData.sessionToken (a 64-character hex string), then paste it below.';
+
+  @override
+  String get ffvpnPathWindows =>
+      'Windows: %APPDATA%\\Mozilla\\Firefox\\Profiles\\<profile>\\signedInUser.json';
+
+  @override
+  String get ffvpnPathLinux =>
+      'Linux: ~/.mozilla/firefox/<profile>/signedInUser.json';
+
+  @override
+  String get ffvpnTokenLabel => 'Firefox Account session token';
+
+  @override
+  String get ffvpnTokenHint =>
+      '64 hex characters — accountData.sessionToken from signedInUser.json';
+
+  @override
+  String get ffvpnPortSocks => 'SOCKS port';
+
+  @override
+  String get ffvpnPortHttp => 'HTTP port (0 = off)';
+
+  @override
+  String get ffvpnSniLabel => 'TLS SNI';
+
+  @override
+  String get ffvpnSniHint =>
+      'Hostname sent in the TLS ClientHello to the Firefox proxy edge — leave empty to use the edge hostname';
+
+  @override
+  String get ffvpnUpstreamSection => 'Upstream SOCKS proxy';
+
+  @override
+  String get ffvpnUpstreamDesc =>
+      'Firefox VPN first connects to this SOCKS5 hop and only then to the Firefox proxy edge. Use it when the edge is blocked or not directly reachable.';
+
+  @override
+  String get ffvpnUpstreamDirect => 'Direct (no upstream)';
+
+  @override
+  String get ffvpnUpstreamManual => 'Manual SOCKS5 proxy';
+
+  @override
+  String get ffvpnUpstreamPsiphon => 'Psiphon (SOCKS)';
+
+  @override
+  String get ffvpnUpstreamTor => 'Tor (SOCKS)';
+
+  @override
+  String get ffvpnUpstreamSstp => 'SSTP (SOCKS)';
+
+  @override
+  String get ffvpnUpstreamWireguard => 'WireGuard (SOCKS)';
+
+  @override
+  String ffvpnUpstreamVia(String name, String port) {
+    return '$name is the upstream hop (SOCKS on 127.0.0.1:$port) and is started automatically if it is not running yet.';
+  }
+
+  @override
+  String get ffvpnUpstreamManualNote =>
+      'The hostname is always sent to the proxy, so DNS is resolved there.';
+
+  @override
+  String get ffvpnCountrySection => 'Exit country';
+
+  @override
+  String get ffvpnCountryAuto => 'Automatic (server-recommended)';
+
+  @override
+  String get ffvpnLoadCountries => 'Load country list';
+
+  @override
+  String get ffvpnCountriesLoading => 'Loading country list…';
+
+  @override
+  String get ffvpnCountriesEmpty =>
+      'No countries loaded yet — press \"Load country list\".';
+
+  @override
+  String get ffvpnShowPremium => 'Show premium-only countries';
+
+  @override
+  String get ffvpnShowPremiumDesc =>
+      'Countries locked behind a Mozilla VPN subscription are hidden by default, like in Firefox.';
+
+  @override
+  String get ffvpnPremiumTag => 'premium';
+
+  @override
+  String get ffvpnQuotaSection => 'Monthly bandwidth quota';
+
+  @override
+  String get ffvpnCheckQuota => 'Check quota';
+
+  @override
+  String get ffvpnQuotaLoading => 'Checking quota…';
+
+  @override
+  String ffvpnQuotaUsedOf(String used, String total, String percent) {
+    return '$used of $total used ($percent%)';
+  }
+
+  @override
+  String ffvpnQuotaLeft(String remaining) {
+    return '$remaining remaining';
+  }
+
+  @override
+  String ffvpnQuotaResets(String date) {
+    return 'Resets on $date';
+  }
+
+  @override
+  String get ffvpnQuotaUnlimited =>
+      'Unlimited bandwidth — no monthly quota applies to this account.';
+
+  @override
+  String get ffvpnQuotaNoToken =>
+      'Enter the session token above to check the quota.';
+
+  @override
+  String get ffvpnErrNotEntitled =>
+      'This Firefox account has no Mozilla VPN subscription (HTTP 403) — the proxy service requires one.';
+
+  @override
+  String get ffvpnErrRegion =>
+      'The service is not available in your region (HTTP 451).';
+
+  @override
+  String get ffvpnErrBadToken =>
+      'The session token is invalid or expired. Sign in again in Firefox and copy a fresh token from signedInUser.json.';
+
+  @override
+  String get ffvpnErrQuota =>
+      'Monthly bandwidth quota is exhausted — wait for the reset date.';
+
+  @override
+  String get ffvpnErrBinaryMissing =>
+      'The ffvpn binary was not found in the app data folder.';
+
+  @override
+  String get ffvpnErrNetwork =>
+      'Network error while reaching Mozilla — check your connection (a tunnel may be needed) and try again.';
+
+  @override
+  String get ffvpnErrOther => 'ffvpn error';
 }

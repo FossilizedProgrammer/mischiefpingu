@@ -82,12 +82,6 @@ class AppDataService {
 
   static Future<String> ensureTorDir() => DataPathsService.ensureTorDir();
 
-  static Future<List<String>> aetherPtCandidates() =>
-      DataPathsService.aetherPtCandidates();
-
-  static Future<String?> findAetherPtDir() =>
-      DataPathsService.findAetherPtDir();
-
   static Future<String> getGatewayHistoryDbPath() async {
     final dir = await getDataDir();
     return '$dir/gateway_history.db';

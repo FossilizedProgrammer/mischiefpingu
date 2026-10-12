@@ -45,6 +45,17 @@ class GithubCoreSpec {
   // ═══════════════════════════════════════════════════════════
   final AssetPickerFn? assetPicker;
 
+  /// ═══════════════════════════════════════════════════════════
+  ///  برای coreهایی که باینری‌شان نسخهٔ نصب‌شده را گزارش نمی‌کند
+  ///  (مثل ffvpn که پرچم `--version` ندارد).
+  ///
+  ///  اگر true باشد، checker اندازهٔ فایل محلی را با اندازهٔ
+  ///  asset منتشرشده مقایسه می‌کند:
+  ///    • برابر  → همان نسخهٔ release نصب است (بدون آپدیت)
+  ///    • متفاوت → آپدیت پیشنهاد می‌شود
+  /// ═══════════════════════════════════════════════════════════
+  final bool sizeBasedVersion;
+
   const GithubCoreSpec({
     required this.coreId,
     required this.displayName,
@@ -56,5 +67,6 @@ class GithubCoreSpec {
     required this.tempPrefix,
     required this.defaultDownloadSize,
     this.assetPicker,
+    this.sizeBasedVersion = false,
   });
 }

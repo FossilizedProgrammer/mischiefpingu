@@ -5,7 +5,6 @@ import 'settings_serialization.dart';
 import 'wireguard_core_type.dart';
 
 part 'settings_presets.dart';
-part 'settings_profiles.dart';
 
 class AppSettings {
   String ip;
@@ -16,7 +15,7 @@ class AppSettings {
   bool onlyIpv4;
   bool autoFindIpAndSni;
   bool saveFoundIpsAndSni;
-  
+
   // ═══════════════════════════════════════════════════════════════
   //  🆕 تنظیمات جدید برای کنترل جستجوی سرور فرانتینگ
   // ═══════════════════════════════════════════════════════════════
@@ -43,21 +42,8 @@ class AppSettings {
   String proxyUser;
   String proxyPass;
   bool autoReconnectPsiphon;
-  bool autoReconnectAether;
   bool autoReconnectTor;
   bool autoReconnectSstp;
-  String aetherProfile;
-  String aetherProtocol;
-  String masqueOption;
-  int aetherLocalPort;
-  String aetherScanMode;
-  String ipType;
-  String obfuscation;
-  bool aetherShareLan;
-  bool aetherQuickReconnect;
-  String aetherCustomEndpoint;
-  bool aetherTryLastEndpointFirst;
-  String aetherEndpointPinning;
   bool psiphonShareLan;
   String psiphonBuildRev;
   String psiphonBinarySha;
@@ -93,6 +79,23 @@ class AppSettings {
   bool sstpShareLan;
   bool sstpVerbose;
   int sstpMtu;
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Firefox VPN (ffvpn) settings
+  // ═══════════════════════════════════════════════════════════════
+  String ffvpnSessionToken;
+  String ffvpnCountry;
+  bool ffvpnShowPremiumCountries;
+  int ffvpnSocksPort;
+  int ffvpnHttpPort;
+  String ffvpnSni;
+  int ffvpnUpstreamType;
+  String ffvpnProxyType;
+  String ffvpnProxyIp;
+  int ffvpnProxyPort;
+  String ffvpnProxyUser;
+  String ffvpnProxyPass;
+
   String themeId;
   bool muted;
   List<String> enabledLogSources;
@@ -119,21 +122,8 @@ class AppSettings {
     this.proxyUser = '',
     this.proxyPass = '',
     this.autoReconnectPsiphon = true,
-    this.autoReconnectAether = true,
     this.autoReconnectTor = true,
     this.autoReconnectSstp = true,
-    this.aetherProfile = 'adaptive',
-    this.aetherProtocol = 'auto',
-    this.masqueOption = 'HTTP-3',
-    this.aetherLocalPort = 1819,
-    this.aetherScanMode = 'balanced',
-    this.ipType = 'ipv4',
-    this.obfuscation = 'off',
-    this.aetherShareLan = false,
-    this.aetherQuickReconnect = true,
-    this.aetherCustomEndpoint = '',
-    this.aetherTryLastEndpointFirst = true,
-    this.aetherEndpointPinning = 'automatic',
     this.psiphonShareLan = false,
     this.conduitMode = 'auto',
     this.conduitCompartmentId = '',
@@ -167,6 +157,18 @@ class AppSettings {
     this.sstpShareLan = false,
     this.sstpVerbose = true,
     this.sstpMtu = 1400,
+    this.ffvpnSessionToken = '',
+    this.ffvpnCountry = '',
+    this.ffvpnShowPremiumCountries = false,
+    this.ffvpnSocksPort = 1083,
+    this.ffvpnHttpPort = 8083,
+    this.ffvpnSni = '',
+    this.ffvpnUpstreamType = 0,
+    this.ffvpnProxyType = 'socks5',
+    this.ffvpnProxyIp = '',
+    this.ffvpnProxyPort = 1080,
+    this.ffvpnProxyUser = '',
+    this.ffvpnProxyPass = '',
     this.psiphonBuildRev = '',
     this.psiphonBinarySha = '',
     this.themeId = 'ocean',
@@ -179,8 +181,16 @@ class AppSettings {
     this.wireguardCore = 'standard',
     this.wireguardAutoReconnect = true,
     List<String>? enabledLogSources,
-  }) : enabledLogSources = enabledLogSources ??
-            ['Psiphon', 'Aether', 'Tor', 'SSTP', 'App', 'System'];
+    }) : enabledLogSources = enabledLogSources ??
+            [
+              'Psiphon',
+              'Tor',
+              'SSTP',
+              'WireGuard',
+              'Firefox VPN',
+              'App',
+              'System',
+            ];
 
   factory AppSettings.fromJson(Map<String, dynamic> m) =>
       AppSettingsSerialization.fromJson(m);
@@ -196,21 +206,6 @@ class AppSettings {
   bool get isDirectPsiphon =>
       (upstreamType == 0 || upstreamType == 4 || upstreamType == 6) &&
       !isFronted;
-
-  bool get isAetherProfileAutomatic => aetherProfile != 'manual';
-
-  bool get isAetherProtocolLockedByProfile => isAetherProfileAutomatic;
-
-  bool get isEndpointPinningAutomatic => aetherEndpointPinning == 'automatic';
-
-  bool get isEndpointPinningCustomFirst =>
-      aetherEndpointPinning == 'custom_first';
-
-  bool get isEndpointPinningCustomOnly =>
-      aetherEndpointPinning == 'custom_only';
-
-  bool get hasCustomEndpointForPinning =>
-      aetherCustomEndpoint.trim().isNotEmpty;
 
   /// تبدیل رشتهٔ ذخیره‌شده به enum `WireGuardCoreType`.
   WireGuardCoreType get wireGuardCoreType {

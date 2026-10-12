@@ -3,7 +3,6 @@ library;
 import 'data_paths/data_dir_resolver.dart';
 import 'data_paths/binary_paths.dart';
 import 'data_paths/tor_paths.dart';
-import 'data_paths/aether_paths.dart';
 import 'platform_info.dart';
 
 /// ═══════════════════════════════════════════════════════════════
@@ -59,10 +58,4 @@ class DataPathsService {
       TorPathsService.logTorBinaryCandidates(log: log);
 
   static Future<String> ensureTorDir() => TorPathsService.ensureTorDir();
-
-  static Future<List<String>> aetherPtCandidates() =>
-      AetherPathsService.aetherPtCandidates();
-
-  static Future<String?> findAetherPtDir() =>
-      AetherPathsService.findAetherPtDir();
 }

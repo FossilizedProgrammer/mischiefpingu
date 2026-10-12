@@ -107,7 +107,7 @@ void main() {
   group('TunnelHealthScoreCalculator.computeTrend', () {
     TunnelHealthReport makeReport(double score, {int? minutesAgo}) {
       return TunnelHealthReport(
-        kind: TunnelKind.aether,
+        kind: TunnelKind.tor,
         timestamp: DateTime.now().subtract(Duration(minutes: minutesAgo ?? 0)),
         score: score,
         latencyMs: 100,

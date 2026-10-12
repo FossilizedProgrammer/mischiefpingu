@@ -32,7 +32,6 @@ extension AppProviderTor on AppProvider {
     userStoppedTor = true;
     _reconnectManager.cancelTorTimer();
     _reconnectManager.resetRetries('tor');
-    _aetherTestService.requestCancel();
     _recoveryCoordinator.releaseLeaseByTunnel('Tor');
 
     nextTorGeneration();

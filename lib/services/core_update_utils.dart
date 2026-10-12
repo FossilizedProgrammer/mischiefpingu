@@ -8,10 +8,7 @@ import 'core_update/file_finder.dart';
 class CoreUpdateUtils {
   CoreUpdateUtils._();
 
-  static bool isMissingVersion(String v) => VersionParsers.isMissing(v);
-  static String? parseAetherVersion(String? output) =>
-      VersionParsers.parseAether(output);
-  static String? parsePsiphonVersion(String? output) =>
+  static bool isMissingVersion(String v) => VersionParsers.isMissing(v);  static String? parsePsiphonVersion(String? output) =>
       VersionParsers.parsePsiphon(output);
   static String? parseTorVersion(String? output) =>
       VersionParsers.parseTor(output);

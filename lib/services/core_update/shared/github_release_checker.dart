@@ -65,14 +65,43 @@ class GithubReleaseChecker {
         );
       }
 
+      var installedVersion = installed;
+      var hasUpdate = latest.isNotEmpty &&
+          (CoreUpdateUtils.isMissingVersion(installed) ||
+              CoreUpdateUtils.isNewerVersion(installed, latest));
+
+      // ═══════════════════════════════════════════════════════
+      //  هسته‌های بدون گزارش نسخه (مثل ffvpn): نسخهٔ نصب‌شده از
+      //  روی اندازهٔ باینری محلی در برابر asset منتشرشده سنجیده می‌شود.
+      // ═══════════════════════════════════════════════════════
+      if (spec.sizeBasedVersion && asset != null && size > 0) {
+        final localSize =
+            await CoreUpdateUtils.fileSize(await spec.destPathResolver());
+        final versionUnknown = CoreUpdateUtils.isMissingVersion(installed) ||
+            installed == 'installed';
+
+        if (localSize == size && latest.isNotEmpty) {
+          installedVersion = latest;
+          hasUpdate = false;
+          _log(
+            '→ ${spec.displayName} local binary matches release asset '
+            '($size bytes) — up to date',
+          );
+        } else if (versionUnknown) {
+          hasUpdate = latest.isNotEmpty;
+          _log(
+            '→ ${spec.displayName} local binary ($localSize bytes) differs '
+            'from release asset ($size bytes) — update offered',
+          );
+        }
+      }
+
       return CoreUpdateInfo(
         coreId: spec.coreId,
         displayName: spec.displayName,
-        installedVersion: installed,
+        installedVersion: installedVersion,
         latestVersion: latest.isEmpty ? installed : latest,
-        hasUpdate: latest.isNotEmpty &&
-            (CoreUpdateUtils.isMissingVersion(installed) ||
-                CoreUpdateUtils.isNewerVersion(installed, latest)),
+        hasUpdate: hasUpdate,
         downloadUrl: url,
         releaseNotes: notes,
         downloadSizeBytes: size,

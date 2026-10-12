@@ -46,12 +46,17 @@ extension ProcessServiceHelpers on ProcessService {
     Duration startupGrace = const Duration(milliseconds: 700),
   }) async {
     try {
+      // Process.start replaces the whole environment when `environment` is
+      // non-null — merge so PATH/HOME/certs (and PT helpers) stay intact.
+      final mergedEnv = env == null
+          ? null
+          : <String, String>{...Platform.environment, ...env};
       final proc = await Process.start(
         binaryPath,
         args,
         workingDirectory: workingDirectory,
         mode: ProcessStartMode.normal,
-        environment: env,
+        environment: mergedEnv,
       );
       await Future.delayed(startupGrace);
 
@@ -60,6 +65,12 @@ extension ProcessServiceHelpers on ProcessService {
           const Duration(milliseconds: 250),
         );
         addLog('$label exited immediately with code $code', source: source);
+        // خروجی واقعی (مثلاً «unknown option '--api-fragment'») را بخوان تا
+        // دلیل شکست در لاگ دیده شود؛ وگرنه فقط کد exit می‌ماند.
+        final detail = await _readExitDetail(proc);
+        if (detail.isNotEmpty) {
+          addLog('  $detail', source: source);
+        }
         return null;
       } catch (_) {
         return proc;
@@ -67,6 +78,31 @@ extension ProcessServiceHelpers on ProcessService {
     } catch (e) {
       addLog('Failed to start $label: $e', source: source);
       return null;
+    }
+  }
+
+  /// خواندن stdout+stderr پروسه‌ای که همین حالا exit کرده (با timeout
+  /// کوتاه چون پروسه دیگر زنده نیست و streamها به‌زودی بسته می‌شوند).
+  Future<String> _readExitDetail(Process proc) async {
+    Future<String> read(Stream<List<int>> stream) => stream
+        .transform(utf8.decoder)
+        .join()
+        .timeout(const Duration(seconds: 2), onTimeout: () => '');
+
+    try {
+      final parts = await Future.wait([read(proc.stdout), read(proc.stderr)]);
+      final text = '${parts[0]}\n${parts[1]}'.trim();
+      if (text.isEmpty) return '';
+      // پروسه‌ها هنگام خطای فلگ کل help را چاپ می‌کنند؛ فقط اولین خط را نگه دار.
+      final firstLine = text
+          .split('\n')
+          .map((l) => l.trim())
+          .firstWhere((l) => l.isNotEmpty, orElse: () => '');
+      return firstLine.length > 300
+          ? '${firstLine.substring(0, 300)}…'
+          : firstLine;
+    } catch (_) {
+      return '';
     }
   }
 

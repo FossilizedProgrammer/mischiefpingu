@@ -14,13 +14,11 @@ class TunnelWatchdogFactory {
     required AppProvider provider,
     required ProcessService processService,
     required Future<void> Function() restartPsiphon,
-    required Future<void> Function() restartAether,
     required Future<void> Function() restartTor,
     required Future<void> Function() restartSstp,
     required Future<void> Function() restartWireGuard,
     Future<bool> Function()? isInternetAlive,
     Future<RecoveryLeaseResult> Function()? acquirePsiphonLease,
-    Future<RecoveryLeaseResult> Function()? acquireAetherLease,
     Future<RecoveryLeaseResult> Function()? acquireTorLease,
     Future<RecoveryLeaseResult> Function()? acquireSstpLease,
     Future<RecoveryLeaseResult> Function()? acquireWireGuardLease,
@@ -29,7 +27,7 @@ class TunnelWatchdogFactory {
 
     // ═══════════════════════════════════════════════════════════
     //  خواندن پروفایل سراسری از settings.
-    //  همه تونل‌ها از همان پروفایل استفاده می‌کنند (حتی Aether).
+    //  همه تونل‌ها از همان پروفایل استفاده می‌کنند.
     // ═══════════════════════════════════════════════════════════
     final profile = WatchdogNetworkProfile.fromId(
       provider.settings.watchdogNetworkProfile,
@@ -49,22 +47,6 @@ class TunnelWatchdogFactory {
       logSource: LogSource.psiphon,
       isInternetAlive: isInternetAlive,
       acquireRecoveryLease: acquirePsiphonLease,
-    );
-
-    final aether = TunnelWatchdog(
-      params: WatchdogParams.fromProfile(
-        name: 'Aether',
-        socksPort: provider.settings.aetherLocalPort,
-        profile: profile,
-      ),
-      isConnected: () => processService.isAetherRunning,
-      isUserStopped: () => provider.userStoppedAether,
-      isBusy: () => provider.isAutoTesting,
-      onRestart: restartAether,
-      log: log,
-      logSource: LogSource.aether,
-      isInternetAlive: isInternetAlive,
-      acquireRecoveryLease: acquireAetherLease,
     );
 
     final tor = TunnelWatchdog(
@@ -124,7 +106,6 @@ class TunnelWatchdogFactory {
 
     return TunnelWatchdogManager(
       psiphon: psiphon,
-      aether: aether,
       tor: tor,
       sstp: sstp,
       wireguard: wireguard,

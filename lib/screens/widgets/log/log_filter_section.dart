@@ -84,8 +84,6 @@ class LogFilterSection extends StatelessWidget {
     switch (source) {
       case LogSource.psiphon:
         return l10n.logSourcePsiphon;
-      case LogSource.aether:
-        return l10n.logSourceAether;
       case LogSource.tor:
         return l10n.logSourceTor;
       case LogSource.sstp:
@@ -96,6 +94,8 @@ class LogFilterSection extends StatelessWidget {
         return l10n.logSourceSystem;
       case LogSource.wireguard:
         return l10n.logSourceWireGuard;
+      case LogSource.ffvpn:
+        return l10n.logSourceFfvpn;
       default:
         return source;
     }

@@ -3,11 +3,10 @@ part of 'settings_model.dart';
 /// ═══════════════════════════════════════════════════════════════
 ///  Presetهای اتصال Psiphon
 ///
-///  چهار حالت:
+///  سه حالت:
 ///    1 · Fronting (CDN) — SunAndLion + fronting
-///    2 · Aether traffic as upstream — آپ‌استریم اتر
-///    3 · Conduit (WebRTC Inproxy)
-///    4 · Direct connection
+///    2 · Conduit (WebRTC Inproxy)
+///    3 · Direct connection
 /// ═══════════════════════════════════════════════════════════════
 extension AppSettingsPresets on AppSettings {
   void applyPreset(int number) {
@@ -20,18 +19,12 @@ extension AppSettingsPresets on AppSettings {
         saveFoundIpsAndSni = true;
         break;
       case 2:
-        // ⬅ Aether traffic as upstream
-        isFronted = false;
-        useSunAndLion = false;
-        upstreamType = 2;
-        break;
-      case 3:
         // Conduit (WebRTC Inproxy)
         isFronted = false;
         useSunAndLion = false;
         upstreamType = 3;
         break;
-      case 4:
+      case 3:
         // Direct connection
         isFronted = false;
         useSunAndLion = false;

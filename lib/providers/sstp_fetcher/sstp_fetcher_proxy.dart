@@ -3,12 +3,10 @@ part of '../sstp_fetcher_provider.dart';
 extension SstpFetcherProxy on SstpFetcherProvider {
   void bindPortGetters({
     required int Function() psiphon,
-    required int Function() aether,
     required int Function() tor,
     int Function()? sstp,
   }) {
     psiphonPortGetter = psiphon;
-    aetherPortGetter = aether;
     torPortGetter = tor;
     if (sstp != null) sstpPortGetter = sstp;
   }
@@ -19,10 +17,6 @@ extension SstpFetcherProxy on SstpFetcherProvider {
         case 'psiphon':
           return processService.isPsiphonConnected
               ? '127.0.0.1:${psiphonPortGetter()}'
-              : null;
-        case 'aether':
-          return processService.isAetherRunning
-              ? '127.0.0.1:${aetherPortGetter()}'
               : null;
         case 'tor':
           return processService.isTorConnected
@@ -48,7 +42,7 @@ extension SstpFetcherProxy on SstpFetcherProvider {
       }
       return v;
     }
-    for (final m in ['psiphon', 'aether', 'tor', 'sstp']) {
+    for (final m in ['psiphon', 'tor', 'sstp']) {
       final v = pick(m);
       if (v != null) return v;
     }

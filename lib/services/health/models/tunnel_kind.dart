@@ -5,7 +5,6 @@ library;
 /// ═══════════════════════════════════════════════════════════════
 enum TunnelKind {
   psiphon,
-  aether,
   tor,
   sstp,
   wireguard;
@@ -14,8 +13,6 @@ enum TunnelKind {
     switch (this) {
       case TunnelKind.psiphon:
         return 'Psiphon';
-      case TunnelKind.aether:
-        return 'Aether';
       case TunnelKind.tor:
         return 'Tor';
       case TunnelKind.sstp:

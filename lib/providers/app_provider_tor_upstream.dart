@@ -1,7 +1,7 @@
 part of 'app_provider.dart';
 
 /// ═══════════════════════════════════════════════════════════════
-///  هندل کردن upstream (Aether / Psiphon / SSTP) برای Tor
+///  هندل کردن upstream (Psiphon / SSTP) برای Tor
 ///
 ///  ⚠️ FIX:
 ///   • isAutoTesting در try/finally
@@ -12,62 +12,6 @@ extension AppProviderTorUpstream on AppProvider {
     required bool fromAutoReconnect,
   }) async {
     const src = LogSource.tor;
-
-    if (settings.torTransport == 'aether') {
-      if (processService.isAetherRunning) {
-        processService.addLog(
-          '→ Tor upstream: Aether already running',
-          source: src,
-        );
-        return (ok: true, type: 'aether', detail: 'via Aether');
-      }
-
-      if (fromAutoReconnect && userStoppedAether) {
-        torStatus = 'Tor: upstream Aether stopped by user — skipped';
-        processService.addLog(
-          '→ Tor auto-reconnect skipped (upstream Aether was stopped by user)',
-          source: src,
-        );
-        touch();
-        return (ok: false, type: 'aether', detail: '');
-      }
-
-      torStatus = 'Tor: starting Aether upstream…';
-      touch();
-
-      // ⚠️ FIX: isAutoTesting در try/finally
-      bool ok = false;
-      isAutoTesting = true;
-      try {
-        ok = await _aetherTestService.ensureHealthy(showUi: false);
-      } finally {
-        isAutoTesting = false;
-      }
-
-      // ⚠️ FIX: چک cancel
-      if (userStoppedTor) {
-        processService.addLog(
-          'Tor start cancelled by user (during Aether upstream)',
-          source: src,
-        );
-        return (ok: false, type: 'aether', detail: '');
-      }
-
-      if (!ok && !processService.isAetherRunning) {
-        torStatus = 'Tor: Aether unavailable — Tor not started';
-        processService.addLog(
-          '✗ Aether unavailable → Tor not started',
-          source: src,
-        );
-        return (ok: false, type: 'aether', detail: '');
-      }
-
-      processService.addLog(
-        '→ Tor will chain through Aether (Tor-over-Aether)',
-        source: src,
-      );
-      return (ok: true, type: 'aether', detail: 'via Aether');
-    }
 
     if (settings.torTransport == 'psiphon') {
       if (processService.isPsiphonRunning) {

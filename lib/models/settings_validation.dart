@@ -9,34 +9,25 @@ class SettingsValidation {
 
   static const Set<String> _validLogSources = {
     'Psiphon',
-    'Aether',
     'Tor',
     'SSTP',
     'WireGuard',
+    'Firefox VPN',
     'App',
     'System',
   };
 
   static const List<String> _defaultLogSources = [
     'Psiphon',
-    'Aether',
     'Tor',
     'SSTP',
     'WireGuard',
+    'Firefox VPN',
     'App',
     'System',
   ];
 
-  static const Set<String> _validEndpointPinningModes = {
-    'automatic',
-    'custom_first',
-    'custom_only',
-  };
-
   static void validateAndNormalize(AppSettings s) {
-    _validateAetherProfile(s);
-    _validateAether(s);
-    _validateEndpointPinning(s);
     _validatePsiphon(s);
     _validateTor(s);
     _validateSstp(s);
@@ -44,16 +35,7 @@ class SettingsValidation {
     _validateLogSources(s);
     _validateWatchdogProfile(s);
     _validateWireGuard(s);
-  }
-
-  static void _validateEndpointPinning(AppSettings s) {
-    if (!_validEndpointPinningModes.contains(s.aetherEndpointPinning)) {
-      s.aetherEndpointPinning = 'automatic';
-    }
-    if (s.aetherCustomEndpoint.trim().isEmpty &&
-        s.aetherEndpointPinning != 'automatic') {
-      s.aetherEndpointPinning = 'automatic';
-    }
+    _validateFfvpn(s);
   }
 
   static void _validateLogSources(AppSettings s) {
@@ -81,42 +63,11 @@ class SettingsValidation {
     }
   }
 
-  static void _validateAetherProfile(AppSettings s) {
-    const valid = {'adaptive', 'patchy', 'strict', 'manual'};
-    if (!valid.contains(s.aetherProfile)) {
-      s.aetherProfile = 'adaptive';
-    }
-  }
-
-  static void _validateAether(AppSettings s) {
-    if (s.aetherProfile != 'manual') {
-      s.aetherProtocol = 'auto';
-    } else if (!['masque', 'wireguard', 'gool', 'mim']
-        .contains(s.aetherProtocol)) {
-      s.aetherProtocol = 'masque';
-    }
-    if (s.masqueOption != 'HTTP-2') s.masqueOption = 'HTTP-3';
-
-    if (!['turbo', 'balanced', 'thorough', 'stealth', 'ironclad']
-        .contains(s.aetherScanMode)) {
-      s.aetherScanMode = 'balanced';
-    }
-    if (s.aetherScanMode == 'turbo' && s.aetherProfile != 'manual') {
-      s.aetherScanMode = 'balanced';
-    }
-    if (!['ipv4', 'ipv6', 'both'].contains(s.ipType)) s.ipType = 'ipv4';
-    if (!['off', 'light', 'firewall', 'balanced', 'gfw', 'aggressive']
-        .contains(s.obfuscation)) {
-      s.obfuscation = 'off';
-    }
-    if (s.aetherLocalPort < 1 || s.aetherLocalPort > 65535) {
-      s.aetherLocalPort = 1819;
-    }
-  }
-
   static void _validatePsiphon(AppSettings s) {
     if (!['socks5', 'http'].contains(s.proxyType)) s.proxyType = 'socks5';
 
+    // 2 (Aether upstream) removed → fall back to direct.
+    if (s.upstreamType == 2) s.upstreamType = 0;
     if (s.upstreamType < 0 || s.upstreamType > 6) {
       s.upstreamType = 0;
     }
@@ -127,7 +78,6 @@ class SettingsValidation {
       'direct',
       'bridge',
       'manual',
-      'aether',
       'psiphon',
       'sstp',
       'wireguard',
@@ -152,6 +102,8 @@ class SettingsValidation {
     if (s.sstpHttpPort < 1 || s.sstpHttpPort > 65535) {
       s.sstpHttpPort = 8082;
     }
+    // 2 (Aether upstream) removed → fall back to direct.
+    if (s.sstpUpstreamType == 2) s.sstpUpstreamType = 0;
     if (s.sstpUpstreamType < 0 || s.sstpUpstreamType > 5) {
       s.sstpUpstreamType = 0;
     }
@@ -171,6 +123,44 @@ class SettingsValidation {
     if (!['auto', 'public', 'custom'].contains(s.conduitMode)) {
       s.conduitMode = 'auto';
     }
+  }
+
+  static void _validateFfvpn(AppSettings s) {
+    s.ffvpnSessionToken = s.ffvpnSessionToken.trim();
+    s.ffvpnCountry = s.ffvpnCountry.trim().toUpperCase();
+    if (s.ffvpnSocksPort < 1 || s.ffvpnSocksPort > 65535) {
+      s.ffvpnSocksPort = 1083;
+    }
+    // 0 disables the HTTP listener entirely.
+    if (s.ffvpnHttpPort < 0 || s.ffvpnHttpPort > 65535) {
+      s.ffvpnHttpPort = 8083;
+    }
+    s.ffvpnSni = normalizeFfvpnSni(s.ffvpnSni);
+    // 2 (Aether upstream) removed → fall back to direct.
+    if (s.ffvpnUpstreamType == 2) s.ffvpnUpstreamType = 0;
+    if (s.ffvpnUpstreamType < 0 || s.ffvpnUpstreamType > 6) {
+      s.ffvpnUpstreamType = 0;
+    }
+    if (!['socks5', 'socks5h'].contains(s.ffvpnProxyType)) {
+      s.ffvpnProxyType = 'socks5';
+    }
+    s.ffvpnProxyIp = s.ffvpnProxyIp.trim();
+    s.ffvpnProxyUser = s.ffvpnProxyUser.trim();
+    if (s.ffvpnProxyPort < 0 || s.ffvpnProxyPort > 65535) {
+      s.ffvpnProxyPort = 1080;
+    }
+  }
+
+  /// SNI must be a bare hostname: strip a pasted scheme/path/port.
+  static String normalizeFfvpnSni(String raw) {
+    var sni = raw.trim();
+    final schemeAt = sni.indexOf('://');
+    if (schemeAt >= 0) sni = sni.substring(schemeAt + 3);
+    final slashAt = sni.indexOf('/');
+    if (slashAt >= 0) sni = sni.substring(0, slashAt);
+    final colonAt = sni.indexOf(':');
+    if (colonAt >= 0) sni = sni.substring(0, colonAt);
+    return sni.trim();
   }
 
   static void _validateWatchdogProfile(AppSettings s) {

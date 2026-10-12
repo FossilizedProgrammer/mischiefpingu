@@ -21,9 +21,10 @@ class CdnScannerController {
   /// آی‌دی آخرین preset که sync شده — برای تشخیص تغییر preset.
   String? _lastSyncedPresetId;
 
-  /// آخرین محتوایی که از customIps در TextField ریخته شده.
-  /// برای تشخیص اینکه آیا کاربر دستی تغییر داده یا خیر.
-  String? _lastCustomSnapshot;
+  /// آخرین متنی که از customIps در TextField ریخته شده.
+  /// ⚠️ فقط وقتی customIps واقعاً عوض شده باشد (ذخیره/حذف از لیست)
+  /// فیلد بازنویسی می‌شود — نه در هر sync — وگرنه تایپ کاربر پاک می‌شود.
+  String? _lastCustomIpsText;
 
   CdnScannerController({required this.inputCtrl, required this.sniCtrl});
 
@@ -36,7 +37,8 @@ class CdnScannerController {
       if (scan.selectedPresetId == 'custom') {
         // ✅ در حالت custom، TextField را با customIps پر کن
         final newText = scan.customIps.join('\n');
-        _lastCustomSnapshot = newText;
+        _lastCustomIpsText = newText;
+        scan.customInput = newText;
         if (inputCtrl.text != newText) {
           inputCtrl.text = newText;
         }
@@ -45,11 +47,12 @@ class CdnScannerController {
         final preset = CdnPresets.byId(scan.selectedPresetId ?? 'akamai');
         if (preset != null) {
           final newText = preset.ranges.join('\n');
+          scan.customInput = newText;
           if (inputCtrl.text != newText) {
             inputCtrl.text = newText;
           }
         }
-        _lastCustomSnapshot = null;
+        _lastCustomIpsText = null;
       }
 
       // SNI را هم به‌روز کن
@@ -66,22 +69,25 @@ class CdnScannerController {
     // حالت ۲: preset تغییر نکرده → sync عادی
     // ───────────────────────────────────────────────────────────
     if (scan.selectedPresetId == 'custom') {
-      // ✅ FIX ریشه‌ای: در حالت custom، هرگز customInput را
-      // از TextField به‌روزرسانی نکن. منبع حقیقت customIps است.
+      // ✅ FIX ریشه‌ای: منبع حقیقت customIps است، ولی فقط وقتی
+      // customIps عوض شده باشد (ذخیره/حذف/پاک‌سازی) فیلد را refresh کن.
       //
-      // اما اگر کاربر دستی TextField را تغییر داد، آن را در
-      // _lastCustomSnapshot ذخیره کن تا از چرخه‌ی برگشتی جلوگیری شود.
-      if (inputCtrl.text != _lastCustomSnapshot) {
-        // کاربر دستی TextField را تغییر داده — این را فقط
-        // در customInput نگه دار، ولی اسکن از customIps می‌خواند.
-        _lastCustomSnapshot = inputCtrl.text;
-        scan.customInput = inputCtrl.text;
-      } else {
-        // کاربر تغییر نداده → TextField را با customIps همگام کن
-        final newText = scan.customIps.join('\n');
-        if (inputCtrl.text != newText) {
-          inputCtrl.text = newText;
+      // 🐛 باگ قبلی: فیلد در هر sync با customIps بازنویسی می‌شد؛
+      // یعنی به‌محض اینکه کاربر چیزی تایپ می‌کرد و یک rebuild
+      // دیگر رخ می‌داد، تایپ او با لیست قدیمی جایگزین می‌شد
+      // و دکمه ذخیره، لیستِ قدیمی را ذخیره می‌کرد (یا خالی).
+      final ipsText = scan.customIps.join('\n');
+      if (ipsText != _lastCustomIpsText) {
+        // لیست کاستوم از بیرون عوض شده → فیلد را به‌روز کن
+        _lastCustomIpsText = ipsText;
+        scan.customInput = ipsText;
+        if (inputCtrl.text != ipsText) {
+          inputCtrl.text = ipsText;
         }
+      } else {
+        // لیست عوض نشده → فیلد دست‌نخورده بماند؛ فقط customInput
+        // را با متن فعلی فیلد همگام کن (تایپ کاربر هرگز پاک نمی‌شود).
+        scan.customInput = inputCtrl.text;
       }
     } else {
       // حالت preset دیگر

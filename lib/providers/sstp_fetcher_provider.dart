@@ -40,7 +40,6 @@ class SstpFetcherProvider extends ChangeNotifier {
   bool cancelHealth = false;
 
   int Function() psiphonPortGetter = () => 1080;
-  int Function() aetherPortGetter = () => 1819;
   int Function() torPortGetter = () => 19050;
   int Function() sstpPortGetter = () => 1082;
 

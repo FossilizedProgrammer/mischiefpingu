@@ -3,16 +3,6 @@ library;
 class VersionParsers {
   VersionParsers._();
 
-  /// پارس نسخه Aether از خروجی `--version`.
-  static String? parseAether(String? output) {
-    if (output == null || output.isEmpty) return null;
-    final parts = output.split(RegExp(r'\s+'));
-    for (final pt in parts.reversed) {
-      if (RegExp(r'^\d+\.\d+').hasMatch(pt)) return pt.trim();
-    }
-    return output.trim().split('\n').first.trim();
-  }
-
   /// پارس نسخه Psiphon از خروجی `-v`.
   static String? parsePsiphon(String? output) {
     if (output == null || output.isEmpty) return null;

@@ -25,7 +25,6 @@ class TorTransportSelector extends StatelessWidget {
         DropdownMenuItem(value: 'direct', child: Text(l10n.torDirect)),
         DropdownMenuItem(value: 'bridge', child: Text(l10n.torBridge)),
         DropdownMenuItem(value: 'manual', child: Text(l10n.torManual)),
-        DropdownMenuItem(value: 'aether', child: Text(l10n.torViaAether)),
         DropdownMenuItem(value: 'psiphon', child: Text(l10n.torViaPsiphon)),
         DropdownMenuItem(value: 'sstp', child: Text(l10n.torViaSstp)),
         DropdownMenuItem(value: 'wireguard', child: Text(l10n.torViaWireGuard)),

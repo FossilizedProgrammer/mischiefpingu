@@ -3,13 +3,13 @@
 library;
 
 enum CoreKind {
-  aether,
   tor,
   psiphon,
   sunandlion,
   sstp,
   wireguard,
   wireguardAwg, // 🆕
+  ffvpn, // 🆕 Firefox VPN
 }
 
 class CoreUpdateSpec {
@@ -27,7 +27,6 @@ class CoreUpdateSpec {
 }
 
 const List<CoreUpdateSpec> coreUpdateSpecs = [
-  CoreUpdateSpec(kind: CoreKind.aether, displayName: 'Aether'),
   CoreUpdateSpec(kind: CoreKind.tor, displayName: 'Tor'),
   CoreUpdateSpec(
     kind: CoreKind.psiphon,
@@ -55,5 +54,12 @@ const List<CoreUpdateSpec> coreUpdateSpecs = [
     displayName: 'WireGuard Amnezia (wireproxy-awg)',
     note: 'AmneziaWG userspace client from artem-russkikh/wireproxy-awg. '
         'Required for the "Amnezia" core type.',
+  ),
+  // 🆕 هستهٔ Firefox VPN
+  CoreUpdateSpec(
+    kind: CoreKind.ffvpn,
+    displayName: 'Firefox VPN (ffvpn)',
+    note: 'Firefox IP Protection client (powered by Mozilla VPN) from '
+        'FossilizedProgrammer/firefox-vpn-go.',
   ),
 ];

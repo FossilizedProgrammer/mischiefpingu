@@ -1,7 +1,7 @@
 name: mischiefpingu
-description: MischiefPingu - Psiphon & Aether Tunnel Core GUI (Linux & Windows)
+description: MischiefPingu - Psiphon Tunnel Core GUI (Linux & Windows)
 publish_to: 'none'
-version: 1.0.12+1
+version: 1.0.13+1
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -20,8 +20,6 @@ dependencies:
   audioplayers: ^6.1.0
   file_picker: ^8.1.6
   package_info_plus: ^8.0.0
-  sqflite_common_ffi: ^2.3.4
-  sqlite3_flutter_libs: ^0.5.24
   meta: ^1.15.0
 
 dev_dependencies:

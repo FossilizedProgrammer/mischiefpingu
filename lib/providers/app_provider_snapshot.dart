@@ -4,7 +4,6 @@ part of 'app_provider.dart';
 class _TunnelStateSnapshot {
   final bool psiphonRunning;
   final bool psiphonConnected;
-  final bool aetherRunning;
   final bool torRunning;
   final bool torConnected;
   final int torBootstrapProgress;
@@ -16,11 +15,12 @@ class _TunnelStateSnapshot {
   //  🆕 اضافه شد: آماده بودن تونل WireGuard (نه فقط running)
   // ═══════════════════════════════════════════════════════════
   final bool wireGuardTunnelReady;
+  final bool ffvpnRunning;
+  final bool ffvpnConnected;
 
   const _TunnelStateSnapshot({
     required this.psiphonRunning,
     required this.psiphonConnected,
-    required this.aetherRunning,
     required this.torRunning,
     required this.torConnected,
     required this.torBootstrapProgress,
@@ -29,6 +29,8 @@ class _TunnelStateSnapshot {
     required this.wireGuardRunning,
     required this.wireGuardConnected,
     required this.wireGuardTunnelReady,
+    required this.ffvpnRunning,
+    required this.ffvpnConnected,
   });
 
   @override
@@ -37,7 +39,6 @@ class _TunnelStateSnapshot {
     return other is _TunnelStateSnapshot &&
         other.psiphonRunning == psiphonRunning &&
         other.psiphonConnected == psiphonConnected &&
-        other.aetherRunning == aetherRunning &&
         other.torRunning == torRunning &&
         other.torConnected == torConnected &&
         other.torBootstrapProgress == torBootstrapProgress &&
@@ -45,14 +46,15 @@ class _TunnelStateSnapshot {
         other.sstpConnected == sstpConnected &&
         other.wireGuardRunning == wireGuardRunning &&
         other.wireGuardConnected == wireGuardConnected &&
-        other.wireGuardTunnelReady == wireGuardTunnelReady;
+        other.wireGuardTunnelReady == wireGuardTunnelReady &&
+        other.ffvpnRunning == ffvpnRunning &&
+        other.ffvpnConnected == ffvpnConnected;
   }
 
   @override
   int get hashCode => Object.hash(
         psiphonRunning,
         psiphonConnected,
-        aetherRunning,
         torRunning,
         torConnected,
         torBootstrapProgress,
@@ -61,5 +63,7 @@ class _TunnelStateSnapshot {
         wireGuardRunning,
         wireGuardConnected,
         wireGuardTunnelReady,
+        ffvpnRunning,
+        ffvpnConnected,
       );
 }

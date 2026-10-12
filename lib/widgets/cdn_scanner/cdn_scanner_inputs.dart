@@ -19,6 +19,60 @@ class CdnScannerInputs extends StatelessWidget {
     required this.theme,
   });
 
+  // ═══════════════════════════════════════════════════════════════
+  //  ذخیره‌ی آی‌پی‌های تایپ‌شده — بدون نیاز به اسکن
+  //
+  //  کاربر آی‌پی‌ها را دستی در فیلد وارد می‌کند و این دکمه همان
+  //  چیزی را که تایپ شده (به‌جز رنج‌های خودِ preset انتخاب‌شده)
+  //  در لیست کاستوم ذخیره می‌کند. نیازی نیست اول اسکن کند.
+  // ═══════════════════════════════════════════════════════════════
+  Future<void> _saveTypedIps(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+
+    var lines = inputCtrl.text
+        .split('\n')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+
+    // اگر preset غیر از custom انتخاب شده، رنج‌های خودِ preset را
+    // حذف کن تا فقط چیزی که کاربر اضافه کرده ذخیره شود.
+    final presetId = scan.selectedPresetId;
+    if (presetId != null && presetId != 'custom') {
+      final preset = CdnPresets.byId(presetId);
+      if (preset != null) {
+        final presetRanges = preset.ranges.toSet();
+        lines = lines.where((l) => !presetRanges.contains(l)).toList();
+      }
+    }
+
+    if (lines.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.listIsEmpty),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    await scan.addCustomIps(lines);
+
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          l10n.cdnIpsSavedSnack(
+            lines.length.toString(),
+            scan.customIps.length.toString(),
+          ),
+        ),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -203,6 +257,23 @@ class CdnScannerInputs extends StatelessWidget {
           onChanged: (v) {
             scan.customInput = v;
           },
+        ),
+        const SizedBox(height: 4),
+        // ─── ذخیره‌ی مستقیم آی‌پی‌های تایپ‌شده ───
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FilledButton.tonalIcon(
+              onPressed: scan.isRunning
+                  ? null
+                  : () => _saveTypedIps(context),
+              icon: const Icon(Icons.save_alt, size: 18),
+              label: Text(l10n.cdnSaveEnteredIps),
+              style: FilledButton.styleFrom(
+                visualDensity: VisualDensity.compact,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 12),
         TextField(

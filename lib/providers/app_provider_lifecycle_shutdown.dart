@@ -19,9 +19,6 @@ extension AppProviderLifecycleShutdown on AppProvider {
     );
     reconnectManager.cancelAll();
     try {
-      aetherTestService.requestCancel();
-    } catch (_) {}
-    try {
       if (processService.isPsiphonRunning || isPsiphonBusy) {
         processService.addLog('→ Stopping Psiphon…', source: LogSource.app);
         await processService.stopPsiphon();
@@ -49,17 +46,6 @@ extension AppProviderLifecycleShutdown on AppProvider {
       processService.addLog('⚠ SSTP shutdown error: $e', source: LogSource.app);
     }
     try {
-      if (processService.isAetherRunning || isAutoTesting) {
-        processService.addLog('→ Stopping Aether…', source: LogSource.app);
-        await processService.stopAether();
-      }
-    } catch (e) {
-      processService.addLog(
-        '⚠ Aether shutdown error: $e',
-        source: LogSource.app,
-      );
-    }
-    try {
       if (processService.isWireGuardRunning || isWireGuardBusy) {
         processService.addLog('→ Stopping WireGuard…', source: LogSource.app);
         await processService.stopWireGuard();
@@ -71,21 +57,22 @@ extension AppProviderLifecycleShutdown on AppProvider {
       );
     }
     try {
-      await processService.closeAllForwardSockets();
-    } catch (_) {}
-    // ─── بستن دیتابیس ───
-    try {
-      await GatewayDatabase.close();
-      processService.addLog(
-        '→ Gateway history database closed',
-        source: LogSource.app,
-      );
+      if (processService.isFfvpnRunning || isFfvpnBusy) {
+        processService.addLog(
+          '→ Stopping Firefox VPN…',
+          source: LogSource.app,
+        );
+        await processService.stopFfvpn();
+      }
     } catch (e) {
       processService.addLog(
-        '⚠ Failed to close gateway DB: $e',
+        '⚠ Firefox VPN shutdown error: $e',
         source: LogSource.app,
       );
     }
+    try {
+      await processService.closeAllForwardSockets();
+    } catch (_) {}
     await Future.delayed(const Duration(milliseconds: 300));
     processService.addLog(
       '★ All tunnels disconnected. Safe to exit.',

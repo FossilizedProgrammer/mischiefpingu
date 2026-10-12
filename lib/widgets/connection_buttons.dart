@@ -21,11 +21,11 @@ class ConnectionButtons extends StatelessWidget {
     );
     final resolver = ConnectionStateResolver(provider);
 
-    final aetherData = resolver.resolveAether(builder);
     final psiphonData = resolver.resolvePsiphon(builder);
     final torData = resolver.resolveTor(builder);
     final sstpData = resolver.resolveSstp(builder);
     final wireGuardData = resolver.resolveWireGuard(builder);
+    final ffvpnData = resolver.resolveFfvpn(builder);
 
     final onSurface = theme.colorScheme.onSurface;
 
@@ -34,20 +34,6 @@ class ConnectionButtons extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          CircleConnectButton(
-            title: 'Aether',
-            actionLabel: aetherData.state.actionLabel,
-            icon: aetherData.state.icon,
-            color: aetherData.state.color,
-            busy: aetherData.state.busy,
-            connected: aetherData.state.connected,
-            onTap: () => provider.connectAether(),
-            statusText: aetherData.state.statusText(aetherData.progress, l10n),
-            statusColor: aetherData.state.statusColor(
-              theme.colorScheme.primary,
-              onSurface,
-            ),
-          ),
           CircleConnectButton(
             title: 'Psiphon',
             actionLabel: psiphonData.state.actionLabel,
@@ -105,6 +91,20 @@ class ConnectionButtons extends StatelessWidget {
             statusText:
                 wireGuardData.state.statusText(wireGuardData.progress, l10n),
             statusColor: wireGuardData.state.statusColor(
+              theme.colorScheme.primary,
+              onSurface,
+            ),
+          ),
+          CircleConnectButton(
+            title: 'Firefox VPN',
+            actionLabel: ffvpnData.state.actionLabel,
+            icon: ffvpnData.state.icon,
+            color: ffvpnData.state.color,
+            busy: ffvpnData.state.busy,
+            connected: ffvpnData.state.connected,
+            onTap: () => provider.connectFfvpn(),
+            statusText: ffvpnData.state.statusText(ffvpnData.progress, l10n),
+            statusColor: ffvpnData.state.statusColor(
               theme.colorScheme.primary,
               onSurface,
             ),

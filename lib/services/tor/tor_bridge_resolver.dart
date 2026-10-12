@@ -28,7 +28,6 @@ class TorBridgeResolver {
   /// و آیا SOCKS5Proxy / TOR_PT_PROXY لازم است.
   static TorBridgeDecision resolve({
     required AppSettings settings,
-    int? aetherSocks,
     int? psiphonSocks,
     int? sstpSocks,
     int? wireguardSocks,
@@ -40,9 +39,7 @@ class TorBridgeResolver {
         : TorBridges.parseBridges(settings.torBridges);
 
     int? upstreamSocks;
-    if (transport == 'aether' && aetherSocks != null) {
-      upstreamSocks = aetherSocks;
-    } else if (transport == 'psiphon' && psiphonSocks != null) {
+    if (transport == 'psiphon' && psiphonSocks != null) {
       upstreamSocks = psiphonSocks;
     } else if (transport == 'sstp' && sstpSocks != null) {
       upstreamSocks = sstpSocks;
