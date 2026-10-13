@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/settings/port_text_field.dart';
 
 class TorManualProxySection extends StatelessWidget {
   final String proxyType;
@@ -71,13 +72,9 @@ class TorManualProxySection extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
               flex: 1,
-              child: TextFormField(
+              child: PortTextField(
+                labelText: l10n.port,
                 initialValue: proxyPort.toString(),
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: l10n.port,
-                  isDense: true,
-                ),
                 onChanged: onProxyPortChanged,
               ),
             ),

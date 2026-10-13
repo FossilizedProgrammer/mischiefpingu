@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../providers/app_provider.dart';
+import '../../../widgets/settings/port_text_field.dart';
 
 class PsiphonManualProxySection extends StatelessWidget {
   const PsiphonManualProxySection({super.key});
@@ -58,13 +59,9 @@ class PsiphonManualProxySection extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: TextFormField(
+              child: PortTextField(
+                labelText: l10n.port,
                 initialValue: s.proxyPort.toString(),
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: l10n.port,
-                  isDense: true,
-                ),
                 onChanged: (v) {
                   final p = int.tryParse(v.trim());
                   if (p != null && p > 0 && p < 65536) {

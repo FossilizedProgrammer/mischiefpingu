@@ -416,6 +416,11 @@ class AppLocalizationsFa extends AppLocalizations {
   String get port => 'پورت';
 
   @override
+  String portRangeError(int min, int max) {
+    return 'شماره پورتی بین $min تا $max وارد کنید';
+  }
+
+  @override
   String get preset1Subtitle =>
       'از هسته سایفون شیر و خورشید استفاده می‌کند (فورک غیررسمی).';
 

@@ -8,6 +8,7 @@ import '../../models/settings_model.dart';
 import '../../providers/app_provider.dart';
 import '../../providers/ffvpn_provider.dart';
 import '../../services/ffvpn/ffvpn_service.dart';
+import '../../widgets/settings/port_text_field.dart';
 import '../../widgets/settings_tile_base.dart';
 import 'ffvpn/ffvpn_upstream_section.dart';
 
@@ -55,10 +56,9 @@ class FirefoxVpnSettingsTile extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: SettingsTextField(
+              child: PortTextField(
                 labelText: l10n.ffvpnPortSocks,
                 initialValue: s.ffvpnSocksPort.toString(),
-                keyboardType: TextInputType.number,
                 onChanged: (v) {
                   final p = int.tryParse(v.trim());
                   if (p != null && p > 0 && p < 65536) {
@@ -70,10 +70,10 @@ class FirefoxVpnSettingsTile extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: SettingsTextField(
+              child: PortTextField(
                 labelText: l10n.ffvpnPortHttp,
                 initialValue: s.ffvpnHttpPort.toString(),
-                keyboardType: TextInputType.number,
+                min: 0,
                 onChanged: (v) {
                   final p = int.tryParse(v.trim());
                   if (p != null && p >= 0 && p < 65536) {

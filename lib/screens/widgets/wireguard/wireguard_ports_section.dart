@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/settings/port_text_field.dart';
 
 class WireGuardPortsSection extends StatefulWidget {
   final ThemeData theme;
@@ -84,14 +84,9 @@ class _WireGuardPortsSectionState extends State<WireGuardPortsSection> {
           ),
         ),
         const SizedBox(height: 8),
-        TextFormField(
+        PortTextField(
           controller: _controller,
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          decoration: InputDecoration(
-            labelText: l10n.socksPort,
-            isDense: true,
-          ),
+          labelText: l10n.socksPort,
           onChanged: _onChanged,
         ),
       ],

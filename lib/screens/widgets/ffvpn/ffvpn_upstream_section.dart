@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/settings_model.dart';
 import '../../../services/ffvpn/ffvpn_upstream_builder.dart';
+import '../../../widgets/settings/port_text_field.dart';
 import '../../../widgets/settings_tile_base.dart';
 
 /// ═══════════════════════════════════════════════════════════════
@@ -182,13 +183,9 @@ class FfvpnManualProxyFields extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
               flex: 1,
-              child: TextFormField(
+              child: PortTextField(
+                labelText: l10n.port,
                 initialValue: s.ffvpnProxyPort.toString(),
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: l10n.port,
-                  isDense: true,
-                ),
                 onChanged: (v) {
                   final p = int.tryParse(v.trim());
                   if (p != null && p > 0 && p < 65536) {

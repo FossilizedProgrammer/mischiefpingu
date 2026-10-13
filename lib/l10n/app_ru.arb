@@ -238,6 +238,7 @@
   "password": "Пароль",
   "passwordOptional": "Пароль (опционально)",
   "port": "Порт",
+  "portRangeError": "Введите номер порта от {min} до {max}",
   "preset1Subtitle": "Использует ядро SunAndLion Psiphon (неофициальный форк).",
   "preset1Title": "1 · Фронтинг (CDN). Лучше для жёсткой цензуры.",
   "preset2Subtitle": "Использует протоколы INPROXY-WEBRTC Psiphon.",
@@ -586,8 +587,12 @@
   "ffvpnUpstreamVia": "{name} используется как восходящий узел (SOCKS на 127.0.0.1:{port}) и запускается автоматически, если ещё не работает.",
   "@ffvpnUpstreamVia": {
     "placeholders": {
-      "name": { "type": "String" },
-      "port": { "type": "String" }
+      "name": {
+        "type": "String"
+      },
+      "port": {
+        "type": "String"
+      }
     }
   },
   "ffvpnUpstreamManualNote": "Имя хоста всегда отправляется прокси, чтобы DNS разрешался там.",

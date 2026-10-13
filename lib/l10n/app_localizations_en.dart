@@ -416,6 +416,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get port => 'Port';
 
   @override
+  String portRangeError(int min, int max) {
+    return 'Enter a port number from $min to $max';
+  }
+
+  @override
   String get preset1Subtitle =>
       'Uses the SunAndLion Psiphon Tunnel Core (Unofficial fork of Psiphon tunnel core).';
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../models/settings_model.dart';
+import '../../../widgets/settings/port_text_field.dart';
 
 class SstpPortsSection extends StatelessWidget {
   final AppSettings settings;
@@ -32,13 +33,9 @@ class SstpPortsSection extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: TextFormField(
+              child: PortTextField(
+                labelText: l10n.socksPort,
                 initialValue: settings.sstpSocksPort.toString(),
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: l10n.socksPort,
-                  isDense: true,
-                ),
                 onChanged: (v) {
                   final p = int.tryParse(v.trim());
                   if (p != null && p > 0 && p < 65536) {
@@ -50,13 +47,9 @@ class SstpPortsSection extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: TextFormField(
+              child: PortTextField(
+                labelText: l10n.httpPort,
                 initialValue: settings.sstpHttpPort.toString(),
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: l10n.httpPort,
-                  isDense: true,
-                ),
                 onChanged: (v) {
                   final p = int.tryParse(v.trim());
                   if (p != null && p > 0 && p < 65536) {

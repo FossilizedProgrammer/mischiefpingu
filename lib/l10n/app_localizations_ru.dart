@@ -418,6 +418,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get port => 'Порт';
 
   @override
+  String portRangeError(int min, int max) {
+    return 'Введите номер порта от $min до $max';
+  }
+
+  @override
   String get preset1Subtitle =>
       'Использует ядро SunAndLion Psiphon (неофициальный форк).';
 

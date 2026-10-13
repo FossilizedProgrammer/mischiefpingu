@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/settings/port_text_field.dart';
 
 class TorPortsSection extends StatelessWidget {
   final int torSocksPort;
@@ -22,25 +23,17 @@ class TorPortsSection extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: TextFormField(
+          child: PortTextField(
+            labelText: l10n.socksPort,
             initialValue: torSocksPort.toString(),
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: l10n.socksPort,
-              isDense: true,
-            ),
             onChanged: onSocksPortChanged,
           ),
         ),
         const SizedBox(width: 10),
         Expanded(
-          child: TextFormField(
+          child: PortTextField(
+            labelText: l10n.httpPort,
             initialValue: torHttpPort.toString(),
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: l10n.httpPort,
-              isDense: true,
-            ),
             onChanged: onHttpPortChanged,
           ),
         ),

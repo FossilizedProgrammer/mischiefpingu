@@ -239,6 +239,7 @@
   "password": "رمز عبور",
   "passwordOptional": "رمز عبور (اختیاری)",
   "port": "پورت",
+  "portRangeError": "شماره پورتی بین {min} تا {max} وارد کنید",
   "preset1Subtitle": "از هسته سایفون شیر و خورشید استفاده می‌کند (فورک غیررسمی).",
   "preset1Title": "۱ · فرانتینگ (CDN). بهترین برای سانسور سنگین.",
   "preset2Subtitle": "از پروتکل‌های INPROXY-WEBRTC سایفون استفاده می‌کند.",
@@ -572,8 +573,12 @@
   "ffvpnUpstreamVia": "{name} به‌عنوان hop آپ‌استریم استفاده می‌شود (SOCKS روی 127.0.0.1:{port}) و اگر هنوز بالا نیست به‌صورت خودکار بالا می‌آید.",
   "@ffvpnUpstreamVia": {
     "placeholders": {
-      "name": { "type": "String" },
-      "port": { "type": "String" }
+      "name": {
+        "type": "String"
+      },
+      "port": {
+        "type": "String"
+      }
     }
   },
   "ffvpnUpstreamManualNote": "نام میزبان همیشه به پروکسی فرستاده می‌شود تا DNS همان‌جا حل شود.",

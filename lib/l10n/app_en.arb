@@ -239,6 +239,17 @@
   "password": "Password",
   "passwordOptional": "Password (optional)",
   "port": "Port",
+  "portRangeError": "Enter a port number from {min} to {max}",
+  "@portRangeError": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
   "preset1Subtitle": "Uses the SunAndLion Psiphon Tunnel Core (Unofficial fork of Psiphon tunnel core).",
   "preset1Title": "1 · Fronting (CDN). Best for heavy censorship.",
   "preset2Subtitle": "Uses Psiphon INPROXY-WEBRTC protocols via volunteer stations.",
@@ -586,8 +597,12 @@
   "ffvpnUpstreamVia": "{name} is the upstream hop (SOCKS on 127.0.0.1:{port}) and is started automatically if it is not running yet.",
   "@ffvpnUpstreamVia": {
     "placeholders": {
-      "name": { "type": "String" },
-      "port": { "type": "String" }
+      "name": {
+        "type": "String"
+      },
+      "port": {
+        "type": "String"
+      }
     }
   },
   "ffvpnUpstreamManualNote": "The hostname is always sent to the proxy, so DNS is resolved there.",
@@ -605,21 +620,31 @@
   "ffvpnQuotaUsedOf": "{used} of {total} used ({percent}%)",
   "@ffvpnQuotaUsedOf": {
     "placeholders": {
-      "used": { "type": "String" },
-      "total": { "type": "String" },
-      "percent": { "type": "String" }
+      "used": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
     }
   },
   "ffvpnQuotaLeft": "{remaining} remaining",
   "@ffvpnQuotaLeft": {
     "placeholders": {
-      "remaining": { "type": "String" }
+      "remaining": {
+        "type": "String"
+      }
     }
   },
   "ffvpnQuotaResets": "Resets on {date}",
   "@ffvpnQuotaResets": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
   "ffvpnQuotaUnlimited": "Unlimited bandwidth — no monthly quota applies to this account.",

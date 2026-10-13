@@ -857,6 +857,12 @@ abstract class AppLocalizations {
   /// **'Port'**
   String get port;
 
+  /// No description provided for @portRangeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a port number from {min} to {max}'**
+  String portRangeError(int min, int max);
+
   /// No description provided for @preset1Subtitle.
   ///
   /// In en, this message translates to:
