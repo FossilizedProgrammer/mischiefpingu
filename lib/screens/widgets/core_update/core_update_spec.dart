@@ -10,6 +10,7 @@ enum CoreKind {
   wireguard,
   wireguardAwg, // 🆕
   ffvpn, // 🆕 Firefox VPN
+  lantern, // 🆕 Lantern headless
 }
 
 class CoreUpdateSpec {
@@ -61,5 +62,12 @@ const List<CoreUpdateSpec> coreUpdateSpecs = [
     displayName: 'Firefox VPN (ffvpn)',
     note: 'Firefox IP Protection client (powered by Mozilla VPN) from '
         'FossilizedProgrammer/firefox-vpn-go.',
+  ),
+  // 🆕 هستهٔ لنترن
+  CoreUpdateSpec(
+    kind: CoreKind.lantern,
+    displayName: 'Lantern (headless)',
+    note: 'Headless Lantern client for hard-filtered networks from '
+        'FossilizedProgrammer/lantern-headless-iran.',
   ),
 ];

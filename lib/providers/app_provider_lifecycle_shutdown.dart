@@ -71,6 +71,17 @@ extension AppProviderLifecycleShutdown on AppProvider {
       );
     }
     try {
+      if (processService.isLanternRunning || isLanternBusy) {
+        processService.addLog('→ Stopping Lantern…', source: LogSource.app);
+        await processService.stopLantern();
+      }
+    } catch (e) {
+      processService.addLog(
+        '⚠ Lantern shutdown error: $e',
+        source: LogSource.app,
+      );
+    }
+    try {
       await processService.closeAllForwardSockets();
     } catch (_) {}
     await Future.delayed(const Duration(milliseconds: 300));

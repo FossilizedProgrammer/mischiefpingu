@@ -31,6 +31,8 @@ extension AppProviderProcessListener on AppProvider {
       wireGuardTunnelReady: processService.isWireGuardTunnelReady,
       ffvpnRunning: processService.isFfvpnRunning,
       ffvpnConnected: processService.isFfvpnConnected,
+      lanternRunning: processService.isLanternRunning,
+      lanternConnected: processService.isLanternConnected,
     );
     final previousState = _lastTunnelState;
     final stateChanged = previousState != currentState;

@@ -2488,6 +2488,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ffvpn error'**
   String get ffvpnErrOther;
+
+  /// No description provided for @logSourceLantern.
+  ///
+  /// In en, this message translates to:
+  /// **'Lantern'**
+  String get logSourceLantern;
+
+  /// No description provided for @lanternSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Lantern Settings'**
+  String get lanternSettings;
+
+  /// No description provided for @lanternConnectionSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection'**
+  String get lanternConnectionSection;
+
+  /// No description provided for @lanternPortSocks.
+  ///
+  /// In en, this message translates to:
+  /// **'SOCKS port'**
+  String get lanternPortSocks;
+
+  /// No description provided for @lanternPortHttp.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTP port (0 = off)'**
+  String get lanternPortHttp;
+
+  /// No description provided for @lanternUpstreamSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Upstream proxy'**
+  String get lanternUpstreamSection;
+
+  /// No description provided for @lanternUpstreamDirect.
+  ///
+  /// In en, this message translates to:
+  /// **'None (direct)'**
+  String get lanternUpstreamDirect;
+
+  /// No description provided for @lanternUpstreamManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual proxy'**
+  String get lanternUpstreamManual;
+
+  /// No description provided for @lanternUpstreamPsiphon.
+  ///
+  /// In en, this message translates to:
+  /// **'Psiphon'**
+  String get lanternUpstreamPsiphon;
+
+  /// No description provided for @lanternUpstreamTor.
+  ///
+  /// In en, this message translates to:
+  /// **'Tor'**
+  String get lanternUpstreamTor;
+
+  /// No description provided for @lanternUpstreamSstp.
+  ///
+  /// In en, this message translates to:
+  /// **'SSTP'**
+  String get lanternUpstreamSstp;
+
+  /// No description provided for @lanternUpstreamWireguard.
+  ///
+  /// In en, this message translates to:
+  /// **'WireGuard'**
+  String get lanternUpstreamWireguard;
+
+  /// No description provided for @lanternUpstreamDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Connections to Lantern\'s servers (and, if none is reachable, your traffic as well) travel through this proxy — use it when Lantern\'s own server IPs are blocked.'**
+  String get lanternUpstreamDesc;
+
+  /// No description provided for @lanternUpstreamManualNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted schemes: socks5://, socks5h://, http:// and https://.'**
+  String get lanternUpstreamManualNote;
+
+  /// No description provided for @lanternUpstreamVia.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is the upstream hop (SOCKS on 127.0.0.1:{port}) and is started automatically if it is not running yet.'**
+  String lanternUpstreamVia(String name, String port);
+
+  /// No description provided for @lanternToolsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Lantern tools'**
+  String get lanternToolsSection;
+
+  /// No description provided for @lanternToolsServers.
+  ///
+  /// In en, this message translates to:
+  /// **'Servers'**
+  String get lanternToolsServers;
+
+  /// No description provided for @lanternToolsRefreshServers.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh list'**
+  String get lanternToolsRefreshServers;
+
+  /// No description provided for @lanternToolsCheckServers.
+  ///
+  /// In en, this message translates to:
+  /// **'Check reachability'**
+  String get lanternToolsCheckServers;
+
+  /// No description provided for @lanternServerReachable.
+  ///
+  /// In en, this message translates to:
+  /// **'Reachable'**
+  String get lanternServerReachable;
+
+  /// No description provided for @lanternServerUnreachable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unreachable'**
+  String get lanternServerUnreachable;
+
+  /// No description provided for @lanternServerNotChecked.
+  ///
+  /// In en, this message translates to:
+  /// **'Not checked'**
+  String get lanternServerNotChecked;
+
+  /// No description provided for @lanternToolsAuth.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get lanternToolsAuth;
+
+  /// No description provided for @lanternEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get lanternEmailLabel;
+
+  /// No description provided for @lanternPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get lanternPasswordLabel;
+
+  /// No description provided for @lanternLoginBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in'**
+  String get lanternLoginBtn;
+
+  /// No description provided for @lanternSignupBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up'**
+  String get lanternSignupBtn;
+
+  /// No description provided for @lanternLogoutBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get lanternLogoutBtn;
+
+  /// No description provided for @lanternRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Running'**
+  String get lanternRunning;
 }
 
 class _AppLocalizationsDelegate

@@ -143,5 +143,14 @@ extension AppProviderReconnect on AppProvider {
         ffvpnStatus = 'Firefox VPN: Connecting…';
       }
     }
+
+    if (processService.isLanternRunning) {
+      if (processService.isLanternConnected) {
+        lanternStatus = 'Lantern: Connected';
+      } else if (lanternStatus == 'Lantern: Ready' ||
+          lanternStatus == 'Lantern: Stopped') {
+        lanternStatus = 'Lantern: Connecting…';
+      }
+    }
   }
 }

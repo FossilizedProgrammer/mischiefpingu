@@ -1307,4 +1307,95 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get ffvpnErrOther => 'خطای ffvpn';
+
+  @override
+  String get logSourceLantern => 'لنترن';
+
+  @override
+  String get lanternSettings => 'تنظیمات لنترن';
+
+  @override
+  String get lanternConnectionSection => 'اتصال';
+
+  @override
+  String get lanternPortSocks => 'پورت SOCKS';
+
+  @override
+  String get lanternPortHttp => 'پورت HTTP (۰ = غیرفعال)';
+
+  @override
+  String get lanternUpstreamSection => 'آپ‌استریم';
+
+  @override
+  String get lanternUpstreamDirect => 'بدون آپ‌استریم (مستقیم)';
+
+  @override
+  String get lanternUpstreamManual => 'پروکسی دستی';
+
+  @override
+  String get lanternUpstreamPsiphon => 'سایفون';
+
+  @override
+  String get lanternUpstreamTor => 'تور';
+
+  @override
+  String get lanternUpstreamSstp => 'SSTP';
+
+  @override
+  String get lanternUpstreamWireguard => 'وایرگارد';
+
+  @override
+  String get lanternUpstreamDesc =>
+      'اتصال به سرورهای لنترن (و در نبود سرور سالم، ترافیک شما هم) از این پروکسی عبور می‌کند — وقتی IP سرورهای لنترن بلاک است از آن استفاده کنید.';
+
+  @override
+  String get lanternUpstreamManualNote =>
+      'اسکیم‌های مجاز: socks5:// ،socks5h:// ،http:// و https://.';
+
+  @override
+  String lanternUpstreamVia(String name, String port) {
+    return '$name هاپ آپ‌استریم است (SOCKS روی 127.0.0.1:$port) و اگر بالا نباشد به‌طور خودکار بالا آورده می‌شود.';
+  }
+
+  @override
+  String get lanternToolsSection => 'ابزارهای لنترن';
+
+  @override
+  String get lanternToolsServers => 'سرورها';
+
+  @override
+  String get lanternToolsRefreshServers => 'بروزرسانی لیست';
+
+  @override
+  String get lanternToolsCheckServers => 'بررسی دسترس‌پذیری';
+
+  @override
+  String get lanternServerReachable => 'در دسترس';
+
+  @override
+  String get lanternServerUnreachable => 'غیرقابل دسترسی';
+
+  @override
+  String get lanternServerNotChecked => 'بررسی‌نشده';
+
+  @override
+  String get lanternToolsAuth => 'حساب کاربری';
+
+  @override
+  String get lanternEmailLabel => 'ایمیل';
+
+  @override
+  String get lanternPasswordLabel => 'گذرواژه';
+
+  @override
+  String get lanternLoginBtn => 'ورود';
+
+  @override
+  String get lanternSignupBtn => 'ثبت‌نام';
+
+  @override
+  String get lanternLogoutBtn => 'خروج';
+
+  @override
+  String get lanternRunning => 'در حال اجرا';
 }

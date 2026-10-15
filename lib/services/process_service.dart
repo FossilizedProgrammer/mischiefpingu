@@ -16,6 +16,7 @@ import 'package:path/path.dart' as p;
 import '../models/wireguard_core_type.dart';
 import 'app_data_service.dart';
 import 'ffvpn/ffvpn_upstream_builder.dart';
+import 'lantern/lantern_cli_service.dart';
 import 'log_line_parsers.dart';
 import 'port_manager.dart';
 import 'process/log_source.dart';
@@ -52,6 +53,7 @@ part 'sstp_stopper.dart';
 part 'process_service_sstp.dart';
 part 'process_service_wireguard.dart';
 part 'process_service_ffvpn.dart';
+part 'process_service_lantern.dart';
 
 class ProcessService extends ChangeNotifier
     with ProcessNotifications
@@ -85,6 +87,10 @@ class ProcessService extends ChangeNotifier
   bool isFfvpnRunning = false;
 
   bool isFfvpnConnected = false;
+
+  bool isLanternRunning = false;
+
+  bool isLanternConnected = false;
 
   @override
   bool isPsiphonConnected = false;
@@ -310,6 +316,7 @@ class ProcessService extends ChangeNotifier
   Process? torProcess;
   Process? sstpProcess;
   Process? ffvpnProcess;
+  Process? lanternProcess;
 
   // ═══════════════════════════════════════════════════════════════
   //  Forwarder sockets
@@ -376,6 +383,7 @@ class ProcessService extends ChangeNotifier
   int? get torPid => torProcess?.pid;
   int? get sstpPid => sstpProcess?.pid;
   int? get ffvpnPid => ffvpnProcess?.pid;
+  int? get lanternPid => lanternProcess?.pid;
 
   // ═══════════════════════════════════════════════════════════════
   //  Lifecycle

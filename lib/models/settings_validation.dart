@@ -13,6 +13,7 @@ class SettingsValidation {
     'SSTP',
     'WireGuard',
     'Firefox VPN',
+    'Lantern',
     'App',
     'System',
   };
@@ -23,6 +24,7 @@ class SettingsValidation {
     'SSTP',
     'WireGuard',
     'Firefox VPN',
+    'Lantern',
     'App',
     'System',
   ];
@@ -36,6 +38,7 @@ class SettingsValidation {
     _validateWatchdogProfile(s);
     _validateWireGuard(s);
     _validateFfvpn(s);
+    _validateLantern(s);
   }
 
   static void _validateLogSources(AppSettings s) {
@@ -148,6 +151,29 @@ class SettingsValidation {
     s.ffvpnProxyUser = s.ffvpnProxyUser.trim();
     if (s.ffvpnProxyPort < 0 || s.ffvpnProxyPort > 65535) {
       s.ffvpnProxyPort = 1080;
+    }
+  }
+
+  static void _validateLantern(AppSettings s) {
+    // پورت SOCKS باید معتبر باشد؛ چون فعال‌سازی HTTP با 0 ممکن است
+    // (مثل ffvpn) پورت HTTP می‌تواند 0 (= غیرفعال) باشد.
+    if (s.lanternSocksPort < 1 || s.lanternSocksPort > 65535) {
+      s.lanternSocksPort = 18071;
+    }
+    if (s.lanternHttpPort < 0 || s.lanternHttpPort > 65535) {
+      s.lanternHttpPort = 18070;
+    }
+    if (s.lanternUpstreamType < 0 || s.lanternUpstreamType > 6 ||
+        s.lanternUpstreamType == 2) {
+      s.lanternUpstreamType = 0;
+    }
+    if (!['socks5', 'socks5h', 'http', 'https'].contains(s.lanternProxyType)) {
+      s.lanternProxyType = 'socks5';
+    }
+    s.lanternProxyIp = s.lanternProxyIp.trim();
+    s.lanternProxyUser = s.lanternProxyUser.trim();
+    if (s.lanternProxyPort < 0 || s.lanternProxyPort > 65535) {
+      s.lanternProxyPort = 1080;
     }
   }
 

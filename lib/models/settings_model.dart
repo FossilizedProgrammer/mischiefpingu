@@ -96,6 +96,18 @@ class AppSettings {
   String ffvpnProxyUser;
   String ffvpnProxyPass;
 
+  // ═══════════════════════════════════════════════════════════════
+  //  Lantern (headless) settings
+  // ═══════════════════════════════════════════════════════════════
+  int lanternSocksPort;
+  int lanternHttpPort;
+  int lanternUpstreamType;
+  String lanternProxyType;
+  String lanternProxyIp;
+  int lanternProxyPort;
+  String lanternProxyUser;
+  String lanternProxyPass;
+
   String themeId;
   bool muted;
   List<String> enabledLogSources;
@@ -169,6 +181,14 @@ class AppSettings {
     this.ffvpnProxyPort = 1080,
     this.ffvpnProxyUser = '',
     this.ffvpnProxyPass = '',
+    this.lanternSocksPort = 18071,
+    this.lanternHttpPort = 18070,
+    this.lanternUpstreamType = 0,
+    this.lanternProxyType = 'socks5',
+    this.lanternProxyIp = '',
+    this.lanternProxyPort = 1080,
+    this.lanternProxyUser = '',
+    this.lanternProxyPass = '',
     this.psiphonBuildRev = '',
     this.psiphonBinarySha = '',
     this.themeId = 'ocean',
@@ -188,6 +208,7 @@ class AppSettings {
               'SSTP',
               'WireGuard',
               'Firefox VPN',
+              'Lantern',
               'App',
               'System',
             ];

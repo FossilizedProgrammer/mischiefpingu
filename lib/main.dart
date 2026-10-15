@@ -8,6 +8,7 @@ import 'providers/app_provider.dart';
 import 'providers/cdn_scanner_provider.dart';
 import 'providers/ffvpn_provider.dart';
 import 'providers/internet_quality_provider.dart';
+import 'providers/lantern_provider.dart';
 import 'providers/sstp_fetcher_provider.dart';
 import 'screens/main_screen.dart';
 import 'theme/theme_builder.dart';
@@ -63,9 +64,13 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) =>
               SstpFetcherProvider(processService: appProvider.processService),
+        ),        ChangeNotifierProvider(
+          create: (_) =>
+              FfvpnProvider(processService: appProvider.processService),
         ),
         ChangeNotifierProvider(
-          create: (_) => FfvpnProvider(processService: appProvider.processService),
+          create: (_) =>
+              LanternProvider(processService: appProvider.processService),
         ),
       ],
       child: const MyApp(),

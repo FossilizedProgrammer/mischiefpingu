@@ -166,6 +166,8 @@ class CoreUpdateController extends ChangeNotifier {
         return 'wireguard-awg'; // 🆕
       case CoreKind.ffvpn:
         return 'ffvpn'; // 🆕 Firefox VPN
+      case CoreKind.lantern:
+        return 'lantern'; // 🆕 Lantern headless
     }
   }
 }

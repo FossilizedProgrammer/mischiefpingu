@@ -1310,4 +1310,95 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ffvpnErrOther => 'ffvpn error';
+
+  @override
+  String get logSourceLantern => 'Lantern';
+
+  @override
+  String get lanternSettings => 'Lantern Settings';
+
+  @override
+  String get lanternConnectionSection => 'Connection';
+
+  @override
+  String get lanternPortSocks => 'SOCKS port';
+
+  @override
+  String get lanternPortHttp => 'HTTP port (0 = off)';
+
+  @override
+  String get lanternUpstreamSection => 'Upstream proxy';
+
+  @override
+  String get lanternUpstreamDirect => 'None (direct)';
+
+  @override
+  String get lanternUpstreamManual => 'Manual proxy';
+
+  @override
+  String get lanternUpstreamPsiphon => 'Psiphon';
+
+  @override
+  String get lanternUpstreamTor => 'Tor';
+
+  @override
+  String get lanternUpstreamSstp => 'SSTP';
+
+  @override
+  String get lanternUpstreamWireguard => 'WireGuard';
+
+  @override
+  String get lanternUpstreamDesc =>
+      'Connections to Lantern\'s servers (and, if none is reachable, your traffic as well) travel through this proxy — use it when Lantern\'s own server IPs are blocked.';
+
+  @override
+  String get lanternUpstreamManualNote =>
+      'Accepted schemes: socks5://, socks5h://, http:// and https://.';
+
+  @override
+  String lanternUpstreamVia(String name, String port) {
+    return '$name is the upstream hop (SOCKS on 127.0.0.1:$port) and is started automatically if it is not running yet.';
+  }
+
+  @override
+  String get lanternToolsSection => 'Lantern tools';
+
+  @override
+  String get lanternToolsServers => 'Servers';
+
+  @override
+  String get lanternToolsRefreshServers => 'Refresh list';
+
+  @override
+  String get lanternToolsCheckServers => 'Check reachability';
+
+  @override
+  String get lanternServerReachable => 'Reachable';
+
+  @override
+  String get lanternServerUnreachable => 'Unreachable';
+
+  @override
+  String get lanternServerNotChecked => 'Not checked';
+
+  @override
+  String get lanternToolsAuth => 'Account';
+
+  @override
+  String get lanternEmailLabel => 'Email';
+
+  @override
+  String get lanternPasswordLabel => 'Password';
+
+  @override
+  String get lanternLoginBtn => 'Log in';
+
+  @override
+  String get lanternSignupBtn => 'Sign up';
+
+  @override
+  String get lanternLogoutBtn => 'Log out';
+
+  @override
+  String get lanternRunning => 'Running';
 }

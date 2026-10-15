@@ -96,6 +96,8 @@ class LogFilterSection extends StatelessWidget {
         return l10n.logSourceWireGuard;
       case LogSource.ffvpn:
         return l10n.logSourceFfvpn;
+      case LogSource.lantern:
+        return l10n.logSourceLantern;
       default:
         return source;
     }

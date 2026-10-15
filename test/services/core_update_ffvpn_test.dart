@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mischiefpingu/screens/widgets/core_update/core_update_controller.dart';
 import 'package:mischiefpingu/services/core_update/core_update_ffvpn.dart';
+import 'package:mischiefpingu/services/core_update/core_update_lantern.dart';
 import 'package:mischiefpingu/services/core_update/core_update_network.dart';
 import 'package:mischiefpingu/services/core_update/core_update_pending.dart';
 import 'package:mischiefpingu/services/core_update/core_update_process_utils.dart';
@@ -139,10 +140,19 @@ void main() {
           pending: pending,
           processUtils: processUtils,
         ),
+        lantern: LanternUpdater(
+          network: network,
+          pending: pending,
+          processUtils: processUtils,
+        ),
       );
 
       expect(registry.byId('ffvpn'), isNotNull);
       expect(registry.byId('ffvpn')!.coreId, 'ffvpn');
+
+      // 🆕 هستهٔ لنترن هم باید در registry موجود باشد.
+      expect(registry.byId('lantern'), isNotNull);
+      expect(registry.byId('lantern')!.coreId, 'lantern');
     });
 
     test('updates screen lists Firefox VPN with a ffvpn state entry', () {

@@ -82,4 +82,18 @@ class ConnectionStateResolver {
       isBusy: ffvpnBusy,
     );
   }
+
+  ConnectionButtonData resolveLantern(ConnectionButtonBuilder builder) {
+    final ps = provider.processService;
+    final lanternOn = ps.isLanternConnected;
+    final lanternBusy = provider.isLanternBusy && !ps.isLanternRunning;
+    final lanternRunningForButton =
+        ps.isLanternRunning || (provider.isLanternBusy && !lanternOn);
+
+    return builder.forSstp(
+      isRunning: lanternRunningForButton,
+      isConnected: lanternOn,
+      isBusy: lanternBusy,
+    );
+  }
 }

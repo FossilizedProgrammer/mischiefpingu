@@ -124,6 +124,7 @@ class SharedFilesSeeder {
       'psiphon-tunnel-core-sunandlion',
       'sstp-proxy',
       'ffvpn',
+      'lantern',
     ];
     for (final fileName in platformBinaries) {
       final sourceName = '$fileName${PlatformInfo.exeExt}';

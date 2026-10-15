@@ -68,6 +68,24 @@ class CoreUpdateVersionChecker {
         return 'installed';
       }
 
+      // ═══════════════════════════════════════════════════
+      //  🆕 لنترن (headless)
+      //
+      //  خروجی `lantern --version` این شکلی است:
+      //    lantern-headless-iran v1.2.3 [Build Date: … Revision Date: …]
+      //  باینری‌های محلی که بدون ldflags ساخته شده‌اند عدد ندارند.
+      // ═══════════════════════════════════════════════════
+      if (coreId == 'lantern') {
+        final exe = await AppDataService.resolveBinaryPath('lantern') ??
+            await AppDataService.getBinaryPath('lantern');
+        if (!await File(exe).exists()) return 'not installed';
+        final v = await _queryExeVersion(exe, ['--version']);
+        if (v == null) return 'installed';
+        final m = RegExp(r'\b(\d+\.\d+\.\d+(?:[-\+][\w\.]+)?)\b')
+            .firstMatch(v);
+        return m?.group(1) ?? 'installed';
+      }
+
       if (coreId == 'sstp') {
         final exe = await AppDataService.getSstpBinaryPathForExecution();
         if (!await File(exe).exists()) return 'not installed';
@@ -115,6 +133,7 @@ class CoreUpdateVersionChecker {
       if (coreId == 'tor' ||
           coreId == 'sunandlion' ||
           coreId == 'ffvpn' ||
+          coreId == 'lantern' ||
           coreId == 'sstp' ||
           coreId == 'wireguard' ||
           coreId == 'wireguard-awg') {

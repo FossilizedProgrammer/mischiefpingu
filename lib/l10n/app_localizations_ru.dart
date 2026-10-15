@@ -1313,4 +1313,95 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get ffvpnErrOther => 'Ошибка ffvpn';
+
+  @override
+  String get logSourceLantern => 'Lantern';
+
+  @override
+  String get lanternSettings => 'Настройки Lantern';
+
+  @override
+  String get lanternConnectionSection => 'Подключение';
+
+  @override
+  String get lanternPortSocks => 'Порт SOCKS';
+
+  @override
+  String get lanternPortHttp => 'Порт HTTP (0 = выкл.)';
+
+  @override
+  String get lanternUpstreamSection => 'Апстрим-прокси';
+
+  @override
+  String get lanternUpstreamDirect => 'Нет (напрямую)';
+
+  @override
+  String get lanternUpstreamManual => 'Ручной прокси';
+
+  @override
+  String get lanternUpstreamPsiphon => 'Psiphon';
+
+  @override
+  String get lanternUpstreamTor => 'Tor';
+
+  @override
+  String get lanternUpstreamSstp => 'SSTP';
+
+  @override
+  String get lanternUpstreamWireguard => 'WireGuard';
+
+  @override
+  String get lanternUpstreamDesc =>
+      'Соединения с серверами Lantern (а если они недоступны — и ваш трафик) идут через этот прокси; используйте его, когда IP-адреса серверов Lantern заблокированы.';
+
+  @override
+  String get lanternUpstreamManualNote =>
+      'Допустимые схемы: socks5://, socks5h://, http:// и https://.';
+
+  @override
+  String lanternUpstreamVia(String name, String port) {
+    return '$name — апстрим-хоп (SOCKS на 127.0.0.1:$port); если он не запущен, будет запущен автоматически.';
+  }
+
+  @override
+  String get lanternToolsSection => 'Инструменты Lantern';
+
+  @override
+  String get lanternToolsServers => 'Серверы';
+
+  @override
+  String get lanternToolsRefreshServers => 'Обновить список';
+
+  @override
+  String get lanternToolsCheckServers => 'Проверить доступность';
+
+  @override
+  String get lanternServerReachable => 'Доступен';
+
+  @override
+  String get lanternServerUnreachable => 'Недоступен';
+
+  @override
+  String get lanternServerNotChecked => 'Не проверен';
+
+  @override
+  String get lanternToolsAuth => 'Аккаунт';
+
+  @override
+  String get lanternEmailLabel => 'Эл. почта';
+
+  @override
+  String get lanternPasswordLabel => 'Пароль';
+
+  @override
+  String get lanternLoginBtn => 'Вход';
+
+  @override
+  String get lanternSignupBtn => 'Регистрация';
+
+  @override
+  String get lanternLogoutBtn => 'Выход';
+
+  @override
+  String get lanternRunning => 'Выполняется';
 }

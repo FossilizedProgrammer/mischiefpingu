@@ -2,6 +2,7 @@ library;
 
 import '../core_update_models.dart';
 import 'core_update_ffvpn.dart';
+import 'core_update_lantern.dart';
 import 'core_update_psiphon.dart';
 import 'core_update_sstp.dart';
 import 'core_update_sunandlion.dart';
@@ -262,3 +263,41 @@ CoreUpdater wireGuardAwgAdapter(WireGuardAwgUpdater inner) =>
     _WireGuardAwgAdapter(inner);
 
 CoreUpdater ffvpnAdapter(FfvpnUpdater inner) => _FfvpnAdapter(inner);
+
+// ═══════════════════════════════════════════════════════════════
+//  _LanternAdapter — adapter برای هستهٔ لنترن (headless)
+// ═══════════════════════════════════════════════════════════════
+class _LanternAdapter implements CoreUpdater {
+  final LanternUpdater inner;
+  _LanternAdapter(this.inner);
+
+  @override
+  String get coreId => 'lantern';
+
+  @override
+  Future<CoreUpdateInfo> check(
+    String? proxy, {
+    required String installed,
+    String psiphonBinSha = '',
+  }) =>
+      inner.check(proxy, installed: installed);
+
+  @override
+  Future<bool> update(
+    CoreUpdateInfo info, {
+    required String installed,
+    String? proxy,
+    String psiphonBinSha = '',
+    void Function(int percent)? onProgress,
+    bool Function()? onCancelCheck,
+  }) =>
+      inner.update(
+        info,
+        installed: installed,
+        proxy: proxy,
+        onProgress: onProgress,
+        onCancelCheck: onCancelCheck,
+      );
+}
+
+CoreUpdater lanternAdapter(LanternUpdater inner) => _LanternAdapter(inner);

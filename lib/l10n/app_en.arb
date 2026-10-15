@@ -655,5 +655,45 @@
   "ffvpnErrQuota": "Monthly bandwidth quota is exhausted — wait for the reset date.",
   "ffvpnErrBinaryMissing": "The ffvpn binary was not found in the app data folder.",
   "ffvpnErrNetwork": "Network error while reaching Mozilla — check your connection (a tunnel may be needed) and try again.",
-  "ffvpnErrOther": "ffvpn error"
+  "ffvpnErrOther": "ffvpn error",
+
+  "logSourceLantern": "Lantern",
+  "lanternSettings": "Lantern Settings",
+  "lanternConnectionSection": "Connection",
+  "lanternPortSocks": "SOCKS port",
+  "lanternPortHttp": "HTTP port (0 = off)",
+  "lanternUpstreamSection": "Upstream proxy",
+  "lanternUpstreamDirect": "None (direct)",
+  "lanternUpstreamManual": "Manual proxy",
+  "lanternUpstreamPsiphon": "Psiphon",
+  "lanternUpstreamTor": "Tor",
+  "lanternUpstreamSstp": "SSTP",
+  "lanternUpstreamWireguard": "WireGuard",
+  "lanternUpstreamDesc": "Connections to Lantern's servers (and, if none is reachable, your traffic as well) travel through this proxy — use it when Lantern's own server IPs are blocked.",
+  "lanternUpstreamManualNote": "Accepted schemes: socks5://, socks5h://, http:// and https://.",
+  "lanternUpstreamVia": "{name} is the upstream hop (SOCKS on 127.0.0.1:{port}) and is started automatically if it is not running yet.",
+  "@lanternUpstreamVia": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "port": {
+        "type": "String"
+      }
+    }
+  },
+  "lanternToolsSection": "Lantern tools",
+  "lanternToolsServers": "Servers",
+  "lanternToolsRefreshServers": "Refresh list",
+  "lanternToolsCheckServers": "Check reachability",
+  "lanternServerReachable": "Reachable",
+  "lanternServerUnreachable": "Unreachable",
+  "lanternServerNotChecked": "Not checked",
+  "lanternToolsAuth": "Account",
+  "lanternEmailLabel": "Email",
+  "lanternPasswordLabel": "Password",
+  "lanternLoginBtn": "Log in",
+  "lanternSignupBtn": "Sign up",
+  "lanternLogoutBtn": "Log out",
+  "lanternRunning": "Running"
 }

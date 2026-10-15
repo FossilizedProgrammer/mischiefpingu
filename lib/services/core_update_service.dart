@@ -3,6 +3,7 @@
 library;
 
 import 'core_update/core_update_ffvpn.dart';
+import 'core_update/core_update_lantern.dart';
 import 'core_update/core_update_network.dart';
 import 'core_update/core_update_pending.dart';
 import 'core_update/core_update_process_utils.dart';
@@ -75,6 +76,13 @@ class CoreUpdateService {
     ),
     // 🆕 هستهٔ Firefox VPN (ffvpn)
     ffvpn: FfvpnUpdater(
+      network: _network,
+      pending: _pending,
+      processUtils: _process,
+      log: log,
+    ),
+    // 🆕 هستهٔ لنترن (headless)
+    lantern: LanternUpdater(
       network: _network,
       pending: _pending,
       processUtils: _process,

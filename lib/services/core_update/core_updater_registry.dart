@@ -1,6 +1,7 @@
 // lib/services/core_update/core_updater_registry.dart
 
 import 'core_update_ffvpn.dart';
+import 'core_update_lantern.dart';
 import 'core_update_psiphon.dart';
 import 'core_update_sstp.dart';
 import 'core_update_sunandlion.dart';
@@ -20,6 +21,7 @@ class CoreUpdaterRegistry {
     required WireGuardUpdater wireguard,
     required WireGuardAwgUpdater wireguardAwg, // 🆕
     required FfvpnUpdater ffvpn,
+    required LanternUpdater lantern, // 🆕
   }) : _updaters = {
           'tor': torAdapter(tor),
           'psiphon': psiphonAdapter(psiphon),
@@ -28,6 +30,7 @@ class CoreUpdaterRegistry {
           'wireguard': wireGuardAdapter(wireguard),
           'wireguard-awg': wireGuardAwgAdapter(wireguardAwg), // 🆕
           'ffvpn': ffvpnAdapter(ffvpn),
+          'lantern': lanternAdapter(lantern), // 🆕
         };
 
   CoreUpdater? byId(String coreId) => _updaters[coreId];

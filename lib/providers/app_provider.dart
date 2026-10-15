@@ -8,6 +8,8 @@ import '../services/process_service.dart';
 import '../services/privilege_service.dart';
 import '../services/app_data_service.dart';
 import '../services/ffvpn/ffvpn_upstream_builder.dart';
+import '../services/lantern/lantern_upstream_builder.dart';
+import '../services/lantern/lantern_cli_service.dart';
 import '../services/psiphon_config_builder.dart';
 import '../services/tor_config_builder.dart';
 import '../services/sstp_config_builder.dart';
@@ -68,6 +70,8 @@ part 'app_provider_wireguard_internal.dart';
 part 'app_provider_wireguard_preflight.dart';
 part 'app_provider_ffvpn.dart';
 part 'ffvpn/ffvpn_preflight.dart';
+part 'app_provider_lantern.dart';
+part 'lantern/lantern_preflight.dart';
 part 'app_provider_constructor.dart';
 part 'app_provider_dispose.dart';
 part 'app_provider_public_actions.dart';
@@ -102,6 +106,13 @@ class AppProvider extends ChangeNotifier {
   int _ffvpnGeneration = 0;
   int get ffvpnGeneration => _ffvpnGeneration;
   int nextFfvpnGeneration() => ++_ffvpnGeneration;
+
+  bool isLanternBusy = false;
+  bool userStoppedLantern = true;
+  String lanternStatus = 'Lantern: Ready';
+  int _lanternGeneration = 0;
+  int get lanternGeneration => _lanternGeneration;
+  int nextLanternGeneration() => ++_lanternGeneration;
 
   late RecoveryCoordinator _recoveryCoordinator;
   RecoveryCoordinator get recoveryCoordinator => _recoveryCoordinator;
