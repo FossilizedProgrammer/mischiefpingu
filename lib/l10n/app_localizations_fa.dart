@@ -507,7 +507,7 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get showMoreSubtitle =>
-      'ظاهر، سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس VPN، اسکنر، آپدیت‌ها، لاگ';
+      'ظاهر، سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس VPN، لنترن، اسکنر، آپدیت‌ها، لاگ';
 
   @override
   String get sni => 'SNI';

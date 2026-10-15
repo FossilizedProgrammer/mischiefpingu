@@ -1028,7 +1028,7 @@ abstract class AppLocalizations {
   /// No description provided for @showMoreSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Scanner, Updates, Log'**
+  /// **'Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Lantern, Scanner, Updates, Log'**
   String get showMoreSubtitle;
 
   /// No description provided for @sni.

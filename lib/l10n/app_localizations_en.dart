@@ -509,7 +509,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get showMoreSubtitle =>
-      'Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Scanner, Updates, Log';
+      'Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Lantern, Scanner, Updates, Log';
 
   @override
   String get sni => 'SNI';

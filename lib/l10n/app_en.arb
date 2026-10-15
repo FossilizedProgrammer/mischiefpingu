@@ -277,7 +277,7 @@
   "showLess": "Show less",
   "showLessSubtitle": "Hide advanced settings & logs",
   "showMore": "Show more",
-  "showMoreSubtitle": "Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Scanner, Updates, Log",
+  "showMoreSubtitle": "Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Lantern, Scanner, Updates, Log",
   "sni": "SNI",
   "sniList": "SNI list (one per line, order = priority)",
   "socksPort": "SOCKS port",
