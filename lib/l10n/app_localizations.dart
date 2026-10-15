@@ -109,7 +109,7 @@ abstract class AppLocalizations {
   /// No description provided for @appSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Unofficial Psiphon client, Tor client, SSTP client, WireGuard client, Firefox VPN client'**
+  /// **'Unofficial Psiphon client, Tor client, SSTP client, WireGuard client, Firefox VPN client, Lantern client'**
   String get appSubtitle;
 
   /// No description provided for @add.

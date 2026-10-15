@@ -13,7 +13,7 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get appSubtitle =>
-      'کلاینت غیر رسمی سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس VPN';
+      'کلاینت غیر رسمی سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس VPN، لنترن';
 
   @override
   String get add => 'افزودن';

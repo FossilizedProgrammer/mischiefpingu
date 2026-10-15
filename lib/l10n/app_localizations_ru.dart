@@ -13,7 +13,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get appSubtitle =>
-      'Неофициальный клиент Psiphon, клиент Tor, клиент SSTP, клиент WireGuard, клиент Firefox VPN';
+      'Неофициальный клиент Psiphon, клиент Tor, клиент SSTP, клиент WireGuard, клиент Firefox VPN, клиент Lantern';
 
   @override
   String get add => 'Добавить';

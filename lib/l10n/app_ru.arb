@@ -559,7 +559,7 @@
   "bridgeLoadFromScanner": "Загрузить из сканера мостов",
   "bridgeLoadFromScannerSubtitle": "Загрузить сохранённые рабочие мосты из раздела сканера мостов ниже",
   "bridgeNoSavedInScanner": "В сканере мостов пока нет сохранённых мостов",
-  "appSubtitle": "Неофициальный клиент Psiphon, клиент Tor, клиент SSTP, клиент WireGuard, клиент Firefox VPN",
+  "appSubtitle": "Неофициальный клиент Psiphon, клиент Tor, клиент SSTP, клиент WireGuard, клиент Firefox VPN, клиент Lantern",
   "showMoreSubtitle": "Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Scanner, Updates, Log",
   "logSourceFfvpn": "Firefox VPN",
   "ffvpnSettings": "Настройки Firefox VPN",

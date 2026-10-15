@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
   "appTitle": "Mischief Pingu",
-  "appSubtitle": "Unofficial Psiphon client, Tor client, SSTP client, WireGuard client, Firefox VPN client",
+  "appSubtitle": "Unofficial Psiphon client, Tor client, SSTP client, WireGuard client, Firefox VPN client, Lantern client",
   "add": "Add",
   "addNew": "Add new",
   "allServers": "All servers",
