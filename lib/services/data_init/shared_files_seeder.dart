@@ -125,6 +125,7 @@ class SharedFilesSeeder {
       'sstp-proxy',
       'ffvpn',
       'lantern',
+      'geph5-proxy',
     ];
     for (final fileName in platformBinaries) {
       final sourceName = '$fileName${PlatformInfo.exeExt}';

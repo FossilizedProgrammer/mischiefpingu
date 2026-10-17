@@ -109,7 +109,7 @@ abstract class AppLocalizations {
   /// No description provided for @appSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Unofficial Psiphon client, Tor client, SSTP client, WireGuard client, Firefox VPN client, Lantern client'**
+  /// **'Unofficial Psiphon client, Tor client, SSTP client, WireGuard client, Firefox VPN client, Lantern client, Geph unofficial client'**
   String get appSubtitle;
 
   /// No description provided for @add.
@@ -1028,7 +1028,7 @@ abstract class AppLocalizations {
   /// No description provided for @showMoreSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Lantern, Scanner, Updates, Log'**
+  /// **'Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Lantern, Geph, Scanner, Updates, Log'**
   String get showMoreSubtitle;
 
   /// No description provided for @sni.
@@ -1174,6 +1174,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Via SSTP (Tor-over-SSTP)'**
   String get torViaSstp;
+
+  /// No description provided for @torViaFfvpn.
+  ///
+  /// In en, this message translates to:
+  /// **'Via Firefox VPN (Tor-over-Firefox VPN)'**
+  String get torViaFfvpn;
+
+  /// No description provided for @torViaLantern.
+  ///
+  /// In en, this message translates to:
+  /// **'Via Lantern (Tor-over-Lantern)'**
+  String get torViaLantern;
+
+  /// No description provided for @torViaGeph.
+  ///
+  /// In en, this message translates to:
+  /// **'Via Geph (Tor-over-Geph)'**
+  String get torViaGeph;
 
   /// No description provided for @tunnelCore.
   ///
@@ -1901,6 +1919,24 @@ abstract class AppLocalizations {
   /// **'WireGuard (SOCKS upstream)'**
   String get sstpWireGuardUpstream;
 
+  /// No description provided for @upstreamViaFfvpn.
+  ///
+  /// In en, this message translates to:
+  /// **'Firefox VPN (SOCKS upstream)'**
+  String get upstreamViaFfvpn;
+
+  /// No description provided for @upstreamViaLantern.
+  ///
+  /// In en, this message translates to:
+  /// **'Lantern (SOCKS upstream)'**
+  String get upstreamViaLantern;
+
+  /// No description provided for @upstreamViaGeph.
+  ///
+  /// In en, this message translates to:
+  /// **'Geph (SOCKS upstream)'**
+  String get upstreamViaGeph;
+
   /// No description provided for @diagnosticsReport.
   ///
   /// In en, this message translates to:
@@ -2339,6 +2375,18 @@ abstract class AppLocalizations {
   /// **'WireGuard (SOCKS)'**
   String get ffvpnUpstreamWireguard;
 
+  /// No description provided for @ffvpnUpstreamLantern.
+  ///
+  /// In en, this message translates to:
+  /// **'Lantern (SOCKS)'**
+  String get ffvpnUpstreamLantern;
+
+  /// No description provided for @ffvpnUpstreamGeph.
+  ///
+  /// In en, this message translates to:
+  /// **'Geph (SOCKS)'**
+  String get ffvpnUpstreamGeph;
+
   /// No description provided for @ffvpnUpstreamVia.
   ///
   /// In en, this message translates to:
@@ -2381,17 +2429,41 @@ abstract class AppLocalizations {
   /// **'No countries loaded yet — press \"Load country list\".'**
   String get ffvpnCountriesEmpty;
 
-  /// No description provided for @ffvpnShowPremium.
+  /// No description provided for @ffvpnCountriesFilteredOut.
   ///
   /// In en, this message translates to:
-  /// **'Show premium-only countries'**
-  String get ffvpnShowPremium;
+  /// **'No country matches the selected filter.'**
+  String get ffvpnCountriesFilteredOut;
 
-  /// No description provided for @ffvpnShowPremiumDesc.
+  /// No description provided for @ffvpnCountryFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Show'**
+  String get ffvpnCountryFilter;
+
+  /// No description provided for @ffvpnCountryFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All countries'**
+  String get ffvpnCountryFilterAll;
+
+  /// No description provided for @ffvpnCountryFilterFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free only'**
+  String get ffvpnCountryFilterFree;
+
+  /// No description provided for @ffvpnCountryFilterPlus.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium only'**
+  String get ffvpnCountryFilterPlus;
+
+  /// No description provided for @ffvpnCountryFilterHint.
   ///
   /// In en, this message translates to:
   /// **'Countries locked behind a Mozilla VPN subscription are hidden by default, like in Firefox.'**
-  String get ffvpnShowPremiumDesc;
+  String get ffvpnCountryFilterHint;
 
   /// No description provided for @ffvpnPremiumTag.
   ///
@@ -2561,6 +2633,18 @@ abstract class AppLocalizations {
   /// **'WireGuard'**
   String get lanternUpstreamWireguard;
 
+  /// No description provided for @lanternUpstreamFfvpn.
+  ///
+  /// In en, this message translates to:
+  /// **'Firefox VPN'**
+  String get lanternUpstreamFfvpn;
+
+  /// No description provided for @lanternUpstreamGeph.
+  ///
+  /// In en, this message translates to:
+  /// **'Geph'**
+  String get lanternUpstreamGeph;
+
   /// No description provided for @lanternUpstreamDesc.
   ///
   /// In en, this message translates to:
@@ -2662,6 +2746,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Running'**
   String get lanternRunning;
+
+  /// No description provided for @gephSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Geph Settings'**
+  String get gephSettings;
+
+  /// No description provided for @gephConnectionSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection'**
+  String get gephConnectionSection;
+
+  /// No description provided for @gephPortSocks.
+  ///
+  /// In en, this message translates to:
+  /// **'SOCKS port'**
+  String get gephPortSocks;
+
+  /// No description provided for @gephPortHttp.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTP port (0 = off)'**
+  String get gephPortHttp;
+
+  /// No description provided for @gephCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit country'**
+  String get gephCountry;
+
+  /// No description provided for @gephCountryAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto (any country)'**
+  String get gephCountryAuto;
+
+  /// No description provided for @gephCountryRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh list'**
+  String get gephCountryRefresh;
+
+  /// No description provided for @gephCountryFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Show'**
+  String get gephCountryFilter;
+
+  /// No description provided for @gephCountryFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All countries'**
+  String get gephCountryFilterAll;
+
+  /// No description provided for @gephCountryFilterFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free only'**
+  String get gephCountryFilterFree;
+
+  /// No description provided for @gephCountryFilterPlus.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium only'**
+  String get gephCountryFilterPlus;
+
+  /// No description provided for @gephAccountSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Geph account'**
+  String get gephAccountSection;
+
+  /// No description provided for @gephAccountReady.
+  ///
+  /// In en, this message translates to:
+  /// **'An account code is saved.'**
+  String get gephAccountReady;
+
+  /// No description provided for @gephAccountMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'No account yet — press “Create account”, or set a login code / account file above.'**
+  String get gephAccountMissing;
+
+  /// No description provided for @gephAccountPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Account code file: {path}'**
+  String gephAccountPath(String path);
+
+  /// No description provided for @gephSignupBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get gephSignupBtn;
+
+  /// No description provided for @gephIHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'I have an account'**
+  String get gephIHaveAccount;
+
+  /// No description provided for @gephRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Running'**
+  String get gephRunning;
+
+  /// No description provided for @logSourceGeph.
+  ///
+  /// In en, this message translates to:
+  /// **'Geph'**
+  String get logSourceGeph;
+
+  /// No description provided for @gephUpstreamSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Upstream proxy'**
+  String get gephUpstreamSection;
+
+  /// No description provided for @gephUpstreamDirect.
+  ///
+  /// In en, this message translates to:
+  /// **'None (direct)'**
+  String get gephUpstreamDirect;
+
+  /// No description provided for @gephUpstreamManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual proxy'**
+  String get gephUpstreamManual;
+
+  /// No description provided for @gephUpstreamPsiphon.
+  ///
+  /// In en, this message translates to:
+  /// **'Psiphon'**
+  String get gephUpstreamPsiphon;
+
+  /// No description provided for @gephUpstreamTor.
+  ///
+  /// In en, this message translates to:
+  /// **'Tor'**
+  String get gephUpstreamTor;
+
+  /// No description provided for @gephUpstreamSstp.
+  ///
+  /// In en, this message translates to:
+  /// **'SSTP'**
+  String get gephUpstreamSstp;
+
+  /// No description provided for @gephUpstreamWireguard.
+  ///
+  /// In en, this message translates to:
+  /// **'WireGuard'**
+  String get gephUpstreamWireguard;
+
+  /// No description provided for @gephUpstreamFfvpn.
+  ///
+  /// In en, this message translates to:
+  /// **'Firefox VPN'**
+  String get gephUpstreamFfvpn;
+
+  /// No description provided for @gephUpstreamLantern.
+  ///
+  /// In en, this message translates to:
+  /// **'Lantern'**
+  String get gephUpstreamLantern;
+
+  /// No description provided for @gephUpstreamDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Geph reaches its broker and exits through this proxy first — use it when your direct connection is blocked. Creating or checking the account goes through it too.'**
+  String get gephUpstreamDesc;
+
+  /// No description provided for @gephUpstreamManualNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted schemes: socks5://, socks5h://, http:// and https://.'**
+  String get gephUpstreamManualNote;
+
+  /// Upstream hop for Geph
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is the upstream hop (SOCKS on 127.0.0.1:{port}) and is started automatically if it is not running yet.'**
+  String gephUpstreamVia(String name, String port);
+
+  /// No description provided for @gephAccountSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Account code source'**
+  String get gephAccountSource;
+
+  /// No description provided for @gephAccountSourceFile.
+  ///
+  /// In en, this message translates to:
+  /// **'File'**
+  String get gephAccountSourceFile;
+
+  /// No description provided for @gephAccountSourceCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Login code'**
+  String get gephAccountSourceCode;
+
+  /// No description provided for @gephAccountFilePath.
+  ///
+  /// In en, this message translates to:
+  /// **'Account code file'**
+  String get gephAccountFilePath;
+
+  /// No description provided for @gephAccountFileHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty to use the account file in the app data folder.'**
+  String get gephAccountFileHint;
+
+  /// No description provided for @gephLoginCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Login code'**
+  String get gephLoginCodeLabel;
+
+  /// No description provided for @gephLoginCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Geph login code — saved in the app settings.'**
+  String get gephLoginCodeHint;
+
+  /// No description provided for @gephAccountSavedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Login code saved to {path}'**
+  String gephAccountSavedTo(String path);
 }
 
 class _AppLocalizationsDelegate

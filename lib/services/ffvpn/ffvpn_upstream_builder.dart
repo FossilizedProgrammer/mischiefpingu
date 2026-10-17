@@ -30,6 +30,12 @@ class FfvpnUpstreamBuilder {
   /// SOCKS محلی WireGuard.
   static const int wireguard = 6;
 
+  /// SOCKS محلی Lantern.
+  static const int lantern = 8;
+
+  /// SOCKS محلی Geph.
+  static const int geph = 9;
+
   final AppSettings settings;
   final ProcessService processService;
 
@@ -56,6 +62,10 @@ class FfvpnUpstreamBuilder {
         return 'SSTP';
       case wireguard:
         return 'WireGuard';
+      case lantern:
+        return 'Lantern';
+      case geph:
+        return 'Geph';
       default:
         return 'Direct';
     }
@@ -72,6 +82,10 @@ class FfvpnUpstreamBuilder {
         return settings.sstpSocksPort;
       case wireguard:
         return settings.wireguardSocksPort;
+      case lantern:
+        return settings.lanternSocksPort;
+      case geph:
+        return settings.gephSocksPort;
       default:
         return null;
     }

@@ -31,6 +31,9 @@ class TorBridgeResolver {
     int? psiphonSocks,
     int? sstpSocks,
     int? wireguardSocks,
+    int? ffvpnSocks,
+    int? lanternSocks,
+    int? gephSocks,
   }) {
     final transport = settings.torTransport;
 
@@ -39,14 +42,29 @@ class TorBridgeResolver {
         : TorBridges.parseBridges(settings.torBridges);
 
     int? upstreamSocks;
-    if (transport == 'psiphon' && psiphonSocks != null) {
-      upstreamSocks = psiphonSocks;
-    } else if (transport == 'sstp' && sstpSocks != null) {
-      upstreamSocks = sstpSocks;
-    } else if (transport == 'manual' && settings.torProxyPort > 0) {
-      upstreamSocks = settings.torProxyPort;
-    } else if (transport == 'wireguard' && wireguardSocks != null) {
-      upstreamSocks = wireguardSocks;
+    switch (transport) {
+      case 'psiphon':
+        upstreamSocks = psiphonSocks;
+        break;
+      case 'sstp':
+        upstreamSocks = sstpSocks;
+        break;
+      case 'wireguard':
+        upstreamSocks = wireguardSocks;
+        break;
+      case 'ffvpn':
+        upstreamSocks = ffvpnSocks;
+        break;
+      case 'lantern':
+        upstreamSocks = lanternSocks;
+        break;
+      case 'geph':
+        upstreamSocks = gephSocks;
+        break;
+      case 'manual':
+        upstreamSocks =
+            settings.torProxyPort > 0 ? settings.torProxyPort : null;
+        break;
     }
 
     final usePtProxy = upstreamSocks != null && rawBridges.isNotEmpty;

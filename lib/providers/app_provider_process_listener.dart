@@ -33,6 +33,8 @@ extension AppProviderProcessListener on AppProvider {
       ffvpnConnected: processService.isFfvpnConnected,
       lanternRunning: processService.isLanternRunning,
       lanternConnected: processService.isLanternConnected,
+      gephRunning: processService.isGephRunning,
+      gephConnected: processService.isGephConnected,
     );
     final previousState = _lastTunnelState;
     final stateChanged = previousState != currentState;

@@ -13,7 +13,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get appSubtitle =>
-      'Неофициальный клиент Psiphon, клиент Tor, клиент SSTP, клиент WireGuard, клиент Firefox VPN, клиент Lantern';
+      'Неофициальный клиент Psiphon, клиент Tor, клиент SSTP, клиент WireGuard, клиент Firefox VPN, клиент Lantern, неофициальный клиент Geph';
 
   @override
   String get add => 'Добавить';
@@ -509,7 +509,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get showMoreSubtitle =>
-      'Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Lantern, Scanner, Updates, Log';
+      'Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Lantern, Geph, Scanner, Updates, Log';
 
   @override
   String get sni => 'SNI';
@@ -582,6 +582,15 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get torViaSstp => 'Через SSTP (Tor-over-SSTP)';
+
+  @override
+  String get torViaFfvpn => 'Через Firefox VPN (Tor-over-Firefox VPN)';
+
+  @override
+  String get torViaLantern => 'Через Lantern (Tor-over-Lantern)';
+
+  @override
+  String get torViaGeph => 'Через Geph (Tor-over-Geph)';
 
   @override
   String get tunnelCore => 'Ядро туннеля';
@@ -967,6 +976,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sstpWireGuardUpstream => 'WireGuard (SOCKS upstream)';
 
   @override
+  String get upstreamViaFfvpn => 'Firefox VPN (SOCKS upstream)';
+
+  @override
+  String get upstreamViaLantern => 'Lantern (SOCKS upstream)';
+
+  @override
+  String get upstreamViaGeph => 'Geph (SOCKS upstream)';
+
+  @override
   String get diagnosticsReport => 'Диагностический отчёт';
 
   @override
@@ -1221,6 +1239,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ffvpnUpstreamWireguard => 'WireGuard (SOCKS)';
 
   @override
+  String get ffvpnUpstreamLantern => 'Lantern (SOCKS)';
+
+  @override
+  String get ffvpnUpstreamGeph => 'Geph (SOCKS)';
+
+  @override
   String ffvpnUpstreamVia(String name, String port) {
     return '$name используется как восходящий узел (SOCKS на 127.0.0.1:$port) и запускается автоматически, если ещё не работает.';
   }
@@ -1246,11 +1270,23 @@ class AppLocalizationsRu extends AppLocalizations {
       'Страны ещё не загружены — нажмите «Загрузить список стран».';
 
   @override
-  String get ffvpnShowPremium =>
-      'Показывать страны только для премиум-аккаунтов';
+  String get ffvpnCountriesFilteredOut =>
+      'Ни одна страна не соответствует выбранному фильтру.';
 
   @override
-  String get ffvpnShowPremiumDesc =>
+  String get ffvpnCountryFilter => 'Показывать';
+
+  @override
+  String get ffvpnCountryFilterAll => 'Все страны';
+
+  @override
+  String get ffvpnCountryFilterFree => 'Только бесплатные';
+
+  @override
+  String get ffvpnCountryFilterPlus => 'Только премиум';
+
+  @override
+  String get ffvpnCountryFilterHint =>
       'Страны, заблокированные без подписки Mozilla VPN; по умолчанию скрыты, как в самом Firefox.';
 
   @override
@@ -1351,6 +1387,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get lanternUpstreamWireguard => 'WireGuard';
 
   @override
+  String get lanternUpstreamFfvpn => 'Firefox VPN';
+
+  @override
+  String get lanternUpstreamGeph => 'Geph';
+
+  @override
   String get lanternUpstreamDesc =>
       'Соединения с серверами Lantern (а если они недоступны — и ваш трафик) идут через этот прокси; используйте его, когда IP-адреса серверов Lantern заблокированы.';
 
@@ -1404,4 +1446,132 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get lanternRunning => 'Выполняется';
+
+  @override
+  String get gephSettings => 'Настройки Geph';
+
+  @override
+  String get gephConnectionSection => 'Подключение';
+
+  @override
+  String get gephPortSocks => 'Порт SOCKS';
+
+  @override
+  String get gephPortHttp => 'Порт HTTP (0 = выкл.)';
+
+  @override
+  String get gephCountry => 'Страна выхода';
+
+  @override
+  String get gephCountryAuto => 'Авто (любая страна)';
+
+  @override
+  String get gephCountryRefresh => 'Обновить список';
+
+  @override
+  String get gephCountryFilter => 'Показывать';
+
+  @override
+  String get gephCountryFilterAll => 'Все страны';
+
+  @override
+  String get gephCountryFilterFree => 'Только бесплатные';
+
+  @override
+  String get gephCountryFilterPlus => 'Только премиум';
+
+  @override
+  String get gephAccountSection => 'Аккаунт Geph';
+
+  @override
+  String get gephAccountReady => 'Код аккаунта сохранён.';
+
+  @override
+  String get gephAccountMissing =>
+      'Аккаунта пока нет — нажмите «Создать аккаунт» или укажите код/файл выше.';
+
+  @override
+  String gephAccountPath(String path) {
+    return 'Файл с кодом аккаунта: $path';
+  }
+
+  @override
+  String get gephSignupBtn => 'Создать аккаунт';
+
+  @override
+  String get gephIHaveAccount => 'У меня есть аккаунт';
+
+  @override
+  String get gephRunning => 'Выполняется';
+
+  @override
+  String get logSourceGeph => 'Geph';
+
+  @override
+  String get gephUpstreamSection => 'Апстрим-прокси';
+
+  @override
+  String get gephUpstreamDirect => 'Нет (напрямую)';
+
+  @override
+  String get gephUpstreamManual => 'Ручной прокси';
+
+  @override
+  String get gephUpstreamPsiphon => 'Psiphon';
+
+  @override
+  String get gephUpstreamTor => 'Tor';
+
+  @override
+  String get gephUpstreamSstp => 'SSTP';
+
+  @override
+  String get gephUpstreamWireguard => 'WireGuard';
+
+  @override
+  String get gephUpstreamFfvpn => 'Firefox VPN';
+
+  @override
+  String get gephUpstreamLantern => 'Lantern';
+
+  @override
+  String get gephUpstreamDesc =>
+      'Geph сначала ходит к брокеру и выходам через этот прокси — используйте его, когда прямое соединение заблокировано. Создание и проверка аккаунта тоже идут через него.';
+
+  @override
+  String get gephUpstreamManualNote =>
+      'Допустимые схемы: socks5://, socks5h://, http:// и https://.';
+
+  @override
+  String gephUpstreamVia(String name, String port) {
+    return '$name — апстрим-хоп (SOCKS на 127.0.0.1:$port); если он не запущен, будет запущен автоматически.';
+  }
+
+  @override
+  String get gephAccountSource => 'Источник кода аккаунта';
+
+  @override
+  String get gephAccountSourceFile => 'Файл';
+
+  @override
+  String get gephAccountSourceCode => 'Код входа';
+
+  @override
+  String get gephAccountFilePath => 'Файл кода аккаунта';
+
+  @override
+  String get gephAccountFileHint =>
+      'Оставьте пустым, чтобы использовать файл кода аккаунта в папке данных приложения.';
+
+  @override
+  String get gephLoginCodeLabel => 'Код входа';
+
+  @override
+  String get gephLoginCodeHint =>
+      'Ваш код входа Geph — сохраняется в настройках приложения.';
+
+  @override
+  String gephAccountSavedTo(String path) {
+    return 'Код входа сохранён в $path';
+  }
 }

@@ -45,6 +45,14 @@ void main() {
       builder.buildUrl(),
       'socks5://127.0.0.1:${settings.wireguardSocksPort}',
     );
+
+    settings.lanternUpstreamType = LanternUpstreamBuilder.ffvpn;
+    expect(builder.buildUrl(), 'socks5://127.0.0.1:${settings.ffvpnSocksPort}');
+    expect(builder.label, 'Firefox VPN');
+
+    settings.lanternUpstreamType = LanternUpstreamBuilder.geph;
+    expect(builder.buildUrl(), 'socks5://127.0.0.1:${settings.gephSocksPort}');
+    expect(builder.label, 'Geph');
   });
 
   test('manual upstream needs host and port', () {

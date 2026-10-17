@@ -62,6 +62,14 @@ class FfvpnUpstreamSection extends StatelessWidget {
               value: FfvpnUpstreamBuilder.wireguard,
               child: Text(l10n.ffvpnUpstreamWireguard),
             ),
+            DropdownMenuItem(
+              value: FfvpnUpstreamBuilder.lantern,
+              child: Text(l10n.ffvpnUpstreamLantern),
+            ),
+            DropdownMenuItem(
+              value: FfvpnUpstreamBuilder.geph,
+              child: Text(l10n.ffvpnUpstreamGeph),
+            ),
           ],
           onChanged: (v) {
             s.ffvpnUpstreamType = v ?? FfvpnUpstreamBuilder.direct;
@@ -109,6 +117,10 @@ class FfvpnUpstreamSection extends StatelessWidget {
         return 'SSTP';
       case FfvpnUpstreamBuilder.wireguard:
         return 'WireGuard';
+      case FfvpnUpstreamBuilder.lantern:
+        return 'Lantern';
+      case FfvpnUpstreamBuilder.geph:
+        return 'Geph';
       default:
         return '';
     }
@@ -124,6 +136,10 @@ class FfvpnUpstreamSection extends StatelessWidget {
         return s.sstpSocksPort;
       case FfvpnUpstreamBuilder.wireguard:
         return s.wireguardSocksPort;
+      case FfvpnUpstreamBuilder.lantern:
+        return s.lanternSocksPort;
+      case FfvpnUpstreamBuilder.geph:
+        return s.gephSocksPort;
       default:
         return 0;
     }

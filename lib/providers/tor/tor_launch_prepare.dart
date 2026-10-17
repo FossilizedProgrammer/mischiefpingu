@@ -68,6 +68,18 @@ extension AppProviderTorLaunchPrepare on AppProvider {
             settings.torTransport == 'psiphon' ? settings.socksPort : null,
         sstpSocks:
             settings.torTransport == 'sstp' ? settings.sstpSocksPort : null,
+        wireguardSocks: settings.torTransport == 'wireguard'
+            ? settings.wireguardSocksPort
+            : null,
+        ffvpnSocks: settings.torTransport == 'ffvpn'
+            ? settings.ffvpnSocksPort
+            : null,
+        lanternSocks: settings.torTransport == 'lantern'
+            ? settings.lanternSocksPort
+            : null,
+        gephSocks: settings.torTransport == 'geph'
+            ? settings.gephSocksPort
+            : null,
       );
 
       // ─── write torrc ───

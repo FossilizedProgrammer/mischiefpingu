@@ -13,14 +13,11 @@ mixin WindowCloseHandler<T extends StatefulWidget> on State<T> {
     _closing = true;
 
     final provider = context.read<AppProvider>();
-    final ps = provider.processService;
 
-    final hasActiveTunnel = ps.isPsiphonRunning ||
-        ps.isTorRunning ||
-        ps.isSstpRunning ||
-        ps.isWireGuardRunning; // ← اضافه شد
-
-    if (!hasActiveTunnel) {
+    // ⚠️ این چک باید *همهٔ* تونلها (از جمله Geph/Firefox VPN/Lantern) را
+    // ببیند؛ وگرنه وقتی فقط یکی از آنها روشن است، مسیر fast-close انتخاب
+    // می‌شود و پروسهش زنده رها می‌ماند. منبع مرجع: AppProvider.
+    if (!provider.hasActiveTunnel) {
       await _fastClose(provider);
       return;
     }

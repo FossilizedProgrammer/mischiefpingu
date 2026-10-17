@@ -32,6 +32,8 @@ void main() {
         FfvpnUpstreamBuilder.tor: 'socks5://127.0.0.1:19050',
         FfvpnUpstreamBuilder.sstp: 'socks5://127.0.0.1:1082',
         FfvpnUpstreamBuilder.wireguard: 'socks5://127.0.0.1:1085',
+        FfvpnUpstreamBuilder.lantern: 'socks5://127.0.0.1:18071',
+        FfvpnUpstreamBuilder.geph: 'socks5://127.0.0.1:9909',
       };
       for (final entry in cases.entries) {
         final s = AppSettings()..ffvpnUpstreamType = entry.key;

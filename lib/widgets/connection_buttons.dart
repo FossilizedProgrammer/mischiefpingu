@@ -27,11 +27,12 @@ class ConnectionButtons extends StatelessWidget {
     final wireGuardData = resolver.resolveWireGuard(builder);
     final ffvpnData = resolver.resolveFfvpn(builder);
     final lanternData = resolver.resolveLantern(builder);
+    final gephData = resolver.resolveGeph(builder);
 
     final onSurface = theme.colorScheme.onSurface;
 
     // هر دکمه در slot مساوی می‌نشیند و در پنجره‌های باریک کوچک می‌شود تا
-    // شش دکمه همیشه جا باشند (پنجرهٔ برنامه تا ۶۸۰px باریک می‌شود).
+    // همه دکمه‌ها همیشه جا باشند (پنجرهٔ برنامه تا ۶۸۰px باریک می‌شود).
     Widget slot(CircleConnectButton button) => Expanded(
           child: Center(
             child: FittedBox(
@@ -147,6 +148,25 @@ class ConnectionButtons extends StatelessWidget {
                 l10n,
               ),
               statusColor: lanternData.state.statusColor(
+                theme.colorScheme.primary,
+                onSurface,
+              ),
+            ),
+          ),
+          slot(
+            CircleConnectButton(
+              title: 'Geph',
+              actionLabel: gephData.state.actionLabel,
+              icon: gephData.state.icon,
+              color: gephData.state.color,
+              busy: gephData.state.busy,
+              connected: gephData.state.connected,
+              onTap: () => provider.connectGeph(),
+              statusText: gephData.state.statusText(
+                gephData.progress,
+                l10n,
+              ),
+              statusColor: gephData.state.statusColor(
                 theme.colorScheme.primary,
                 onSurface,
               ),

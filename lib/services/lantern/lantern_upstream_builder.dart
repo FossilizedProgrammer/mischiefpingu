@@ -30,6 +30,12 @@ class LanternUpstreamBuilder {
   /// SOCKS محلی WireGuard.
   static const int wireguard = 6;
 
+  /// SOCKS محلی Firefox VPN.
+  static const int ffvpn = 7;
+
+  /// SOCKS محلی Geph.
+  static const int geph = 9;
+
   final AppSettings settings;
   final ProcessService processService;
 
@@ -56,6 +62,10 @@ class LanternUpstreamBuilder {
         return 'SSTP';
       case wireguard:
         return 'WireGuard';
+      case ffvpn:
+        return 'Firefox VPN';
+      case geph:
+        return 'Geph';
       default:
         return 'Direct';
     }
@@ -72,6 +82,10 @@ class LanternUpstreamBuilder {
         return settings.sstpSocksPort;
       case wireguard:
         return settings.wireguardSocksPort;
+      case ffvpn:
+        return settings.ffvpnSocksPort;
+      case geph:
+        return settings.gephSocksPort;
       default:
         return null;
     }
@@ -108,6 +122,10 @@ class LanternUpstreamBuilder {
         return processService.isSstpRunning;
       case wireguard:
         return processService.isWireGuardRunning;
+      case ffvpn:
+        return processService.isFfvpnRunning;
+      case geph:
+        return processService.isGephRunning;
       default:
         return true;
     }

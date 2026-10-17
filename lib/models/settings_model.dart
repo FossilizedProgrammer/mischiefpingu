@@ -85,7 +85,12 @@ class AppSettings {
   // ═══════════════════════════════════════════════════════════════
   String ffvpnSessionToken;
   String ffvpnCountry;
-  bool ffvpnShowPremiumCountries;
+
+  /// فیلتر نمایش لیست کشورها: 'free' | 'plus' | 'all'.
+  ///
+  /// پیش‌فرض `free` است؛ یعنی مثل خود فایرفاکس کشورهای قفل‌شدهٔ پرمیوم
+  /// پنهان می‌مانند (جانشین بولین قدیمی `ffvpnShowPremiumCountries`).
+  String ffvpnCountryFilter;
   int ffvpnSocksPort;
   int ffvpnHttpPort;
   String ffvpnSni;
@@ -107,6 +112,36 @@ class AppSettings {
   int lanternProxyPort;
   String lanternProxyUser;
   String lanternProxyPass;
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Geph5 (geph5-proxy) settings
+  // ═══════════════════════════════════════════════════════════════
+  int gephSocksPort;
+  int gephHttpPort;
+  String gephCountry;
+
+  /// فیلتر نمایش لیست کشورها: 'all' | 'free' | 'plus'.
+  String gephCountryFilter;
+  bool gephShareLan;
+  int gephUpstreamType;
+  String gephProxyType;
+  String gephProxyIp;
+  int gephProxyPort;
+  String gephProxyUser;
+  String gephProxyPass;
+
+  /// منبع کد حساب گف: از فایل ([gephAccountSourceFile]) یا کد لاگین
+  /// ذخیره‌شده در تنظیمات ([gephAccountSourceCode]).
+  String gephAccountSource;
+
+  /// مسیر فایل کد حساب؛ خالی یعنی مسیر پیش‌فرض داخل پوشهٔ داده.
+  String gephAccountFile;
+
+  /// کد لاگین گف (وقتی منبع روی «کد لاگین» است).
+  String gephAccountCode;
+
+  static const String gephAccountSourceFile = 'file';
+  static const String gephAccountSourceCode = 'code';
 
   String themeId;
   bool muted;
@@ -171,7 +206,7 @@ class AppSettings {
     this.sstpMtu = 1400,
     this.ffvpnSessionToken = '',
     this.ffvpnCountry = '',
-    this.ffvpnShowPremiumCountries = false,
+    this.ffvpnCountryFilter = 'free',
     this.ffvpnSocksPort = 1083,
     this.ffvpnHttpPort = 8083,
     this.ffvpnSni = '',
@@ -189,6 +224,20 @@ class AppSettings {
     this.lanternProxyPort = 1080,
     this.lanternProxyUser = '',
     this.lanternProxyPass = '',
+    this.gephSocksPort = 9909,
+    this.gephHttpPort = 9910,
+    this.gephCountry = 'auto',
+    this.gephCountryFilter = 'all',
+    this.gephShareLan = false,
+    this.gephUpstreamType = 0,
+    this.gephProxyType = 'socks5',
+    this.gephProxyIp = '',
+    this.gephProxyPort = 1080,
+    this.gephProxyUser = '',
+    this.gephProxyPass = '',
+    this.gephAccountSource = gephAccountSourceFile,
+    this.gephAccountFile = '',
+    this.gephAccountCode = '',
     this.psiphonBuildRev = '',
     this.psiphonBinarySha = '',
     this.themeId = 'ocean',
@@ -209,6 +258,7 @@ class AppSettings {
               'WireGuard',
               'Firefox VPN',
               'Lantern',
+              'Geph',
               'App',
               'System',
             ];

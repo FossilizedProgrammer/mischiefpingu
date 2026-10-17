@@ -290,6 +290,9 @@
   "torUpstream": "Tor (SOCKS upstream)",
   "torViaPsiphon": "Через Psiphon (Tor-over-Psiphon)",
   "torViaSstp": "Через SSTP (Tor-over-SSTP)",
+  "torViaFfvpn": "Через Firefox VPN (Tor-over-Firefox VPN)",
+  "torViaLantern": "Через Lantern (Tor-over-Lantern)",
+  "torViaGeph": "Через Geph (Tor-over-Geph)",
   "tunnelCore": "Ядро туннеля",
   "update": "Обновить",
   "upstream": "Upstream",
@@ -435,6 +438,9 @@
   "torViaWireGuard": "Через WireGuard (Tor-over-WireGuard)",
   "psiphonWireGuardUpstream": "WireGuard (SOCKS upstream)",
   "sstpWireGuardUpstream": "WireGuard (SOCKS upstream)",
+  "upstreamViaFfvpn": "Firefox VPN (SOCKS upstream)",
+  "upstreamViaLantern": "Lantern (SOCKS upstream)",
+  "upstreamViaGeph": "Geph (SOCKS upstream)",
   "wireguardCoreTitle": "Ядро WireGuard",
   "wireguardCoreDescription": "Выберите реализацию WireGuard. Amnezia добавляет обфускацию для жёсткой цензуры.",
   "wireguardCoreStandard": "Стандартное (wireguard-go)",
@@ -559,8 +565,8 @@
   "bridgeLoadFromScanner": "Загрузить из сканера мостов",
   "bridgeLoadFromScannerSubtitle": "Загрузить сохранённые рабочие мосты из раздела сканера мостов ниже",
   "bridgeNoSavedInScanner": "В сканере мостов пока нет сохранённых мостов",
-  "appSubtitle": "Неофициальный клиент Psiphon, клиент Tor, клиент SSTP, клиент WireGuard, клиент Firefox VPN, клиент Lantern",
-  "showMoreSubtitle": "Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Lantern, Scanner, Updates, Log",
+  "appSubtitle": "Неофициальный клиент Psiphon, клиент Tor, клиент SSTP, клиент WireGuard, клиент Firefox VPN, клиент Lantern, неофициальный клиент Geph",
+  "showMoreSubtitle": "Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Lantern, Geph, Scanner, Updates, Log",
   "logSourceFfvpn": "Firefox VPN",
   "ffvpnSettings": "Настройки Firefox VPN",
   "ffvpnGuideTitle": "Токен сессии аккаунта Firefox",
@@ -584,6 +590,8 @@
   "ffvpnUpstreamTor": "Tor (SOCKS)",
   "ffvpnUpstreamSstp": "SSTP (SOCKS)",
   "ffvpnUpstreamWireguard": "WireGuard (SOCKS)",
+  "ffvpnUpstreamLantern": "Lantern (SOCKS)",
+  "ffvpnUpstreamGeph": "Geph (SOCKS)",
   "ffvpnUpstreamVia": "{name} используется как восходящий узел (SOCKS на 127.0.0.1:{port}) и запускается автоматически, если ещё не работает.",
   "@ffvpnUpstreamVia": {
     "placeholders": {
@@ -601,8 +609,12 @@
   "ffvpnLoadCountries": "Загрузить список стран",
   "ffvpnCountriesLoading": "Загрузка списка стран…",
   "ffvpnCountriesEmpty": "Страны ещё не загружены — нажмите «Загрузить список стран».",
-  "ffvpnShowPremium": "Показывать страны только для премиум-аккаунтов",
-  "ffvpnShowPremiumDesc": "Страны, заблокированные без подписки Mozilla VPN; по умолчанию скрыты, как в самом Firefox.",
+  "ffvpnCountriesFilteredOut": "Ни одна страна не соответствует выбранному фильтру.",
+  "ffvpnCountryFilter": "Показывать",
+  "ffvpnCountryFilterAll": "Все страны",
+  "ffvpnCountryFilterFree": "Только бесплатные",
+  "ffvpnCountryFilterPlus": "Только премиум",
+  "ffvpnCountryFilterHint": "Страны, заблокированные без подписки Mozilla VPN; по умолчанию скрыты, как в самом Firefox.",
   "ffvpnPremiumTag": "премиум",
   "ffvpnQuotaSection": "Месячная квота трафика",
   "ffvpnCheckQuota": "Проверить квоту",
@@ -619,7 +631,6 @@
   "ffvpnErrBinaryMissing": "Бинарный файл ffvpn не найден в папке данных приложения.",
   "ffvpnErrNetwork": "Сетевая ошибка при обращении к Mozilla — проверьте соединение (возможно, нужен другой туннель) и повторите.",
   "ffvpnErrOther": "Ошибка ffvpn",
-
   "logSourceLantern": "Lantern",
   "lanternSettings": "Настройки Lantern",
   "lanternConnectionSection": "Подключение",
@@ -632,6 +643,8 @@
   "lanternUpstreamTor": "Tor",
   "lanternUpstreamSstp": "SSTP",
   "lanternUpstreamWireguard": "WireGuard",
+  "lanternUpstreamFfvpn": "Firefox VPN",
+  "lanternUpstreamGeph": "Geph",
   "lanternUpstreamDesc": "Соединения с серверами Lantern (а если они недоступны — и ваш трафик) идут через этот прокси; используйте его, когда IP-адреса серверов Lantern заблокированы.",
   "lanternUpstreamManualNote": "Допустимые схемы: socks5://, socks5h://, http:// и https://.",
   "lanternUpstreamVia": "{name} — апстрим-хоп (SOCKS на 127.0.0.1:{port}); если он не запущен, будет запущен автоматически.",
@@ -648,5 +661,68 @@
   "lanternLoginBtn": "Вход",
   "lanternSignupBtn": "Регистрация",
   "lanternLogoutBtn": "Выход",
-  "lanternRunning": "Выполняется"
+  "lanternRunning": "Выполняется",
+  "gephSettings": "Настройки Geph",
+  "gephConnectionSection": "Подключение",
+  "gephPortSocks": "Порт SOCKS",
+  "gephPortHttp": "Порт HTTP (0 = выкл.)",
+  "gephCountry": "Страна выхода",
+  "gephCountryAuto": "Авто (любая страна)",
+  "gephCountryRefresh": "Обновить список",
+  "gephCountryFilter": "Показывать",
+  "gephCountryFilterAll": "Все страны",
+  "gephCountryFilterFree": "Только бесплатные",
+  "gephCountryFilterPlus": "Только премиум",
+  "gephAccountSection": "Аккаунт Geph",
+  "gephAccountReady": "Код аккаунта сохранён.",
+  "gephAccountMissing": "Аккаунта пока нет — нажмите «Создать аккаунт» или укажите код/файл выше.",
+  "gephAccountPath": "Файл с кодом аккаунта: {path}",
+  "gephSignupBtn": "Создать аккаунт",
+  "gephIHaveAccount": "У меня есть аккаунт",
+  "gephRunning": "Выполняется",
+  "logSourceGeph": "Geph",
+  "gephUpstreamSection": "Апстрим-прокси",
+  "gephUpstreamDirect": "Нет (напрямую)",
+  "gephUpstreamManual": "Ручной прокси",
+  "gephUpstreamPsiphon": "Psiphon",
+  "gephUpstreamTor": "Tor",
+  "gephUpstreamSstp": "SSTP",
+  "gephUpstreamWireguard": "WireGuard",
+  "gephUpstreamFfvpn": "Firefox VPN",
+  "gephUpstreamLantern": "Lantern",
+  "gephUpstreamDesc": "Geph сначала ходит к брокеру и выходам через этот прокси — используйте его, когда прямое соединение заблокировано. Создание и проверка аккаунта тоже идут через него.",
+  "gephUpstreamManualNote": "Допустимые схемы: socks5://, socks5h://, http:// и https://.",
+  "gephUpstreamVia": "{name} — апстрим-хоп (SOCKS на 127.0.0.1:{port}); если он не запущен, будет запущен автоматически.",
+  "@gephAccountPath": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@gephUpstreamVia": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "port": {
+        "type": "String"
+      }
+    }
+  },
+  "gephAccountSource": "Источник кода аккаунта",
+  "gephAccountSourceFile": "Файл",
+  "gephAccountSourceCode": "Код входа",
+  "gephAccountFilePath": "Файл кода аккаунта",
+  "gephAccountFileHint": "Оставьте пустым, чтобы использовать файл кода аккаунта в папке данных приложения.",
+  "gephLoginCodeLabel": "Код входа",
+  "gephLoginCodeHint": "Ваш код входа Geph — сохраняется в настройках приложения.",
+  "gephAccountSavedTo": "Код входа сохранён в {path}",
+  "@gephAccountSavedTo": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -6,6 +6,7 @@ class LogSource {
   static const String wireguard = 'WireGuard';
   static const String ffvpn = 'Firefox VPN';
   static const String lantern = 'Lantern';
+  static const String geph = 'Geph';
   static const String app = 'App';
   static const String system = 'System';
   static const String empty = '';
@@ -19,6 +20,7 @@ class LogSource {
     wireguard,
     ffvpn,
     lantern,
+    geph,
     app,
     system,
   ];

@@ -7,6 +7,7 @@ import 'l10n/locale_provider.dart';
 import 'providers/app_provider.dart';
 import 'providers/cdn_scanner_provider.dart';
 import 'providers/ffvpn_provider.dart';
+import 'providers/geph_provider.dart';
 import 'providers/internet_quality_provider.dart';
 import 'providers/lantern_provider.dart';
 import 'providers/sstp_fetcher_provider.dart';
@@ -71,6 +72,10 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) =>
               LanternProvider(processService: appProvider.processService),
+        ),
+        ChangeNotifierProvider(
+          create: (_) =>
+              GephProvider(processService: appProvider.processService),
         ),
       ],
       child: const MyApp(),

@@ -1,9 +1,10 @@
 part of 'app_provider.dart';
 
 /// ═══════════════════════════════════════════════════════════════
-///  هندل کردن upstream (Psiphon / SSTP) برای Tor
+///  هندل کردن upstream برای Tor
+///  (Psiphon / SSTP / WireGuard / Firefox VPN / Lantern / Geph)
 ///
-///  ⚠️ FIX:
+///  ⚠️ نکات:
 ///   • isAutoTesting در try/finally
 ///   • چک userStoppedTor بعد از هر await
 /// ═══════════════════════════════════════════════════════════════
@@ -11,98 +12,61 @@ extension AppProviderTorUpstream on AppProvider {
   Future<({bool ok, String type, String detail})> resolveTorUpstream({
     required bool fromAutoReconnect,
   }) async {
-    const src = LogSource.tor;
-
-    if (settings.torTransport == 'psiphon') {
-      if (processService.isPsiphonRunning) {
-        processService.addLog(
-          '→ Tor upstream: Psiphon already running',
-          source: src,
+    switch (settings.torTransport) {
+      case 'psiphon':
+        return _resolveTorChainedTunnel(
+          type: 'psiphon',
+          label: 'Psiphon',
+          isRunning: () => processService.isPsiphonRunning,
+          stoppedByUser: () => userStoppedPsiphon,
+          start: () => connectPsiphon(fromAutoReconnect: fromAutoReconnect),
+          fromAutoReconnect: fromAutoReconnect,
         );
-        return (ok: true, type: 'psiphon', detail: 'via Psiphon');
-      }
-
-      if (fromAutoReconnect && userStoppedPsiphon) {
-        torStatus = 'Tor: upstream Psiphon stopped by user — skipped';
-        processService.addLog(
-          '→ Tor auto-reconnect skipped (upstream Psiphon was stopped by user)',
-          source: src,
+      case 'sstp':
+        return _resolveTorChainedTunnel(
+          type: 'sstp',
+          label: 'SSTP',
+          isRunning: () => processService.isSstpRunning,
+          stoppedByUser: () => userStoppedSstp,
+          start: () => connectSstp(fromAutoReconnect: fromAutoReconnect),
+          fromAutoReconnect: fromAutoReconnect,
         );
-        touch();
-        return (ok: false, type: 'psiphon', detail: '');
-      }
-
-      torStatus = 'Tor: starting Psiphon upstream…';
-      touch();
-
-      await connectPsiphon(fromAutoReconnect: fromAutoReconnect);
-
-      // ⚠️ FIX: چک cancel
-      if (userStoppedTor) {
-        processService.addLog(
-          'Tor start cancelled by user (after Psiphon upstream)',
-          source: src,
+      case 'wireguard':
+        return _resolveTorChainedTunnel(
+          type: 'wireguard',
+          label: 'WireGuard',
+          isRunning: () => processService.isWireGuardRunning,
+          stoppedByUser: () => userStoppedWireGuard,
+          start: () => connectWireGuard(fromAutoReconnect: fromAutoReconnect),
+          fromAutoReconnect: fromAutoReconnect,
         );
-        return (ok: false, type: 'psiphon', detail: '');
-      }
-
-      if (!processService.isPsiphonRunning) {
-        torStatus = 'Tor: Psiphon unavailable — Tor not started';
-        processService.addLog(
-          '✗ Psiphon unavailable → Tor not started',
-          source: src,
+      case 'ffvpn':
+        return _resolveTorChainedTunnel(
+          type: 'ffvpn',
+          label: 'Firefox VPN',
+          isRunning: () => processService.isFfvpnRunning,
+          stoppedByUser: () => userStoppedFfvpn,
+          start: () => connectFfvpn(),
+          fromAutoReconnect: fromAutoReconnect,
         );
-        return (ok: false, type: 'psiphon', detail: '');
-      }
-
-      processService.addLog('→ Tor will chain through Psiphon', source: src);
-      return (ok: true, type: 'psiphon', detail: 'via Psiphon');
-    }
-
-    if (settings.torTransport == 'sstp') {
-      if (processService.isSstpRunning) {
-        processService.addLog(
-          '→ Tor upstream: SSTP already running',
-          source: src,
+      case 'lantern':
+        return _resolveTorChainedTunnel(
+          type: 'lantern',
+          label: 'Lantern',
+          isRunning: () => processService.isLanternRunning,
+          stoppedByUser: () => userStoppedLantern,
+          start: () => connectLantern(),
+          fromAutoReconnect: fromAutoReconnect,
         );
-        return (ok: true, type: 'sstp', detail: 'via SSTP');
-      }
-
-      if (fromAutoReconnect && userStoppedSstp) {
-        torStatus = 'Tor: upstream SSTP stopped by user — skipped';
-        processService.addLog(
-          '→ Tor auto-reconnect skipped (upstream SSTP was stopped by user)',
-          source: src,
+      case 'geph':
+        return _resolveTorChainedTunnel(
+          type: 'geph',
+          label: 'Geph',
+          isRunning: () => processService.isGephRunning,
+          stoppedByUser: () => userStoppedGeph,
+          start: () => connectGeph(),
+          fromAutoReconnect: fromAutoReconnect,
         );
-        touch();
-        return (ok: false, type: 'sstp', detail: '');
-      }
-
-      torStatus = 'Tor: starting SSTP upstream…';
-      touch();
-
-      await connectSstp(fromAutoReconnect: fromAutoReconnect);
-
-      // ⚠️ FIX: چک cancel
-      if (userStoppedTor) {
-        processService.addLog(
-          'Tor start cancelled by user (after SSTP upstream)',
-          source: src,
-        );
-        return (ok: false, type: 'sstp', detail: '');
-      }
-
-      if (!processService.isSstpRunning) {
-        torStatus = 'Tor: SSTP unavailable — Tor not started';
-        processService.addLog(
-          '✗ SSTP unavailable → Tor not started',
-          source: src,
-        );
-        return (ok: false, type: 'sstp', detail: '');
-      }
-
-      processService.addLog('→ Tor will chain through SSTP', source: src);
-      return (ok: true, type: 'sstp', detail: 'via SSTP');
     }
 
     if (settings.torTransport == 'bridge') {
@@ -125,5 +89,63 @@ extension AppProviderTorUpstream on AppProvider {
     }
 
     return (ok: true, type: 'direct', detail: 'direct connection');
+  }
+
+  /// بالا آوردن تونل آپ‌استریم برای Tor (اگر لازم باشد).
+  ///
+  /// `ok = false` یعنی Tor نباید شروع شود.
+  Future<({bool ok, String type, String detail})> _resolveTorChainedTunnel({
+    required String type,
+    required String label,
+    required bool Function() isRunning,
+    required bool Function() stoppedByUser,
+    required Future<void> Function() start,
+    required bool fromAutoReconnect,
+  }) async {
+    const src = LogSource.tor;
+
+    if (isRunning()) {
+      processService.addLog(
+        '→ Tor upstream: $label already running',
+        source: src,
+      );
+      return (ok: true, type: type, detail: 'via $label');
+    }
+
+    if (fromAutoReconnect && stoppedByUser()) {
+      torStatus = 'Tor: upstream $label stopped by user — skipped';
+      processService.addLog(
+        '→ Tor auto-reconnect skipped (upstream $label was stopped by user)',
+        source: src,
+      );
+      touch();
+      return (ok: false, type: type, detail: '');
+    }
+
+    torStatus = 'Tor: starting $label upstream…';
+    touch();
+
+    await start();
+
+    // ⚠️ FIX: چک cancel
+    if (userStoppedTor) {
+      processService.addLog(
+        'Tor start cancelled by user (after $label upstream)',
+        source: src,
+      );
+      return (ok: false, type: type, detail: '');
+    }
+
+    if (!isRunning()) {
+      torStatus = 'Tor: $label unavailable — Tor not started';
+      processService.addLog(
+        '✗ $label unavailable → Tor not started',
+        source: src,
+      );
+      return (ok: false, type: type, detail: '');
+    }
+
+    processService.addLog('→ Tor will chain through $label', source: src);
+    return (ok: true, type: type, detail: 'via $label');
   }
 }

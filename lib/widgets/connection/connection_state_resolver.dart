@@ -96,4 +96,18 @@ class ConnectionStateResolver {
       isBusy: lanternBusy,
     );
   }
+
+  ConnectionButtonData resolveGeph(ConnectionButtonBuilder builder) {
+    final ps = provider.processService;
+    final gephOn = ps.isGephConnected;
+    final gephBusy = provider.isGephBusy && !ps.isGephRunning;
+    final gephRunningForButton =
+        ps.isGephRunning || (provider.isGephBusy && !gephOn);
+
+    return builder.forSstp(
+      isRunning: gephRunningForButton,
+      isConnected: gephOn,
+      isBusy: gephBusy,
+    );
+  }
 }

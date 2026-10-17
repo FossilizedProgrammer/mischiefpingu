@@ -8,6 +8,7 @@ import '../tor_settings_tile.dart';
 import '../sstp_settings_tile.dart';
 import '../wireguard_settings_tile.dart';
 import '../lantern_settings_tile.dart';
+import '../geph_settings_tile.dart';
 
 class SettingsGroupTunnels extends StatelessWidget {
   const SettingsGroupTunnels({super.key});
@@ -22,6 +23,7 @@ class SettingsGroupTunnels extends StatelessWidget {
         WireGuardSettingsTile(),
         FirefoxVpnSettingsTile(),
         LanternSettingsTile(),
+        GephSettingsTile(),
       ],
     );
   }

@@ -8,6 +8,8 @@ import '../services/process_service.dart';
 import '../services/privilege_service.dart';
 import '../services/app_data_service.dart';
 import '../services/ffvpn/ffvpn_upstream_builder.dart';
+import '../services/geph/geph_upstream_builder.dart';
+import '../services/geph/geph_cli_service.dart';
 import '../services/lantern/lantern_upstream_builder.dart';
 import '../services/lantern/lantern_cli_service.dart';
 import '../services/psiphon_config_builder.dart';
@@ -23,6 +25,7 @@ import '../services/tunnel_watchdog_factory.dart';
 import '../services/psiphon/psiphon_log_watcher.dart';
 import '../services/tor/tor_log_watcher.dart';
 import '../services/sstp/sstp_log_watcher.dart';
+import '../services/sstp/sstp_upstream_builder.dart';
 import '../services/recovery/recovery_coordinator.dart';
 import '../services/diagnostics/connectivity_probe.dart';
 import '../services/network/network_change_detector.dart';
@@ -72,6 +75,8 @@ part 'app_provider_ffvpn.dart';
 part 'ffvpn/ffvpn_preflight.dart';
 part 'app_provider_lantern.dart';
 part 'lantern/lantern_preflight.dart';
+part 'app_provider_geph.dart';
+part 'geph/geph_preflight.dart';
 part 'app_provider_constructor.dart';
 part 'app_provider_dispose.dart';
 part 'app_provider_public_actions.dart';
@@ -113,6 +118,13 @@ class AppProvider extends ChangeNotifier {
   int _lanternGeneration = 0;
   int get lanternGeneration => _lanternGeneration;
   int nextLanternGeneration() => ++_lanternGeneration;
+
+  bool isGephBusy = false;
+  bool userStoppedGeph = true;
+  String gephStatus = 'Geph: Ready';
+  int _gephGeneration = 0;
+  int get gephGeneration => _gephGeneration;
+  int nextGephGeneration() => ++_gephGeneration;
 
   late RecoveryCoordinator _recoveryCoordinator;
   RecoveryCoordinator get recoveryCoordinator => _recoveryCoordinator;
@@ -180,6 +192,29 @@ class AppProvider extends ChangeNotifier {
 
   AppProvider() {
     initializeAppProvider(this);
+  }
+
+  /// آیا تونلی در حال کار است یا وسط start/stop؟
+  ///
+  /// محل مرجع این پرسش است: مسیر بستن پنجره با همین تصمیم می‌گیرد که آیا
+  /// لازم است قبل از خروج تونل‌ها بسته شوند یا نه. اگر تونلی اینجا جا بیفتد،
+  /// هنگام بستن برنامه زنده رها می‌شود.
+  bool get hasActiveTunnel {
+    final ps = processService;
+    return ps.isPsiphonRunning ||
+        isPsiphonBusy ||
+        ps.isTorRunning ||
+        isTorBusy ||
+        ps.isSstpRunning ||
+        isSstpBusy ||
+        ps.isWireGuardRunning ||
+        isWireGuardBusy ||
+        ps.isFfvpnRunning ||
+        isFfvpnBusy ||
+        ps.isLanternRunning ||
+        isLanternBusy ||
+        ps.isGephRunning ||
+        isGephBusy;
   }
 
   void attachQualityProvider(InternetQualityProvider provider) {

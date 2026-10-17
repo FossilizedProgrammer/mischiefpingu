@@ -1,7 +1,7 @@
 {
   "@@locale": "fa",
   "appTitle": "پینگوی شیطون",
-  "appSubtitle": "کلاینت غیر رسمی سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس VPN، لنترن",
+  "appSubtitle": "کلاینت غیر رسمی سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس VPN، لنترن، کلاینت غیررسمی گف",
   "add": "افزودن",
   "addNew": "افزودن جدید",
   "allServers": "همه سرورها",
@@ -267,7 +267,7 @@
   "showLess": "نمایش کمتر",
   "showLessSubtitle": "پنهان کردن تنظیمات پیشرفته و لاگ‌ها",
   "showMore": "نمایش بیشتر",
-  "showMoreSubtitle": "ظاهر، سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس VPN، لنترن، اسکنر، آپدیت‌ها، لاگ",
+  "showMoreSubtitle": "ظاهر، سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس VPN، لنترن، گف، اسکنر، آپدیت‌ها، لاگ",
   "sni": "SNI",
   "sniList": "لیست SNI (هر خط یکی، ترتیب = اولویت)",
   "socksPort": "پورت SOCKS",
@@ -292,6 +292,9 @@
   "torUpstream": "تور (آپ‌استریم SOCKS)",
   "torViaPsiphon": "از طریق سایفون (Tor-over-Psiphon)",
   "torViaSstp": "از طریق اس‌اس‌تی‌پی (Tor-over-SSTP)",
+  "torViaFfvpn": "از طریق فایرفاکس VPN (Tor-over-Firefox VPN)",
+  "torViaLantern": "از طریق لنترن (Tor-over-Lantern)",
+  "torViaGeph": "از طریق گف (Tor-over-Geph)",
   "tunnelCore": "هسته تونل",
   "update": "آپدیت",
   "upstream": "آپ‌استریم",
@@ -423,6 +426,9 @@
   "torViaWireGuard": "از طریق وایرگارد (Tor-over-WireGuard)",
   "psiphonWireGuardUpstream": "وایرگارد (آپ‌استریم SOCKS)",
   "sstpWireGuardUpstream": "وایرگارد (آپ‌استریم SOCKS)",
+  "upstreamViaFfvpn": "فایرفاکس VPN (آپ‌استریم SOCKS)",
+  "upstreamViaLantern": "لنترن (آپ‌استریم SOCKS)",
+  "upstreamViaGeph": "گف (آپ‌استریم SOCKS)",
   "wireguardCoreTitle": "هسته وایرگارد",
   "wireguardCoreDescription": "پیاده‌سازی WireGuard را انتخاب کنید. Amnezia برای فیلترینگ سنگین، مبهم‌سازی اضافه می‌کند.",
   "wireguardCoreStandard": "استاندارد (wireguard-go)",
@@ -570,6 +576,8 @@
   "ffvpnUpstreamTor": "تور (SOCKS)",
   "ffvpnUpstreamSstp": "SSTP (SOCKS)",
   "ffvpnUpstreamWireguard": "وایرگارد (SOCKS)",
+  "ffvpnUpstreamLantern": "لنترن (SOCKS)",
+  "ffvpnUpstreamGeph": "گف (SOCKS)",
   "ffvpnUpstreamVia": "{name} به‌عنوان hop آپ‌استریم استفاده می‌شود (SOCKS روی 127.0.0.1:{port}) و اگر هنوز بالا نیست به‌صورت خودکار بالا می‌آید.",
   "@ffvpnUpstreamVia": {
     "placeholders": {
@@ -587,8 +595,12 @@
   "ffvpnLoadCountries": "دریافت فهرست کشورها",
   "ffvpnCountriesLoading": "در حال دریافت فهرست کشورها…",
   "ffvpnCountriesEmpty": "هنوز کشوری بارگذاری نشده — «دریافت فهرست کشورها» را بزنید.",
-  "ffvpnShowPremium": "نمایش کشورهای مخصوص اکانت پرمیوم",
-  "ffvpnShowPremiumDesc": "کشورهای قفل‌شده که اشتراک Mozilla VPN می‌خواهند؛ مثل خود فایرفاکس، به‌صورت پیش‌فرض پنهان‌اند.",
+  "ffvpnCountriesFilteredOut": "هیچ کشوری با فیلتر انتخاب‌شده مطابقت ندارد.",
+  "ffvpnCountryFilter": "نمایش",
+  "ffvpnCountryFilterAll": "همهٔ کشورها",
+  "ffvpnCountryFilterFree": "فقط رایگان",
+  "ffvpnCountryFilterPlus": "فقط پرمیوم",
+  "ffvpnCountryFilterHint": "کشورهای قفل‌شده که اشتراک Mozilla VPN می‌خواهند؛ مثل خود فایرفاکس، به‌صورت پیش‌فرض پنهان‌اند.",
   "ffvpnPremiumTag": "پرمیوم",
   "ffvpnQuotaSection": "سهمیهٔ ماهانهٔ پهنای باند",
   "ffvpnCheckQuota": "بررسی سهمیه",
@@ -605,7 +617,6 @@
   "ffvpnErrBinaryMissing": "باینری ffvpn در پوشهٔ دادهٔ برنامه پیدا نشد.",
   "ffvpnErrNetwork": "خطای شبکه در اتصال به موزیلا — اتصال را بررسی کنید (شاید لازم باشد تونل دیگری فعال باشد) و دوباره تلاش کنید.",
   "ffvpnErrOther": "خطای ffvpn",
-
   "logSourceLantern": "لنترن",
   "lanternSettings": "تنظیمات لنترن",
   "lanternConnectionSection": "اتصال",
@@ -618,6 +629,8 @@
   "lanternUpstreamTor": "تور",
   "lanternUpstreamSstp": "SSTP",
   "lanternUpstreamWireguard": "وایرگارد",
+  "lanternUpstreamFfvpn": "فایرفاکس VPN",
+  "lanternUpstreamGeph": "گف",
   "lanternUpstreamDesc": "اتصال به سرورهای لنترن (و در نبود سرور سالم، ترافیک شما هم) از این پروکسی عبور می‌کند — وقتی IP سرورهای لنترن بلاک است از آن استفاده کنید.",
   "lanternUpstreamManualNote": "اسکیم‌های مجاز: socks5:// ،socks5h:// ،http:// و https://.",
   "lanternUpstreamVia": "{name} هاپ آپ‌استریم است (SOCKS روی 127.0.0.1:{port}) و اگر بالا نباشد به‌طور خودکار بالا آورده می‌شود.",
@@ -634,5 +647,68 @@
   "lanternLoginBtn": "ورود",
   "lanternSignupBtn": "ثبت‌نام",
   "lanternLogoutBtn": "خروج",
-  "lanternRunning": "در حال اجرا"
+  "lanternRunning": "در حال اجرا",
+  "gephSettings": "تنظیمات گف",
+  "gephConnectionSection": "اتصال",
+  "gephPortSocks": "پورت SOCKS",
+  "gephPortHttp": "پورت HTTP (۰ = غیرفعال)",
+  "gephCountry": "کشور خروجی",
+  "gephCountryAuto": "خودکار (هر کشوری)",
+  "gephCountryRefresh": "بروزرسانی لیست",
+  "gephCountryFilter": "نمایش",
+  "gephCountryFilterAll": "همهٔ کشورها",
+  "gephCountryFilterFree": "فقط رایگان",
+  "gephCountryFilterPlus": "فقط پرمیوم",
+  "gephAccountSection": "حساب گف",
+  "gephAccountReady": "کد حساب ذخیره شده است.",
+  "gephAccountMissing": "هنوز حسابی ساخته نشده — «ساخت حساب» را بزنید، یا منبع کد/فایل را بالا مشخص کنید.",
+  "gephAccountPath": "فایل کد حساب: {path}",
+  "gephSignupBtn": "ساخت حساب",
+  "gephIHaveAccount": "حساب دارم",
+  "gephRunning": "در حال اجرا",
+  "logSourceGeph": "گف",
+  "gephUpstreamSection": "آپ‌استریم",
+  "gephUpstreamDirect": "بدون آپ‌استریم (مستقیم)",
+  "gephUpstreamManual": "پروکسی دستی",
+  "gephUpstreamPsiphon": "سایفون",
+  "gephUpstreamTor": "تور",
+  "gephUpstreamSstp": "SSTP",
+  "gephUpstreamWireguard": "وایرگارد",
+  "gephUpstreamFfvpn": "فایرفاکس VPN",
+  "gephUpstreamLantern": "لنترن",
+  "gephUpstreamDesc": "گف اول بروکر و خروجی‌هایش را از این پروکسی می‌فرستد — وقتی اتصال مستقیم بلاک است از آن استفاده کنید. ساخت و بررسی حساب هم از همین مسیر می‌رود.",
+  "gephUpstreamManualNote": "اسکیم‌های مجاز: socks5:// ،socks5h:// ،http:// و https://.",
+  "gephUpstreamVia": "{name} هاپ آپ‌استریم است (SOCKS روی 127.0.0.1:{port}) و اگر بالا نباشد به‌طور خودکار بالا آورده می‌شود.",
+  "@gephAccountPath": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@gephUpstreamVia": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "port": {
+        "type": "String"
+      }
+    }
+  },
+  "gephAccountSource": "منبع کد حساب",
+  "gephAccountSourceFile": "فایل",
+  "gephAccountSourceCode": "کد لاگین",
+  "gephAccountFilePath": "فایل کد حساب",
+  "gephAccountFileHint": "خالی بگذارید تا از فایل کد حساب داخل پوشهٔ دادهٔ برنامه استفاده شود.",
+  "gephLoginCodeLabel": "کد لاگین",
+  "gephLoginCodeHint": "کد لاگین گف — در تنظیمات برنامه ذخیره می‌شود.",
+  "gephAccountSavedTo": "کد لاگین در {path} ذخیره شد",
+  "@gephAccountSavedTo": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  }
 }

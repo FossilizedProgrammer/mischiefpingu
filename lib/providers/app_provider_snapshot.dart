@@ -19,6 +19,8 @@ class _TunnelStateSnapshot {
   final bool ffvpnConnected;
   final bool lanternRunning;
   final bool lanternConnected;
+  final bool gephRunning;
+  final bool gephConnected;
 
   const _TunnelStateSnapshot({
     required this.psiphonRunning,
@@ -35,6 +37,8 @@ class _TunnelStateSnapshot {
     required this.ffvpnConnected,
     required this.lanternRunning,
     required this.lanternConnected,
+    required this.gephRunning,
+    required this.gephConnected,
   });
 
   @override
@@ -54,7 +58,9 @@ class _TunnelStateSnapshot {
         other.ffvpnRunning == ffvpnRunning &&
         other.ffvpnConnected == ffvpnConnected &&
         other.lanternRunning == lanternRunning &&
-        other.lanternConnected == lanternConnected;
+        other.lanternConnected == lanternConnected &&
+        other.gephRunning == gephRunning &&
+        other.gephConnected == gephConnected;
   }
 
   @override
@@ -73,5 +79,7 @@ class _TunnelStateSnapshot {
         ffvpnConnected,
         lanternRunning,
         lanternConnected,
+        gephRunning,
+        gephConnected,
       );
 }

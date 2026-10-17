@@ -4,25 +4,60 @@ import '../../models/settings_model.dart';
 import '../process_service.dart';
 
 class SstpUpstreamBuilder {
+  /// بدون آپ‌استریم — اتصال مستقیم.
+  static const int direct = 0;
+
+  /// پروکسی دستی که خود کاربر آدرس/پورت‌اش را می‌دهد.
+  static const int manual = 1;
+
+  /// SOCKS محلی Psiphon.
+  static const int psiphon = 3;
+
+  /// SOCKS محلی Tor.
+  static const int tor = 4;
+
+  /// SOCKS محلی WireGuard.
+  static const int wireguard = 5;
+
+  /// SOCKS محلی Firefox VPN.
+  static const int ffvpn = 6;
+
+  /// SOCKS محلی Lantern.
+  static const int lantern = 7;
+
+  /// SOCKS محلی Geph.
+  static const int geph = 8;
+
   final AppSettings settings;
   final ProcessService processService;
 
   SstpUpstreamBuilder({required this.settings, required this.processService});
 
+  int get type => settings.sstpUpstreamType;
+
   /// args مربوط به upstream را به لیست اضافه می‌کند.
   void apply(List<String> args) {
     switch (settings.sstpUpstreamType) {
-      case 1:
+      case manual:
         _applyManual(args);
         break;
-      case 3:
-        _applyPsiphon(args);
+      case psiphon:
+        _applySocks(args, settings.socksPort, 'Psiphon');
         break;
-      case 4:
-        _applyTor(args);
+      case tor:
+        _applySocks(args, settings.torSocksPort, 'Tor');
         break;
-      case 5:
-        _applyWireGuard(args);
+      case wireguard:
+        _applySocks(args, settings.wireguardSocksPort, 'WireGuard');
+        break;
+      case ffvpn:
+        _applySocks(args, settings.ffvpnSocksPort, 'Firefox VPN');
+        break;
+      case lantern:
+        _applySocks(args, settings.lanternSocksPort, 'Lantern');
+        break;
+      case geph:
+        _applySocks(args, settings.gephSocksPort, 'Geph');
         break;
       default:
         break;
@@ -45,27 +80,11 @@ class SstpUpstreamBuilder {
     }
   }
 
-  void _applyPsiphon(List<String> args) {
-    args.addAll(['-proxy', 'socks5://127.0.0.1:${settings.socksPort}']);
-    processService.addLog(
-      '→ SSTP upstream: Psiphon (127.0.0.1:${settings.socksPort})',
-      source: LogSource.sstp,
-    );
-  }
-
-  void _applyTor(List<String> args) {
-    args.addAll(['-proxy', 'socks5://127.0.0.1:${settings.torSocksPort}']);
-    processService.addLog(
-      '→ SSTP upstream: Tor (127.0.0.1:${settings.torSocksPort})',
-      source: LogSource.sstp,
-    );
-  }
-
-  void _applyWireGuard(List<String> args) {
-    final port = settings.wireguardSocksPort;
+  /// یک آپ‌استریم SOCKS محلی را به argv اضافه می‌کند.
+  void _applySocks(List<String> args, int port, String label) {
     args.addAll(['-proxy', 'socks5://127.0.0.1:$port']);
     processService.addLog(
-      '→ SSTP upstream: WireGuard (127.0.0.1:$port)',
+      '→ SSTP upstream: $label (127.0.0.1:$port)',
       source: LogSource.sstp,
     );
   }

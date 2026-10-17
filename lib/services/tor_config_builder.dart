@@ -21,12 +21,18 @@ class TorConfigBuilder {
     int? psiphonSocks,
     int? sstpSocks,
     int? wireguardSocks,
+    int? ffvpnSocks,
+    int? lanternSocks,
+    int? gephSocks,
   }) {
     final decision = TorBridgeResolver.resolve(
       settings: settings,
       psiphonSocks: psiphonSocks,
       sstpSocks: sstpSocks,
       wireguardSocks: wireguardSocks,
+      ffvpnSocks: ffvpnSocks,
+      lanternSocks: lanternSocks,
+      gephSocks: gephSocks,
     );
 
     final sb = StringBuffer();

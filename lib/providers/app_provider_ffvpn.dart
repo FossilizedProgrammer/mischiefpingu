@@ -226,6 +226,20 @@ extension AppProviderFfvpn on AppProvider {
           isRunning: () => processService.isWireGuardRunning,
           start: () => connectWireGuard(fromAutoReconnect: false),
         );
+      case FfvpnUpstreamBuilder.lantern:
+        return _ensureFfvpnUpstreamTunnel(
+          name: 'Lantern',
+          port: port,
+          isRunning: () => processService.isLanternRunning,
+          start: () => connectLantern(),
+        );
+      case FfvpnUpstreamBuilder.geph:
+        return _ensureFfvpnUpstreamTunnel(
+          name: 'Geph',
+          port: port,
+          isRunning: () => processService.isGephRunning,
+          start: () => connectGeph(),
+        );
       default:
         return true;
     }

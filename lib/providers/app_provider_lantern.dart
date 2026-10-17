@@ -211,6 +211,20 @@ extension AppProviderLantern on AppProvider {
           isRunning: () => processService.isWireGuardRunning,
           start: () => connectWireGuard(fromAutoReconnect: false),
         );
+      case LanternUpstreamBuilder.ffvpn:
+        return _ensureLanternUpstreamTunnel(
+          name: 'Firefox VPN',
+          port: port,
+          isRunning: () => processService.isFfvpnRunning,
+          start: () => connectFfvpn(),
+        );
+      case LanternUpstreamBuilder.geph:
+        return _ensureLanternUpstreamTunnel(
+          name: 'Geph',
+          port: port,
+          isRunning: () => processService.isGephRunning,
+          start: () => connectGeph(),
+        );
       default:
         return true;
     }

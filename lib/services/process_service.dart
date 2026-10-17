@@ -16,6 +16,7 @@ import 'package:path/path.dart' as p;
 import '../models/wireguard_core_type.dart';
 import 'app_data_service.dart';
 import 'ffvpn/ffvpn_upstream_builder.dart';
+import 'geph/geph_cli_service.dart';
 import 'lantern/lantern_cli_service.dart';
 import 'log_line_parsers.dart';
 import 'port_manager.dart';
@@ -54,6 +55,7 @@ part 'process_service_sstp.dart';
 part 'process_service_wireguard.dart';
 part 'process_service_ffvpn.dart';
 part 'process_service_lantern.dart';
+part 'process_service_geph.dart';
 
 class ProcessService extends ChangeNotifier
     with ProcessNotifications
@@ -91,6 +93,10 @@ class ProcessService extends ChangeNotifier
   bool isLanternRunning = false;
 
   bool isLanternConnected = false;
+
+  bool isGephRunning = false;
+
+  bool isGephConnected = false;
 
   @override
   bool isPsiphonConnected = false;
@@ -317,6 +323,7 @@ class ProcessService extends ChangeNotifier
   Process? sstpProcess;
   Process? ffvpnProcess;
   Process? lanternProcess;
+  Process? gephProcess;
 
   // ═══════════════════════════════════════════════════════════════
   //  Forwarder sockets
@@ -384,6 +391,7 @@ class ProcessService extends ChangeNotifier
   int? get sstpPid => sstpProcess?.pid;
   int? get ffvpnPid => ffvpnProcess?.pid;
   int? get lanternPid => lanternProcess?.pid;
+  int? get gephPid => gephProcess?.pid;
 
   // ═══════════════════════════════════════════════════════════════
   //  Lifecycle

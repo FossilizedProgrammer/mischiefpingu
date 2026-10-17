@@ -28,6 +28,9 @@ class TorTransportSelector extends StatelessWidget {
         DropdownMenuItem(value: 'psiphon', child: Text(l10n.torViaPsiphon)),
         DropdownMenuItem(value: 'sstp', child: Text(l10n.torViaSstp)),
         DropdownMenuItem(value: 'wireguard', child: Text(l10n.torViaWireGuard)),
+        DropdownMenuItem(value: 'ffvpn', child: Text(l10n.torViaFfvpn)),
+        DropdownMenuItem(value: 'lantern', child: Text(l10n.torViaLantern)),
+        DropdownMenuItem(value: 'geph', child: Text(l10n.torViaGeph)),
       ],
       onChanged: onTransportChanged,
     );

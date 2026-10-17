@@ -63,6 +63,14 @@ class LanternUpstreamSection extends StatelessWidget {
               value: LanternUpstreamBuilder.wireguard,
               child: Text(l10n.lanternUpstreamWireguard),
             ),
+            DropdownMenuItem(
+              value: LanternUpstreamBuilder.ffvpn,
+              child: Text(l10n.lanternUpstreamFfvpn),
+            ),
+            DropdownMenuItem(
+              value: LanternUpstreamBuilder.geph,
+              child: Text(l10n.lanternUpstreamGeph),
+            ),
           ],
           onChanged: (v) {
             s.lanternUpstreamType = v ?? LanternUpstreamBuilder.direct;
@@ -110,6 +118,10 @@ class LanternUpstreamSection extends StatelessWidget {
         return 'SSTP';
       case LanternUpstreamBuilder.wireguard:
         return 'WireGuard';
+      case LanternUpstreamBuilder.ffvpn:
+        return 'Firefox VPN';
+      case LanternUpstreamBuilder.geph:
+        return 'Geph';
       default:
         return '';
     }
@@ -125,6 +137,10 @@ class LanternUpstreamSection extends StatelessWidget {
         return s.sstpSocksPort;
       case LanternUpstreamBuilder.wireguard:
         return s.wireguardSocksPort;
+      case LanternUpstreamBuilder.ffvpn:
+        return s.ffvpnSocksPort;
+      case LanternUpstreamBuilder.geph:
+        return s.gephSocksPort;
       default:
         return 0;
     }

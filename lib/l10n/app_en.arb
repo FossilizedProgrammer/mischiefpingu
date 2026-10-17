@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
   "appTitle": "Mischief Pingu",
-  "appSubtitle": "Unofficial Psiphon client, Tor client, SSTP client, WireGuard client, Firefox VPN client, Lantern client",
+  "appSubtitle": "Unofficial Psiphon client, Tor client, SSTP client, WireGuard client, Firefox VPN client, Lantern client, Geph unofficial client",
   "add": "Add",
   "addNew": "Add new",
   "allServers": "All servers",
@@ -277,7 +277,7 @@
   "showLess": "Show less",
   "showLessSubtitle": "Hide advanced settings & logs",
   "showMore": "Show more",
-  "showMoreSubtitle": "Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Lantern, Scanner, Updates, Log",
+  "showMoreSubtitle": "Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Lantern, Geph, Scanner, Updates, Log",
   "sni": "SNI",
   "sniList": "SNI list (one per line, order = priority)",
   "socksPort": "SOCKS port",
@@ -302,6 +302,9 @@
   "torUpstream": "Tor (SOCKS upstream)",
   "torViaPsiphon": "Via Psiphon (Tor-over-Psiphon)",
   "torViaSstp": "Via SSTP (Tor-over-SSTP)",
+  "torViaFfvpn": "Via Firefox VPN (Tor-over-Firefox VPN)",
+  "torViaLantern": "Via Lantern (Tor-over-Lantern)",
+  "torViaGeph": "Via Geph (Tor-over-Geph)",
   "tunnelCore": "Tunnel core",
   "update": "Update",
   "upstream": "Upstream",
@@ -451,6 +454,9 @@
   "torViaWireGuard": "Via WireGuard (Tor-over-WireGuard)",
   "psiphonWireGuardUpstream": "WireGuard (SOCKS upstream)",
   "sstpWireGuardUpstream": "WireGuard (SOCKS upstream)",
+  "upstreamViaFfvpn": "Firefox VPN (SOCKS upstream)",
+  "upstreamViaLantern": "Lantern (SOCKS upstream)",
+  "upstreamViaGeph": "Geph (SOCKS upstream)",
   "diagnosticsReport": "Diagnostics Report",
   "diagnosticsReportGenerate": "Generate Report",
   "diagnosticsReportCopy": "Copy Report",
@@ -594,6 +600,8 @@
   "ffvpnUpstreamTor": "Tor (SOCKS)",
   "ffvpnUpstreamSstp": "SSTP (SOCKS)",
   "ffvpnUpstreamWireguard": "WireGuard (SOCKS)",
+  "ffvpnUpstreamLantern": "Lantern (SOCKS)",
+  "ffvpnUpstreamGeph": "Geph (SOCKS)",
   "ffvpnUpstreamVia": "{name} is the upstream hop (SOCKS on 127.0.0.1:{port}) and is started automatically if it is not running yet.",
   "@ffvpnUpstreamVia": {
     "placeholders": {
@@ -611,8 +619,12 @@
   "ffvpnLoadCountries": "Load country list",
   "ffvpnCountriesLoading": "Loading country list…",
   "ffvpnCountriesEmpty": "No countries loaded yet — press \"Load country list\".",
-  "ffvpnShowPremium": "Show premium-only countries",
-  "ffvpnShowPremiumDesc": "Countries locked behind a Mozilla VPN subscription are hidden by default, like in Firefox.",
+  "ffvpnCountriesFilteredOut": "No country matches the selected filter.",
+  "ffvpnCountryFilter": "Show",
+  "ffvpnCountryFilterAll": "All countries",
+  "ffvpnCountryFilterFree": "Free only",
+  "ffvpnCountryFilterPlus": "Premium only",
+  "ffvpnCountryFilterHint": "Countries locked behind a Mozilla VPN subscription are hidden by default, like in Firefox.",
   "ffvpnPremiumTag": "premium",
   "ffvpnQuotaSection": "Monthly bandwidth quota",
   "ffvpnCheckQuota": "Check quota",
@@ -656,7 +668,6 @@
   "ffvpnErrBinaryMissing": "The ffvpn binary was not found in the app data folder.",
   "ffvpnErrNetwork": "Network error while reaching Mozilla — check your connection (a tunnel may be needed) and try again.",
   "ffvpnErrOther": "ffvpn error",
-
   "logSourceLantern": "Lantern",
   "lanternSettings": "Lantern Settings",
   "lanternConnectionSection": "Connection",
@@ -669,6 +680,8 @@
   "lanternUpstreamTor": "Tor",
   "lanternUpstreamSstp": "SSTP",
   "lanternUpstreamWireguard": "WireGuard",
+  "lanternUpstreamFfvpn": "Firefox VPN",
+  "lanternUpstreamGeph": "Geph",
   "lanternUpstreamDesc": "Connections to Lantern's servers (and, if none is reachable, your traffic as well) travel through this proxy — use it when Lantern's own server IPs are blocked.",
   "lanternUpstreamManualNote": "Accepted schemes: socks5://, socks5h://, http:// and https://.",
   "lanternUpstreamVia": "{name} is the upstream hop (SOCKS on 127.0.0.1:{port}) and is started automatically if it is not running yet.",
@@ -695,5 +708,69 @@
   "lanternLoginBtn": "Log in",
   "lanternSignupBtn": "Sign up",
   "lanternLogoutBtn": "Log out",
-  "lanternRunning": "Running"
+  "lanternRunning": "Running",
+  "gephSettings": "Geph Settings",
+  "gephConnectionSection": "Connection",
+  "gephPortSocks": "SOCKS port",
+  "gephPortHttp": "HTTP port (0 = off)",
+  "gephCountry": "Exit country",
+  "gephCountryAuto": "Auto (any country)",
+  "gephCountryRefresh": "Refresh list",
+  "gephCountryFilter": "Show",
+  "gephCountryFilterAll": "All countries",
+  "gephCountryFilterFree": "Free only",
+  "gephCountryFilterPlus": "Premium only",
+  "gephAccountSection": "Geph account",
+  "gephAccountReady": "An account code is saved.",
+  "gephAccountMissing": "No account yet — press “Create account”, or set a login code / account file above.",
+  "gephAccountPath": "Account code file: {path}",
+  "gephSignupBtn": "Create account",
+  "gephIHaveAccount": "I have an account",
+  "gephRunning": "Running",
+  "logSourceGeph": "Geph",
+  "gephUpstreamSection": "Upstream proxy",
+  "gephUpstreamDirect": "None (direct)",
+  "gephUpstreamManual": "Manual proxy",
+  "gephUpstreamPsiphon": "Psiphon",
+  "gephUpstreamTor": "Tor",
+  "gephUpstreamSstp": "SSTP",
+  "gephUpstreamWireguard": "WireGuard",
+  "gephUpstreamFfvpn": "Firefox VPN",
+  "gephUpstreamLantern": "Lantern",
+  "gephUpstreamDesc": "Geph reaches its broker and exits through this proxy first — use it when your direct connection is blocked. Creating or checking the account goes through it too.",
+  "gephUpstreamManualNote": "Accepted schemes: socks5://, socks5h://, http:// and https://.",
+  "gephUpstreamVia": "{name} is the upstream hop (SOCKS on 127.0.0.1:{port}) and is started automatically if it is not running yet.",
+  "@gephAccountPath": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@gephUpstreamVia": {
+    "description": "Upstream hop for Geph",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "port": {
+        "type": "String"
+      }
+    }
+  },
+  "gephAccountSource": "Account code source",
+  "gephAccountSourceFile": "File",
+  "gephAccountSourceCode": "Login code",
+  "gephAccountFilePath": "Account code file",
+  "gephAccountFileHint": "Leave empty to use the account file in the app data folder.",
+  "gephLoginCodeLabel": "Login code",
+  "gephLoginCodeHint": "Your Geph login code — saved in the app settings.",
+  "gephAccountSavedTo": "Login code saved to {path}",
+  "@gephAccountSavedTo": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  }
 }

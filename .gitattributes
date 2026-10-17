@@ -6,3 +6,4 @@ bundled/linux/psiphon-tunnel-core-sunandlion filter=lfs diff=lfs merge=lfs -text
 bundled/linux/sstp-proxy filter=lfs diff=lfs merge=lfs -text
 bundled/**/tor/** filter=lfs diff=lfs merge=lfs -text
 bundled/linux/lantern filter=lfs diff=lfs merge=lfs -text
+bundled/linux/geph5-proxy filter=lfs diff=lfs merge=lfs -text

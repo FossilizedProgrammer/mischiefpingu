@@ -98,6 +98,8 @@ class LogFilterSection extends StatelessWidget {
         return l10n.logSourceFfvpn;
       case LogSource.lantern:
         return l10n.logSourceLantern;
+      case LogSource.geph:
+        return l10n.logSourceGeph;
       default:
         return source;
     }

@@ -152,5 +152,18 @@ extension AppProviderReconnect on AppProvider {
         lanternStatus = 'Lantern: Connecting…';
       }
     }
+
+    if (processService.isGephRunning) {
+      if (processService.isGephConnected) {
+        gephStatus = 'Geph: Connected';
+      } else if (gephStatus == 'Geph: Ready' ||
+          gephStatus == 'Geph: Stopped') {
+        gephStatus = 'Geph: Connecting…';
+      }
+    } else if (gephStatus == 'Geph: Starting…') {
+      // باینری هنگام استارت از پا درآمد (کد حساب، بروکر، پورت و…) تا
+      // status روی «در حال اتصال» گیر نکند.
+      gephStatus = 'Geph: Stopped';
+    }
   }
 }

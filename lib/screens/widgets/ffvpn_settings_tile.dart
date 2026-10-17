@@ -17,7 +17,7 @@ import 'ffvpn/ffvpn_upstream_section.dart';
 ///    • راهنمای گرفتن sessionToken از signedInUser.json
 ///    • فیلد توکن + پورت‌های SOCKS/HTTP + SNI سفارشی
 ///    • آپ‌استریم SOCKS (دستی / Psiphon / Tor / SSTP / WireGuard)
-///    • انتخاب کشور خروجی + کلید نمایش کشورهای premium
+///    • انتخاب کشور خروجی + فیلتر نمایش کشورهای premium
 ///    • نمایش مصرف سهمیهٔ ماهانهٔ پهنای باند
 /// ═══════════════════════════════════════════════════════════════
 class FirefoxVpnSettingsTile extends StatelessWidget {
@@ -168,7 +168,7 @@ class FfvpnGuideSection extends StatelessWidget {
   }
 }
 
-/// انتخاب کشور خروجی + کلید نمایش کشورهای premium.
+/// انتخاب کشور خروجی + فیلتر نمایش کشورهای premium.
 class FfvpnCountrySection extends StatelessWidget {
   final AppSettings s;
   final ThemeData theme;
@@ -183,24 +183,67 @@ class FfvpnCountrySection extends StatelessWidget {
     required this.onSave,
   });
 
+  /// فیلتر نمایش لیست کشورها: `all` | `free` | `plus`.
+  ///
+  /// `locked` یعنی کشور فقط با اشتراک Mozilla VPN باز می‌شود.
+  bool _matchesFilter(String filter, FfvpnCountry c) {
+    if (filter == 'all') return true;
+    return filter == 'plus' ? c.locked : !c.locked;
+  }
+
   @override
   Widget build(BuildContext context) {
     final ffvpn = context.watch<FfvpnProvider>();
+    final filter = s.ffvpnCountryFilter;
+
+    // «فقط رایگان» یعنی سراغ کشورهای پرمیوم نرو (`--free-only`)؛ در «همه»
+    // و «فقط پرمیوم» لیست کامل گرفته می‌شود و فیلتر فقط نمایش را محدود
+    // می‌کند تا تغییر فیلتر نیازی به درخواست تازه نداشته باشد.
+    final includePremium = filter != 'free';
+    final visible = ffvpn.countries.where((c) => _matchesFilter(filter, c));
 
     return SettingsSection(
       label: l10n.ffvpnCountrySection,
       children: [
-        SettingsSwitch(
-          title: l10n.ffvpnShowPremium,
-          subtitle: l10n.ffvpnShowPremiumDesc,
-          value: s.ffvpnShowPremiumCountries,
+        SettingsDropdown<String>(
+          key: const ValueKey('ffvpn-country-filter'),
+          labelText: l10n.ffvpnCountryFilter,
+          value: filter,
+          items: [
+            DropdownMenuItem(
+              value: 'all',
+              child: Text(l10n.ffvpnCountryFilterAll),
+            ),
+            DropdownMenuItem(
+              value: 'free',
+              child: Text(l10n.ffvpnCountryFilterFree),
+            ),
+            DropdownMenuItem(
+              value: 'plus',
+              child: Text(l10n.ffvpnCountryFilterPlus),
+            ),
+          ],
           onChanged: (v) {
-            s.ffvpnShowPremiumCountries = v;
+            final next = v ?? 'free';
+            // فقط وقتی «فقط رایگان» وارد/خارج می‌شود (و لیستی هم گرفته
+            // شده) دوباره از CLI بگیر؛ «همه» ↔ «فقط پرمیوم» فقط نمایش
+            // را عوض می‌کند و نیازی به درخواست تازه ندارد.
+            final needsReload =
+                (next == 'free') != (filter == 'free') && ffvpn.hasCountries;
+            s.ffvpnCountryFilter = next;
             onSave();
-            // لیست را با تنظیم جدید دوباره بگیر (پیش‌فرض: پنهان).
-            // ignore: discarded_futures
-            ffvpn.loadCountries(includePremium: v, force: true);
+            if (needsReload) {
+              // ignore: discarded_futures
+              ffvpn.loadCountries(includePremium: next != 'free', force: true);
+            }
           },
+        ),
+        const SizedBox(height: 6),
+        Text(
+          l10n.ffvpnCountryFilterHint,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: 8),
         Row(
@@ -211,7 +254,7 @@ class FfvpnCountrySection extends StatelessWidget {
                   : () {
                       // ignore: discarded_futures
                       ffvpn.loadCountries(
-                        includePremium: s.ffvpnShowPremiumCountries,
+                        includePremium: includePremium,
                         force: true,
                       );
                     },
@@ -246,9 +289,13 @@ class FfvpnCountrySection extends StatelessWidget {
               color: theme.colorScheme.error,
             ),
           )
-        else if (!ffvpn.hasCountries)
+        else if (visible.isEmpty)
           Text(
-            l10n.ffvpnCountriesEmpty,
+            // لیست گرفته شده ولی فیلتر همه را پنهان کرده؟ پیام گمراه‌کننده
+            // «هنوز چیزی بارگذاری نشده» را نشان نده.
+            ffvpn.hasCountries
+                ? l10n.ffvpnCountriesFilteredOut
+                : l10n.ffvpnCountriesEmpty,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
               fontStyle: FontStyle.italic,
@@ -258,7 +305,7 @@ class FfvpnCountrySection extends StatelessWidget {
           SettingsDropdown<String>(
             labelText: l10n.ffvpnCountrySection,
             value: s.ffvpnCountry.trim().toUpperCase(),
-            items: _dropdownItems(ffvpn),
+            items: _dropdownItems(visible),
             onChanged: (v) {
               s.ffvpnCountry = v ?? '';
               onSave();
@@ -268,14 +315,15 @@ class FfvpnCountrySection extends StatelessWidget {
     );
   }
 
-  List<DropdownMenuItem<String>> _dropdownItems(FfvpnProvider ffvpn) {
+  List<DropdownMenuItem<String>> _dropdownItems(Iterable<FfvpnCountry> visible) {
+    final list = visible.toList();
     final items = <DropdownMenuItem<String>>[
       DropdownMenuItem<String>(
         value: '',
         child: Text(l10n.ffvpnCountryAuto),
       ),
     ];
-    for (final c in ffvpn.countries) {
+    for (final c in list) {
       final label = c.locked
           ? '${c.code} · ${c.name} — ${l10n.ffvpnPremiumTag}'
           : '${c.code} · ${c.name}';
@@ -283,7 +331,7 @@ class FfvpnCountrySection extends StatelessWidget {
     }
     // کشور انتخاب‌شده که در لیست فعلی نیست را هم اضافه کن.
     final saved = s.ffvpnCountry.trim().toUpperCase();
-    if (saved.isNotEmpty && !ffvpn.countries.any((c) => c.code == saved)) {
+    if (saved.isNotEmpty && !list.any((c) => c.code == saved)) {
       items.add(DropdownMenuItem<String>(value: saved, child: Text(saved)));
     }
     return items;

@@ -13,7 +13,7 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get appSubtitle =>
-      'کلاینت غیر رسمی سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس VPN، لنترن';
+      'کلاینت غیر رسمی سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس VPN، لنترن، کلاینت غیررسمی گف';
 
   @override
   String get add => 'افزودن';
@@ -507,7 +507,7 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get showMoreSubtitle =>
-      'ظاهر، سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس VPN، لنترن، اسکنر، آپدیت‌ها، لاگ';
+      'ظاهر، سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس VPN، لنترن، گف، اسکنر، آپدیت‌ها، لاگ';
 
   @override
   String get sni => 'SNI';
@@ -580,6 +580,15 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get torViaSstp => 'از طریق اس‌اس‌تی‌پی (Tor-over-SSTP)';
+
+  @override
+  String get torViaFfvpn => 'از طریق فایرفاکس VPN (Tor-over-Firefox VPN)';
+
+  @override
+  String get torViaLantern => 'از طریق لنترن (Tor-over-Lantern)';
+
+  @override
+  String get torViaGeph => 'از طریق گف (Tor-over-Geph)';
 
   @override
   String get tunnelCore => 'هسته تونل';
@@ -963,6 +972,15 @@ class AppLocalizationsFa extends AppLocalizations {
   String get sstpWireGuardUpstream => 'وایرگارد (آپ‌استریم SOCKS)';
 
   @override
+  String get upstreamViaFfvpn => 'فایرفاکس VPN (آپ‌استریم SOCKS)';
+
+  @override
+  String get upstreamViaLantern => 'لنترن (آپ‌استریم SOCKS)';
+
+  @override
+  String get upstreamViaGeph => 'گف (آپ‌استریم SOCKS)';
+
+  @override
   String get diagnosticsReport => 'گزارش تشخیصی';
 
   @override
@@ -1216,6 +1234,12 @@ class AppLocalizationsFa extends AppLocalizations {
   String get ffvpnUpstreamWireguard => 'وایرگارد (SOCKS)';
 
   @override
+  String get ffvpnUpstreamLantern => 'لنترن (SOCKS)';
+
+  @override
+  String get ffvpnUpstreamGeph => 'گف (SOCKS)';
+
+  @override
   String ffvpnUpstreamVia(String name, String port) {
     return '$name به‌عنوان hop آپ‌استریم استفاده می‌شود (SOCKS روی 127.0.0.1:$port) و اگر هنوز بالا نیست به‌صورت خودکار بالا می‌آید.';
   }
@@ -1241,10 +1265,23 @@ class AppLocalizationsFa extends AppLocalizations {
       'هنوز کشوری بارگذاری نشده — «دریافت فهرست کشورها» را بزنید.';
 
   @override
-  String get ffvpnShowPremium => 'نمایش کشورهای مخصوص اکانت پرمیوم';
+  String get ffvpnCountriesFilteredOut =>
+      'هیچ کشوری با فیلتر انتخاب‌شده مطابقت ندارد.';
 
   @override
-  String get ffvpnShowPremiumDesc =>
+  String get ffvpnCountryFilter => 'نمایش';
+
+  @override
+  String get ffvpnCountryFilterAll => 'همهٔ کشورها';
+
+  @override
+  String get ffvpnCountryFilterFree => 'فقط رایگان';
+
+  @override
+  String get ffvpnCountryFilterPlus => 'فقط پرمیوم';
+
+  @override
+  String get ffvpnCountryFilterHint =>
       'کشورهای قفل‌شده که اشتراک Mozilla VPN می‌خواهند؛ مثل خود فایرفاکس، به‌صورت پیش‌فرض پنهان‌اند.';
 
   @override
@@ -1345,6 +1382,12 @@ class AppLocalizationsFa extends AppLocalizations {
   String get lanternUpstreamWireguard => 'وایرگارد';
 
   @override
+  String get lanternUpstreamFfvpn => 'فایرفاکس VPN';
+
+  @override
+  String get lanternUpstreamGeph => 'گف';
+
+  @override
   String get lanternUpstreamDesc =>
       'اتصال به سرورهای لنترن (و در نبود سرور سالم، ترافیک شما هم) از این پروکسی عبور می‌کند — وقتی IP سرورهای لنترن بلاک است از آن استفاده کنید.';
 
@@ -1398,4 +1441,132 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get lanternRunning => 'در حال اجرا';
+
+  @override
+  String get gephSettings => 'تنظیمات گف';
+
+  @override
+  String get gephConnectionSection => 'اتصال';
+
+  @override
+  String get gephPortSocks => 'پورت SOCKS';
+
+  @override
+  String get gephPortHttp => 'پورت HTTP (۰ = غیرفعال)';
+
+  @override
+  String get gephCountry => 'کشور خروجی';
+
+  @override
+  String get gephCountryAuto => 'خودکار (هر کشوری)';
+
+  @override
+  String get gephCountryRefresh => 'بروزرسانی لیست';
+
+  @override
+  String get gephCountryFilter => 'نمایش';
+
+  @override
+  String get gephCountryFilterAll => 'همهٔ کشورها';
+
+  @override
+  String get gephCountryFilterFree => 'فقط رایگان';
+
+  @override
+  String get gephCountryFilterPlus => 'فقط پرمیوم';
+
+  @override
+  String get gephAccountSection => 'حساب گف';
+
+  @override
+  String get gephAccountReady => 'کد حساب ذخیره شده است.';
+
+  @override
+  String get gephAccountMissing =>
+      'هنوز حسابی ساخته نشده — «ساخت حساب» را بزنید، یا منبع کد/فایل را بالا مشخص کنید.';
+
+  @override
+  String gephAccountPath(String path) {
+    return 'فایل کد حساب: $path';
+  }
+
+  @override
+  String get gephSignupBtn => 'ساخت حساب';
+
+  @override
+  String get gephIHaveAccount => 'حساب دارم';
+
+  @override
+  String get gephRunning => 'در حال اجرا';
+
+  @override
+  String get logSourceGeph => 'گف';
+
+  @override
+  String get gephUpstreamSection => 'آپ‌استریم';
+
+  @override
+  String get gephUpstreamDirect => 'بدون آپ‌استریم (مستقیم)';
+
+  @override
+  String get gephUpstreamManual => 'پروکسی دستی';
+
+  @override
+  String get gephUpstreamPsiphon => 'سایفون';
+
+  @override
+  String get gephUpstreamTor => 'تور';
+
+  @override
+  String get gephUpstreamSstp => 'SSTP';
+
+  @override
+  String get gephUpstreamWireguard => 'وایرگارد';
+
+  @override
+  String get gephUpstreamFfvpn => 'فایرفاکس VPN';
+
+  @override
+  String get gephUpstreamLantern => 'لنترن';
+
+  @override
+  String get gephUpstreamDesc =>
+      'گف اول بروکر و خروجی‌هایش را از این پروکسی می‌فرستد — وقتی اتصال مستقیم بلاک است از آن استفاده کنید. ساخت و بررسی حساب هم از همین مسیر می‌رود.';
+
+  @override
+  String get gephUpstreamManualNote =>
+      'اسکیم‌های مجاز: socks5:// ،socks5h:// ،http:// و https://.';
+
+  @override
+  String gephUpstreamVia(String name, String port) {
+    return '$name هاپ آپ‌استریم است (SOCKS روی 127.0.0.1:$port) و اگر بالا نباشد به‌طور خودکار بالا آورده می‌شود.';
+  }
+
+  @override
+  String get gephAccountSource => 'منبع کد حساب';
+
+  @override
+  String get gephAccountSourceFile => 'فایل';
+
+  @override
+  String get gephAccountSourceCode => 'کد لاگین';
+
+  @override
+  String get gephAccountFilePath => 'فایل کد حساب';
+
+  @override
+  String get gephAccountFileHint =>
+      'خالی بگذارید تا از فایل کد حساب داخل پوشهٔ دادهٔ برنامه استفاده شود.';
+
+  @override
+  String get gephLoginCodeLabel => 'کد لاگین';
+
+  @override
+  String get gephLoginCodeHint =>
+      'کد لاگین گف — در تنظیمات برنامه ذخیره می‌شود.';
+
+  @override
+  String gephAccountSavedTo(String path) {
+    return 'کد لاگین در $path ذخیره شد';
+  }
 }
