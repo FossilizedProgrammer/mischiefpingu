@@ -12,6 +12,8 @@
 [![X (formerly Twitter)](https://img.shields.io/badge/X-@tenblockperhour-black?logo=x)](https://x.com/tenblockperhour)
 [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
+[English](README.md) | **فارسی** | [Русский](README.ru.md)
+
 </div>
 
 ---

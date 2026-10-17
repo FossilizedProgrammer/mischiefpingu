@@ -10,6 +10,8 @@ A Flutter GUI for desktop (Linux and Windows) that unifies multiple censorship-c
 [![X (formerly Twitter)](https://img.shields.io/badge/X-@tenblockperhour-black?logo=x)](https://x.com/tenblockperhour)
 [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
+**English** | [فارسی](README.fa.md) | [Русский](README.ru.md)
+
 </div>
 
 ---
