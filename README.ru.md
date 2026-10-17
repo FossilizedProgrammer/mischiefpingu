@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**Многопрофильный клиент — Psiphon • Tor • SSTP • WireGuard • Firefox VPN**
+**Многопрофильный клиент — Psiphon • Tor • SSTP • WireGuard • Firefox VPN • Lantern • Geph**
 
 Графический интерфейс Flutter для настольных ПК (Linux и Windows), объединяющий несколько ядер обхода цензуры в чистом и целостном интерфейсе.
 
@@ -30,7 +30,7 @@
 
 ##  Возможности
 
-### 🔌 Шесть подключаемых ядер
+### 🔌 Восемь подключаемых ядер
 
 | Ядро | Описание |
 |------|----------|
@@ -39,6 +39,8 @@
 | **SSTP** | SSTP-прокси клиент, разработанный автором этого приложения |
 | **WireGuard** | Пользовательский клиент на основе wireproxy с двумя ядрами: **Standard** (wireguard-go) и **AmneziaWG** (обфусцированная версия для жёсткой цензуры) |
 | **Firefox VPN** | Встроенный клиент **IP Protection** в Firefox (`ffvpn` на базе Mozilla VPN) — вход через аккаунт Firefox и локальный SOCKS5/HTTP-прокси |
+| **Lantern** | Headless-ядро Lantern (`lantern`) с локальным SOCKS5/HTTP-прокси и встроенным обновлятором |
+| **Geph** | Неофициальный клиент **Geph 5** (`geph5-proxy`) — регистрация/вход в аккаунт, выбор страны выхода (Free/Premium), локальный SOCKS5/HTTP-прокси |
 
 **Общие возможности:**  
 Поддержка вставки конфигов или URI, локальный SOCKS-порт, Share-on-LAN и автоматическое переподключение.
@@ -57,9 +59,11 @@
 
 ### 🔗 Цепочки туннелей
 
-- Tor через Psiphon / SSTP
-- SSTP через Psiphon / Tor
-- Psiphon через Tor / SSTP / ручной прокси
+- Tor через Psiphon / SSTP / Lantern / Geph
+- SSTP через Psiphon / Tor / Lantern / Geph
+- Psiphon через Tor / SSTP / Lantern / Geph / ручной прокси
+- Firefox VPN через Lantern / Geph
+- Lantern или Geph через любое другое ядро (или ручной прокси)
 
 ---
 
@@ -84,7 +88,7 @@
 
 ### 🛠️ Обновление ядер
 
-Встроенный обновлятор для всех бинарных файлов (Tor, Psiphon, SunAndLion, SSTP, wireproxy, Firefox VPN). Обновления сохраняются и применяются при следующем запуске.
+Встроенный обновлятор для всех бинарных файлов (Tor, Psiphon, SunAndLion, SSTP, wireproxy, Firefox VPN, Lantern). Обновления сохраняются и применяются при следующем запуске.
 
 ---
 
@@ -144,6 +148,8 @@
 | [**Flutter**](https://flutter.dev/) | Весь графический интерфейс построен на Flutter |
 | [**sstp-proxy**](https://github.com/FossilizedProgrammer/sstp-proxy) | SSTP-прокси клиент в этом приложении разработан автором MischiefPingu. Эта реализация предоставляет протокол в виде локального прокси, что делает возможным цепочку туннелей |
 | [**firefox-vpn-go**](https://github.com/FossilizedProgrammer/firefox-vpn-go) | Ядро Firefox VPN в этом приложении — самостоятельный Go-клиент для встроенного VPN-прокси Firefox (IP Protection на базе Mozilla VPN), распространяемый в виде готовых бинарных файлов release |
+| [**Lantern**](https://github.com/getlantern/lantern) | Проект Lantern — это приложение запускает его headless-ядро, распространяемое через релизы `lantern-headless-iran` |
+| [**Geph**](https://github.com/geph-official/geph5) | Ядро Geph 5 (`geph5-proxy`), лежащее в основе туннеля Geph в этом приложении |
 
 ---
 

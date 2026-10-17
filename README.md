@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**Multi-core client — Psiphon • Tor • SSTP • WireGuard • Firefox VPN**
+**Multi-core client — Psiphon • Tor • SSTP • WireGuard • Firefox VPN • Lantern • Geph**
 
 A Flutter GUI for desktop (Linux and Windows) that unifies multiple censorship-circumvention cores in a clean, integrated interface.
 
@@ -39,6 +39,8 @@ A Flutter GUI for desktop (Linux and Windows) that unifies multiple censorship-c
 | **SSTP** | SSTP proxy client, developed by the author of this application |
 | **WireGuard** | Userspace client based on wireproxy with two cores: **Standard** (wireguard-go) and **AmneziaWG** (obfuscated version for heavy censorship) |
 | **Firefox VPN** | Firefox's built-in **IP Protection** client (`ffvpn`, powered by Mozilla VPN) — signs in with your Firefox Account and exposes a local SOCKS5/HTTP proxy |
+| **Lantern** | Headless Lantern core (`lantern`) exposing a local SOCKS5/HTTP proxy, with a built-in updater |
+| **Geph** | Unofficial **Geph 5** client (`geph5-proxy`) — account sign-up/login, free/Premium exit-country selection, local SOCKS5/HTTP proxy |
 
 **Common features:**  
 Supports pasting configs or URIs, local SOCKS port, Share-on-LAN, and automatic reconnection.
@@ -57,9 +59,11 @@ Supports pasting configs or URIs, local SOCKS port, Share-on-LAN, and automatic 
 
 ### 🔗 Chained Tunnels
 
-- Tor over Psiphon / SSTP
-- SSTP over Psiphon / Tor
-- Psiphon over Tor / SSTP / manual proxy
+- Tor over Psiphon / SSTP / Lantern / Geph
+- SSTP over Psiphon / Tor / Lantern / Geph
+- Psiphon over Tor / SSTP / Lantern / Geph / manual proxy
+- Firefox VPN over Lantern / Geph
+- Lantern or Geph over any other core (or a manual proxy)
 
 ---
 
@@ -84,7 +88,7 @@ Supports pasting configs or URIs, local SOCKS port, Share-on-LAN, and automatic 
 
 ### ️ Core Updater
 
-Built-in updater for all binaries (Tor, Psiphon, SunAndLion, SSTP, wireproxy, Firefox VPN). Updates are saved and applied on the next start.
+Built-in updater for all binaries (Tor, Psiphon, SunAndLion, SSTP, wireproxy, Firefox VPN, Lantern). Updates are saved and applied on the next start.
 
 ---
 
@@ -144,6 +148,8 @@ This project would not exist without the efforts of others. Sincere thanks to:
 | [**Flutter**](https://flutter.dev/) | The entire GUI is built on Flutter |
 | [**sstp-proxy**](https://github.com/FossilizedProgrammer/sstp-proxy) | The SSTP proxy client in this app was developed by the author of MischiefPingu. This implementation provides the protocol as a local proxy, enabling tunnel chaining |
 | [**firefox-vpn-go**](https://github.com/FossilizedProgrammer/firefox-vpn-go) | The Firefox VPN core of this app — a standalone Go client for the browser's built-in IP Protection VPN (Mozilla VPN), distributed as prebuilt release binaries |
+| [**Lantern**](https://github.com/getlantern/lantern) | The Lantern project — this app runs its headless core, distributed via the `lantern-headless-iran` release builds |
+| [**Geph**](https://github.com/geph-official/geph5) | The Geph 5 core (`geph5-proxy`) behind this app's Geph tunnel |
 
 ---
 
