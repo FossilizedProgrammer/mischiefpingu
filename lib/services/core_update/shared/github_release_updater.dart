@@ -8,7 +8,7 @@ import 'github_core_spec.dart';
 import 'github_release_checker.dart';
 import 'github_release_installer.dart';
 
-export 'github_core_spec.dart' show GithubCoreSpec;
+export 'github_core_spec.dart' show GithubCoreSpec, ExtraBinarySpec;
 
 class GithubReleaseUpdater {
   final GithubCoreSpec spec;

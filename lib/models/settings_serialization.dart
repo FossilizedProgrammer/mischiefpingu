@@ -2,6 +2,7 @@
 library;
 
 import 'dart:convert';
+import 'lantern_engine.dart';
 import 'settings_model.dart';
 import 'settings_validation.dart';
 
@@ -116,6 +117,7 @@ extension AppSettingsSerialization on AppSettings {
       ffvpnProxyPass: _s(m, 'ffvpnProxyPass', ''),
       lanternSocksPort: _i(m, 'lanternSocksPort', 18071),
       lanternHttpPort: _i(m, 'lanternHttpPort', 18070),
+      lanternEngine: _i(m, 'lanternEngine', LanternEngine.defaultValue),
       lanternUpstreamType: _i(m, 'lanternUpstreamType', 0),
       lanternProxyType: _s(m, 'lanternProxyType', 'socks5'),
       lanternProxyIp: _s(m, 'lanternProxyIp', ''),
@@ -235,6 +237,7 @@ extension AppSettingsSerialization on AppSettings {
         'ffvpnProxyPass': ffvpnProxyPass,
         'lanternSocksPort': lanternSocksPort,
         'lanternHttpPort': lanternHttpPort,
+        'lanternEngine': lanternEngine,
         'lanternUpstreamType': lanternUpstreamType,
         'lanternProxyType': lanternProxyType,
         'lanternProxyIp': lanternProxyIp,

@@ -109,8 +109,14 @@ abstract class AppLocalizations {
   /// No description provided for @appSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Unofficial Psiphon client, Tor client, SSTP client, WireGuard client, Firefox VPN client, Lantern client, Geph unofficial client'**
+  /// **'Unofficial Psiphon client, Tor, SSTP and WireGuard clients'**
   String get appSubtitle;
+
+  /// No description provided for @appSubtitle2.
+  ///
+  /// In en, this message translates to:
+  /// **'Firefox VPN, Lantern unofficial client, Geph unofficial client'**
+  String get appSubtitle2;
 
   /// No description provided for @add.
   ///
@@ -2578,6 +2584,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Connection'**
   String get lanternConnectionSection;
+
+  /// No description provided for @lanternEngine.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection engine'**
+  String get lanternEngine;
+
+  /// No description provided for @lanternEngineRadiance.
+  ///
+  /// In en, this message translates to:
+  /// **'Radiance (official v10, recommended)'**
+  String get lanternEngineRadiance;
+
+  /// No description provided for @lanternEngineClassic.
+  ///
+  /// In en, this message translates to:
+  /// **'Classic (flashlight)'**
+  String get lanternEngineClassic;
+
+  /// No description provided for @lanternEngineDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Radiance runs the same engine as the official Lantern v10 client and gets through blocking on its own. Classic is the older headless client.'**
+  String get lanternEngineDesc;
 
   /// No description provided for @lanternPortSocks.
   ///

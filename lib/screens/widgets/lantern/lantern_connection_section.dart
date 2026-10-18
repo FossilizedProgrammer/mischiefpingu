@@ -3,12 +3,13 @@
 import 'package:flutter/material.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../../models/lantern_engine.dart';
 import '../../../models/settings_model.dart';
 import '../../../widgets/settings/port_text_field.dart';
 import '../../../widgets/settings_tile_base.dart';
 
 /// ═══════════════════════════════════════════════════════════════
-///  LanternConnectionSection — پورت‌های SOCKS/HTTP لنترن.
+///  LanternConnectionSection — موتور اتصال و پورت‌های SOCKS/HTTP لنترن.
 /// ═══════════════════════════════════════════════════════════════
 class LanternConnectionSection extends StatelessWidget {
   final AppSettings s;
@@ -29,6 +30,32 @@ class LanternConnectionSection extends StatelessWidget {
     return SettingsSection(
       label: l10n.lanternConnectionSection,
       children: [
+        SettingsDropdown<int>(
+          labelText: l10n.lanternEngine,
+          value: s.lanternEngine,
+          items: [
+            DropdownMenuItem(
+              value: LanternEngine.radiance,
+              child: Text(l10n.lanternEngineRadiance),
+            ),
+            DropdownMenuItem(
+              value: LanternEngine.classic,
+              child: Text(l10n.lanternEngineClassic),
+            ),
+          ],
+          onChanged: (v) {
+            s.lanternEngine = v ?? LanternEngine.defaultValue;
+            onSave();
+          },
+        ),
+        const SizedBox(height: 8),
+        Text(
+          l10n.lanternEngineDesc,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 16),
         Row(
           children: [
             Expanded(

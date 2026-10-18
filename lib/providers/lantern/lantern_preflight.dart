@@ -5,21 +5,25 @@ part of '../app_provider.dart';
 /// ═══════════════════════════════════════════════════════════════
 extension AppProviderLanternPreflight on AppProvider {
   /// مسیر باینری لنترن را پیدا می‌کند؛ اگر نبود پیام می‌دهد و null برمی‌گرداند.
+  ///
+  /// موتور Radiance از باینری `lantern-radiance` و موتور کلاسیک از `lantern`
+  /// استفاده می‌کند.
   Future<String?> _preflightLanternBinary(String src) async {
-    final path = await AppDataService.resolveBinaryPath('lantern');
+    final name = LanternEngine.binaryName(settings.lanternEngine);
+    final path = await AppDataService.resolveBinaryPath(name);
     if (path != null) return path;
 
     processService.addLog(
-      '✗ lantern binary not found. Place "lantern${AppDataService.exeExt}" '
+      '✗ $name binary not found. Place "$name${AppDataService.exeExt}" '
       'in the data folder.',
       source: src,
     );
     await AppDataService.logBinaryCandidates(
-      'lantern',
+      name,
       log: (m) => processService.addLog(m, source: src),
     );
     processService.setBinaryMissingMessage(
-      'lantern${AppDataService.exeExt} binary not found. '
+      '$name${AppDataService.exeExt} binary not found. '
       'Place it in the data folder next to the other tunnel binaries.',
     );
     touch();

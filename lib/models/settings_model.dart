@@ -1,6 +1,7 @@
 // lib/models/settings_model.dart
 library;
 
+import 'lantern_engine.dart';
 import 'settings_serialization.dart';
 import 'wireguard_core_type.dart';
 
@@ -106,6 +107,10 @@ class AppSettings {
   // ═══════════════════════════════════════════════════════════════
   int lanternSocksPort;
   int lanternHttpPort;
+
+  /// موتور اتصال: `LanternEngine.radiance` (پیش‌فرض) یا
+  /// `LanternEngine.classic`.
+  int lanternEngine;
   int lanternUpstreamType;
   String lanternProxyType;
   String lanternProxyIp;
@@ -218,6 +223,7 @@ class AppSettings {
     this.ffvpnProxyPass = '',
     this.lanternSocksPort = 18071,
     this.lanternHttpPort = 18070,
+    this.lanternEngine = LanternEngine.defaultValue,
     this.lanternUpstreamType = 0,
     this.lanternProxyType = 'socks5',
     this.lanternProxyIp = '',

@@ -12,7 +12,7 @@ import 'lantern/lantern_upstream_section.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  LanternSettingsTile — تنظیمات تونل لنترن (headless):
-///    • پورت‌های SOCKS/HTTP
+///    • موتور اتصال (Radiance / Classic) و پورت‌های SOCKS/HTTP
 ///    • آپ‌استریم `--upstream-proxy` (دستی / Psiphon / Tor / SSTP / WireGuard)
 ///    • ابزارهای CLI: servers / update / auth
 /// ═══════════════════════════════════════════════════════════════

@@ -8,6 +8,30 @@ typedef AssetPickerFn = Map<String, dynamic>? Function(
   String arch,
 );
 
+/// باینری اضافی که از همان آرشیو استخراج و در data dir نصب می‌شود.
+///
+/// مثال: لنترن آرشیو تک‌فایلی منتشر می‌کند که هم `lantern` (CLI) و هم
+/// `lantern-radiance` (موتور Radiance) را در خود دارد.
+class ExtraBinarySpec {
+  /// نام پایهٔ باینری بدون پسوند (مثل `lantern-radiance`).
+  final String baseName;
+
+  /// الگوی fallback برای جستجو در آرشیو.
+  final String fallbackPattern;
+
+  /// شناسهٔ مستقل برای لاگ/PendingCoreUpdate (مثل `lantern-radiance`).
+  ///
+  /// باید با [GithubCoreSpec.coreId] متفاوت باشد تا آپدیت‌های معلق
+  /// هر دو باینری جدا ثبت شوند.
+  final String coreId;
+
+  const ExtraBinarySpec({
+    required this.baseName,
+    required this.fallbackPattern,
+    required this.coreId,
+  });
+}
+
 /// تنظیمات یک core مبتنی بر GitHub Releases.
 class GithubCoreSpec {
   /// شناسه core (برای لاگ و PendingCoreUpdate).
@@ -56,6 +80,9 @@ class GithubCoreSpec {
   /// ═══════════════════════════════════════════════════════════
   final bool sizeBasedVersion;
 
+  /// باینری‌های اضافی که از همان آرشیو استخراج و نصب می‌شوند.
+  final List<ExtraBinarySpec> extraBinaries;
+
   const GithubCoreSpec({
     required this.coreId,
     required this.displayName,
@@ -68,5 +95,6 @@ class GithubCoreSpec {
     required this.defaultDownloadSize,
     this.assetPicker,
     this.sizeBasedVersion = false,
+    this.extraBinaries = const [],
   });
 }

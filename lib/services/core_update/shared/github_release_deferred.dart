@@ -23,12 +23,19 @@ class GithubReleaseDeferred {
   bool get _isWin => AppDataService.isWindows;
 
   /// ذخیرهٔ باینری دانلود‌شده در staging و ثبت آپدیت معلق.
+  ///
+  /// [coreId] و [displayName] برای باینری‌های اضافی (extra) قابل بازنویسی‌اند
+  /// تا هر کدام یک رکورد معلق جدا داشته باشند.
   Future<void> defer({
     required String found,
     required String dest,
     required String binaryName,
     required String version,
+    String? coreId,
+    String? displayName,
   }) async {
+    final effectiveCoreId = coreId ?? spec.coreId;
+    final effectiveName = displayName ?? spec.displayName;
     final stagingDir = await Directory.systemTemp.createTemp(
       '${spec.tempPrefix}deferred_',
     );
@@ -39,7 +46,7 @@ class GithubReleaseDeferred {
     }
     await pending.add(
       PendingCoreUpdate(
-        coreId: spec.coreId,
+        coreId: effectiveCoreId,
         stagingPath: stagingPath,
         destPath: dest,
         version: version,
@@ -47,7 +54,7 @@ class GithubReleaseDeferred {
       ),
     );
     _log(
-      '★ ${spec.displayName} update downloaded ($version) — deferred, will apply on next startup',
+      '★ $effectiveName update downloaded ($version) — deferred, will apply on next startup',
     );
   }
 

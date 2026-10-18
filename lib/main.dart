@@ -21,12 +21,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
 
-  await windowManager.setSize(const Size(780, 462));
-  await windowManager.setMinimumSize(const Size(680, 420));
+  await windowManager.setSize(const Size(780, 380));
+  await windowManager.setMinimumSize(const Size(680, 340));
 
   const windowOptions = WindowOptions(
-    size: Size(780, 462),
-    minimumSize: Size(680, 420),
+    size: Size(780, 380),
+    minimumSize: Size(680, 340),
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
     titleBarStyle: TitleBarStyle.normal,

@@ -36,9 +36,12 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  l10n.appSubtitle,
+                  '${l10n.appSubtitle}\n${l10n.appSubtitle2}',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall?.copyWith(
                     fontSize: 11,
+                    height: 1.35,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     fontWeight: FontWeight.w500,
                   ),

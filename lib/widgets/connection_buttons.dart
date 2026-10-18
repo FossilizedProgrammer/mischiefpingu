@@ -5,7 +5,7 @@ import '../l10n/app_localizations.dart';
 import '../providers/app_provider.dart';
 import 'connection/connection_button_builder.dart';
 import 'connection/connection_state_resolver.dart';
-import 'connection/circle_connect_button.dart';
+import 'connection/connection_pill_button.dart';
 
 class ConnectionButtons extends StatelessWidget {
   const ConnectionButtons({super.key});
@@ -31,148 +31,134 @@ class ConnectionButtons extends StatelessWidget {
 
     final onSurface = theme.colorScheme.onSurface;
 
-    // هر دکمه در slot مساوی می‌نشیند و در پنجره‌های باریک کوچک می‌شود تا
-    // همه دکمه‌ها همیشه جا باشند (پنجرهٔ برنامه تا ۶۸۰px باریک می‌شود).
-    Widget slot(CircleConnectButton button) => Expanded(
-          child: Center(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: button,
-            ),
+    // همهٔ دکمه‌ها در یک ردیف، هرکدام مستقل. هر اسلات به‌طور مساوی تقسیم
+    // می‌شود تا در پنجره‌های باریک فشرده و مرتب بمانند.
+    Widget slot(ConnectionPillButton button) => Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 3),
+            child: button,
           ),
         );
 
+    final buttons = <ConnectionPillButton>[
+      ConnectionPillButton(
+        title: 'Psiphon',
+        actionLabel: psiphonData.state.actionLabel,
+        icon: psiphonData.state.icon,
+        color: psiphonData.state.color,
+        busy: psiphonData.state.busy,
+        connected: psiphonData.state.connected,
+        onTap: () => provider.connectPsiphon(),
+        statusText: psiphonData.state.statusText(
+          psiphonData.progress,
+          l10n,
+        ),
+        statusColor: psiphonData.state.statusColor(
+          theme.colorScheme.primary,
+          onSurface,
+        ),
+      ),
+      ConnectionPillButton(
+        title: 'Tor',
+        actionLabel: torData.state.actionLabel,
+        icon: torData.state.icon,
+        color: torData.state.color,
+        busy: torData.state.busy,
+        connected: torData.state.connected,
+        onTap: () => provider.connectTor(),
+        progress: torData.progress,
+        statusText: torData.state.statusText(torData.progress, l10n),
+        statusColor: torData.state.statusColor(
+          theme.colorScheme.primary,
+          onSurface,
+        ),
+      ),
+      ConnectionPillButton(
+        title: 'SSTP',
+        actionLabel: sstpData.state.actionLabel,
+        icon: sstpData.state.icon,
+        color: sstpData.state.color,
+        busy: sstpData.state.busy,
+        connected: sstpData.state.connected,
+        onTap: () => provider.connectSstp(),
+        statusText: sstpData.state.statusText(sstpData.progress, l10n),
+        statusColor: sstpData.state.statusColor(
+          theme.colorScheme.primary,
+          onSurface,
+        ),
+      ),
+      ConnectionPillButton(
+        title: 'WireGuard',
+        actionLabel: wireGuardData.state.actionLabel,
+        icon: wireGuardData.state.icon,
+        color: wireGuardData.state.color,
+        busy: wireGuardData.state.busy,
+        connected: wireGuardData.state.connected,
+        onTap: () => provider.connectWireGuard(),
+        statusText: wireGuardData.state.statusText(
+          wireGuardData.progress,
+          l10n,
+        ),
+        statusColor: wireGuardData.state.statusColor(
+          theme.colorScheme.primary,
+          onSurface,
+        ),
+      ),
+      ConnectionPillButton(
+        title: 'Firefox VPN',
+        actionLabel: ffvpnData.state.actionLabel,
+        icon: ffvpnData.state.icon,
+        color: ffvpnData.state.color,
+        busy: ffvpnData.state.busy,
+        connected: ffvpnData.state.connected,
+        onTap: () => provider.connectFfvpn(),
+        statusText: ffvpnData.state.statusText(ffvpnData.progress, l10n),
+        statusColor: ffvpnData.state.statusColor(
+          theme.colorScheme.primary,
+          onSurface,
+        ),
+      ),
+      ConnectionPillButton(
+        title: 'Lantern',
+        actionLabel: lanternData.state.actionLabel,
+        icon: lanternData.state.icon,
+        color: lanternData.state.color,
+        busy: lanternData.state.busy,
+        connected: lanternData.state.connected,
+        onTap: () => provider.connectLantern(),
+        statusText: lanternData.state.statusText(
+          lanternData.progress,
+          l10n,
+        ),
+        statusColor: lanternData.state.statusColor(
+          theme.colorScheme.primary,
+          onSurface,
+        ),
+      ),
+      ConnectionPillButton(
+        title: 'Geph',
+        actionLabel: gephData.state.actionLabel,
+        icon: gephData.state.icon,
+        color: gephData.state.color,
+        busy: gephData.state.busy,
+        connected: gephData.state.connected,
+        onTap: () => provider.connectGeph(),
+        statusText: gephData.state.statusText(
+          gephData.progress,
+          l10n,
+        ),
+        statusColor: gephData.state.statusColor(
+          theme.colorScheme.primary,
+          onSurface,
+        ),
+      ),
+    ];
+
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          slot(
-            CircleConnectButton(
-              title: 'Psiphon',
-              actionLabel: psiphonData.state.actionLabel,
-              icon: psiphonData.state.icon,
-              color: psiphonData.state.color,
-              busy: psiphonData.state.busy,
-              connected: psiphonData.state.connected,
-              onTap: () => provider.connectPsiphon(),
-              statusText: psiphonData.state.statusText(
-                psiphonData.progress,
-                l10n,
-              ),
-              statusColor: psiphonData.state.statusColor(
-                theme.colorScheme.primary,
-                onSurface,
-              ),
-            ),
-          ),
-          slot(
-            CircleConnectButton(
-              title: 'Tor',
-              actionLabel: torData.state.actionLabel,
-              icon: torData.state.icon,
-              color: torData.state.color,
-              busy: torData.state.busy,
-              connected: torData.state.connected,
-              onTap: () => provider.connectTor(),
-              progress: torData.progress,
-              statusText: torData.state.statusText(torData.progress, l10n),
-              statusColor: torData.state.statusColor(
-                theme.colorScheme.primary,
-                onSurface,
-              ),
-            ),
-          ),
-          slot(
-            CircleConnectButton(
-              title: 'SSTP',
-              actionLabel: sstpData.state.actionLabel,
-              icon: sstpData.state.icon,
-              color: sstpData.state.color,
-              busy: sstpData.state.busy,
-              connected: sstpData.state.connected,
-              onTap: () => provider.connectSstp(),
-              statusText: sstpData.state.statusText(sstpData.progress, l10n),
-              statusColor: sstpData.state.statusColor(
-                theme.colorScheme.primary,
-                onSurface,
-              ),
-            ),
-          ),
-          slot(
-            CircleConnectButton(
-              title: 'WireGuard',
-              actionLabel: wireGuardData.state.actionLabel,
-              icon: wireGuardData.state.icon,
-              color: wireGuardData.state.color,
-              busy: wireGuardData.state.busy,
-              connected: wireGuardData.state.connected,
-              onTap: () => provider.connectWireGuard(),
-              statusText: wireGuardData.state.statusText(
-                wireGuardData.progress,
-                l10n,
-              ),
-              statusColor: wireGuardData.state.statusColor(
-                theme.colorScheme.primary,
-                onSurface,
-              ),
-            ),
-          ),
-          slot(
-            CircleConnectButton(
-              title: 'Firefox VPN',
-              actionLabel: ffvpnData.state.actionLabel,
-              icon: ffvpnData.state.icon,
-              color: ffvpnData.state.color,
-              busy: ffvpnData.state.busy,
-              connected: ffvpnData.state.connected,
-              onTap: () => provider.connectFfvpn(),
-              statusText: ffvpnData.state.statusText(ffvpnData.progress, l10n),
-              statusColor: ffvpnData.state.statusColor(
-                theme.colorScheme.primary,
-                onSurface,
-              ),
-            ),
-          ),
-          slot(
-            CircleConnectButton(
-              title: 'Lantern',
-              actionLabel: lanternData.state.actionLabel,
-              icon: lanternData.state.icon,
-              color: lanternData.state.color,
-              busy: lanternData.state.busy,
-              connected: lanternData.state.connected,
-              onTap: () => provider.connectLantern(),
-              statusText: lanternData.state.statusText(
-                lanternData.progress,
-                l10n,
-              ),
-              statusColor: lanternData.state.statusColor(
-                theme.colorScheme.primary,
-                onSurface,
-              ),
-            ),
-          ),
-          slot(
-            CircleConnectButton(
-              title: 'Geph',
-              actionLabel: gephData.state.actionLabel,
-              icon: gephData.state.icon,
-              color: gephData.state.color,
-              busy: gephData.state.busy,
-              connected: gephData.state.connected,
-              onTap: () => provider.connectGeph(),
-              statusText: gephData.state.statusText(
-                gephData.progress,
-                l10n,
-              ),
-              statusColor: gephData.state.statusColor(
-                theme.colorScheme.primary,
-                onSurface,
-              ),
-            ),
-          ),
-        ],
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: buttons.map(slot).toList(),
       ),
     );
   }

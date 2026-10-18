@@ -16,10 +16,15 @@ part of 'process_service.dart';
 /// ═══════════════════════════════════════════════════════════════
 extension ProcessServiceLantern on ProcessService {
   /// argv (شامل فلگ‌های سراسری و زیرفرمان start) باید آماده باشد؛
-  /// ساخت آن بر عهدهٔ [LanternCliService.startArgs] است.
+  /// ساخت آن بر عهدهٔ [LanternCliService.startArgs] یا
+  /// [LanternCliService.radianceStartArgs] است.
+  ///
+  /// [radiance] را برای باینری موتور Radiance روی true بگذارید تا خط آمادهٔ
+  /// `RADIANCE_READY` تشخیص داده شود (خروجی این باینری متفاوت است).
   Future<bool> startLantern({
     required String binaryPath,
     required List<String> args,
+    bool radiance = false,
   }) async {
     await ensureInitialized();
     if (isLanternRunning) return false;
@@ -27,8 +32,8 @@ extension ProcessServiceLantern on ProcessService {
 
     try {
       addLog(
-        'Starting lantern with: $binaryPath '
-        '${LanternCliService.maskArgs(args)}',
+        'Starting lantern${radiance ? " (radiance engine)" : ""} with: '
+        '$binaryPath ${LanternCliService.maskArgs(args)}',
         source: src,
       );
 
@@ -39,7 +44,7 @@ extension ProcessServiceLantern on ProcessService {
       );
       lanternProcess = process;
 
-      _attachLanternListeners(process);
+      _attachLanternListeners(process, radiance: radiance);
 
       // اگر داده‌پس یا فلگی اشتباه باشد، باینری در کمتر از یک ثانیه
       // خارج می‌شود؛ مثل ffvpn یک چک سریع exit انجام می‌دهیم.
@@ -65,7 +70,12 @@ extension ProcessServiceLantern on ProcessService {
       }
 
       isLanternRunning = true;
-      isLanternConnected = false;
+      // ⚠️ اینجا عمداً isLanternConnected را false نمی‌کنیم: موتور (به‌ویژه
+      // radiance با کانفیگ کش‌شده) ممکن است در همان ~۹۰۰ms بالا، خط آمادهٔ
+      // RADIANCE_READY را چاپ کند و listener قبلاً isLanternConnected را true
+      // کرده باشد. اگر اینجا صفرش کنیم، نوتیف «وصل شد» می‌آید (چون listener
+      // یک‌بار fire شده) ولی دکمه سبز نمی‌شود و پروکسی هم قابل استفاده
+      // علامت نمی‌خورد. پس حالت connected را دست‌نخورده نگه می‌داریم.
       addLog('lantern is running (PID: ${process.pid})', source: src);
       touch();
       return true;
@@ -79,7 +89,7 @@ extension ProcessServiceLantern on ProcessService {
     }
   }
 
-  void _attachLanternListeners(Process process) {
+  void _attachLanternListeners(Process process, {bool radiance = false}) {
     const src = LogSource.lantern;
 
     void handleLine(String raw) {
@@ -89,7 +99,12 @@ extension ProcessServiceLantern on ProcessService {
 
       final lower = trimmed.toLowerCase();
 
-      if (!isLanternConnected && lower.contains('local proxy is listening')) {
+      // موتور کلاسیک با «local proxy is listening» و موتور Radiance با
+      // «RADIANCE_READY» آماده بودن تونل را اعلام می‌کنند.
+      final readyMarker =
+          radiance ? 'radiance_ready' : 'local proxy is listening';
+
+      if (!isLanternConnected && lower.contains(readyMarker)) {
         final wasConnected = isLanternConnected;
         isLanternConnected = true;
 
@@ -101,6 +116,15 @@ extension ProcessServiceLantern on ProcessService {
 
         addLog(
           '★ Lantern tunnel ready — local proxy is now available',
+          source: src,
+        );
+        touch();
+      }
+
+      if (radiance && lower.contains('radiance-engine: connect:')) {
+        addLog(
+          '⚠ Radiance engine could not connect — see the message above. '
+          'Consider enabling an upstream proxy in the Lantern settings.',
           source: src,
         );
         touch();

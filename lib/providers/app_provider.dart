@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/settings_model.dart';
 import '../models/settings_validation.dart';
+import '../models/lantern_engine.dart';
 import '../services/process_service.dart';
 import '../services/privilege_service.dart';
 import '../services/app_data_service.dart';

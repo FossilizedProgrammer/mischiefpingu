@@ -13,7 +13,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appSubtitle =>
-      'Unofficial Psiphon client, Tor client, SSTP client, WireGuard client, Firefox VPN client, Lantern client, Geph unofficial client';
+      'Unofficial Psiphon client, Tor, SSTP and WireGuard clients';
+
+  @override
+  String get appSubtitle2 =>
+      'Firefox VPN, Lantern unofficial client, Geph unofficial client';
 
   @override
   String get add => 'Add';
@@ -1356,6 +1360,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lanternConnectionSection => 'Connection';
+
+  @override
+  String get lanternEngine => 'Connection engine';
+
+  @override
+  String get lanternEngineRadiance => 'Radiance (official v10, recommended)';
+
+  @override
+  String get lanternEngineClassic => 'Classic (flashlight)';
+
+  @override
+  String get lanternEngineDesc =>
+      'Radiance runs the same engine as the official Lantern v10 client and gets through blocking on its own. Classic is the older headless client.';
 
   @override
   String get lanternPortSocks => 'SOCKS port';

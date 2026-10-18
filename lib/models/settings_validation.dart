@@ -2,6 +2,7 @@
 
 library;
 
+import 'lantern_engine.dart';
 import 'settings_model.dart';
 
 class SettingsValidation {
@@ -178,6 +179,10 @@ class SettingsValidation {
     }
     if (s.lanternHttpPort < 0 || s.lanternHttpPort > 65535) {
       s.lanternHttpPort = 18070;
+    }
+    // موتور اتصال: radiance (پیش‌فرض) یا classic.
+    if (!LanternEngine.isValid(s.lanternEngine)) {
+      s.lanternEngine = LanternEngine.defaultValue;
     }
     // 0 direct، 1 manual، 3 Psiphon، 4 Tor، 5 SSTP، 6 WireGuard،
     // 7 Firefox VPN، 9 Geph. (۸ = خودِ Lantern؛ ۲ = Aether حذف‌شده.)

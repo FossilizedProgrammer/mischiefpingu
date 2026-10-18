@@ -13,6 +13,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/settings_model.dart';
 import '../../../providers/app_provider.dart';
 import '../../../providers/lantern_provider.dart';
+import '../../../services/lantern/lantern_cli_service.dart';
 import '../../../widgets/settings_tile_base.dart';
 
 class LanternToolsSection extends StatefulWidget {
@@ -85,13 +86,17 @@ class _LanternToolsSectionState extends State<LanternToolsSection> {
     );
   }
 
+  /// کلید یکتای هر سرور در dropdown؛ آدرس، و اگر خالی بود نام سرور.
+  static String _serverKey(LanternServerInfo srv) =>
+      srv.address.isNotEmpty ? srv.address : srv.name;
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
     final lantern = context.watch<LanternProvider>();
     final busy = lantern.isRunningCommand || lantern.isLoadingServers;
 
-    final addrs = lantern.servers.map((e) => e.address).toSet();
+    final addrs = lantern.servers.map(_serverKey).toSet();
     if (_selectedServerAddr != null && !addrs.contains(_selectedServerAddr)) {
       _selectedServerAddr = null;
     }
@@ -166,18 +171,27 @@ class _LanternToolsSectionState extends State<LanternToolsSection> {
                 hint: Text(l10n.lanternToolsServers),
                 items: lantern.servers.map((srv) {
                   final loc = [
-                    srv.countryCode,
-                    srv.country,
                     srv.city,
+                    srv.country,
                   ].where((e) => e.isNotEmpty).join(' · ');
+                  // فقط نام کشور نمایش داده می‌شود تا آیتم‌های لیست کوتاه
+                  // بمانند؛ جزئیات کامل (نام سرور و موقعیت) در tooltip است.
+                  final label = srv.country.isNotEmpty
+                      ? srv.country
+                      : (srv.countryCode.isNotEmpty ? srv.countryCode : srv.name);
                   return DropdownMenuItem(
-                    value: srv.address,
+                    value: _serverKey(srv),
                     child: Row(
                       children: [
                         Expanded(
-                          child: Text(
-                            loc.isEmpty ? srv.name : '${srv.name} — $loc',
-                            overflow: TextOverflow.ellipsis,
+                          child: Tooltip(
+                            message: loc.isEmpty
+                                ? srv.name
+                                : '${srv.name}\n$loc',
+                            child: Text(
+                              label,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 8),

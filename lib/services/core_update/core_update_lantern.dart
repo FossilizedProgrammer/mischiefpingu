@@ -8,13 +8,17 @@ import 'core_update_process_utils.dart';
 import 'shared/github_release_updater.dart';
 
 /// ═══════════════════════════════════════════════════════════════
-///  LanternUpdater — آپدیت هستهٔ لنترن (headless)
+///  LanternUpdater — آپدیت هستهٔ لنترن (headless + radiance)
 ///
 ///  مخزن: https://github.com/FossilizedProgrammer/lantern-headless-iran/releases
 ///
-///  releaseها باینری خام (بدون آرشیو) منتشر می‌کنند:
-///    lantern-headless-linux-amd64 / lantern-headless-linux-arm64
-///    lantern-headless-windows-amd64.exe / …
+///  هر release یک آرشیو تک‌فایلی برای هر پلتفرم منتشر می‌کند که *هر دو*
+///  باینری را در خود دارد:
+///    lantern-headless-linux-amd64.tar.gz   → lantern + lantern-radiance
+///    lantern-headless-windows-amd64.zip    → lantern.exe + lantern-radiance.exe
+///
+///  آپدیتر همان آرشیو را دانلود و هر دو باینری را نصب می‌کند (باینری دوم
+///  از طریق [GithubCoreSpec.extraBinaries]).
 ///
 ///  نسخهٔ نصب‌شده از `lantern --version` خوانده می‌شود؛ باینری‌های محلی
 ///  که بدون ldflags ساخته شده‌اند نسخهٔ عددی ندارند، بنابراین مثل ffvpn
@@ -23,6 +27,7 @@ import 'shared/github_release_updater.dart';
 /// ═══════════════════════════════════════════════════════════════
 class LanternUpdater {
   static const String _binaryBaseName = 'lantern';
+  static const String _radianceBaseName = 'lantern-radiance';
 
   final GithubReleaseUpdater _updater;
 
@@ -38,12 +43,19 @@ class LanternUpdater {
             owner: 'FossilizedProgrammer',
             repo: 'lantern-headless-iran',
             binaryBaseName: _binaryBaseName,
-            fallbackPattern: 'lantern',
+            fallbackPattern: _binaryBaseName,
             destPathResolver: () =>
                 AppDataService.getBinaryPathForWrite(_binaryBaseName),
             tempPrefix: 'mischiefpingu_lantern_',
-            defaultDownloadSize: 65000000,
+            defaultDownloadSize: 110000000,
             sizeBasedVersion: true,
+            extraBinaries: const [
+              ExtraBinarySpec(
+                baseName: _radianceBaseName,
+                fallbackPattern: _radianceBaseName,
+                coreId: _radianceBaseName,
+              ),
+            ],
           ),
           network: network,
           pending: pending,

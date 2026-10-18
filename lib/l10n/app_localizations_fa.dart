@@ -13,7 +13,11 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get appSubtitle =>
-      'کلاینت غیر رسمی سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس VPN، لنترن، کلاینت غیررسمی گف';
+      'کلاینت غیررسمی سایفون، تور، اس‌اس‌تی‌پی و وایرگارد،';
+
+  @override
+  String get appSubtitle2 =>
+      'فایرفاکس وی‌پی‌ان، لنترن آن‌آفیشیال کلاینت، گف آن‌آفیشیال کلاینت';
 
   @override
   String get add => 'افزودن';
@@ -507,7 +511,7 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get showMoreSubtitle =>
-      'ظاهر، سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس VPN، لنترن، گف، اسکنر، آپدیت‌ها، لاگ';
+      'ظاهر، سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس وی‌پی‌ان، لنترن، گف، اسکنر، آپدیت‌ها، لاگ';
 
   @override
   String get sni => 'SNI';
@@ -582,7 +586,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get torViaSstp => 'از طریق اس‌اس‌تی‌پی (Tor-over-SSTP)';
 
   @override
-  String get torViaFfvpn => 'از طریق فایرفاکس VPN (Tor-over-Firefox VPN)';
+  String get torViaFfvpn => 'از طریق فایرفاکس وی‌پی‌ان (Tor-over-Firefox VPN)';
 
   @override
   String get torViaLantern => 'از طریق لنترن (Tor-over-Lantern)';
@@ -972,7 +976,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get sstpWireGuardUpstream => 'وایرگارد (آپ‌استریم SOCKS)';
 
   @override
-  String get upstreamViaFfvpn => 'فایرفاکس VPN (آپ‌استریم SOCKS)';
+  String get upstreamViaFfvpn => 'فایرفاکس وی‌پی‌ان (آپ‌استریم SOCKS)';
 
   @override
   String get upstreamViaLantern => 'لنترن (آپ‌استریم SOCKS)';
@@ -1355,6 +1359,19 @@ class AppLocalizationsFa extends AppLocalizations {
   String get lanternConnectionSection => 'اتصال';
 
   @override
+  String get lanternEngine => 'موتور اتصال';
+
+  @override
+  String get lanternEngineRadiance => 'رادیانس (رسمی نسخهٔ ۱۰، پیشنهادی)';
+
+  @override
+  String get lanternEngineClassic => 'کلاسیک (flashlight)';
+
+  @override
+  String get lanternEngineDesc =>
+      'رادیانس همان موتور رسمی کلاینت لنترن نسخهٔ ۱۰ را اجرا می‌کند و خودش از فیلترینگ عبور می‌کند. کلاسیک همان کلاینت قدیمی است.';
+
+  @override
   String get lanternPortSocks => 'پورت SOCKS';
 
   @override
@@ -1382,7 +1399,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get lanternUpstreamWireguard => 'وایرگارد';
 
   @override
-  String get lanternUpstreamFfvpn => 'فایرفاکس VPN';
+  String get lanternUpstreamFfvpn => 'فایرفاکس وی‌پی‌ان';
 
   @override
   String get lanternUpstreamGeph => 'گف';
@@ -1524,7 +1541,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get gephUpstreamWireguard => 'وایرگارد';
 
   @override
-  String get gephUpstreamFfvpn => 'فایرفاکس VPN';
+  String get gephUpstreamFfvpn => 'فایرفاکس وی‌پی‌ان';
 
   @override
   String get gephUpstreamLantern => 'لنترن';

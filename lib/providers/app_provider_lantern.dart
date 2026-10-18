@@ -110,11 +110,20 @@ extension AppProviderLantern on AppProvider {
         settings: settings,
         processService: processService,
       );
-      final args = cli.startArgs(upstreamUrl: dialUrl);
+
+      // موتور اتصال: radiance (پیش‌فرض) یا classic.
+      final isRadiance = settings.lanternEngine == LanternEngine.radiance;
+      final args = isRadiance
+          ? cli.radianceStartArgs(
+              dataPath: await AppDataService.getDataDir(),
+              upstreamUrl: dialUrl,
+            )
+          : cli.startArgs(upstreamUrl: dialUrl);
 
       final ok = await processService.startLantern(
         binaryPath: binaryPath,
         args: args,
+        radiance: isRadiance,
       );
 
       if (userStoppedLantern) {
