@@ -17,7 +17,7 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get appSubtitle2 =>
-      'فایرفاکس وی‌پی‌ان، لنترن آن‌آفیشیال کلاینت، گف آن‌آفیشیال کلاینت';
+      'فایرفاکس وی‌پی‌ان، لنترن آن‌آفیشیال کلاینت، گف آن‌آفیشیال کلاینت، ان‌پی‌وی (napsternetV)';
 
   @override
   String get add => 'افزودن';
@@ -339,6 +339,9 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get languageRussian => 'Русский';
+
+  @override
+  String get languageSpanish => 'Español';
 
   @override
   String get latest => 'آخرین';

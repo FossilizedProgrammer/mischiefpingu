@@ -17,7 +17,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get appSubtitle2 =>
-      'Firefox VPN, неофициальный клиент Lantern, неофициальный клиент Geph';
+      'Firefox VPN, неофициальный клиент Lantern, неофициальный клиент Geph, NPV (napsternetV)';
 
   @override
   String get add => 'Добавить';
@@ -341,6 +341,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get languageRussian => 'Русский';
+
+  @override
+  String get languageSpanish => 'Español';
 
   @override
   String get latest => 'Последняя';

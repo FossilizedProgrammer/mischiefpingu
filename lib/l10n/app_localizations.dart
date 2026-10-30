@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
 import 'app_localizations_fa.dart';
 import 'app_localizations_ru.dart';
 
@@ -96,6 +97,7 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
+    Locale('es'),
     Locale('fa'),
     Locale('ru')
   ];
@@ -115,7 +117,7 @@ abstract class AppLocalizations {
   /// No description provided for @appSubtitle2.
   ///
   /// In en, this message translates to:
-  /// **'Firefox VPN, Lantern unofficial client, Geph unofficial client'**
+  /// **'Firefox VPN, Lantern unofficial client, Geph unofficial client, NPV (napsternetV)'**
   String get appSubtitle2;
 
   /// No description provided for @add.
@@ -706,6 +708,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Русский'**
   String get languageRussian;
+
+  /// No description provided for @languageSpanish.
+  ///
+  /// In en, this message translates to:
+  /// **'Español'**
+  String get languageSpanish;
 
   /// No description provided for @latest.
   ///
@@ -3023,7 +3031,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'fa', 'ru'].contains(locale.languageCode);
+      <String>['en', 'es', 'fa', 'ru'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -3034,6 +3042,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'en':
       return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
     case 'fa':
       return AppLocalizationsFa();
     case 'ru':

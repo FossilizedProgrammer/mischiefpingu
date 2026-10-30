@@ -44,6 +44,10 @@ class LanguageSelectorTile extends StatelessWidget {
                 value: 'ru',
                 title: Text(l10n.languageRussian),
               ),
+              RadioListTile<String>(
+                value: 'es',
+                title: Text(l10n.languageSpanish),
+              ),
             ],
           ),
         ),
@@ -57,6 +61,8 @@ class LanguageSelectorTile extends StatelessWidget {
         return 'فارسی';
       case 'ru':
         return 'Русский';
+      case 'es':
+        return 'Español';
       default:
         return 'English';
     }
