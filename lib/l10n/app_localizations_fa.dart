@@ -452,6 +452,10 @@ class AppLocalizationsFa extends AppLocalizations {
   String get profile => 'پروفایل';
 
   @override
+  String get aetherPresetControlsNote =>
+      'پروتکل، حالت اسکن و مبهم‌سازی از پروفایل انتخاب‌شده پیروی می‌کنند. برای ویرایش، Manual را انتخاب کنید.';
+
+  @override
   String get protocol => 'پروتکل';
 
   @override
@@ -470,7 +474,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get psiphonSettings => 'تنظیمات سایفون';
 
   @override
-  String get psiphonUpstream => 'سایفون (آپ‌استریم SOCKS)';
+  String get psiphonUpstream => 'سایفون';
 
   @override
   String get save => 'ذخیره';
@@ -532,7 +536,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get sstpSettings => 'تنظیمات اس‌اس‌تی‌پی';
 
   @override
-  String get sstpSocksUpstream => 'اس‌اس‌تی‌پی (آپ‌استریم SOCKS)';
+  String get sstpSocksUpstream => 'SSTP';
 
   @override
   String get start => 'اتصال';
@@ -577,10 +581,10 @@ class AppLocalizationsFa extends AppLocalizations {
   String get torSettings => 'تنظیمات تور';
 
   @override
-  String get torSocksUpstream => 'تور (آپ‌استریم SOCKS)';
+  String get torSocksUpstream => 'تور';
 
   @override
-  String get torUpstream => 'تور (آپ‌استریم SOCKS)';
+  String get torUpstream => 'تور';
 
   @override
   String get torViaPsiphon => 'از طریق سایفون (Tor-over-Psiphon)';
@@ -596,6 +600,9 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get torViaGeph => 'از طریق گف (Tor-over-Geph)';
+
+  @override
+  String get torUpstreamNpv => 'از طریق NPV (Tor-over-NPV)';
 
   @override
   String get tunnelCore => 'هسته تونل';
@@ -973,19 +980,25 @@ class AppLocalizationsFa extends AppLocalizations {
   String get torViaWireGuard => 'از طریق وایرگارد (Tor-over-WireGuard)';
 
   @override
-  String get psiphonWireGuardUpstream => 'وایرگارد (آپ‌استریم SOCKS)';
+  String get psiphonWireGuardUpstream => 'وایرگارد';
 
   @override
-  String get sstpWireGuardUpstream => 'وایرگارد (آپ‌استریم SOCKS)';
+  String get sstpWireGuardUpstream => 'وایرگارد';
 
   @override
-  String get upstreamViaFfvpn => 'فایرفاکس وی‌پی‌ان (آپ‌استریم SOCKS)';
+  String get upstreamViaFfvpn => 'فایرفاکس وی‌پی‌ان';
 
   @override
-  String get upstreamViaLantern => 'لنترن (آپ‌استریم SOCKS)';
+  String get upstreamViaLantern => 'لنترن';
 
   @override
-  String get upstreamViaGeph => 'گف (آپ‌استریم SOCKS)';
+  String get upstreamViaGeph => 'گف';
+
+  @override
+  String get psiphonUpstreamNpv => 'NPV';
+
+  @override
+  String get sstpUpstreamNpv => 'NPV';
 
   @override
   String get diagnosticsReport => 'گزارش تشخیصی';
@@ -1169,6 +1182,28 @@ class AppLocalizationsFa extends AppLocalizations {
   String get ffvpnSettings => 'تنظیمات وی‌پی‌ان فایرفاکس';
 
   @override
+  String get ffvpnLoginSection => 'ورود با ایمیل و رمز عبور';
+
+  @override
+  String get ffvpnLoginHint =>
+      'مستقیم به حساب فایرفاکس وارد می‌شود و توکن نشست به‌دست‌آمده را پایین ذخیره می‌کند — نیازی به گشتن در signedInUser.json نیست.';
+
+  @override
+  String get ffvpnEmailLabel => 'ایمیل حساب فایرفاکس';
+
+  @override
+  String get ffvpnPasswordLabel => 'رمز عبور';
+
+  @override
+  String get ffvpnSignIn => 'ورود';
+
+  @override
+  String get ffvpnSigningIn => 'در حال ورود…';
+
+  @override
+  String get ffvpnSignedIn => 'وارد شدید — توکن نشست ذخیره شد.';
+
+  @override
   String get ffvpnGuideTitle => 'توکن نشست حساب فایرفاکس';
 
   @override
@@ -1229,22 +1264,25 @@ class AppLocalizationsFa extends AppLocalizations {
   String get ffvpnUpstreamManual => 'پروکسی SOCKS5 دستی';
 
   @override
-  String get ffvpnUpstreamPsiphon => 'سایفون (SOCKS)';
+  String get ffvpnUpstreamPsiphon => 'سایفون';
 
   @override
-  String get ffvpnUpstreamTor => 'تور (SOCKS)';
+  String get ffvpnUpstreamTor => 'تور';
 
   @override
-  String get ffvpnUpstreamSstp => 'SSTP (SOCKS)';
+  String get ffvpnUpstreamSstp => 'SSTP';
 
   @override
-  String get ffvpnUpstreamWireguard => 'وایرگارد (SOCKS)';
+  String get ffvpnUpstreamWireguard => 'وایرگارد';
 
   @override
-  String get ffvpnUpstreamLantern => 'لنترن (SOCKS)';
+  String get ffvpnUpstreamLantern => 'لنترن';
 
   @override
-  String get ffvpnUpstreamGeph => 'گف (SOCKS)';
+  String get ffvpnUpstreamGeph => 'گف';
+
+  @override
+  String get ffvpnUpstreamNpv => 'NPV';
 
   @override
   String ffvpnUpstreamVia(String name, String port) {
@@ -1350,6 +1388,18 @@ class AppLocalizationsFa extends AppLocalizations {
       'خطای شبکه در اتصال به موزیلا — اتصال را بررسی کنید (شاید لازم باشد تونل دیگری فعال باشد) و دوباره تلاش کنید.';
 
   @override
+  String get ffvpnErrBadCredentials =>
+      'ایمیل یا رمز عبور نادرست است (یا ورود بلاک شده) — اطلاعات حساب فایرفاکس را بررسی کنید.';
+
+  @override
+  String get ffvpnErrSignInUnsupported =>
+      'هستهٔ ffvpn نصب‌شده از ورود با ایمیل/رمز پشتیبانی نمی‌کند. هسته را از «آپدیت هسته‌ها» به‌روز کنید یا توکن نشست را دستی بچسبانید.';
+
+  @override
+  String get ffvpnErrBlocked =>
+      'لبهٔ امنیتی موزیلا درخواست ورود را از این شبکه بلاک کرد (HTTP 406). از داخل یک تونل یا شبکهٔ دیگر وارد شوید و دوباره تلاش کنید.';
+
+  @override
   String get ffvpnErrOther => 'خطای ffvpn';
 
   @override
@@ -1408,6 +1458,9 @@ class AppLocalizationsFa extends AppLocalizations {
   String get lanternUpstreamGeph => 'گف';
 
   @override
+  String get lanternUpstreamNpv => 'NPV';
+
+  @override
   String get lanternUpstreamDesc =>
       'اتصال به سرورهای لنترن (و در نبود سرور سالم، ترافیک شما هم) از این پروکسی عبور می‌کند — وقتی IP سرورهای لنترن بلاک است از آن استفاده کنید.';
 
@@ -1427,10 +1480,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get lanternToolsServers => 'سرورها';
 
   @override
-  String get lanternToolsRefreshServers => 'بروزرسانی لیست';
-
-  @override
-  String get lanternToolsCheckServers => 'بررسی دسترس‌پذیری';
+  String get lanternToolsCheckServers => 'بررسی سرورها';
 
   @override
   String get lanternServerReachable => 'در دسترس';
@@ -1550,6 +1600,9 @@ class AppLocalizationsFa extends AppLocalizations {
   String get gephUpstreamLantern => 'لنترن';
 
   @override
+  String get gephUpstreamNpv => 'NPV';
+
+  @override
   String get gephUpstreamDesc =>
       'گف اول بروکر و خروجی‌هایش را از این پروکسی می‌فرستد — وقتی اتصال مستقیم بلاک است از آن استفاده کنید. ساخت و بررسی حساب هم از همین مسیر می‌رود.';
 
@@ -1589,4 +1642,303 @@ class AppLocalizationsFa extends AppLocalizations {
   String gephAccountSavedTo(String path) {
     return 'کد لاگین در $path ذخیره شد';
   }
+
+  @override
+  String get npvSettings => 'تنظیمات NPV Tunnel';
+
+  @override
+  String get npvEngineName => 'NPV';
+
+  @override
+  String get npvConfigSection => 'فایل کانفیگ NPV';
+
+  @override
+  String get npvConfigDesc =>
+      'فایل .npvs که NPV با آن وصل می‌شود. یکی را از کامپیوتر انتخاب کنید.';
+
+  @override
+  String get npvPickConfigFile => 'انتخاب فایل';
+
+  @override
+  String get npvChangeConfigFile => 'عوض کردن فایل';
+
+  @override
+  String get npvClearConfigFile => 'حذف';
+
+  @override
+  String get npvNoConfigFile => 'هنوز فایلی انتخاب نشده';
+
+  @override
+  String npvConfigLoaded(String name) {
+    return 'انتخاب شد: $name';
+  }
+
+  @override
+  String get npvConfigReadError => 'خواندن فایل انتخاب‌شده ممکن نشد';
+
+  @override
+  String get npvConfigLockedWhileRunning =>
+      'برای عوض کردن فایل، اول اتصال را متوقف کنید.';
+
+  @override
+  String get npvConnectionSection => 'پروکسی محلی و سنجش';
+
+  @override
+  String get npvPortSocks => 'پورت SOCKS';
+
+  @override
+  String get npvPortHttp => 'پورت HTTP (۰ = خاموش)';
+
+  @override
+  String get npvProbeSection => 'سنجش کانفیگ‌ها';
+
+  @override
+  String get npvProbeDesc =>
+      'هر کانفیگ یک‌بار آزمایش می‌شود و سریع‌ترین کانفیگِ سالم استفاده می‌شود.';
+
+  @override
+  String get npvProbeTimeout => 'مهلت هر درخواست (ثانیه)';
+
+  @override
+  String get npvProbeJobs => 'سنجش‌های همزمان';
+
+  @override
+  String get npvProbeUrl => 'آدرس تست (اختیاری)';
+
+  @override
+  String get autoReconnectNpv => 'اتصال مجدد خودکار NPV';
+
+  @override
+  String get npvServersSection => 'سرورهای همین فایل';
+
+  @override
+  String get npvServersDesc =>
+      'همهٔ کانفیگ‌های داخل فایل. «بررسی سرورها» تک‌تکشان را آزمایش می‌کند و نشان می‌دهد کدام‌ها کار می‌کنند؛ سریع‌ترین‌ها بالا.';
+
+  @override
+  String get npvServersListBtn => 'نمایش سرورها';
+
+  @override
+  String get npvServersCheckBtn => 'بررسی سرورها';
+
+  @override
+  String get npvServersCancelBtn => 'لغو';
+
+  @override
+  String get npvServersScanning => 'در حال سنجش کانفیگ‌ها…';
+
+  @override
+  String npvServersSummary(Object answered, Object total) {
+    return '$answered از $total کانفیگ کار می‌کند';
+  }
+
+  @override
+  String npvServersCount(Object total) {
+    return '$total کانفیگ در همین فایل';
+  }
+
+  @override
+  String get npvServersCreator => 'یادداشت';
+
+  @override
+  String get npvServersNone => 'این فایل هیچ کانفیگی ندارد.';
+
+  @override
+  String get npvServersNoFile =>
+      'اول یک فایل .npvs انتخاب کنید؛ فعلاً چیزی برای نمایش نیست.';
+
+  @override
+  String get npvServersInUse => 'در حال استفاده';
+
+  @override
+  String get npvServersDead => 'غیرقابل دسترس';
+
+  @override
+  String get npvServersPinHint =>
+      'روی هر کانفیگ بزنید تا همان استفاده شود؛ یک ضربهٔ دیگر برنامه را به انتخاب سریع‌ترین برمی‌گرداند.';
+
+  @override
+  String get npvServersPinnedChip => 'انتخاب‌شده';
+
+  @override
+  String get npvServersUnpinHint => 'انتخاب شده — برای لغو بزنید';
+
+  @override
+  String get npvServersAutoBtn => 'خودکار (سریع‌ترین)';
+
+  @override
+  String npvServersPinnedTo(Object label) {
+    return 'انتخاب شده: $label';
+  }
+
+  @override
+  String npvServersStalePin(Object index) {
+    return 'کانفیگ انتخاب‌شدهٔ #$index در همین فایل نیست؛ یکی دیگر را انتخاب کنید یا به خودکار برگردید.';
+  }
+
+  @override
+  String get npvServersPinIgnored =>
+      'هستهٔ NPV کانفیگ دیگری استفاده کرد — برای انتخاب دستی، هسته را آپدیت کنید.';
+
+  @override
+  String get aetherConnected => 'اتر متصل شد';
+
+  @override
+  String get aetherManualHint =>
+      'حالت دستی: پروتکل، مبهم‌سازی، حالت اسکن و اندپوینت سفارشی در پایین در اختیار شماست. حالت اسکن فقط وقتی اثر دارد که اندپوینت سفارشی خالی باشد.';
+
+  @override
+  String get aetherSettings => 'تنظیمات اتر';
+
+  @override
+  String get autoReconnectAether => 'اتصال مجدد خودکار اتر';
+
+  @override
+  String get both => 'هر دو';
+
+  @override
+  String get connectionMode => 'حالت اتصال';
+
+  @override
+  String get customEndpoint => 'اندپوینت سفارشی (اختیاری)';
+
+  @override
+  String get customEndpointHint => 'برای اسکن خودکار خالی بگذارید';
+
+  @override
+  String get endpointPinning => 'پین کردن اندپوینت';
+
+  @override
+  String get endpointPinningAutomatic => 'خودکار';
+
+  @override
+  String get endpointPinningAutomaticDesc =>
+      'همیشه اسکن خودکار برای بهترین اندپوینت. توصیه‌شده برای اکثر کاربران.';
+
+  @override
+  String get endpointPinningCustomFirst => 'اول سفارشی';
+
+  @override
+  String get endpointPinningCustomFirstDesc =>
+      'اول اندپوینت سفارشی را امتحان کن. اگر شکست خورد، به اسکن خودکار برگرد.';
+
+  @override
+  String get endpointPinningCustomOnly => 'فقط سفارشی';
+
+  @override
+  String get endpointPinningCustomOnlyDesc =>
+      'فقط اندپوینت سفارشی. بدون fallback. برای تست یک سرور خاص.';
+
+  @override
+  String get endpointPinningNeedsCustom =>
+      'برای فعال‌سازی حالت‌های «اول سفارشی» و «فقط سفارشی»، یک اندپوینت سفارشی پایین تعیین کنید.';
+
+  @override
+  String get endpointPinningSubtitle =>
+      'کنترل کنید Aether چطور اندپوینت خود را انتخاب کند';
+
+  @override
+  String get ipType => 'نوع IP';
+
+  @override
+  String get ipv4 => 'IPv4';
+
+  @override
+  String get ipv6 => 'IPv6';
+
+  @override
+  String get localSocksPort => 'پورت SOCKS محلی';
+
+  @override
+  String get logSourceAether => 'اتر';
+
+  @override
+  String get obfAggressive => 'تهاجمی';
+
+  @override
+  String get obfBalanced => 'متعادل';
+
+  @override
+  String get obfDefaultCore => 'پیش‌فرض هسته';
+
+  @override
+  String get obfFirewall => 'فایروال';
+
+  @override
+  String get obfGfw => 'GFW';
+
+  @override
+  String get obfLight => 'سبک';
+
+  @override
+  String get obfuscation => 'مبهم‌سازی (--noize)';
+
+  @override
+  String get profileAdaptive => 'تطبیقی';
+
+  @override
+  String get profileAdaptiveDesc => 'تعادل سرعت و پوشش — مناسب اکثر شبکه‌ها';
+
+  @override
+  String get profileManual => 'دستی';
+
+  @override
+  String get profileManualDesc => 'همه گزینه‌ها دستی — برای کاربران حرفه‌ای';
+
+  @override
+  String get profilePatchy => 'سیگنال ناپایدار';
+
+  @override
+  String get profilePatchyDesc =>
+      'دیتای موبایل ناپایدار — جستجوی سخت‌تر و مقاوم‌تر';
+
+  @override
+  String get profileStrict => 'شبکه محدود';
+
+  @override
+  String get profileStrictDesc =>
+      'وای‌فای محدود یا فیلتر سنگین — fragment + masque-in-masque + noize gfw';
+
+  @override
+  String get protoGool => 'Gool (WARP-in-WARP)';
+
+  @override
+  String get protoMasque => 'MASQUE (HTTP/3 یا HTTP/2)';
+
+  @override
+  String get protoMim => 'MIM (masque-in-masque)';
+
+  @override
+  String get protoWireguard => 'WireGuard';
+
+  @override
+  String get scanBalanced => 'متعادل';
+
+  @override
+  String get scanIronclad => 'آهنین';
+
+  @override
+  String get scanStealth => 'مخفیانه';
+
+  @override
+  String get scanThorough => 'دقیق';
+
+  @override
+  String get scanTurbo => 'توربو';
+
+  @override
+  String get scanVerified => 'تأییدشده';
+
+  @override
+  String get torViaAether => 'از طریق اتر (Tor-over-Aether)';
+
+  @override
+  String get tryLastEndpointFirst => 'اول آخرین اندپوینت موفق را امتحان کن';
+
+  @override
+  String get tryLastEndpointFirstSubtitle =>
+      'اگر فعال باشد، قبل از اسکن آخرین اندپوینت کارکننده امتحان می‌شود';
+
+  @override
+  String get aetherUpstream => 'اتر';
 }

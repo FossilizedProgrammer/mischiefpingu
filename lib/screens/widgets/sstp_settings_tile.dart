@@ -95,6 +95,7 @@ class SstpSettingsTile extends StatelessWidget {
             s.sstpProxyPass = v;
             save();
           },
+          aetherLocalPort: s.aetherLocalPort,
         ),
         const Divider(height: 28),
         SstpFrontingSection(

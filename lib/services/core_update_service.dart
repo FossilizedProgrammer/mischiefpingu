@@ -4,7 +4,9 @@ library;
 
 import 'core_update/core_update_ffvpn.dart';
 import 'core_update/core_update_lantern.dart';
+import 'core_update/core_update_aether.dart';
 import 'core_update/core_update_network.dart';
+import 'core_update/core_update_npv.dart';
 import 'core_update/core_update_pending.dart';
 import 'core_update/core_update_process_utils.dart';
 import 'core_update/core_update_psiphon.dart';
@@ -37,6 +39,12 @@ class CoreUpdateService {
   );
 
   late final CoreUpdaterRegistry _registry = CoreUpdaterRegistry(
+    aether: AetherUpdater(
+      network: _network,
+      pending: _pending,
+      processUtils: _process,
+      log: log,
+    ),
     tor: TorUpdater(
       network: _network,
       pending: _pending,
@@ -83,6 +91,13 @@ class CoreUpdateService {
     ),
     // 🆕 هستهٔ لنترن (headless)
     lantern: LanternUpdater(
+      network: _network,
+      pending: _pending,
+      processUtils: _process,
+      log: log,
+    ),
+    // 🆕 هستهٔ NPV (npv-go)
+    npv: NpvUpdater(
       network: _network,
       pending: _pending,
       processUtils: _process,

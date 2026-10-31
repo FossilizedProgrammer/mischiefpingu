@@ -17,7 +17,7 @@ extension AppProviderReconnectScheduler on AppProvider {
   /// schedule یا cancel کردن reconnect برای یک تونل.
   ///
   /// پارامترها:
-  ///   • [tunnel] — شناسه تونل ('psiphon', 'tor', ...)
+  ///   • [tunnel] — شناسه تونل ('psiphon', 'aether', ...)
   ///   • [isRunning] — آیا تونل الان در حال اجراست
   ///   • [isBusy] — آیا تونل مشغول start/stop است
   ///   • [isLoading] — آیا در حال load تنظیمات است
@@ -77,6 +77,13 @@ extension AppProviderReconnectScheduler on AppProvider {
           log: log,
         );
         break;
+      case 'aether':
+        _reconnectManager.scheduleAetherReconnect(
+          shouldReconnect: shouldReconnect,
+          onReconnect: onReconnect,
+          log: log,
+        );
+        break;
       case 'tor':
         _reconnectManager.scheduleTorReconnect(
           shouldReconnect: shouldReconnect,
@@ -98,6 +105,13 @@ extension AppProviderReconnectScheduler on AppProvider {
           log: log,
         );
         break;
+      case 'npv':
+        _reconnectManager.scheduleNpvReconnect(
+          shouldReconnect: shouldReconnect,
+          onReconnect: onReconnect,
+          log: log,
+        );
+        break;
     }
   }
 
@@ -107,6 +121,9 @@ extension AppProviderReconnectScheduler on AppProvider {
       case 'psiphon':
         _reconnectManager.cancelPsiphonTimer();
         break;
+      case 'aether':
+        _reconnectManager.cancelAetherTimer();
+        break;
       case 'tor':
         _reconnectManager.cancelTorTimer();
         break;
@@ -115,6 +132,9 @@ extension AppProviderReconnectScheduler on AppProvider {
         break;
       case 'wireguard':
         _reconnectManager.cancelWireGuardTimer();
+        break;
+      case 'npv':
+        _reconnectManager.cancelNpvTimer();
         break;
     }
   }

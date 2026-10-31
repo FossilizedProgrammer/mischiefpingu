@@ -454,6 +454,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profile => 'Profile';
 
   @override
+  String get aetherPresetControlsNote =>
+      'Protocol, scan mode and obfuscation follow the selected preset. Choose Manual to edit them.';
+
+  @override
   String get protocol => 'Protocol';
 
   @override
@@ -472,7 +476,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get psiphonSettings => 'Psiphon Settings';
 
   @override
-  String get psiphonUpstream => 'Psiphon (SOCKS upstream)';
+  String get psiphonUpstream => 'Psiphon';
 
   @override
   String get save => 'Save';
@@ -534,7 +538,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sstpSettings => 'SSTP Settings';
 
   @override
-  String get sstpSocksUpstream => 'SSTP (SOCKS upstream)';
+  String get sstpSocksUpstream => 'SSTP';
 
   @override
   String get start => 'Start';
@@ -579,10 +583,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get torSettings => 'Tor Settings';
 
   @override
-  String get torSocksUpstream => 'Tor (SOCKS upstream)';
+  String get torSocksUpstream => 'Tor';
 
   @override
-  String get torUpstream => 'Tor (SOCKS upstream)';
+  String get torUpstream => 'Tor';
 
   @override
   String get torViaPsiphon => 'Via Psiphon (Tor-over-Psiphon)';
@@ -598,6 +602,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get torViaGeph => 'Via Geph (Tor-over-Geph)';
+
+  @override
+  String get torUpstreamNpv => 'Via NPV (Tor-over-NPV)';
 
   @override
   String get tunnelCore => 'Tunnel core';
@@ -974,19 +981,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get torViaWireGuard => 'Via WireGuard (Tor-over-WireGuard)';
 
   @override
-  String get psiphonWireGuardUpstream => 'WireGuard (SOCKS upstream)';
+  String get psiphonWireGuardUpstream => 'WireGuard';
 
   @override
-  String get sstpWireGuardUpstream => 'WireGuard (SOCKS upstream)';
+  String get sstpWireGuardUpstream => 'WireGuard';
 
   @override
-  String get upstreamViaFfvpn => 'Firefox VPN (SOCKS upstream)';
+  String get upstreamViaFfvpn => 'Firefox VPN';
 
   @override
-  String get upstreamViaLantern => 'Lantern (SOCKS upstream)';
+  String get upstreamViaLantern => 'Lantern';
 
   @override
-  String get upstreamViaGeph => 'Geph (SOCKS upstream)';
+  String get upstreamViaGeph => 'Geph';
+
+  @override
+  String get psiphonUpstreamNpv => 'NPV';
+
+  @override
+  String get sstpUpstreamNpv => 'NPV';
 
   @override
   String get diagnosticsReport => 'Diagnostics Report';
@@ -1171,6 +1184,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ffvpnSettings => 'Firefox VPN Settings';
 
   @override
+  String get ffvpnLoginSection => 'Sign in with Email & Password';
+
+  @override
+  String get ffvpnLoginHint =>
+      'Signs in directly to your Firefox Account and stores the resulting session token below — no need to dig through signedInUser.json.';
+
+  @override
+  String get ffvpnEmailLabel => 'Firefox Account email';
+
+  @override
+  String get ffvpnPasswordLabel => 'Password';
+
+  @override
+  String get ffvpnSignIn => 'Sign in';
+
+  @override
+  String get ffvpnSigningIn => 'Signing in…';
+
+  @override
+  String get ffvpnSignedIn => 'Signed in — session token saved.';
+
+  @override
   String get ffvpnGuideTitle => 'Firefox Account session token';
 
   @override
@@ -1231,22 +1266,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ffvpnUpstreamManual => 'Manual SOCKS5 proxy';
 
   @override
-  String get ffvpnUpstreamPsiphon => 'Psiphon (SOCKS)';
+  String get ffvpnUpstreamPsiphon => 'Psiphon';
 
   @override
-  String get ffvpnUpstreamTor => 'Tor (SOCKS)';
+  String get ffvpnUpstreamTor => 'Tor';
 
   @override
-  String get ffvpnUpstreamSstp => 'SSTP (SOCKS)';
+  String get ffvpnUpstreamSstp => 'SSTP';
 
   @override
-  String get ffvpnUpstreamWireguard => 'WireGuard (SOCKS)';
+  String get ffvpnUpstreamWireguard => 'WireGuard';
 
   @override
-  String get ffvpnUpstreamLantern => 'Lantern (SOCKS)';
+  String get ffvpnUpstreamLantern => 'Lantern';
 
   @override
-  String get ffvpnUpstreamGeph => 'Geph (SOCKS)';
+  String get ffvpnUpstreamGeph => 'Geph';
+
+  @override
+  String get ffvpnUpstreamNpv => 'NPV';
 
   @override
   String ffvpnUpstreamVia(String name, String port) {
@@ -1353,6 +1391,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'Network error while reaching Mozilla — check your connection (a tunnel may be needed) and try again.';
 
   @override
+  String get ffvpnErrBadCredentials =>
+      'The email or password is incorrect (or sign-in is blocked) — check your Firefox Account credentials.';
+
+  @override
+  String get ffvpnErrSignInUnsupported =>
+      'The installed ffvpn core does not support email/password sign-in. Update the core from Core Updates, or paste a session token instead.';
+
+  @override
+  String get ffvpnErrBlocked =>
+      'Mozilla\'s edge blocked the sign-in request from this network (HTTP 406). Sign in through a tunnel or another network, then try again.';
+
+  @override
   String get ffvpnErrOther => 'ffvpn error';
 
   @override
@@ -1411,6 +1461,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lanternUpstreamGeph => 'Geph';
 
   @override
+  String get lanternUpstreamNpv => 'NPV';
+
+  @override
   String get lanternUpstreamDesc =>
       'Connections to Lantern\'s servers (and, if none is reachable, your traffic as well) travel through this proxy — use it when Lantern\'s own server IPs are blocked.';
 
@@ -1430,10 +1483,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lanternToolsServers => 'Servers';
 
   @override
-  String get lanternToolsRefreshServers => 'Refresh list';
-
-  @override
-  String get lanternToolsCheckServers => 'Check reachability';
+  String get lanternToolsCheckServers => 'Check servers';
 
   @override
   String get lanternServerReachable => 'Reachable';
@@ -1553,6 +1603,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gephUpstreamLantern => 'Lantern';
 
   @override
+  String get gephUpstreamNpv => 'NPV';
+
+  @override
   String get gephUpstreamDesc =>
       'Geph reaches its broker and exits through this proxy first — use it when your direct connection is blocked. Creating or checking the account goes through it too.';
 
@@ -1592,4 +1645,304 @@ class AppLocalizationsEn extends AppLocalizations {
   String gephAccountSavedTo(String path) {
     return 'Login code saved to $path';
   }
+
+  @override
+  String get npvSettings => 'NPV Tunnel Settings';
+
+  @override
+  String get npvEngineName => 'NPV';
+
+  @override
+  String get npvConfigSection => 'NPV config file';
+
+  @override
+  String get npvConfigDesc =>
+      'The .npvs file that NPV connects with. Choose one from your computer.';
+
+  @override
+  String get npvPickConfigFile => 'Choose file';
+
+  @override
+  String get npvChangeConfigFile => 'Change file';
+
+  @override
+  String get npvClearConfigFile => 'Remove';
+
+  @override
+  String get npvNoConfigFile => 'No file chosen yet';
+
+  @override
+  String npvConfigLoaded(String name) {
+    return 'Selected: $name';
+  }
+
+  @override
+  String get npvConfigReadError => 'Could not read the selected file';
+
+  @override
+  String get npvConfigLockedWhileRunning =>
+      'Stop the tunnel to change this file.';
+
+  @override
+  String get npvConnectionSection => 'Local proxy and probing';
+
+  @override
+  String get npvPortSocks => 'SOCKS port';
+
+  @override
+  String get npvPortHttp => 'HTTP port (0 = off)';
+
+  @override
+  String get npvProbeSection => 'Config probe';
+
+  @override
+  String get npvProbeDesc =>
+      'Each config is tried once; the fastest working one is used.';
+
+  @override
+  String get npvProbeTimeout => 'Per-request timeout (s)';
+
+  @override
+  String get npvProbeJobs => 'Parallel probes';
+
+  @override
+  String get npvProbeUrl => 'Probe URL (optional)';
+
+  @override
+  String get autoReconnectNpv => 'Auto-reconnect NPV';
+
+  @override
+  String get npvServersSection => 'Servers in this file';
+
+  @override
+  String get npvServersDesc =>
+      'Every config inside the file. Checking tests them one by one and shows which ones work, fastest first.';
+
+  @override
+  String get npvServersListBtn => 'Show servers';
+
+  @override
+  String get npvServersCheckBtn => 'Check servers';
+
+  @override
+  String get npvServersCancelBtn => 'Cancel';
+
+  @override
+  String get npvServersScanning => 'Probing configs…';
+
+  @override
+  String npvServersSummary(Object answered, Object total) {
+    return '$answered of $total configs work';
+  }
+
+  @override
+  String npvServersCount(Object total) {
+    return '$total configs in this file';
+  }
+
+  @override
+  String get npvServersCreator => 'Note';
+
+  @override
+  String get npvServersNone => 'This file has no configs.';
+
+  @override
+  String get npvServersNoFile =>
+      'Choose an .npvs file first - there is nothing to list yet.';
+
+  @override
+  String get npvServersInUse => 'in use';
+
+  @override
+  String get npvServersDead => 'Unreachable';
+
+  @override
+  String get npvServersPinHint =>
+      'Tap a config to use that one; tap it again to let the app pick the fastest.';
+
+  @override
+  String get npvServersPinnedChip => 'selected';
+
+  @override
+  String get npvServersUnpinHint => 'Selected - tap to undo';
+
+  @override
+  String get npvServersAutoBtn => 'Auto (fastest)';
+
+  @override
+  String npvServersPinnedTo(Object label) {
+    return 'Selected: $label';
+  }
+
+  @override
+  String npvServersStalePin(Object index) {
+    return 'Selected config #$index is not in this file - pick another one or go back to Auto.';
+  }
+
+  @override
+  String get npvServersPinIgnored =>
+      'The NPV core used a different config - update the core to pick one yourself.';
+
+  @override
+  String get aetherConnected => 'Aether Connected';
+
+  @override
+  String get aetherManualHint =>
+      'Manual mode: protocol, obfuscation, scan mode and custom endpoint are under your control below. Scan mode only applies while the custom endpoint is empty.';
+
+  @override
+  String get aetherSettings => 'Aether Settings';
+
+  @override
+  String get autoReconnectAether => 'Auto-reconnect Aether';
+
+  @override
+  String get both => 'Both';
+
+  @override
+  String get connectionMode => 'Connection Mode';
+
+  @override
+  String get customEndpoint => 'Custom Endpoint (optional)';
+
+  @override
+  String get customEndpointHint => 'Leave empty for auto-scan';
+
+  @override
+  String get endpointPinning => 'Endpoint Pinning';
+
+  @override
+  String get endpointPinningAutomatic => 'Auto';
+
+  @override
+  String get endpointPinningAutomaticDesc =>
+      'Always auto-scan for the best endpoint. Recommended for most users.';
+
+  @override
+  String get endpointPinningCustomFirst => 'Custom first';
+
+  @override
+  String get endpointPinningCustomFirstDesc =>
+      'Try your custom endpoint first. If it fails, fall back to auto-scan.';
+
+  @override
+  String get endpointPinningCustomOnly => 'Custom only';
+
+  @override
+  String get endpointPinningCustomOnlyDesc =>
+      'Only use your custom endpoint. No auto-scan fallback. Use for testing a specific server.';
+
+  @override
+  String get endpointPinningNeedsCustom =>
+      'Set a custom endpoint below to enable Custom-first and Custom-only modes.';
+
+  @override
+  String get endpointPinningSubtitle =>
+      'Control how Aether chooses its endpoint';
+
+  @override
+  String get ipType => 'IP Type';
+
+  @override
+  String get ipv4 => 'IPv4';
+
+  @override
+  String get ipv6 => 'IPv6';
+
+  @override
+  String get localSocksPort => 'Local SOCKS port';
+
+  @override
+  String get logSourceAether => 'Aether';
+
+  @override
+  String get obfAggressive => 'Aggressive';
+
+  @override
+  String get obfBalanced => 'Balanced';
+
+  @override
+  String get obfDefaultCore => 'Default (core)';
+
+  @override
+  String get obfFirewall => 'Firewall';
+
+  @override
+  String get obfGfw => 'GFW';
+
+  @override
+  String get obfLight => 'Light';
+
+  @override
+  String get obfuscation => 'Obfuscation (--noize)';
+
+  @override
+  String get profileAdaptive => 'Adaptive';
+
+  @override
+  String get profileAdaptiveDesc =>
+      'Balance of speed and coverage — suitable for most networks';
+
+  @override
+  String get profileManual => 'Manual';
+
+  @override
+  String get profileManualDesc => 'All options manual — for advanced users';
+
+  @override
+  String get profilePatchy => 'Patchy signal';
+
+  @override
+  String get profilePatchyDesc =>
+      'Unstable mobile data — harder and more resilient search';
+
+  @override
+  String get profileStrict => 'Strict network';
+
+  @override
+  String get profileStrictDesc =>
+      'Restricted Wi-Fi or heavy filtering — fragment + masque-in-masque + noize gfw';
+
+  @override
+  String get protoGool => 'Gool (WARP-in-WARP)';
+
+  @override
+  String get protoMasque => 'MASQUE (HTTP/3 or HTTP/2)';
+
+  @override
+  String get protoMim => 'MIM (masque-in-masque)';
+
+  @override
+  String get protoWireguard => 'WireGuard';
+
+  @override
+  String get scanBalanced => 'Balanced';
+
+  @override
+  String get scanIronclad => 'Ironclad';
+
+  @override
+  String get scanStealth => 'Stealth';
+
+  @override
+  String get scanThorough => 'Thorough';
+
+  @override
+  String get scanTurbo => 'Turbo';
+
+  @override
+  String get scanVerified => 'Verified';
+
+  @override
+  String get torViaAether => 'Via Aether (Tor-over-Aether)';
+
+  @override
+  String get tryLastEndpointFirst => 'Try last successful endpoint first';
+
+  @override
+  String get tryLastEndpointFirstSubtitle =>
+      'If enabled, will try the last working endpoint before scanning';
+
+  @override
+  String get aetherUpstream => 'Aether';
 }

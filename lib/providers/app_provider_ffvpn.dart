@@ -10,8 +10,7 @@ part of 'app_provider.dart';
 extension AppProviderFfvpn on AppProvider {
   /// connectFfvpn — entry point عمومی (toggle connect/stop).
   Future<void> connectFfvpn() async {
-    final isCurrentlyActive =
-        processService.isFfvpnRunning || isFfvpnBusy;
+    final isCurrentlyActive = processService.isFfvpnRunning || isFfvpnBusy;
 
     if (isCurrentlyActive) {
       await stopFfvpnByUser();
@@ -126,8 +125,7 @@ extension AppProviderFfvpn on AppProvider {
         sessionToken: settings.ffvpnSessionToken,
         socksPort: settings.ffvpnSocksPort,
         httpPort: settings.ffvpnHttpPort,
-        country:
-            settings.ffvpnCountry.isEmpty ? null : settings.ffvpnCountry,
+        country: settings.ffvpnCountry.isEmpty ? null : settings.ffvpnCountry,
         sni: sni.isEmpty ? null : sni,
         dialProxy: dialProxy.isEmpty ? null : dialProxy,
       );
@@ -198,6 +196,13 @@ extension AppProviderFfvpn on AppProvider {
 
     final port = builder.socksPort;
     switch (builder.type) {
+      case FfvpnUpstreamBuilder.aether:
+        return _ensureFfvpnUpstreamTunnel(
+          name: 'Aether',
+          port: port,
+          isRunning: () => processService.isAetherRunning,
+          start: () => connectAether(),
+        );
       case FfvpnUpstreamBuilder.psiphon:
         return _ensureFfvpnUpstreamTunnel(
           name: 'Psiphon',
@@ -239,6 +244,13 @@ extension AppProviderFfvpn on AppProvider {
           port: port,
           isRunning: () => processService.isGephRunning,
           start: () => connectGeph(),
+        );
+      case FfvpnUpstreamBuilder.npv:
+        return _ensureFfvpnUpstreamTunnel(
+          name: 'NPV',
+          port: port,
+          isRunning: () => processService.isNpvRunning,
+          start: () => connectNpv(),
         );
       default:
         return true;

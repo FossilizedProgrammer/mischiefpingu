@@ -19,7 +19,10 @@ class PsiphonBaseConfigBuilder {
       "UseIndistinguishableTLS": true,
       "TunnelWholeDevice": false,
       "EgressRegion": settings.egressRegion,
-      "EstablishTunnelTimeoutSeconds": 0,
+      // ۰ یعنی بی‌نهایت: با آپ‌استریم/شبکهٔ مرده هسته تا ابد retry می‌کرد.
+      // سقف ۱۲۰ ثانیه (مثل کلاینت اندروید) باعث می‌شود شکست اعلام شود و
+      // auto-reconnect بتواند تلاش تازه‌ای بگیرد.
+      "EstablishTunnelTimeoutSeconds": 120,
       "EmitDiagnosticNotices": true,
       "EmitBytesTransferred": true,
       "ClientPlatform": "Linux",

@@ -5,6 +5,7 @@ import 'snackbar_builders.dart';
 
 mixin SnackBarMixin<T extends StatefulWidget> on State<T> {
   String? lastShownProtocol;
+  String? lastShownAetherProtocol;
   String? lastShownTorTransport;
   String? lastShownSstpServer;
   String? lastShownPortConflict;
@@ -36,12 +37,24 @@ mixin SnackBarMixin<T extends StatefulWidget> on State<T> {
     );
   }
 
+  void showAetherProtocolSnackBar(String protocol) {
+    final l10n = AppLocalizations.of(context);
+    showUnifiedSnackBar(
+      title: l10n.aetherConnected,
+      subtitle: 'via ${protocol.toUpperCase()}',
+      icon: Icons.cloud_done_rounded,
+    );
+  }
+
   void showTorTransportSnackBar(String transport, String detail) {
     final l10n = AppLocalizations.of(context);
     String transportLabel;
     switch (transport) {
       case 'direct':
         transportLabel = l10n.torDirect;
+        break;
+      case 'aether':
+        transportLabel = l10n.torViaAether;
         break;
       case 'bridge':
         transportLabel = l10n.torBridge;

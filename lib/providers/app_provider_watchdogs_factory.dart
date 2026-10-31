@@ -15,6 +15,7 @@ TunnelWatchdogManager _buildWatchdogManager({
   required ProcessService processService,
   required Future<bool> Function() isInternetAlive,
   required Future<RecoveryLeaseResult> Function() acquirePsiphonLease,
+  required Future<RecoveryLeaseResult> Function() acquireAetherLease,
   required Future<RecoveryLeaseResult> Function() acquireTorLease,
   required Future<RecoveryLeaseResult> Function() acquireSstpLease,
   required Future<RecoveryLeaseResult> Function() acquireWireGuardLease,
@@ -24,11 +25,14 @@ TunnelWatchdogManager _buildWatchdogManager({
     processService: processService,
     isInternetAlive: isInternetAlive,
     acquirePsiphonLease: acquirePsiphonLease,
+    acquireAetherLease: acquireAetherLease,
     acquireTorLease: acquireTorLease,
     acquireSstpLease: acquireSstpLease,
     acquireWireGuardLease: acquireWireGuardLease,
     restartPsiphon: () => provider.restartPsiphonInternal(
         reason: 'watchdog detected dead tunnel'),
+    restartAether: () =>
+        provider.restartAetherInternal(reason: 'watchdog detected dead tunnel'),
     restartTor: () =>
         provider.restartTorInternal(reason: 'watchdog detected dead tunnel'),
     restartSstp: () =>

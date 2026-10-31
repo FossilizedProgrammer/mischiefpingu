@@ -6,6 +6,7 @@ import 'settings_serialization.dart';
 import 'wireguard_core_type.dart';
 
 part 'settings_presets.dart';
+part 'settings_profiles.dart';
 
 class AppSettings {
   String ip;
@@ -43,8 +44,21 @@ class AppSettings {
   String proxyUser;
   String proxyPass;
   bool autoReconnectPsiphon;
+  bool autoReconnectAether;
   bool autoReconnectTor;
   bool autoReconnectSstp;
+  String aetherProfile;
+  String aetherProtocol;
+  String masqueOption;
+  int aetherLocalPort;
+  String aetherScanMode;
+  String ipType;
+  String obfuscation;
+  bool aetherShareLan;
+  bool aetherQuickReconnect;
+  String aetherCustomEndpoint;
+  bool aetherTryLastEndpointFirst;
+  String aetherEndpointPinning;
   bool psiphonShareLan;
   String psiphonBuildRev;
   String psiphonBinarySha;
@@ -148,6 +162,32 @@ class AppSettings {
   static const String gephAccountSourceFile = 'file';
   static const String gephAccountSourceCode = 'code';
 
+  // ═══════════════════════════════════════════════════════════════
+  //  NPV Tunnel (npv) settings
+  // ═══════════════════════════════════════════════════════════════
+  int npvSocksPort;
+  int npvHttpPort;
+
+  /// نام فایل export داخل پوشهٔ کار npv؛ خالی = کانفیگ پیش‌فرضِ assets.
+  String npvConfigName;
+
+  /// مهلت هر درخواست سنجش (ثانیه) و تعداد سنجش‌های همزمان.
+  int npvProbeTimeout;
+  int npvProbeJobs;
+
+  /// هدف درخواست سنجش؛ خالی = خود npv چند آدرس generate_204 را امتحان می‌کند.
+  String npvProbeUrl;
+  bool npvShareLan;
+  bool npvAutoReconnect;
+
+  /// شمارهٔ کانفیگی که کاربر از فهرست export دستی انتخاب کرده، همان
+  /// چیزی که `npv -s` می‌پذیرد. خالی = حالت خودکار (سریع‌ترین).
+  String npvPinnedIndex;
+
+  /// remark همان ردیف، فقط برای نمایش؛ بدون آن بعد از ری‌استارت معلوم
+  /// نیست کدام کانفیگ پین شده تا فهرست دوباره گرفته شود.
+  String npvPinnedRemark;
+
   String themeId;
   bool muted;
   List<String> enabledLogSources;
@@ -174,8 +214,21 @@ class AppSettings {
     this.proxyUser = '',
     this.proxyPass = '',
     this.autoReconnectPsiphon = true,
+    this.autoReconnectAether = true,
     this.autoReconnectTor = true,
     this.autoReconnectSstp = true,
+    this.aetherProfile = 'adaptive',
+    this.aetherProtocol = 'auto',
+    this.masqueOption = 'HTTP-2',
+    this.aetherLocalPort = 1819,
+    this.aetherScanMode = 'balanced',
+    this.ipType = 'ipv4',
+    this.obfuscation = 'off',
+    this.aetherShareLan = false,
+    this.aetherQuickReconnect = true,
+    this.aetherCustomEndpoint = '',
+    this.aetherTryLastEndpointFirst = true,
+    this.aetherEndpointPinning = 'automatic',
     this.psiphonShareLan = false,
     this.conduitMode = 'auto',
     this.conduitCompartmentId = '',
@@ -244,6 +297,16 @@ class AppSettings {
     this.gephAccountSource = gephAccountSourceFile,
     this.gephAccountFile = '',
     this.gephAccountCode = '',
+    this.npvSocksPort = 1086,
+    this.npvHttpPort = 8086,
+    this.npvConfigName = '',
+    this.npvProbeTimeout = 10,
+    this.npvProbeJobs = 3,
+    this.npvProbeUrl = '',
+    this.npvShareLan = false,
+    this.npvAutoReconnect = true,
+    this.npvPinnedIndex = '',
+    this.npvPinnedRemark = '',
     this.psiphonBuildRev = '',
     this.psiphonBinarySha = '',
     this.themeId = 'ocean',
@@ -256,15 +319,17 @@ class AppSettings {
     this.wireguardCore = 'standard',
     this.wireguardAutoReconnect = true,
     List<String>? enabledLogSources,
-    }) : enabledLogSources = enabledLogSources ??
+  }) : enabledLogSources = enabledLogSources ??
             [
               'Psiphon',
+              'Aether',
               'Tor',
               'SSTP',
               'WireGuard',
               'Firefox VPN',
               'Lantern',
               'Geph',
+              'NPV',
               'App',
               'System',
             ];
@@ -280,9 +345,20 @@ class AppSettings {
 
   bool get effectiveUseSunAndLion => useSunAndLion && isFronted && !isConduit;
 
-  bool get isDirectPsiphon =>
-      (upstreamType == 0 || upstreamType == 4 || upstreamType == 6) &&
-      !isFronted;
+  bool get isAetherProfileAutomatic => aetherProfile != 'manual';
+
+  bool get isAetherProtocolLockedByProfile => isAetherProfileAutomatic;
+
+  bool get isEndpointPinningAutomatic => aetherEndpointPinning == 'automatic';
+
+  bool get isEndpointPinningCustomFirst =>
+      aetherEndpointPinning == 'custom_first';
+
+  bool get isEndpointPinningCustomOnly =>
+      aetherEndpointPinning == 'custom_only';
+
+  bool get hasCustomEndpointForPinning =>
+      aetherCustomEndpoint.trim().isNotEmpty;
 
   /// تبدیل رشتهٔ ذخیره‌شده به enum `WireGuardCoreType`.
   WireGuardCoreType get wireGuardCoreType {

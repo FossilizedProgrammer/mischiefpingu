@@ -18,6 +18,13 @@ class CoreUpdateVersionChecker {
     String psiphonRev = '',
   }) async {
     try {
+      if (coreId == 'aether') {
+        final exe = await AppDataService.resolveBinaryPath('aether') ??
+            await AppDataService.getBinaryPath('aether');
+        final v = await _queryExeVersion(exe, ['--version']);
+        return CoreUpdateUtils.parseAetherVersion(v) ?? 'unknown';
+      }
+
       if (coreId == 'tor') {
         final exe = await AppDataService.findTorBinary() ??
             await AppDataService.getTorBinaryPath();
@@ -81,8 +88,25 @@ class CoreUpdateVersionChecker {
         if (!await File(exe).exists()) return 'not installed';
         final v = await _queryExeVersion(exe, ['--version']);
         if (v == null) return 'installed';
-        final m = RegExp(r'\b(\d+\.\d+\.\d+(?:[-\+][\w\.]+)?)\b')
-            .firstMatch(v);
+        final m = RegExp(r'\b(\d+\.\d+\.\d+(?:[-\+][\w\.]+)?)\b').firstMatch(v);
+        return m?.group(1) ?? 'installed';
+      }
+
+      // ═══════════════════════════════════════════════════
+      //  🆕 هستهٔ NPV (npv-go)
+      //
+      //  خروجی `npv --version` این شکلی است:
+      //    npv-go 1.1.0
+      //  بیلد محلی و باینری‌های قدیمی عدد ندارند؛ آن‌ها «installed»
+      //  می‌مانند و مقایسه با اندازهٔ asset انجام می‌شود.
+      // ═══════════════════════════════════════════════════
+      if (coreId == 'npv') {
+        final exe = await AppDataService.resolveBinaryPath('npv') ??
+            await AppDataService.getBinaryPath('npv');
+        if (!await File(exe).exists()) return 'not installed';
+        final v = await _queryExeVersion(exe, ['--version']);
+        if (v == null) return 'installed';
+        final m = RegExp(r'\b(\d+\.\d+\.\d+(?:[-\+][\w\.]+)?)\b').firstMatch(v);
         return m?.group(1) ?? 'installed';
       }
 
@@ -134,6 +158,7 @@ class CoreUpdateVersionChecker {
           coreId == 'sunandlion' ||
           coreId == 'ffvpn' ||
           coreId == 'lantern' ||
+          coreId == 'npv' ||
           coreId == 'sstp' ||
           coreId == 'wireguard' ||
           coreId == 'wireguard-awg') {

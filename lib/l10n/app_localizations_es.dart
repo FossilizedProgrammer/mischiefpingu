@@ -457,6 +457,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profile => 'Perfil';
 
   @override
+  String get aetherPresetControlsNote =>
+      'El protocolo, el modo de escaneo y la ofuscación siguen al preset seleccionado. Elige Manual para editarlos.';
+
+  @override
   String get protocol => 'Protocolo';
 
   @override
@@ -602,6 +606,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get torViaGeph => 'A través de Geph (Tor-over-Geph)';
+
+  @override
+  String get torUpstreamNpv => 'A través de NPV (Tor-over-NPV)';
 
   @override
   String get tunnelCore => 'Núcleo del túnel';
@@ -996,6 +1003,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get upstreamViaGeph => 'Geph';
 
   @override
+  String get psiphonUpstreamNpv => 'NPV';
+
+  @override
+  String get sstpUpstreamNpv => 'NPV';
+
+  @override
   String get diagnosticsReport => 'Informe de diagnóstico';
 
   @override
@@ -1180,6 +1193,28 @@ class AppLocalizationsEs extends AppLocalizations {
   String get ffvpnSettings => 'Ajustes de Firefox VPN';
 
   @override
+  String get ffvpnLoginSection => 'Iniciar sesión con correo y contraseña';
+
+  @override
+  String get ffvpnLoginHint =>
+      'Inicia sesión directamente en tu cuenta de Firefox y guarda abajo el token de sesión resultante — sin necesidad de rebuscar en signedInUser.json.';
+
+  @override
+  String get ffvpnEmailLabel => 'Correo de la cuenta de Firefox';
+
+  @override
+  String get ffvpnPasswordLabel => 'Contraseña';
+
+  @override
+  String get ffvpnSignIn => 'Iniciar sesión';
+
+  @override
+  String get ffvpnSigningIn => 'Iniciando sesión…';
+
+  @override
+  String get ffvpnSignedIn => 'Sesión iniciada — token guardado.';
+
+  @override
   String get ffvpnGuideTitle => 'Token de sesión de la cuenta de Firefox';
 
   @override
@@ -1256,6 +1291,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get ffvpnUpstreamGeph => 'Geph';
+
+  @override
+  String get ffvpnUpstreamNpv => 'NPV';
 
   @override
   String ffvpnUpstreamVia(String name, String port) {
@@ -1362,6 +1400,18 @@ class AppLocalizationsEs extends AppLocalizations {
       'Error de red al conectar con Mozilla — revisa tu conexión (puede hacer falta un túnel) e inténtalo de nuevo.';
 
   @override
+  String get ffvpnErrBadCredentials =>
+      'El correo o la contraseña son incorrectos (o el inicio de sesión está bloqueado) — revisa las credenciales de tu cuenta de Firefox.';
+
+  @override
+  String get ffvpnErrSignInUnsupported =>
+      'El núcleo ffvpn instalado no admite inicio de sesión con correo/contraseña. Actualiza el núcleo en Actualizaciones de núcleos, o pega un token de sesión.';
+
+  @override
+  String get ffvpnErrBlocked =>
+      'El borde de Mozilla bloqueó la solicitud de inicio de sesión desde esta red (HTTP 406). Inicia sesión a través de un túnel o de otra red y vuelve a intentarlo.';
+
+  @override
   String get ffvpnErrOther => 'error de ffvpn';
 
   @override
@@ -1420,6 +1470,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get lanternUpstreamGeph => 'Geph';
 
   @override
+  String get lanternUpstreamNpv => 'NPV';
+
+  @override
   String get lanternUpstreamDesc =>
       'Las conexiones a los servidores de Lantern (y, si ninguno es alcanzable, también tu tráfico) pasan por este proxy — úsalo cuando las IP de los servidores de Lantern estén bloqueadas.';
 
@@ -1437,9 +1490,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get lanternToolsServers => 'Servidores';
-
-  @override
-  String get lanternToolsRefreshServers => 'Actualizar lista';
 
   @override
   String get lanternToolsCheckServers => 'Comprobar servidores';
@@ -1562,6 +1612,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get gephUpstreamLantern => 'Lantern';
 
   @override
+  String get gephUpstreamNpv => 'NPV';
+
+  @override
   String get gephUpstreamDesc =>
       'Geph llega a su broker y sale primero a través de este proxy — úsalo cuando tu conexión directa esté bloqueada. Crear o comprobar la cuenta también pasa por él.';
 
@@ -1601,4 +1654,306 @@ class AppLocalizationsEs extends AppLocalizations {
   String gephAccountSavedTo(String path) {
     return 'Código de acceso guardado en $path';
   }
+
+  @override
+  String get npvSettings => 'Ajustes de NPV Tunnel';
+
+  @override
+  String get npvEngineName => 'NPV';
+
+  @override
+  String get npvConfigSection => 'Archivo de configuración de NPV';
+
+  @override
+  String get npvConfigDesc =>
+      'El archivo .npvs con el que se conecta NPV. Elige uno de tu ordenador.';
+
+  @override
+  String get npvPickConfigFile => 'Elegir archivo';
+
+  @override
+  String get npvChangeConfigFile => 'Cambiar archivo';
+
+  @override
+  String get npvClearConfigFile => 'Quitar';
+
+  @override
+  String get npvNoConfigFile => 'Aún no se ha elegido ningún archivo';
+
+  @override
+  String npvConfigLoaded(String name) {
+    return 'Seleccionado: $name';
+  }
+
+  @override
+  String get npvConfigReadError => 'No se pudo leer el archivo seleccionado';
+
+  @override
+  String get npvConfigLockedWhileRunning =>
+      'Detén el túnel para cambiar este archivo.';
+
+  @override
+  String get npvConnectionSection => 'Proxy local y sondeo';
+
+  @override
+  String get npvPortSocks => 'Puerto SOCKS';
+
+  @override
+  String get npvPortHttp => 'Puerto HTTP (0 = apagado)';
+
+  @override
+  String get npvProbeSection => 'Sondeo de configuraciones';
+
+  @override
+  String get npvProbeDesc =>
+      'Cada configuración se prueba una vez; se usa la más rápida de las que funcionan.';
+
+  @override
+  String get npvProbeTimeout => 'Tiempo de espera por solicitud (s)';
+
+  @override
+  String get npvProbeJobs => 'Sondeos en paralelo';
+
+  @override
+  String get npvProbeUrl => 'URL de sondeo (opcional)';
+
+  @override
+  String get autoReconnectNpv => 'Reconexión automática de NPV';
+
+  @override
+  String get npvServersSection => 'Servidores de este archivo';
+
+  @override
+  String get npvServersDesc =>
+      'Todas las configuraciones del archivo. Comprobar las prueba una a una y muestra cuáles funcionan, de la más rápida primero.';
+
+  @override
+  String get npvServersListBtn => 'Mostrar servidores';
+
+  @override
+  String get npvServersCheckBtn => 'Comprobar servidores';
+
+  @override
+  String get npvServersCancelBtn => 'Cancelar';
+
+  @override
+  String get npvServersScanning => 'Sondeando configuraciones…';
+
+  @override
+  String npvServersSummary(Object answered, Object total) {
+    return '$answered de $total configuraciones funcionan';
+  }
+
+  @override
+  String npvServersCount(Object total) {
+    return '$total configuraciones en este archivo';
+  }
+
+  @override
+  String get npvServersCreator => 'Nota';
+
+  @override
+  String get npvServersNone => 'Este archivo no tiene configuraciones.';
+
+  @override
+  String get npvServersNoFile =>
+      'Elige primero un archivo .npvs — todavía no hay nada que listar.';
+
+  @override
+  String get npvServersInUse => 'en uso';
+
+  @override
+  String get npvServersDead => 'No alcanzable';
+
+  @override
+  String get npvServersPinHint =>
+      'Pulsa una configuración para usar esa; pulsa de nuevo para que la aplicación elija la más rápida.';
+
+  @override
+  String get npvServersPinnedChip => 'seleccionada';
+
+  @override
+  String get npvServersUnpinHint => 'Seleccionada — pulsa para deshacer';
+
+  @override
+  String get npvServersAutoBtn => 'Auto (la más rápida)';
+
+  @override
+  String npvServersPinnedTo(Object label) {
+    return 'Seleccionada: $label';
+  }
+
+  @override
+  String npvServersStalePin(Object index) {
+    return 'La configuración seleccionada #$index no está en este archivo — elige otra o vuelve a Auto.';
+  }
+
+  @override
+  String get npvServersPinIgnored =>
+      'El núcleo de NPV usó una configuración distinta — actualiza el núcleo para elegir tú una.';
+
+  @override
+  String get aetherConnected => 'Aether conectado';
+
+  @override
+  String get aetherManualHint =>
+      'Modo manual: protocolo, ofuscación, modo de escaneo y endpoint personalizado quedan bajo tu control más abajo. El modo de escaneo solo se aplica mientras el endpoint personalizado esté vacío.';
+
+  @override
+  String get aetherSettings => 'Ajustes de Aether';
+
+  @override
+  String get autoReconnectAether => 'Reconexión automática de Aether';
+
+  @override
+  String get both => 'Ambos';
+
+  @override
+  String get connectionMode => 'Modo de conexión';
+
+  @override
+  String get customEndpoint => 'Endpoint personalizado (opcional)';
+
+  @override
+  String get customEndpointHint => 'Déjalo vacío para escaneo automático';
+
+  @override
+  String get endpointPinning => 'Fijado de endpoint';
+
+  @override
+  String get endpointPinningAutomatic => 'Auto';
+
+  @override
+  String get endpointPinningAutomaticDesc =>
+      'Escanea siempre automáticamente el mejor endpoint. Recomendado para la mayoría de los usuarios.';
+
+  @override
+  String get endpointPinningCustomFirst => 'Personalizado primero';
+
+  @override
+  String get endpointPinningCustomFirstDesc =>
+      'Prueba primero tu endpoint personalizado. Si falla, recurre al escaneo automático.';
+
+  @override
+  String get endpointPinningCustomOnly => 'Solo personalizado';
+
+  @override
+  String get endpointPinningCustomOnlyDesc =>
+      'Usa únicamente tu endpoint personalizado, sin recurso al escaneo automático. Sirve para probar un servidor concreto.';
+
+  @override
+  String get endpointPinningNeedsCustom =>
+      'Define abajo un endpoint personalizado para activar los modos «Personalizado primero» y «Solo personalizado».';
+
+  @override
+  String get endpointPinningSubtitle =>
+      'Controla cómo elige Aether su endpoint';
+
+  @override
+  String get ipType => 'Tipo de IP';
+
+  @override
+  String get ipv4 => 'IPv4';
+
+  @override
+  String get ipv6 => 'IPv6';
+
+  @override
+  String get localSocksPort => 'Puerto SOCKS local';
+
+  @override
+  String get logSourceAether => 'Aether';
+
+  @override
+  String get obfAggressive => 'Agresiva';
+
+  @override
+  String get obfBalanced => 'Equilibrada';
+
+  @override
+  String get obfDefaultCore => 'Predeterminada (núcleo)';
+
+  @override
+  String get obfFirewall => 'Firewall';
+
+  @override
+  String get obfGfw => 'GFW';
+
+  @override
+  String get obfLight => 'Ligera';
+
+  @override
+  String get obfuscation => 'Ofuscación (--noize)';
+
+  @override
+  String get profileAdaptive => 'Adaptativo';
+
+  @override
+  String get profileAdaptiveDesc =>
+      'Equilibrio entre velocidad y cobertura — adecuado para la mayoría de las redes';
+
+  @override
+  String get profileManual => 'Manual';
+
+  @override
+  String get profileManualDesc =>
+      'Todas las opciones manuales — para usuarios avanzados';
+
+  @override
+  String get profilePatchy => 'Señal irregular';
+
+  @override
+  String get profilePatchyDesc =>
+      'Datos móviles inestables — búsqueda más dura y resistente';
+
+  @override
+  String get profileStrict => 'Red estricta';
+
+  @override
+  String get profileStrictDesc =>
+      'Wi-Fi restringida o filtrado intenso — fragment + masque dentro de masque + noize gfw';
+
+  @override
+  String get protoGool => 'Gool (WARP dentro de WARP)';
+
+  @override
+  String get protoMasque => 'MASQUE (HTTP/3 o HTTP/2)';
+
+  @override
+  String get protoMim => 'MIM (masque dentro de masque)';
+
+  @override
+  String get protoWireguard => 'WireGuard';
+
+  @override
+  String get scanBalanced => 'Equilibrado';
+
+  @override
+  String get scanIronclad => 'Blindado';
+
+  @override
+  String get scanStealth => 'Sigiloso';
+
+  @override
+  String get scanThorough => 'Exhaustivo';
+
+  @override
+  String get scanTurbo => 'Turbo';
+
+  @override
+  String get scanVerified => 'Verificado';
+
+  @override
+  String get torViaAether => 'A través de Aether (Tor-over-Aether)';
+
+  @override
+  String get tryLastEndpointFirst =>
+      'Probar primero el último endpoint correcto';
+
+  @override
+  String get tryLastEndpointFirstSubtitle =>
+      'Si se activa, intentará el último endpoint que funcionó antes de escanear';
+
+  @override
+  String get aetherUpstream => 'Aether';
 }

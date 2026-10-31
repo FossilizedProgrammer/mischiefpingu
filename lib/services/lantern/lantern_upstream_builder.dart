@@ -18,6 +18,9 @@ class LanternUpstreamBuilder {
   /// پروکسی دستی که خود کاربر آدرس/پورت‌اش را می‌دهد.
   static const int manual = 1;
 
+  /// SOCKS محلی Aether.
+  static const int aether = 2;
+
   /// SOCKS محلی Psiphon.
   static const int psiphon = 3;
 
@@ -35,6 +38,9 @@ class LanternUpstreamBuilder {
 
   /// SOCKS محلی Geph.
   static const int geph = 9;
+
+  /// SOCKS محلی NPV.
+  static const int npv = 10;
 
   final AppSettings settings;
   final ProcessService processService;
@@ -54,6 +60,8 @@ class LanternUpstreamBuilder {
     switch (type) {
       case manual:
         return 'Manual';
+      case aether:
+        return 'Aether';
       case psiphon:
         return 'Psiphon';
       case tor:
@@ -66,6 +74,8 @@ class LanternUpstreamBuilder {
         return 'Firefox VPN';
       case geph:
         return 'Geph';
+      case npv:
+        return 'NPV';
       default:
         return 'Direct';
     }
@@ -74,6 +84,8 @@ class LanternUpstreamBuilder {
   /// پورت SOCKS محلی آپ‌استریم (برای `direct` و `manual` بی‌معنی است).
   int? get socksPort {
     switch (type) {
+      case aether:
+        return settings.aetherLocalPort;
       case psiphon:
         return settings.socksPort;
       case tor:
@@ -86,6 +98,8 @@ class LanternUpstreamBuilder {
         return settings.ffvpnSocksPort;
       case geph:
         return settings.gephSocksPort;
+      case npv:
+        return settings.npvSocksPort;
       default:
         return null;
     }
@@ -114,6 +128,8 @@ class LanternUpstreamBuilder {
     if (!hasUpstream) return true;
     if (type == manual) return buildUrl().isNotEmpty;
     switch (type) {
+      case aether:
+        return processService.isAetherRunning;
       case psiphon:
         return processService.isPsiphonRunning;
       case tor:
@@ -126,6 +142,8 @@ class LanternUpstreamBuilder {
         return processService.isFfvpnRunning;
       case geph:
         return processService.isGephRunning;
+      case npv:
+        return processService.isNpvRunning;
       default:
         return true;
     }

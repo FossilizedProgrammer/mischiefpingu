@@ -3,6 +3,7 @@
 library;
 
 enum CoreKind {
+  aether,
   tor,
   psiphon,
   sunandlion,
@@ -11,6 +12,7 @@ enum CoreKind {
   wireguardAwg, // 🆕
   ffvpn, // 🆕 Firefox VPN
   lantern, // 🆕 Lantern headless
+  npv, // 🆕 NPV Tunnel
 }
 
 class CoreUpdateSpec {
@@ -28,6 +30,7 @@ class CoreUpdateSpec {
 }
 
 const List<CoreUpdateSpec> coreUpdateSpecs = [
+  CoreUpdateSpec(kind: CoreKind.aether, displayName: 'Aether'),
   CoreUpdateSpec(kind: CoreKind.tor, displayName: 'Tor'),
   CoreUpdateSpec(
     kind: CoreKind.psiphon,
@@ -69,5 +72,12 @@ const List<CoreUpdateSpec> coreUpdateSpecs = [
     displayName: 'Lantern (headless)',
     note: 'Headless Lantern client for hard-filtered networks from '
         'FossilizedProgrammer/lantern-headless-iran.',
+  ),
+  // 🆕 هستهٔ NPV
+  CoreUpdateSpec(
+    kind: CoreKind.npv,
+    displayName: 'NPV Tunnel (npv)',
+    note: 'Connects to the servers in your .npvs file and serves a local '
+        'SOCKS/HTTP proxy, from FossilizedProgrammer/npv-go.',
   ),
 ];

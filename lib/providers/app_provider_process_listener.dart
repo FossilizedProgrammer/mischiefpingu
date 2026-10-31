@@ -14,6 +14,7 @@ extension AppProviderProcessListener on AppProvider {
       final last = logs.last;
       tryParseFoundFronting(last);
       tryParseBuildRev(last);
+      tryParseAetherRealEndpoint(last);
     }
     // ═══════════════════════════════════════════════════════════
     //  🆕 wireGuardTunnelReady هم به snapshot اضافه شد
@@ -21,6 +22,7 @@ extension AppProviderProcessListener on AppProvider {
     final currentState = _TunnelStateSnapshot(
       psiphonRunning: processService.isPsiphonRunning,
       psiphonConnected: processService.isPsiphonConnected,
+      aetherRunning: processService.isAetherRunning,
       torRunning: processService.isTorRunning,
       torConnected: processService.isTorConnected,
       torBootstrapProgress: processService.torBootstrapProgress,
@@ -35,6 +37,8 @@ extension AppProviderProcessListener on AppProvider {
       lanternConnected: processService.isLanternConnected,
       gephRunning: processService.isGephRunning,
       gephConnected: processService.isGephConnected,
+      npvRunning: processService.isNpvRunning,
+      npvConnected: processService.isNpvConnected,
     );
     final previousState = _lastTunnelState;
     final stateChanged = previousState != currentState;

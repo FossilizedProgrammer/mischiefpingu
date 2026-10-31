@@ -5,6 +5,7 @@ library;
 import 'dart:convert';
 
 import '../../models/settings_model.dart';
+import '../database/gateway_history_store.dart';
 import '../process_service.dart';
 import 'diagnostics_report_redactor.dart';
 

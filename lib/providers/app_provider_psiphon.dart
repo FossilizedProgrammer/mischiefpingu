@@ -32,6 +32,7 @@ extension AppProviderPsiphon on AppProvider {
     userStoppedPsiphon = true;
     _reconnectManager.cancelPsiphonTimer();
     _reconnectManager.resetRetries('psiphon');
+    _aetherTestService.requestCancel();
     _recoveryCoordinator.releaseLeaseByTunnel('Psiphon');
 
     // ⚠️ FIX: generation رو عوض کن — start قبلی در finally دیگه flag ریست نمی‌کنه

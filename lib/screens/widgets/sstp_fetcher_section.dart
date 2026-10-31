@@ -25,6 +25,7 @@ class _SstpFetcherSectionState extends State<SstpFetcherSection> {
     final fetcher = context.read<SstpFetcherProvider>();
     fetcher.bindPortGetters(
       psiphon: () => app.settings.socksPort,
+      aether: () => app.settings.aetherLocalPort,
       tor: () => app.settings.torSocksPort,
       sstp: () => app.settings.sstpSocksPort,
     );

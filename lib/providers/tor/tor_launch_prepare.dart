@@ -64,6 +64,8 @@ extension AppProviderTorLaunchPrepare on AppProvider {
         geoip6Path: assets.geoip6Path,
         lyrebirdPath: assets.lyrebirdPath,
         conjurePath: assets.conjurePath,
+        aetherSocks:
+            settings.torTransport == 'aether' ? settings.aetherLocalPort : null,
         psiphonSocks:
             settings.torTransport == 'psiphon' ? settings.socksPort : null,
         sstpSocks:
@@ -71,15 +73,14 @@ extension AppProviderTorLaunchPrepare on AppProvider {
         wireguardSocks: settings.torTransport == 'wireguard'
             ? settings.wireguardSocksPort
             : null,
-        ffvpnSocks: settings.torTransport == 'ffvpn'
-            ? settings.ffvpnSocksPort
-            : null,
+        ffvpnSocks:
+            settings.torTransport == 'ffvpn' ? settings.ffvpnSocksPort : null,
         lanternSocks: settings.torTransport == 'lantern'
             ? settings.lanternSocksPort
             : null,
-        gephSocks: settings.torTransport == 'geph'
-            ? settings.gephSocksPort
-            : null,
+        gephSocks:
+            settings.torTransport == 'geph' ? settings.gephSocksPort : null,
+        npvSocks: settings.torTransport == 'npv' ? settings.npvSocksPort : null,
       );
 
       // ─── write torrc ───

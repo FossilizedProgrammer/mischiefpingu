@@ -2,7 +2,7 @@ part of 'app_provider.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  هندل upstream برای SSTP
-///  (Psiphon / Tor / WireGuard / Firefox VPN / Lantern / Geph)
+///  (Aether / Psiphon / Tor / WireGuard / Firefox VPN / Lantern / Geph / NPV)
 ///
 ///  ⚠️ نکات:
 ///   • isAutoTesting در try/finally
@@ -16,6 +16,14 @@ extension AppProviderSstpUpstream on AppProvider {
     );
 
     switch (builder.type) {
+      case SstpUpstreamBuilder.aether:
+        return _ensureSstpUpstreamTunnel(
+          name: 'Aether',
+          isRunning: () => processService.isAetherRunning,
+          isStoppedByUser: () => userStoppedAether,
+          start: () => connectAether(fromAutoReconnect: fromAutoReconnect),
+          fromAutoReconnect: fromAutoReconnect,
+        );
       case SstpUpstreamBuilder.psiphon:
         return _ensureSstpUpstreamTunnel(
           name: 'Psiphon',
@@ -62,6 +70,14 @@ extension AppProviderSstpUpstream on AppProvider {
           isRunning: () => processService.isGephRunning,
           isStoppedByUser: () => userStoppedGeph,
           start: () => connectGeph(),
+          fromAutoReconnect: fromAutoReconnect,
+        );
+      case SstpUpstreamBuilder.npv:
+        return _ensureSstpUpstreamTunnel(
+          name: 'NPV',
+          isRunning: () => processService.isNpvRunning,
+          isStoppedByUser: () => userStoppedNpv,
+          start: () => connectNpv(),
           fromAutoReconnect: fromAutoReconnect,
         );
       default:

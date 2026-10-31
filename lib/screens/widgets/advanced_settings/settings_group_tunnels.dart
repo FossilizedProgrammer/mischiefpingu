@@ -2,6 +2,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import '../aether_settings_tile.dart';
 import '../ffvpn_settings_tile.dart';
 import '../psiphon_settings_tile.dart';
 import '../tor_settings_tile.dart';
@@ -9,6 +10,7 @@ import '../sstp_settings_tile.dart';
 import '../wireguard_settings_tile.dart';
 import '../lantern_settings_tile.dart';
 import '../geph_settings_tile.dart';
+import '../npv_settings_tile.dart';
 
 class SettingsGroupTunnels extends StatelessWidget {
   const SettingsGroupTunnels({super.key});
@@ -17,6 +19,7 @@ class SettingsGroupTunnels extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Column(
       children: [
+        AetherSettingsTile(),
         PsiphonSettingsTile(),
         TorSettingsTile(),
         SstpSettingsTile(),
@@ -24,6 +27,7 @@ class SettingsGroupTunnels extends StatelessWidget {
         FirefoxVpnSettingsTile(),
         LanternSettingsTile(),
         GephSettingsTile(),
+        NpvSettingsTile(),
       ],
     );
   }

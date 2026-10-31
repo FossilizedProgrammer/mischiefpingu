@@ -21,6 +21,7 @@ class ConnectionButtons extends StatelessWidget {
     );
     final resolver = ConnectionStateResolver(provider);
 
+    final aetherData = resolver.resolveAether(builder);
     final psiphonData = resolver.resolvePsiphon(builder);
     final torData = resolver.resolveTor(builder);
     final sstpData = resolver.resolveSstp(builder);
@@ -28,6 +29,7 @@ class ConnectionButtons extends StatelessWidget {
     final ffvpnData = resolver.resolveFfvpn(builder);
     final lanternData = resolver.resolveLantern(builder);
     final gephData = resolver.resolveGeph(builder);
+    final npvData = resolver.resolveNpv(builder);
 
     final onSurface = theme.colorScheme.onSurface;
 
@@ -41,6 +43,20 @@ class ConnectionButtons extends StatelessWidget {
         );
 
     final buttons = <ConnectionPillButton>[
+      ConnectionPillButton(
+        title: 'Aether',
+        actionLabel: aetherData.state.actionLabel,
+        icon: aetherData.state.icon,
+        color: aetherData.state.color,
+        busy: aetherData.state.busy,
+        connected: aetherData.state.connected,
+        onTap: () => provider.connectAether(),
+        statusText: aetherData.state.statusText(aetherData.progress, l10n),
+        statusColor: aetherData.state.statusColor(
+          theme.colorScheme.primary,
+          onSurface,
+        ),
+      ),
       ConnectionPillButton(
         title: 'Psiphon',
         actionLabel: psiphonData.state.actionLabel,
@@ -148,6 +164,20 @@ class ConnectionButtons extends StatelessWidget {
           l10n,
         ),
         statusColor: gephData.state.statusColor(
+          theme.colorScheme.primary,
+          onSurface,
+        ),
+      ),
+      ConnectionPillButton(
+        title: 'NPV',
+        actionLabel: npvData.state.actionLabel,
+        icon: npvData.state.icon,
+        color: npvData.state.color,
+        busy: npvData.state.busy,
+        connected: npvData.state.connected,
+        onTap: () => provider.connectNpv(),
+        statusText: npvData.state.statusText(npvData.progress, l10n),
+        statusColor: npvData.state.statusColor(
           theme.colorScheme.primary,
           onSurface,
         ),

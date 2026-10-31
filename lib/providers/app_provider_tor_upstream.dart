@@ -2,7 +2,7 @@ part of 'app_provider.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  هندل کردن upstream برای Tor
-///  (Psiphon / SSTP / WireGuard / Firefox VPN / Lantern / Geph)
+///  (Aether / Psiphon / SSTP / WireGuard / Firefox VPN / Lantern / Geph / NPV)
 ///
 ///  ⚠️ نکات:
 ///   • isAutoTesting در try/finally
@@ -13,6 +13,15 @@ extension AppProviderTorUpstream on AppProvider {
     required bool fromAutoReconnect,
   }) async {
     switch (settings.torTransport) {
+      case 'aether':
+        return _resolveTorChainedTunnel(
+          type: 'aether',
+          label: 'Aether',
+          isRunning: () => processService.isAetherRunning,
+          stoppedByUser: () => userStoppedAether,
+          start: () => connectAether(fromAutoReconnect: fromAutoReconnect),
+          fromAutoReconnect: fromAutoReconnect,
+        );
       case 'psiphon':
         return _resolveTorChainedTunnel(
           type: 'psiphon',
@@ -65,6 +74,15 @@ extension AppProviderTorUpstream on AppProvider {
           isRunning: () => processService.isGephRunning,
           stoppedByUser: () => userStoppedGeph,
           start: () => connectGeph(),
+          fromAutoReconnect: fromAutoReconnect,
+        );
+      case 'npv':
+        return _resolveTorChainedTunnel(
+          type: 'npv',
+          label: 'NPV',
+          isRunning: () => processService.isNpvRunning,
+          stoppedByUser: () => userStoppedNpv,
+          start: () => connectNpv(),
           fromAutoReconnect: fromAutoReconnect,
         );
     }

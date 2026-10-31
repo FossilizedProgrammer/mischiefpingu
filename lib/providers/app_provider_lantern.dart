@@ -10,8 +10,7 @@ part of 'app_provider.dart';
 extension AppProviderLantern on AppProvider {
   /// connectLantern — entry point عمومی (toggle connect/stop).
   Future<void> connectLantern() async {
-    final isCurrentlyActive =
-        processService.isLanternRunning || isLanternBusy;
+    final isCurrentlyActive = processService.isLanternRunning || isLanternBusy;
 
     if (isCurrentlyActive) {
       await stopLanternByUser();
@@ -139,8 +138,7 @@ extension AppProviderLantern on AppProvider {
         return;
       }
 
-      lanternStatus =
-          ok ? 'Lantern: Starting…' : 'Lantern: Failed to start';
+      lanternStatus = ok ? 'Lantern: Starting…' : 'Lantern: Failed to start';
 
       if (myGeneration != _lanternGeneration) {
         processService.addLog(
@@ -192,6 +190,13 @@ extension AppProviderLantern on AppProvider {
 
     final port = builder.socksPort;
     switch (builder.type) {
+      case LanternUpstreamBuilder.aether:
+        return _ensureLanternUpstreamTunnel(
+          name: 'Aether',
+          port: port,
+          isRunning: () => processService.isAetherRunning,
+          start: () => connectAether(),
+        );
       case LanternUpstreamBuilder.psiphon:
         return _ensureLanternUpstreamTunnel(
           name: 'Psiphon',
@@ -233,6 +238,13 @@ extension AppProviderLantern on AppProvider {
           port: port,
           isRunning: () => processService.isGephRunning,
           start: () => connectGeph(),
+        );
+      case LanternUpstreamBuilder.npv:
+        return _ensureLanternUpstreamTunnel(
+          name: 'NPV',
+          port: port,
+          isRunning: () => processService.isNpvRunning,
+          start: () => connectNpv(),
         );
       default:
         return true;

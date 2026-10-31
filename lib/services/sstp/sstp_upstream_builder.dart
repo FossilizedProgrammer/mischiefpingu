@@ -10,6 +10,9 @@ class SstpUpstreamBuilder {
   /// پروکسی دستی که خود کاربر آدرس/پورت‌اش را می‌دهد.
   static const int manual = 1;
 
+  /// SOCKS محلی Aether.
+  static const int aether = 2;
+
   /// SOCKS محلی Psiphon.
   static const int psiphon = 3;
 
@@ -28,6 +31,9 @@ class SstpUpstreamBuilder {
   /// SOCKS محلی Geph.
   static const int geph = 8;
 
+  /// SOCKS محلی NPV.
+  static const int npv = 10;
+
   final AppSettings settings;
   final ProcessService processService;
 
@@ -40,6 +46,9 @@ class SstpUpstreamBuilder {
     switch (settings.sstpUpstreamType) {
       case manual:
         _applyManual(args);
+        break;
+      case aether:
+        _applySocks(args, settings.aetherLocalPort, 'Aether');
         break;
       case psiphon:
         _applySocks(args, settings.socksPort, 'Psiphon');
@@ -58,6 +67,9 @@ class SstpUpstreamBuilder {
         break;
       case geph:
         _applySocks(args, settings.gephSocksPort, 'Geph');
+        break;
+      case npv:
+        _applySocks(args, settings.npvSocksPort, 'NPV');
         break;
       default:
         break;

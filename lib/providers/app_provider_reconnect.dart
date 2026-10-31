@@ -43,6 +43,30 @@ extension AppProviderReconnect on AppProvider {
     );
 
     // ═══════════════════════════════════════════════════════════
+    //  Aether
+    // ═══════════════════════════════════════════════════════════
+    _scheduleReconnectFor(
+      tunnel: 'aether',
+      isRunning: processService.isAetherRunning,
+      isBusy: isAutoTesting,
+      isLoading: false,
+      hasPid: processService.aetherPid != null,
+      userStopped: userStoppedAether,
+      autoReconnectEnabled: settings.autoReconnectAether,
+      isAutoTesting: isAutoTesting,
+      isRestarting: restartingAether,
+      shouldReconnect: () =>
+          !processService.isAetherRunning &&
+          !isAutoTesting &&
+          processService.aetherPid == null &&
+          !userStoppedAether &&
+          settings.autoReconnectAether &&
+          !restartingAether &&
+          !isShuttingDown,
+      onReconnect: () => connectAether(fromAutoReconnect: true),
+    );
+
+    // ═══════════════════════════════════════════════════════════
     //  Tor
     // ═══════════════════════════════════════════════════════════
     _scheduleReconnectFor(
@@ -116,6 +140,30 @@ extension AppProviderReconnect on AppProvider {
           !isShuttingDown,
       onReconnect: () => connectWireGuard(fromAutoReconnect: true),
     );
+
+    // ═══════════════════════════════════════════════════════════
+    //  NPV
+    // ═══════════════════════════════════════════════════════════
+    _scheduleReconnectFor(
+      tunnel: 'npv',
+      isRunning: processService.isNpvRunning,
+      isBusy: isNpvBusy,
+      isLoading: false,
+      hasPid: processService.npvPid != null,
+      userStopped: userStoppedNpv,
+      autoReconnectEnabled: settings.npvAutoReconnect,
+      isAutoTesting: isAutoTesting,
+      isRestarting: false,
+      shouldReconnect: () =>
+          !processService.isNpvRunning &&
+          !isNpvBusy &&
+          processService.npvPid == null &&
+          !userStoppedNpv &&
+          settings.npvAutoReconnect &&
+          !isAutoTesting &&
+          !isShuttingDown,
+      onReconnect: () => connectNpv(),
+    );
   }
 
   void updateTunnelStatuses() {
@@ -153,11 +201,25 @@ extension AppProviderReconnect on AppProvider {
       }
     }
 
+    if (processService.isNpvRunning) {
+      if (processService.isNpvConnected) {
+        final picked = processService.npvSelectedConfig;
+        npvStatus =
+            picked.isEmpty ? 'NPV: Connected' : 'NPV: Connected · $picked';
+      } else if (npvStatus == 'NPV: Ready' || npvStatus == 'NPV: Stopped') {
+        npvStatus = 'NPV: Connecting…';
+      }
+    } else if (npvStatus == 'NPV: Connecting…' ||
+        npvStatus.startsWith('NPV: Connected')) {
+      // باینری از پا درآمد (exit سریع، نبودِ کانفیگ زنده و…) تا status
+      // روی «در حال اتصال» گیر نکند.
+      npvStatus = 'NPV: Stopped';
+    }
+
     if (processService.isGephRunning) {
       if (processService.isGephConnected) {
         gephStatus = 'Geph: Connected';
-      } else if (gephStatus == 'Geph: Ready' ||
-          gephStatus == 'Geph: Stopped') {
+      } else if (gephStatus == 'Geph: Ready' || gephStatus == 'Geph: Stopped') {
         gephStatus = 'Geph: Connecting…';
       }
     } else if (gephStatus == 'Geph: Starting…') {

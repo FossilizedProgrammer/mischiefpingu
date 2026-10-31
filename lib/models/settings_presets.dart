@@ -28,7 +28,7 @@ extension AppSettingsPresets on AppSettings {
         // Direct connection
         isFronted = false;
         useSunAndLion = false;
-        upstreamType = 4;
+        upstreamType = 0;
         break;
     }
   }

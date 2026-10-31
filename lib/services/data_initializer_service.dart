@@ -9,6 +9,7 @@ import 'ownership_service.dart';
 import 'data_paths_service.dart';
 import 'tor_bundle_seeder.dart';
 import 'psiphon_data_seeder.dart';
+import 'data_init/aether_pt_seeder.dart';
 import 'data_init/shared_files_seeder.dart';
 
 class DataInitializerService {
@@ -56,6 +57,8 @@ class DataInitializerService {
       dataDir: dataDir,
       platformDir: platformDir,
     );
+
+    await AetherPtSeeder.seed(dataDir: dataDir, platformDir: platformDir);
 
     await OwnershipService.fixOwnership(dataDir);
     await DataPathsService.ensureTorDir();

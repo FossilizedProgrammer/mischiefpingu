@@ -17,8 +17,12 @@ import '../models/wireguard_core_type.dart';
 import 'app_data_service.dart';
 import 'ffvpn/ffvpn_upstream_builder.dart';
 import 'geph/geph_cli_service.dart';
+import 'health/tunnel_health_models.dart' show TunnelKind;
+import 'health/tunnel_health_tester.dart';
 import 'lantern/lantern_cli_service.dart';
 import 'log_line_parsers.dart';
+import 'npv/npv_args.dart';
+import 'npv/npv_server_list.dart';
 import 'port_manager.dart';
 import 'process/log_source.dart';
 import 'process/log_store.dart';
@@ -38,12 +42,16 @@ import 'wireguard/wireguard_paths.dart';
 export 'process/log_source.dart' show LogSource;
 
 part 'process_service_helpers.dart';
+part 'process_service_aether_lan.dart';
 part 'process_service_lan.dart';
 
 part 'psiphon/psiphon_process_starter.dart';
 part 'psiphon/psiphon_log_listener.dart';
 part 'psiphon_stopper.dart';
 part 'process_service_psiphon.dart';
+
+part 'aether_starter.dart';
+part 'aether_stopper.dart';
 
 part 'tor_launcher.dart';
 part 'tor_stopper.dart';
@@ -56,6 +64,7 @@ part 'process_service_wireguard.dart';
 part 'process_service_ffvpn.dart';
 part 'process_service_lantern.dart';
 part 'process_service_geph.dart';
+part 'process_service_npv.dart';
 
 class ProcessService extends ChangeNotifier
     with ProcessNotifications
@@ -81,6 +90,18 @@ class ProcessService extends ChangeNotifier
   bool isPsiphonRunning = false;
 
   @override
+  bool isAetherRunning = false;
+
+  @override
+  bool isAetherTunnelReady = false;
+
+  /// آخرین خطایی که خود هستهٔ Aether پیش از validate شدن تونل گزارش کرد
+  /// (مثلاً `connect-ip status: 400` برای endpoint سنجاق‌شده). تا وقتی
+  /// تونل ready نشده، presence یعنی این attempt بی‌فایده است و نباید
+  /// منتظر timeout پروب ماند.
+  String? aetherAttemptError;
+
+  @override
   bool isTorRunning = false;
 
   @override
@@ -97,6 +118,33 @@ class ProcessService extends ChangeNotifier
   bool isGephRunning = false;
 
   bool isGephConnected = false;
+
+  bool isNpvRunning = false;
+
+  bool isNpvConnected = false;
+
+  /// remark کانفیگی که npv بعد از سنجش انتخاب کرده (برای نمایش در status).
+  String npvSelectedConfig = '';
+
+  /// نتیجهٔ `npv list -json`: فهرست کانفیگ‌ها و سنجش آن‌ها.
+  NpvServerList? npvServerList;
+
+  bool isNpvScanning = false;
+
+  /// سنجش توسط کاربر قطع شده تا exit-code غیرصفرِ kill خطا تلقی نشود.
+  bool npvScanCancelled = false;
+
+  /// خطای آخرین سنجش؛ null یعنی بی‌خطا.
+  String? npvScanError;
+
+  /// آیا آخرین سنجش واقعاً ترافیک رد کرده بود (-check) یا فقط فهرست بود.
+  bool npvScanChecked = false;
+
+  DateTime? npvScanTime;
+
+  /// فایل کانفیگی که آخرین سنجش روی آن انجام شد؛ اتصال فقط وقتی از نتیجه
+  /// استفاده می‌کند که همین فایل هنوز انتخاب شده باشد.
+  String npvScanConfigPath = '';
 
   @override
   bool isPsiphonConnected = false;
@@ -147,6 +195,27 @@ class ProcessService extends ChangeNotifier
   void clearPendingProtocolNotification() {
     pendingProtocolNotification = null;
     pendingProtocolBinary = null;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Aether protocol state
+  // ═══════════════════════════════════════════════════════════════
+
+  @override
+  String? lastAetherProtocol;
+
+  @override
+  String? pendingAetherProtocolNotification;
+
+  @override
+  void clearPendingAetherProtocolNotification() {
+    pendingAetherProtocolNotification = null;
+  }
+
+  @override
+  void setAetherProtocolNotification(String protocol) {
+    lastAetherProtocol = protocol;
+    pendingAetherProtocolNotification = protocol;
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -319,11 +388,14 @@ class ProcessService extends ChangeNotifier
   // ═══════════════════════════════════════════════════════════════
 
   Process? psiphonProcess;
+  Process? aetherProcess;
   Process? torProcess;
   Process? sstpProcess;
   Process? ffvpnProcess;
   Process? lanternProcess;
   Process? gephProcess;
+  Process? npvProcess;
+  Process? npvScanProcess;
 
   // ═══════════════════════════════════════════════════════════════
   //  Forwarder sockets
@@ -386,12 +458,14 @@ class ProcessService extends ChangeNotifier
   //  PID getters
   // ═══════════════════════════════════════════════════════════════
 
+  int? get aetherPid => aetherProcess?.pid;
   int? get psiphonPid => psiphonProcess?.pid;
   int? get torPid => torProcess?.pid;
   int? get sstpPid => sstpProcess?.pid;
   int? get ffvpnPid => ffvpnProcess?.pid;
   int? get lanternPid => lanternProcess?.pid;
   int? get gephPid => gephProcess?.pid;
+  int? get npvPid => npvProcess?.pid;
 
   // ═══════════════════════════════════════════════════════════════
   //  Lifecycle

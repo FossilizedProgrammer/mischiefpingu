@@ -101,5 +101,38 @@ ThemeData buildAppTheme(String themeId, Brightness brightness) {
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
+    scrollbarTheme: _appScrollbarTheme(isDark),
+  );
+}
+
+/// اسکرول‌بار ستون همیشه نمایان؛ بدون آن دسکتاپ فقط هنگام اسکرول نشان می‌دهد.
+ScrollbarThemeData _appScrollbarTheme(bool isDark) {
+  final base = isDark ? Colors.white : const Color(0xFF0F172A);
+  return ScrollbarThemeData(
+    thumbVisibility: WidgetStatePropertyAll<bool>(true),
+    trackVisibility: WidgetStatePropertyAll<bool>(true),
+    interactive: true,
+    thickness: WidgetStateProperty.resolveWith(
+      (states) => states.contains(WidgetState.hovered) ? 12.0 : 10.0,
+    ),
+    radius: const Radius.circular(6),
+    crossAxisMargin: 4,
+    mainAxisMargin: 8,
+    minThumbLength: 40,
+    thumbColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.dragged)) {
+        return base.withValues(alpha: isDark ? 0.75 : 0.6);
+      }
+      if (states.contains(WidgetState.hovered)) {
+        return base.withValues(alpha: isDark ? 0.55 : 0.42);
+      }
+      return base.withValues(alpha: isDark ? 0.38 : 0.28);
+    }),
+    trackColor: WidgetStatePropertyAll<Color>(
+      base.withValues(alpha: isDark ? 0.1 : 0.07),
+    ),
+    trackBorderColor: WidgetStatePropertyAll<Color>(
+      base.withValues(alpha: isDark ? 0.16 : 0.12),
+    ),
   );
 }

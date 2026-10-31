@@ -919,6 +919,12 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get profile;
 
+  /// No description provided for @aetherPresetControlsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Protocol, scan mode and obfuscation follow the selected preset. Choose Manual to edit them.'**
+  String get aetherPresetControlsNote;
+
   /// No description provided for @protocol.
   ///
   /// In en, this message translates to:
@@ -958,7 +964,7 @@ abstract class AppLocalizations {
   /// No description provided for @psiphonUpstream.
   ///
   /// In en, this message translates to:
-  /// **'Psiphon (SOCKS upstream)'**
+  /// **'Psiphon'**
   String get psiphonUpstream;
 
   /// No description provided for @save.
@@ -1078,7 +1084,7 @@ abstract class AppLocalizations {
   /// No description provided for @sstpSocksUpstream.
   ///
   /// In en, this message translates to:
-  /// **'SSTP (SOCKS upstream)'**
+  /// **'SSTP'**
   String get sstpSocksUpstream;
 
   /// No description provided for @start.
@@ -1168,13 +1174,13 @@ abstract class AppLocalizations {
   /// No description provided for @torSocksUpstream.
   ///
   /// In en, this message translates to:
-  /// **'Tor (SOCKS upstream)'**
+  /// **'Tor'**
   String get torSocksUpstream;
 
   /// No description provided for @torUpstream.
   ///
   /// In en, this message translates to:
-  /// **'Tor (SOCKS upstream)'**
+  /// **'Tor'**
   String get torUpstream;
 
   /// No description provided for @torViaPsiphon.
@@ -1206,6 +1212,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Via Geph (Tor-over-Geph)'**
   String get torViaGeph;
+
+  /// No description provided for @torUpstreamNpv.
+  ///
+  /// In en, this message translates to:
+  /// **'Via NPV (Tor-over-NPV)'**
+  String get torUpstreamNpv;
 
   /// No description provided for @tunnelCore.
   ///
@@ -1924,32 +1936,44 @@ abstract class AppLocalizations {
   /// No description provided for @psiphonWireGuardUpstream.
   ///
   /// In en, this message translates to:
-  /// **'WireGuard (SOCKS upstream)'**
+  /// **'WireGuard'**
   String get psiphonWireGuardUpstream;
 
   /// No description provided for @sstpWireGuardUpstream.
   ///
   /// In en, this message translates to:
-  /// **'WireGuard (SOCKS upstream)'**
+  /// **'WireGuard'**
   String get sstpWireGuardUpstream;
 
   /// No description provided for @upstreamViaFfvpn.
   ///
   /// In en, this message translates to:
-  /// **'Firefox VPN (SOCKS upstream)'**
+  /// **'Firefox VPN'**
   String get upstreamViaFfvpn;
 
   /// No description provided for @upstreamViaLantern.
   ///
   /// In en, this message translates to:
-  /// **'Lantern (SOCKS upstream)'**
+  /// **'Lantern'**
   String get upstreamViaLantern;
 
   /// No description provided for @upstreamViaGeph.
   ///
   /// In en, this message translates to:
-  /// **'Geph (SOCKS upstream)'**
+  /// **'Geph'**
   String get upstreamViaGeph;
+
+  /// No description provided for @psiphonUpstreamNpv.
+  ///
+  /// In en, this message translates to:
+  /// **'NPV'**
+  String get psiphonUpstreamNpv;
+
+  /// No description provided for @sstpUpstreamNpv.
+  ///
+  /// In en, this message translates to:
+  /// **'NPV'**
+  String get sstpUpstreamNpv;
 
   /// No description provided for @diagnosticsReport.
   ///
@@ -2263,6 +2287,48 @@ abstract class AppLocalizations {
   /// **'Firefox VPN Settings'**
   String get ffvpnSettings;
 
+  /// No description provided for @ffvpnLoginSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Email & Password'**
+  String get ffvpnLoginSection;
+
+  /// No description provided for @ffvpnLoginHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Signs in directly to your Firefox Account and stores the resulting session token below — no need to dig through signedInUser.json.'**
+  String get ffvpnLoginHint;
+
+  /// No description provided for @ffvpnEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Firefox Account email'**
+  String get ffvpnEmailLabel;
+
+  /// No description provided for @ffvpnPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get ffvpnPasswordLabel;
+
+  /// No description provided for @ffvpnSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get ffvpnSignIn;
+
+  /// No description provided for @ffvpnSigningIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Signing in…'**
+  String get ffvpnSigningIn;
+
+  /// No description provided for @ffvpnSignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in — session token saved.'**
+  String get ffvpnSignedIn;
+
   /// No description provided for @ffvpnGuideTitle.
   ///
   /// In en, this message translates to:
@@ -2368,38 +2434,44 @@ abstract class AppLocalizations {
   /// No description provided for @ffvpnUpstreamPsiphon.
   ///
   /// In en, this message translates to:
-  /// **'Psiphon (SOCKS)'**
+  /// **'Psiphon'**
   String get ffvpnUpstreamPsiphon;
 
   /// No description provided for @ffvpnUpstreamTor.
   ///
   /// In en, this message translates to:
-  /// **'Tor (SOCKS)'**
+  /// **'Tor'**
   String get ffvpnUpstreamTor;
 
   /// No description provided for @ffvpnUpstreamSstp.
   ///
   /// In en, this message translates to:
-  /// **'SSTP (SOCKS)'**
+  /// **'SSTP'**
   String get ffvpnUpstreamSstp;
 
   /// No description provided for @ffvpnUpstreamWireguard.
   ///
   /// In en, this message translates to:
-  /// **'WireGuard (SOCKS)'**
+  /// **'WireGuard'**
   String get ffvpnUpstreamWireguard;
 
   /// No description provided for @ffvpnUpstreamLantern.
   ///
   /// In en, this message translates to:
-  /// **'Lantern (SOCKS)'**
+  /// **'Lantern'**
   String get ffvpnUpstreamLantern;
 
   /// No description provided for @ffvpnUpstreamGeph.
   ///
   /// In en, this message translates to:
-  /// **'Geph (SOCKS)'**
+  /// **'Geph'**
   String get ffvpnUpstreamGeph;
+
+  /// No description provided for @ffvpnUpstreamNpv.
+  ///
+  /// In en, this message translates to:
+  /// **'NPV'**
+  String get ffvpnUpstreamNpv;
 
   /// No description provided for @ffvpnUpstreamVia.
   ///
@@ -2569,6 +2641,24 @@ abstract class AppLocalizations {
   /// **'Network error while reaching Mozilla — check your connection (a tunnel may be needed) and try again.'**
   String get ffvpnErrNetwork;
 
+  /// No description provided for @ffvpnErrBadCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'The email or password is incorrect (or sign-in is blocked) — check your Firefox Account credentials.'**
+  String get ffvpnErrBadCredentials;
+
+  /// No description provided for @ffvpnErrSignInUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'The installed ffvpn core does not support email/password sign-in. Update the core from Core Updates, or paste a session token instead.'**
+  String get ffvpnErrSignInUnsupported;
+
+  /// No description provided for @ffvpnErrBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Mozilla\'s edge blocked the sign-in request from this network (HTTP 406). Sign in through a tunnel or another network, then try again.'**
+  String get ffvpnErrBlocked;
+
   /// No description provided for @ffvpnErrOther.
   ///
   /// In en, this message translates to:
@@ -2683,6 +2773,12 @@ abstract class AppLocalizations {
   /// **'Geph'**
   String get lanternUpstreamGeph;
 
+  /// No description provided for @lanternUpstreamNpv.
+  ///
+  /// In en, this message translates to:
+  /// **'NPV'**
+  String get lanternUpstreamNpv;
+
   /// No description provided for @lanternUpstreamDesc.
   ///
   /// In en, this message translates to:
@@ -2713,16 +2809,10 @@ abstract class AppLocalizations {
   /// **'Servers'**
   String get lanternToolsServers;
 
-  /// No description provided for @lanternToolsRefreshServers.
-  ///
-  /// In en, this message translates to:
-  /// **'Refresh list'**
-  String get lanternToolsRefreshServers;
-
   /// No description provided for @lanternToolsCheckServers.
   ///
   /// In en, this message translates to:
-  /// **'Check reachability'**
+  /// **'Check servers'**
   String get lanternToolsCheckServers;
 
   /// No description provided for @lanternServerReachable.
@@ -2953,6 +3043,12 @@ abstract class AppLocalizations {
   /// **'Lantern'**
   String get gephUpstreamLantern;
 
+  /// No description provided for @gephUpstreamNpv.
+  ///
+  /// In en, this message translates to:
+  /// **'NPV'**
+  String get gephUpstreamNpv;
+
   /// No description provided for @gephUpstreamDesc.
   ///
   /// In en, this message translates to:
@@ -3018,6 +3114,552 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Login code saved to {path}'**
   String gephAccountSavedTo(String path);
+
+  /// No description provided for @npvSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'NPV Tunnel Settings'**
+  String get npvSettings;
+
+  /// No description provided for @npvEngineName.
+  ///
+  /// In en, this message translates to:
+  /// **'NPV'**
+  String get npvEngineName;
+
+  /// No description provided for @npvConfigSection.
+  ///
+  /// In en, this message translates to:
+  /// **'NPV config file'**
+  String get npvConfigSection;
+
+  /// No description provided for @npvConfigDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'The .npvs file that NPV connects with. Choose one from your computer.'**
+  String get npvConfigDesc;
+
+  /// No description provided for @npvPickConfigFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose file'**
+  String get npvPickConfigFile;
+
+  /// No description provided for @npvChangeConfigFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Change file'**
+  String get npvChangeConfigFile;
+
+  /// No description provided for @npvClearConfigFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get npvClearConfigFile;
+
+  /// No description provided for @npvNoConfigFile.
+  ///
+  /// In en, this message translates to:
+  /// **'No file chosen yet'**
+  String get npvNoConfigFile;
+
+  /// No description provided for @npvConfigLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected: {name}'**
+  String npvConfigLoaded(String name);
+
+  /// No description provided for @npvConfigReadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read the selected file'**
+  String get npvConfigReadError;
+
+  /// No description provided for @npvConfigLockedWhileRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop the tunnel to change this file.'**
+  String get npvConfigLockedWhileRunning;
+
+  /// No description provided for @npvConnectionSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Local proxy and probing'**
+  String get npvConnectionSection;
+
+  /// No description provided for @npvPortSocks.
+  ///
+  /// In en, this message translates to:
+  /// **'SOCKS port'**
+  String get npvPortSocks;
+
+  /// No description provided for @npvPortHttp.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTP port (0 = off)'**
+  String get npvPortHttp;
+
+  /// No description provided for @npvProbeSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Config probe'**
+  String get npvProbeSection;
+
+  /// No description provided for @npvProbeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Each config is tried once; the fastest working one is used.'**
+  String get npvProbeDesc;
+
+  /// No description provided for @npvProbeTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Per-request timeout (s)'**
+  String get npvProbeTimeout;
+
+  /// No description provided for @npvProbeJobs.
+  ///
+  /// In en, this message translates to:
+  /// **'Parallel probes'**
+  String get npvProbeJobs;
+
+  /// No description provided for @npvProbeUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Probe URL (optional)'**
+  String get npvProbeUrl;
+
+  /// No description provided for @autoReconnectNpv.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-reconnect NPV'**
+  String get autoReconnectNpv;
+
+  /// No description provided for @npvServersSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Servers in this file'**
+  String get npvServersSection;
+
+  /// No description provided for @npvServersDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Every config inside the file. Checking tests them one by one and shows which ones work, fastest first.'**
+  String get npvServersDesc;
+
+  /// No description provided for @npvServersListBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Show servers'**
+  String get npvServersListBtn;
+
+  /// No description provided for @npvServersCheckBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Check servers'**
+  String get npvServersCheckBtn;
+
+  /// No description provided for @npvServersCancelBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get npvServersCancelBtn;
+
+  /// No description provided for @npvServersScanning.
+  ///
+  /// In en, this message translates to:
+  /// **'Probing configs…'**
+  String get npvServersScanning;
+
+  /// No description provided for @npvServersSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{answered} of {total} configs work'**
+  String npvServersSummary(Object answered, Object total);
+
+  /// No description provided for @npvServersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{total} configs in this file'**
+  String npvServersCount(Object total);
+
+  /// No description provided for @npvServersCreator.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get npvServersCreator;
+
+  /// No description provided for @npvServersNone.
+  ///
+  /// In en, this message translates to:
+  /// **'This file has no configs.'**
+  String get npvServersNone;
+
+  /// No description provided for @npvServersNoFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an .npvs file first - there is nothing to list yet.'**
+  String get npvServersNoFile;
+
+  /// No description provided for @npvServersInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'in use'**
+  String get npvServersInUse;
+
+  /// No description provided for @npvServersDead.
+  ///
+  /// In en, this message translates to:
+  /// **'Unreachable'**
+  String get npvServersDead;
+
+  /// No description provided for @npvServersPinHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a config to use that one; tap it again to let the app pick the fastest.'**
+  String get npvServersPinHint;
+
+  /// No description provided for @npvServersPinnedChip.
+  ///
+  /// In en, this message translates to:
+  /// **'selected'**
+  String get npvServersPinnedChip;
+
+  /// No description provided for @npvServersUnpinHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected - tap to undo'**
+  String get npvServersUnpinHint;
+
+  /// No description provided for @npvServersAutoBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto (fastest)'**
+  String get npvServersAutoBtn;
+
+  /// No description provided for @npvServersPinnedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected: {label}'**
+  String npvServersPinnedTo(Object label);
+
+  /// No description provided for @npvServersStalePin.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected config #{index} is not in this file - pick another one or go back to Auto.'**
+  String npvServersStalePin(Object index);
+
+  /// No description provided for @npvServersPinIgnored.
+  ///
+  /// In en, this message translates to:
+  /// **'The NPV core used a different config - update the core to pick one yourself.'**
+  String get npvServersPinIgnored;
+
+  /// No description provided for @aetherConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Aether Connected'**
+  String get aetherConnected;
+
+  /// No description provided for @aetherManualHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual mode: protocol, obfuscation, scan mode and custom endpoint are under your control below. Scan mode only applies while the custom endpoint is empty.'**
+  String get aetherManualHint;
+
+  /// No description provided for @aetherSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Aether Settings'**
+  String get aetherSettings;
+
+  /// No description provided for @autoReconnectAether.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-reconnect Aether'**
+  String get autoReconnectAether;
+
+  /// No description provided for @both.
+  ///
+  /// In en, this message translates to:
+  /// **'Both'**
+  String get both;
+
+  /// No description provided for @connectionMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection Mode'**
+  String get connectionMode;
+
+  /// No description provided for @customEndpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Endpoint (optional)'**
+  String get customEndpoint;
+
+  /// No description provided for @customEndpointHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty for auto-scan'**
+  String get customEndpointHint;
+
+  /// No description provided for @endpointPinning.
+  ///
+  /// In en, this message translates to:
+  /// **'Endpoint Pinning'**
+  String get endpointPinning;
+
+  /// No description provided for @endpointPinningAutomatic.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto'**
+  String get endpointPinningAutomatic;
+
+  /// No description provided for @endpointPinningAutomaticDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Always auto-scan for the best endpoint. Recommended for most users.'**
+  String get endpointPinningAutomaticDesc;
+
+  /// No description provided for @endpointPinningCustomFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom first'**
+  String get endpointPinningCustomFirst;
+
+  /// No description provided for @endpointPinningCustomFirstDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Try your custom endpoint first. If it fails, fall back to auto-scan.'**
+  String get endpointPinningCustomFirstDesc;
+
+  /// No description provided for @endpointPinningCustomOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom only'**
+  String get endpointPinningCustomOnly;
+
+  /// No description provided for @endpointPinningCustomOnlyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Only use your custom endpoint. No auto-scan fallback. Use for testing a specific server.'**
+  String get endpointPinningCustomOnlyDesc;
+
+  /// No description provided for @endpointPinningNeedsCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a custom endpoint below to enable Custom-first and Custom-only modes.'**
+  String get endpointPinningNeedsCustom;
+
+  /// No description provided for @endpointPinningSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Control how Aether chooses its endpoint'**
+  String get endpointPinningSubtitle;
+
+  /// No description provided for @ipType.
+  ///
+  /// In en, this message translates to:
+  /// **'IP Type'**
+  String get ipType;
+
+  /// No description provided for @ipv4.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv4'**
+  String get ipv4;
+
+  /// No description provided for @ipv6.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv6'**
+  String get ipv6;
+
+  /// No description provided for @localSocksPort.
+  ///
+  /// In en, this message translates to:
+  /// **'Local SOCKS port'**
+  String get localSocksPort;
+
+  /// No description provided for @logSourceAether.
+  ///
+  /// In en, this message translates to:
+  /// **'Aether'**
+  String get logSourceAether;
+
+  /// No description provided for @obfAggressive.
+  ///
+  /// In en, this message translates to:
+  /// **'Aggressive'**
+  String get obfAggressive;
+
+  /// No description provided for @obfBalanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced'**
+  String get obfBalanced;
+
+  /// No description provided for @obfDefaultCore.
+  ///
+  /// In en, this message translates to:
+  /// **'Default (core)'**
+  String get obfDefaultCore;
+
+  /// No description provided for @obfFirewall.
+  ///
+  /// In en, this message translates to:
+  /// **'Firewall'**
+  String get obfFirewall;
+
+  /// No description provided for @obfGfw.
+  ///
+  /// In en, this message translates to:
+  /// **'GFW'**
+  String get obfGfw;
+
+  /// No description provided for @obfLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get obfLight;
+
+  /// No description provided for @obfuscation.
+  ///
+  /// In en, this message translates to:
+  /// **'Obfuscation (--noize)'**
+  String get obfuscation;
+
+  /// No description provided for @profileAdaptive.
+  ///
+  /// In en, this message translates to:
+  /// **'Adaptive'**
+  String get profileAdaptive;
+
+  /// No description provided for @profileAdaptiveDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance of speed and coverage — suitable for most networks'**
+  String get profileAdaptiveDesc;
+
+  /// No description provided for @profileManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual'**
+  String get profileManual;
+
+  /// No description provided for @profileManualDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'All options manual — for advanced users'**
+  String get profileManualDesc;
+
+  /// No description provided for @profilePatchy.
+  ///
+  /// In en, this message translates to:
+  /// **'Patchy signal'**
+  String get profilePatchy;
+
+  /// No description provided for @profilePatchyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Unstable mobile data — harder and more resilient search'**
+  String get profilePatchyDesc;
+
+  /// No description provided for @profileStrict.
+  ///
+  /// In en, this message translates to:
+  /// **'Strict network'**
+  String get profileStrict;
+
+  /// No description provided for @profileStrictDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Restricted Wi-Fi or heavy filtering — fragment + masque-in-masque + noize gfw'**
+  String get profileStrictDesc;
+
+  /// No description provided for @protoGool.
+  ///
+  /// In en, this message translates to:
+  /// **'Gool (WARP-in-WARP)'**
+  String get protoGool;
+
+  /// No description provided for @protoMasque.
+  ///
+  /// In en, this message translates to:
+  /// **'MASQUE (HTTP/3 or HTTP/2)'**
+  String get protoMasque;
+
+  /// No description provided for @protoMim.
+  ///
+  /// In en, this message translates to:
+  /// **'MIM (masque-in-masque)'**
+  String get protoMim;
+
+  /// No description provided for @protoWireguard.
+  ///
+  /// In en, this message translates to:
+  /// **'WireGuard'**
+  String get protoWireguard;
+
+  /// No description provided for @scanBalanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced'**
+  String get scanBalanced;
+
+  /// No description provided for @scanIronclad.
+  ///
+  /// In en, this message translates to:
+  /// **'Ironclad'**
+  String get scanIronclad;
+
+  /// No description provided for @scanStealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Stealth'**
+  String get scanStealth;
+
+  /// No description provided for @scanThorough.
+  ///
+  /// In en, this message translates to:
+  /// **'Thorough'**
+  String get scanThorough;
+
+  /// No description provided for @scanTurbo.
+  ///
+  /// In en, this message translates to:
+  /// **'Turbo'**
+  String get scanTurbo;
+
+  /// No description provided for @scanVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get scanVerified;
+
+  /// No description provided for @torViaAether.
+  ///
+  /// In en, this message translates to:
+  /// **'Via Aether (Tor-over-Aether)'**
+  String get torViaAether;
+
+  /// No description provided for @tryLastEndpointFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Try last successful endpoint first'**
+  String get tryLastEndpointFirst;
+
+  /// No description provided for @tryLastEndpointFirstSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'If enabled, will try the last working endpoint before scanning'**
+  String get tryLastEndpointFirstSubtitle;
+
+  /// No description provided for @aetherUpstream.
+  ///
+  /// In en, this message translates to:
+  /// **'Aether'**
+  String get aetherUpstream;
 }
 
 class _AppLocalizationsDelegate

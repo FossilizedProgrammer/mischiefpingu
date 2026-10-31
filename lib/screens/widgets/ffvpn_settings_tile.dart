@@ -41,6 +41,8 @@ class FirefoxVpnSettingsTile extends StatelessWidget {
       iconBackgroundColor: theme.colorScheme.primary,
       initiallyExpanded: false,
       children: [
+        FfvpnSignInSection(s: s, theme: theme, l10n: l10n, onSave: save),
+        const Divider(height: 28),
         FfvpnGuideSection(theme: theme, l10n: l10n),
         const Divider(height: 28),
         SettingsTextField(
@@ -101,6 +103,130 @@ class FirefoxVpnSettingsTile extends StatelessWidget {
         FfvpnCountrySection(s: s, theme: theme, l10n: l10n, onSave: save),
         const Divider(height: 28),
         FfvpnQuotaSection(s: s, theme: theme, l10n: l10n),
+      ],
+    );
+  }
+}
+
+/// ورود با ایمیل/رمز عبور حساب فایرفاکس؛ توکن حاصل در تنظیمات ذخیره
+/// می‌شود تا کاربر نیازی به استخراج دستی signedInUser.json نداشته باشد.
+///
+/// رمز عبور فقط در همین State و در argv/env لحظه‌ای هستهٔ ffvpn زنده است و
+/// هیچ‌جا ذخیره یا لاگ نمی‌شود.
+class FfvpnSignInSection extends StatefulWidget {
+  final AppSettings s;
+  final ThemeData theme;
+  final AppLocalizations l10n;
+  final VoidCallback onSave;
+
+  const FfvpnSignInSection({
+    super.key,
+    required this.s,
+    required this.theme,
+    required this.l10n,
+    required this.onSave,
+  });
+
+  @override
+  State<FfvpnSignInSection> createState() => _FfvpnSignInSectionState();
+}
+
+class _FfvpnSignInSectionState extends State<FfvpnSignInSection> {
+  final _email = TextEditingController();
+  final _password = TextEditingController();
+  bool _signedIn = false;
+
+  @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final ffvpn = context.read<FfvpnProvider>();
+    final token = await ffvpn.signIn(
+      email: _email.text,
+      password: _password.text,
+    );
+    if (!mounted) return;
+    if (token == null) return;
+    _password.clear();
+    widget.s.ffvpnSessionToken = token;
+    widget.onSave();
+    setState(() => _signedIn = true);
+    // ignore: discarded_futures
+    ffvpn.refreshUsage(sessionToken: token);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ffvpn = context.watch<FfvpnProvider>();
+    final theme = widget.theme;
+    final l10n = widget.l10n;
+    final busy = ffvpn.isSigningIn;
+
+    return SettingsSection(
+      label: l10n.ffvpnLoginSection,
+      children: [
+        Text(
+          l10n.ffvpnLoginHint,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 10),
+        SettingsTextField(
+          labelText: l10n.ffvpnEmailLabel,
+          controller: _email,
+          enabled: !busy,
+          keyboardType: TextInputType.emailAddress,
+          onChanged: (_) {
+            if (_signedIn) setState(() => _signedIn = false);
+          },
+        ),
+        const SizedBox(height: 10),
+        SettingsTextField(
+          labelText: l10n.ffvpnPasswordLabel,
+          controller: _password,
+          enabled: !busy,
+          obscureText: true,
+          onChanged: (_) {
+            if (_signedIn) setState(() => _signedIn = false);
+          },
+        ),
+        const SizedBox(height: 10),
+        SettingsActionRow(
+          alignment: MainAxisAlignment.start,
+          children: [
+            FilledButton.tonalIcon(
+              onPressed: busy ? null : _submit,
+              icon: busy
+                  ? const SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.login, size: 18),
+              label: Text(busy ? l10n.ffvpnSigningIn : l10n.ffvpnSignIn),
+            ),
+          ],
+        ),
+        if (ffvpn.signInError != null) ...[
+          const SizedBox(height: 8),
+          Text(
+            FfvpnUiHelpers.errorText(l10n, ffvpn.signInError!),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.error,
+            ),
+          ),
+        ] else if (_signedIn && ffvpn.signInEmail != null) ...[
+          const SizedBox(height: 8),
+          SettingsInfoCard(
+            message: l10n.ffvpnSignedIn,
+            icon: Icons.check_circle_outline,
+          ),
+        ],
       ],
     );
   }
@@ -315,7 +441,8 @@ class FfvpnCountrySection extends StatelessWidget {
     );
   }
 
-  List<DropdownMenuItem<String>> _dropdownItems(Iterable<FfvpnCountry> visible) {
+  List<DropdownMenuItem<String>> _dropdownItems(
+      Iterable<FfvpnCountry> visible) {
     final list = visible.toList();
     final items = <DropdownMenuItem<String>>[
       DropdownMenuItem<String>(
@@ -462,6 +589,12 @@ class FfvpnUiHelpers {
         return l10n.ffvpnErrRegion;
       case FfvpnErrorKind.badToken:
         return l10n.ffvpnErrBadToken;
+      case FfvpnErrorKind.badCredentials:
+        return l10n.ffvpnErrBadCredentials;
+      case FfvpnErrorKind.signInUnsupported:
+        return l10n.ffvpnErrSignInUnsupported;
+      case FfvpnErrorKind.blocked:
+        return l10n.ffvpnErrBlocked;
       case FfvpnErrorKind.quota:
         return l10n.ffvpnErrQuota;
       case FfvpnErrorKind.binaryMissing:

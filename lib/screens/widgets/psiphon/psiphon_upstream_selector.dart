@@ -27,7 +27,7 @@ class PsiphonUpstreamSelector extends StatelessWidget {
       children: [
         const Divider(height: 28),
         DropdownButtonFormField<int>(
-          initialValue: upstreamType == 4 ? 0 : upstreamType,
+          initialValue: upstreamType,
           decoration: InputDecoration(labelText: l10n.upstream, isDense: true),
           items: [
             DropdownMenuItem(value: 0, child: Text(l10n.directNoUpstream)),
@@ -40,6 +40,7 @@ class PsiphonUpstreamSelector extends StatelessWidget {
             DropdownMenuItem(value: 7, child: Text(l10n.upstreamViaFfvpn)),
             DropdownMenuItem(value: 8, child: Text(l10n.upstreamViaLantern)),
             DropdownMenuItem(value: 9, child: Text(l10n.upstreamViaGeph)),
+            DropdownMenuItem(value: 10, child: Text(l10n.psiphonUpstreamNpv)),
           ],
           onChanged: onUpstreamTypeChanged,
         ),

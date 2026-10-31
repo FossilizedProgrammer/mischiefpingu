@@ -75,6 +75,11 @@ extension AppProviderPsiphonLaunch on AppProvider {
         return;
       }
 
+      // ─── هسته‌ای که Psiphon پشت آن dial می‌کند باید بالا باشد ───
+      if (!await resolvePsiphonUpstream(fromAutoReconnect: fromAutoReconnect)) {
+        return;
+      }
+
       final config = buildPsiphonConfig();
       final useSunAndLion = settings.effectiveUseSunAndLion;
       processService.addLog(

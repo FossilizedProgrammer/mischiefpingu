@@ -11,6 +11,8 @@ class SettingsTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final bool enabled;
   final bool readOnly;
+  final bool obscureText;
+  final TextEditingController? controller;
   final VoidCallback? onTap;
   final String? Function(String?)? validator;
 
@@ -25,6 +27,8 @@ class SettingsTextField extends StatelessWidget {
     this.onChanged,
     this.enabled = true,
     this.readOnly = false,
+    this.obscureText = false,
+    this.controller,
     this.onTap,
     this.validator,
   });
@@ -32,13 +36,15 @@ class SettingsTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      initialValue: initialValue,
+      controller: controller,
+      initialValue: controller == null ? initialValue : null,
       maxLines: maxLines,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
       onChanged: onChanged,
       enabled: enabled,
       readOnly: readOnly,
+      obscureText: obscureText,
       onTap: onTap,
       validator: validator,
       decoration: InputDecoration(

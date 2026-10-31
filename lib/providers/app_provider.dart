@@ -8,12 +8,16 @@ import '../models/lantern_engine.dart';
 import '../services/process_service.dart';
 import '../services/privilege_service.dart';
 import '../services/app_data_service.dart';
+import '../services/aether_auto_test_service.dart';
+import '../services/aether/gateway_reconnect_orchestrator.dart';
+import '../services/aether_logger.dart';
 import '../services/ffvpn/ffvpn_upstream_builder.dart';
 import '../services/geph/geph_upstream_builder.dart';
 import '../services/geph/geph_cli_service.dart';
 import '../services/lantern/lantern_upstream_builder.dart';
 import '../services/lantern/lantern_cli_service.dart';
 import '../services/psiphon_config_builder.dart';
+import '../services/psiphon/psiphon_upstream_builder.dart';
 import '../services/tor_config_builder.dart';
 import '../services/sstp_config_builder.dart';
 import '../services/settings_persistence_service.dart';
@@ -31,6 +35,17 @@ import '../services/recovery/recovery_coordinator.dart';
 import '../services/diagnostics/connectivity_probe.dart';
 import '../services/network/network_change_detector.dart';
 import '../services/watchdog/tunnel_watchdog.dart';
+import '../services/database/database_initializer.dart';
+import '../services/database/gateway_database.dart';
+import '../services/database/gateway_history_store.dart';
+import '../services/database/aether_event_store.dart';
+import '../services/database/profile_performance_store.dart';
+import '../services/aether/decision/aether_decision_engine.dart';
+import '../services/aether/decision/ranked_candidate.dart';
+import '../services/aether/connection_health.dart';
+import '../services/aether/connection_health_monitor.dart';
+import '../services/aether/quality_degradation_detector.dart';
+import '../services/aether/quality_statistics_service.dart';
 import '../services/health/tunnel_health_models.dart';
 import '../services/health/tunnel_health_registry.dart';
 import '../constants/default_lists.dart';
@@ -38,6 +53,7 @@ import 'internet_quality_provider.dart';
 import '../services/wireguard/wireguard_config_parser.dart';
 import '../services/wireguard/wireguard_config_builder.dart';
 import '../services/wireguard/wireguard_paths.dart';
+import '../services/npv/npv_paths.dart';
 import '../services/wireguard/wireguard_log_watcher.dart';
 import '../services/sstp/sstp_keepalive.dart';
 
@@ -54,7 +70,12 @@ part 'app_provider_lifecycle_persistence.dart';
 part 'app_provider_parsers.dart';
 part 'app_provider_psiphon.dart';
 part 'app_provider_psiphon_preflight.dart';
+part 'aether/aether_smart_reconnect.dart';
 part 'psiphon/psiphon_launch.dart';
+part 'psiphon/psiphon_upstream_resolver.dart';
+part 'app_provider_aether.dart';
+part 'app_provider_aether_internal.dart';
+part 'app_provider_aether_preflight.dart';
 part 'app_provider_tor.dart';
 part 'app_provider_tor_assets.dart';
 part 'app_provider_tor_upstream.dart';
@@ -77,9 +98,14 @@ part 'ffvpn/ffvpn_preflight.dart';
 part 'app_provider_lantern.dart';
 part 'lantern/lantern_preflight.dart';
 part 'app_provider_geph.dart';
+part 'app_provider_npv.dart';
+part 'npv/npv_preflight.dart';
 part 'geph/geph_preflight.dart';
 part 'app_provider_constructor.dart';
 part 'app_provider_dispose.dart';
+part 'aether/aether_start_guards.dart';
+part 'aether/aether_fast_path.dart';
+part 'aether/aether_restart.dart';
 part 'app_provider_public_actions.dart';
 part 'app_provider_health_helpers.dart';
 part 'app_provider_tunnel_helpers.dart';
@@ -90,6 +116,8 @@ part 'app_provider_process_listener_sync.dart';
 class AppProvider extends ChangeNotifier {
   final ProcessService processService = ProcessService();
 
+  late AetherAutoTestService _aetherTestService;
+  AetherAutoTestService get aetherTestService => _aetherTestService;
   late final SstpKeepalive _sstpKeepalive;
   SstpKeepalive get sstpKeepalive => _sstpKeepalive;
 
@@ -120,6 +148,13 @@ class AppProvider extends ChangeNotifier {
   int get lanternGeneration => _lanternGeneration;
   int nextLanternGeneration() => ++_lanternGeneration;
 
+  bool isNpvBusy = false;
+  bool userStoppedNpv = true;
+  String npvStatus = 'NPV: Ready';
+  int _npvGeneration = 0;
+  int get npvGeneration => _npvGeneration;
+  int nextNpvGeneration() => ++_npvGeneration;
+
   bool isGephBusy = false;
   bool userStoppedGeph = true;
   String gephStatus = 'Geph: Ready';
@@ -136,19 +171,57 @@ class AppProvider extends ChangeNotifier {
   late NetworkChangeDetector _networkChangeDetector;
   NetworkChangeDetector get networkChangeDetector => _networkChangeDetector;
 
+  late GatewayHistoryStore _gatewayHistoryStore;
+  GatewayHistoryStore get gatewayHistoryStore => _gatewayHistoryStore;
+
+  late AetherEventStore _aetherEventStore;
+  AetherEventStore get aetherEventStore => _aetherEventStore;
+
+  late AetherLogger _aetherLogger;
+  AetherLogger get aetherLogger => _aetherLogger;
+
+  late ProfilePerformanceStore _profilePerformanceStore;
+  ProfilePerformanceStore get profilePerformanceStore =>
+      _profilePerformanceStore;
+
+  late AetherDecisionEngine _decisionEngine;
+  AetherDecisionEngine get decisionEngine => _decisionEngine;
+
+  late ConnectionHealthMonitor _healthMonitor;
+  ConnectionHealth? _currentHealth;
+  ConnectionHealth? get currentHealth => _currentHealth;
+  ConnectionHealth? _lastNotifiedHealth;
+
+  late QualityDegradationDetector _degradationDetector;
+  late QualityStatisticsService _statsService;
+  QualityStatisticsService get statsService => _statsService;
+
   late TunnelHealthRegistry _healthRegistry;
   TunnelHealthRegistry get healthRegistry => _healthRegistry;
+
+  RankedCandidate? _currentActiveCandidate;
+  RankedCandidate? get currentActiveCandidate => _currentActiveCandidate;
+
+  Timer? _healthPollTimer;
+  final Duration healthPollInterval = const Duration(seconds: 3);
+
+  GatewayReconnectOrchestrator? _gatewayReconnectOrchestrator;
+  GatewayReconnectOrchestrator? get gatewayReconnectOrchestrator =>
+      _gatewayReconnectOrchestrator;
 
   InternetQualityProvider? _qualityProvider;
   InternetQualityProvider? get qualityProvider => _qualityProvider;
 
   int _psiphonGeneration = 0;
+  int _aetherGeneration = 0;
   int _torGeneration = 0;
   int _sstpGeneration = 0;
   int get psiphonGeneration => _psiphonGeneration;
+  int get aetherGeneration => _aetherGeneration;
   int get torGeneration => _torGeneration;
   int get sstpGeneration => _sstpGeneration;
   int nextPsiphonGeneration() => ++_psiphonGeneration;
+  int nextAetherGeneration() => ++_aetherGeneration;
   int nextTorGeneration() => ++_torGeneration;
   int nextSstpGeneration() => ++_sstpGeneration;
 
@@ -178,18 +251,30 @@ class AppProvider extends ChangeNotifier {
   bool isPsiphonBusy = false;
   bool isTorBusy = false;
   bool isSstpBusy = false;
+
+  /// نگهبان بازگشت: Psiphon ↔ هسته‌ای که آپ‌استریم خودش است.
+  bool _psiphonUpstreamResolving = false;
   bool loggingEnabled = true;
+  String aetherStatus = 'Aether: Ready';
   String torStatus = 'Tor: Ready';
   String sstpStatus = 'SSTP: Ready';
   bool isElevated = false;
   bool isAutoTesting = false;
   bool userStoppedPsiphon = true;
+  bool userStoppedAether = true;
   bool userStoppedTor = true;
   bool userStoppedSstp = true;
   bool isShuttingDown = false;
   bool restartingPsiphon = false;
+  bool restartingAether = false;
   bool restartingTor = false;
   bool restartingSstp = false;
+
+  String? lastAetherConnectedProtocol;
+  String? lastAetherConnectedGatewayKey;
+  DateTime? lastAetherConnectedAt;
+  int aetherReconnectCount = 0;
+  bool _escalationInProgress = false;
 
   AppProvider() {
     initializeAppProvider(this);
@@ -204,6 +289,8 @@ class AppProvider extends ChangeNotifier {
     final ps = processService;
     return ps.isPsiphonRunning ||
         isPsiphonBusy ||
+        ps.isAetherRunning ||
+        isAutoTesting ||
         ps.isTorRunning ||
         isTorBusy ||
         ps.isSstpRunning ||
@@ -215,7 +302,9 @@ class AppProvider extends ChangeNotifier {
         ps.isLanternRunning ||
         isLanternBusy ||
         ps.isGephRunning ||
-        isGephBusy;
+        isGephBusy ||
+        ps.isNpvRunning ||
+        isNpvBusy;
   }
 
   void attachQualityProvider(InternetQualityProvider provider) {

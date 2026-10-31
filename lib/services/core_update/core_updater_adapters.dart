@@ -3,12 +3,47 @@ library;
 import '../core_update_models.dart';
 import 'core_update_ffvpn.dart';
 import 'core_update_lantern.dart';
+import 'core_update_npv.dart';
+import 'core_update_aether.dart';
 import 'core_update_psiphon.dart';
 import 'core_update_sstp.dart';
 import 'core_update_sunandlion.dart';
 import 'core_update_tor.dart';
 import 'wireguard/wireguard_updater.dart';
 import 'core_updater.dart';
+
+class _AetherAdapter implements CoreUpdater {
+  final AetherUpdater inner;
+  _AetherAdapter(this.inner);
+
+  @override
+  String get coreId => 'aether';
+
+  @override
+  Future<CoreUpdateInfo> check(
+    String? proxy, {
+    required String installed,
+    String psiphonBinSha = '',
+  }) =>
+      inner.check(proxy, installed: installed);
+
+  @override
+  Future<bool> update(
+    CoreUpdateInfo info, {
+    required String installed,
+    String? proxy,
+    String psiphonBinSha = '',
+    void Function(int percent)? onProgress,
+    bool Function()? onCancelCheck,
+  }) =>
+      inner.update(
+        info,
+        installed: installed,
+        proxy: proxy,
+        onProgress: onProgress,
+        onCancelCheck: onCancelCheck,
+      );
+}
 
 class _TorAdapter implements CoreUpdater {
   final TorUpdater inner;
@@ -251,6 +286,7 @@ class _FfvpnAdapter implements CoreUpdater {
 //  factory functions
 // ═══════════════════════════════════════════════════════════════
 
+CoreUpdater aetherAdapter(AetherUpdater inner) => _AetherAdapter(inner);
 CoreUpdater torAdapter(TorUpdater inner) => _TorAdapter(inner);
 CoreUpdater psiphonAdapter(PsiphonUpdater inner) => _PsiphonAdapter(inner);
 CoreUpdater sunAndLionAdapter(SunAndLionUpdater inner) =>
@@ -301,3 +337,41 @@ class _LanternAdapter implements CoreUpdater {
 }
 
 CoreUpdater lanternAdapter(LanternUpdater inner) => _LanternAdapter(inner);
+
+// ═══════════════════════════════════════════════════════════════
+//  🆕 _NpvAdapter — adapter برای هستهٔ NPV (npv)
+// ═══════════════════════════════════════════════════════════════
+class _NpvAdapter implements CoreUpdater {
+  final NpvUpdater inner;
+  _NpvAdapter(this.inner);
+
+  @override
+  String get coreId => 'npv';
+
+  @override
+  Future<CoreUpdateInfo> check(
+    String? proxy, {
+    required String installed,
+    String psiphonBinSha = '',
+  }) =>
+      inner.check(proxy, installed: installed);
+
+  @override
+  Future<bool> update(
+    CoreUpdateInfo info, {
+    required String installed,
+    String? proxy,
+    String psiphonBinSha = '',
+    void Function(int percent)? onProgress,
+    bool Function()? onCancelCheck,
+  }) =>
+      inner.update(
+        info,
+        installed: installed,
+        proxy: proxy,
+        onProgress: onProgress,
+        onCancelCheck: onCancelCheck,
+      );
+}
+
+CoreUpdater npvAdapter(NpvUpdater inner) => _NpvAdapter(inner);

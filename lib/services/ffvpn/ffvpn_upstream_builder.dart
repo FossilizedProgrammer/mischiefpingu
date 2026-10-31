@@ -18,6 +18,9 @@ class FfvpnUpstreamBuilder {
   /// SOCKS5 دستی که خود کاربر آدرس/پورت‌اش را می‌دهد.
   static const int manual = 1;
 
+  /// SOCKS محلی Aether.
+  static const int aether = 2;
+
   /// SOCKS محلی Psiphon.
   static const int psiphon = 3;
 
@@ -35,6 +38,9 @@ class FfvpnUpstreamBuilder {
 
   /// SOCKS محلی Geph.
   static const int geph = 9;
+
+  /// SOCKS محلی NPV.
+  static const int npv = 10;
 
   final AppSettings settings;
   final ProcessService processService;
@@ -54,6 +60,8 @@ class FfvpnUpstreamBuilder {
     switch (type) {
       case manual:
         return 'Manual';
+      case aether:
+        return 'Aether';
       case psiphon:
         return 'Psiphon';
       case tor:
@@ -66,6 +74,8 @@ class FfvpnUpstreamBuilder {
         return 'Lantern';
       case geph:
         return 'Geph';
+      case npv:
+        return 'NPV';
       default:
         return 'Direct';
     }
@@ -74,6 +84,8 @@ class FfvpnUpstreamBuilder {
   /// پورت SOCKS محلی آپ‌استریم (برای `direct` و `manual` بی‌معنی است).
   int? get socksPort {
     switch (type) {
+      case aether:
+        return settings.aetherLocalPort;
       case psiphon:
         return settings.socksPort;
       case tor:
@@ -86,6 +98,8 @@ class FfvpnUpstreamBuilder {
         return settings.lanternSocksPort;
       case geph:
         return settings.gephSocksPort;
+      case npv:
+        return settings.npvSocksPort;
       default:
         return null;
     }

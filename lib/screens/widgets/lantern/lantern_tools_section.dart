@@ -1,7 +1,7 @@
 // lib/screens/widgets/lantern/lantern_tools_section.dart
 //
 // ابزارهای CLI لنترن داخل برنامه:
-//   • servers → بروزرسانی/بررسی و نمایش لیست سرورها به‌صورت کومبوباکس
+//   • servers → بروزرسانی+بررسی دسترسی و نمایش لیست سرورها به‌صورت کومبوباکس
 //   • auth    → login / signup / logout
 //
 // خروجی فرمان‌ها در پنل لاگ (منبع Lantern) می‌آید.
@@ -118,18 +118,6 @@ class _LanternToolsSectionState extends State<LanternToolsSection> {
               onPressed: busy
                   ? null
                   : () async {
-                      await lantern.loadServers(s, refresh: true);
-                      if (mounted) setState(() {});
-                    },
-              icon: const Icon(Icons.refresh, size: 18),
-              label: Text(l10n.lanternToolsRefreshServers),
-              style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
-            ),
-            const SizedBox(width: 6),
-            TextButton.icon(
-              onPressed: busy
-                  ? null
-                  : () async {
                       await lantern.loadServers(s, refresh: true, check: true);
                       if (mounted) setState(() {});
                     },
@@ -178,16 +166,17 @@ class _LanternToolsSectionState extends State<LanternToolsSection> {
                   // بمانند؛ جزئیات کامل (نام سرور و موقعیت) در tooltip است.
                   final label = srv.country.isNotEmpty
                       ? srv.country
-                      : (srv.countryCode.isNotEmpty ? srv.countryCode : srv.name);
+                      : (srv.countryCode.isNotEmpty
+                          ? srv.countryCode
+                          : srv.name);
                   return DropdownMenuItem(
                     value: _serverKey(srv),
                     child: Row(
                       children: [
                         Expanded(
                           child: Tooltip(
-                            message: loc.isEmpty
-                                ? srv.name
-                                : '${srv.name}\n$loc',
+                            message:
+                                loc.isEmpty ? srv.name : '${srv.name}\n$loc',
                             child: Text(
                               label,
                               overflow: TextOverflow.ellipsis,
@@ -289,21 +278,11 @@ class _LanternToolsSectionState extends State<LanternToolsSection> {
         ),
         if (busy) ...[
           const SizedBox(height: 8),
-          Row(
-            children: [
-              const SizedBox(
-                width: 14,
-                height: 14,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '${l10n.lanternRunning}: ${lantern.runningLabel}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
+          Text(
+            '${l10n.lanternRunning}: ${lantern.runningLabel}',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
         if (provider.isLanternBusy) ...[

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../l10n/app_localizations.dart';
 import '../../../../services/health/tunnel_health_models.dart';
-import '../tunnel_probe_result.dart';
+import '../../../../services/health/tunnel_probe_result.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  HealthStatus — نتیجهٔ resolved وضعیت (color + icon + label).

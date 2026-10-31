@@ -719,7 +719,6 @@
   },
   "lanternToolsSection": "Herramientas de Lantern",
   "lanternToolsServers": "Servidores",
-  "lanternToolsRefreshServers": "Actualizar lista",
   "lanternToolsCheckServers": "Comprobar servidores",
   "lanternServerReachable": "Alcanzable",
   "lanternServerUnreachable": "No alcanzable",

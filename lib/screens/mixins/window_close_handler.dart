@@ -14,9 +14,9 @@ mixin WindowCloseHandler<T extends StatefulWidget> on State<T> {
 
     final provider = context.read<AppProvider>();
 
-    // ⚠️ این چک باید *همهٔ* تونلها (از جمله Geph/Firefox VPN/Lantern) را
-    // ببیند؛ وگرنه وقتی فقط یکی از آنها روشن است، مسیر fast-close انتخاب
-    // می‌شود و پروسهش زنده رها می‌ماند. منبع مرجع: AppProvider.
+    // ⚠️ این چک باید *همهٔ* تونلها (از جمله Aether/Geph/Firefox VPN/Lantern)
+    // را ببیند؛ وگرنه وقتی فقط یکی از آنها روشن است، مسیر fast-close انتخاب
+    // می‌شود و پروسهش زنده رها می‌شود. منبع مرجع: AppProvider.
     if (!provider.hasActiveTunnel) {
       await _fastClose(provider);
       return;

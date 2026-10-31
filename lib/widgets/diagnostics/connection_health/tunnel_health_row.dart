@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../services/health/tunnel_health_models.dart';
-import 'tunnel_probe_result.dart';
+import '../../../services/health/tunnel_probe_result.dart';
 
 import 'tunnel_health_row/health_status_resolver.dart';
 import 'tunnel_health_row/probe_latency_badge.dart';

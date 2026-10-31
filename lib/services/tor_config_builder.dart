@@ -18,21 +18,25 @@ class TorConfigBuilder {
     String? geoip6Path,
     String? lyrebirdPath,
     String? conjurePath,
+    int? aetherSocks,
     int? psiphonSocks,
     int? sstpSocks,
     int? wireguardSocks,
     int? ffvpnSocks,
     int? lanternSocks,
     int? gephSocks,
+    int? npvSocks,
   }) {
     final decision = TorBridgeResolver.resolve(
       settings: settings,
+      aetherSocks: aetherSocks,
       psiphonSocks: psiphonSocks,
       sstpSocks: sstpSocks,
       wireguardSocks: wireguardSocks,
       ffvpnSocks: ffvpnSocks,
       lanternSocks: lanternSocks,
       gephSocks: gephSocks,
+      npvSocks: npvSocks,
     );
 
     final sb = StringBuffer();

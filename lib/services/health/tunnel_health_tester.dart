@@ -5,7 +5,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
-import '../../../services/health/tunnel_health_models.dart';
+import 'tunnel_health_models.dart';
 import 'tunnel_probe_result.dart';
 
 /// ═══════════════════════════════════════════════════════════════

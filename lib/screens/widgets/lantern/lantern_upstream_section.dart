@@ -48,6 +48,10 @@ class LanternUpstreamSection extends StatelessWidget {
               child: Text(l10n.lanternUpstreamManual),
             ),
             DropdownMenuItem(
+              value: LanternUpstreamBuilder.aether,
+              child: Text(l10n.aetherUpstream),
+            ),
+            DropdownMenuItem(
               value: LanternUpstreamBuilder.psiphon,
               child: Text(l10n.lanternUpstreamPsiphon),
             ),
@@ -70,6 +74,10 @@ class LanternUpstreamSection extends StatelessWidget {
             DropdownMenuItem(
               value: LanternUpstreamBuilder.geph,
               child: Text(l10n.lanternUpstreamGeph),
+            ),
+            DropdownMenuItem(
+              value: LanternUpstreamBuilder.npv,
+              child: Text(l10n.lanternUpstreamNpv),
             ),
           ],
           onChanged: (v) {
@@ -122,6 +130,8 @@ class LanternUpstreamSection extends StatelessWidget {
         return 'Firefox VPN';
       case LanternUpstreamBuilder.geph:
         return 'Geph';
+      case LanternUpstreamBuilder.npv:
+        return 'NPV';
       default:
         return '';
     }
@@ -141,6 +151,8 @@ class LanternUpstreamSection extends StatelessWidget {
         return s.ffvpnSocksPort;
       case LanternUpstreamBuilder.geph:
         return s.gephSocksPort;
+      case LanternUpstreamBuilder.npv:
+        return s.npvSocksPort;
       default:
         return 0;
     }

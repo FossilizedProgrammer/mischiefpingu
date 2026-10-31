@@ -5,6 +5,10 @@ import 'suggested_presets.dart';
 import 'show_more_button.dart';
 import 'advanced_settings_column.dart';
 
+/// فاصلهٔ لبهٔ راست لیست اصلی تا محتوا؛ اسکرول‌بار ستون روی همین ناحیه
+/// نقاشی می‌شود (overlay) وگرنه روی حاشیهٔ ۱۲پیکسلی کارت‌ها می‌افتد.
+const double kMainListEndPadding = 10;
+
 class MainScreenBody extends StatelessWidget {
   final bool showMore;
   final Animation<double> fadeAnim;
@@ -22,7 +26,10 @@ class MainScreenBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsetsDirectional.only(
+        end: kMainListEndPadding,
+        bottom: 24,
+      ),
       children: [
         const SuggestedPresets(),
         const ConnectionButtons(),

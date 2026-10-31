@@ -31,6 +31,9 @@ class PsiphonUpstreamBuilder {
   /// SOCKS محلی Geph.
   static const int geph = 9;
 
+  /// SOCKS محلی NPV.
+  static const int npv = 10;
+
   final AppSettings settings;
   final ProcessService processService;
 
@@ -48,6 +51,7 @@ class PsiphonUpstreamBuilder {
         ffvpn,
         lantern,
         geph,
+        npv,
       }.contains(settings.upstreamType);
 
   /// بخش upstream را به config اضافه می‌کند.
@@ -73,6 +77,9 @@ class PsiphonUpstreamBuilder {
         break;
       case geph:
         _applySocks(config, settings.gephSocksPort, 'Geph');
+        break;
+      case npv:
+        _applySocks(config, settings.npvSocksPort, 'NPV');
         break;
       default:
         break;

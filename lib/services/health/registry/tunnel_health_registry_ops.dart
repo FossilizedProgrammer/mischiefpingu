@@ -22,8 +22,18 @@ extension TunnelHealthRegistryOps on TunnelHealthRegistry {
       case TunnelKind.sstp:
         _sstpAdapter?.start();
         break;
+      case TunnelKind.aether:
+        // Aether از tracker خودش استفاده می‌کنه
+        break;
       case TunnelKind.wireguard:
         _wireguardAdapter?.start();
+        break;
+      // این چهار هسته health source (parser لاگ) ندارند؛ فقط monitor
+      // و probe روی SOCKS محلی‌شان کار می‌کند.
+      case TunnelKind.ffvpn:
+      case TunnelKind.lantern:
+      case TunnelKind.geph:
+      case TunnelKind.npv:
         break;
     }
   }
@@ -42,8 +52,15 @@ extension TunnelHealthRegistryOps on TunnelHealthRegistry {
       case TunnelKind.sstp:
         _sstpAdapter?.reset();
         break;
+      case TunnelKind.aether:
+        break;
       case TunnelKind.wireguard:
         _wireguardAdapter?.reset();
+        break;
+      case TunnelKind.ffvpn:
+      case TunnelKind.lantern:
+      case TunnelKind.geph:
+      case TunnelKind.npv:
         break;
     }
 

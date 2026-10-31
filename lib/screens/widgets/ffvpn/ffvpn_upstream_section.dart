@@ -47,6 +47,10 @@ class FfvpnUpstreamSection extends StatelessWidget {
               child: Text(l10n.ffvpnUpstreamManual),
             ),
             DropdownMenuItem(
+              value: FfvpnUpstreamBuilder.aether,
+              child: Text(l10n.aetherUpstream),
+            ),
+            DropdownMenuItem(
               value: FfvpnUpstreamBuilder.psiphon,
               child: Text(l10n.ffvpnUpstreamPsiphon),
             ),
@@ -69,6 +73,10 @@ class FfvpnUpstreamSection extends StatelessWidget {
             DropdownMenuItem(
               value: FfvpnUpstreamBuilder.geph,
               child: Text(l10n.ffvpnUpstreamGeph),
+            ),
+            DropdownMenuItem(
+              value: FfvpnUpstreamBuilder.npv,
+              child: Text(l10n.ffvpnUpstreamNpv),
             ),
           ],
           onChanged: (v) {
@@ -109,6 +117,8 @@ class FfvpnUpstreamSection extends StatelessWidget {
 
   static String _labelFor(int type) {
     switch (type) {
+      case FfvpnUpstreamBuilder.aether:
+        return 'Aether';
       case FfvpnUpstreamBuilder.psiphon:
         return 'Psiphon';
       case FfvpnUpstreamBuilder.tor:
@@ -121,6 +131,8 @@ class FfvpnUpstreamSection extends StatelessWidget {
         return 'Lantern';
       case FfvpnUpstreamBuilder.geph:
         return 'Geph';
+      case FfvpnUpstreamBuilder.npv:
+        return 'NPV';
       default:
         return '';
     }
@@ -140,6 +152,8 @@ class FfvpnUpstreamSection extends StatelessWidget {
         return s.lanternSocksPort;
       case FfvpnUpstreamBuilder.geph:
         return s.gephSocksPort;
+      case FfvpnUpstreamBuilder.npv:
+        return s.npvSocksPort;
       default:
         return 0;
     }

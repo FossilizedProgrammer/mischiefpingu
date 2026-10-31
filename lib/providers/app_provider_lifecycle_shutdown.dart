@@ -52,12 +52,14 @@ extension AppProviderLifecycleShutdown on AppProvider {
     // تازه‌ای بالا نمی‌آورند؛ وگرنه ممکن است بعد از این پاس خاموش‌کردن یک
     // تونل تازه بالا بیاید و زنده رها شود.
     userStoppedPsiphon = true;
+    userStoppedAether = true;
     userStoppedTor = true;
     userStoppedSstp = true;
     userStoppedWireGuard = true;
     userStoppedFfvpn = true;
     userStoppedLantern = true;
     userStoppedGeph = true;
+    userStoppedNpv = true;
 
     final ps = processService;
 
@@ -98,10 +100,25 @@ extension AppProviderLifecycleShutdown on AppProvider {
         () => ps.isWireGuardRunning || isWireGuardBusy,
         ps.stopWireGuard,
       ),
+      _stopTunnel('NPV', () => ps.isNpvRunning || isNpvBusy, ps.stopNpv),
+      _stopTunnel(
+        'Aether',
+        () => ps.isAetherRunning || isAutoTesting,
+        ps.stopAether,
+      ),
     ]);
 
     try {
+      aetherTestService.requestCancel();
+    } catch (_) {}
+
+    try {
       await ps.closeAllForwardSockets();
+    } catch (_) {}
+
+    // ─── بستن دیتابیس تاریخچهٔ gateway ───
+    try {
+      await GatewayDatabase.close();
     } catch (_) {}
 
     await Future.delayed(const Duration(milliseconds: 300));
@@ -114,10 +131,12 @@ extension AppProviderLifecycleShutdown on AppProvider {
       if (ps.isGephRunning) 'Geph',
       if (ps.isLanternRunning) 'Lantern',
       if (ps.isFfvpnRunning) 'Firefox VPN',
+      if (ps.isAetherRunning) 'Aether',
       if (ps.isTorRunning) 'Tor',
       if (ps.isPsiphonRunning) 'Psiphon',
       if (ps.isSstpRunning) 'SSTP',
       if (ps.isWireGuardRunning) 'WireGuard',
+      if (ps.isNpvRunning) 'NPV',
     ];
 
     if (failedTunnels == 0 && stillRunning.isEmpty) {

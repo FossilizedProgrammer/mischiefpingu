@@ -133,8 +133,7 @@ extension AppProviderGeph on AppProvider {
         return;
       }
 
-      gephStatus =
-          ok ? 'Geph: Starting…' : 'Geph: Failed to start';
+      gephStatus = ok ? 'Geph: Starting…' : 'Geph: Failed to start';
 
       if (myGeneration != _gephGeneration) {
         processService.addLog(
@@ -186,6 +185,13 @@ extension AppProviderGeph on AppProvider {
 
     final port = builder.socksPort;
     switch (builder.type) {
+      case GephUpstreamBuilder.aether:
+        return _ensureGephUpstreamTunnel(
+          name: 'Aether',
+          port: port,
+          isRunning: () => processService.isAetherRunning,
+          start: () => connectAether(),
+        );
       case GephUpstreamBuilder.psiphon:
         return _ensureGephUpstreamTunnel(
           name: 'Psiphon',
@@ -227,6 +233,13 @@ extension AppProviderGeph on AppProvider {
           port: port,
           isRunning: () => processService.isLanternRunning,
           start: () => connectLantern(),
+        );
+      case GephUpstreamBuilder.npv:
+        return _ensureGephUpstreamTunnel(
+          name: 'NPV',
+          port: port,
+          isRunning: () => processService.isNpvRunning,
+          start: () => connectNpv(),
         );
       default:
         return true;

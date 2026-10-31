@@ -7,6 +7,7 @@ import 'watchdog_network_profile.dart';
 /// ═══════════════════════════════════════════════════════════════
 class WatchdogProfileParams {
   final Duration psiphonInterval;
+  final Duration aetherInterval;
   final Duration torInterval;
   final Duration sstpInterval;
   final Duration wireguardInterval;
@@ -28,6 +29,7 @@ class WatchdogProfileParams {
 
   const WatchdogProfileParams({
     required this.psiphonInterval,
+    required this.aetherInterval,
     required this.torInterval,
     required this.sstpInterval,
     required this.wireguardInterval,
@@ -53,6 +55,8 @@ class WatchdogProfileParams {
     switch (tunnelName.toLowerCase()) {
       case 'psiphon':
         return psiphonInterval;
+      case 'aether':
+        return aetherInterval;
       case 'tor':
         return torInterval;
       case 'sstp':
@@ -69,6 +73,7 @@ class WatchdogProfileParams {
       case WatchdogNetworkProfile.stable:
         return const WatchdogProfileParams(
           psiphonInterval: Duration(seconds: 50),
+          aetherInterval: Duration(seconds: 50),
           torInterval: Duration(seconds: 75),
           sstpInterval: Duration(seconds: 50),
           wireguardInterval: Duration(seconds: 50),
@@ -92,6 +97,7 @@ class WatchdogProfileParams {
       case WatchdogNetworkProfile.normal:
         return const WatchdogProfileParams(
           psiphonInterval: Duration(seconds: 75),
+          aetherInterval: Duration(seconds: 75),
           torInterval: Duration(seconds: 100),
           sstpInterval: Duration(seconds: 75),
           wireguardInterval: Duration(seconds: 75),
@@ -115,6 +121,7 @@ class WatchdogProfileParams {
       case WatchdogNetworkProfile.harsh:
         return const WatchdogProfileParams(
           psiphonInterval: Duration(seconds: 105),
+          aetherInterval: Duration(seconds: 105),
           torInterval: Duration(seconds: 120),
           sstpInterval: Duration(seconds: 105),
           wireguardInterval: Duration(seconds: 105),

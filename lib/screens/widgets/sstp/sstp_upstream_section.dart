@@ -20,6 +20,7 @@ class SstpUpstreamSection extends StatelessWidget {
   final ValueChanged<String> onProxyUserChanged;
   final String sstpProxyPass;
   final ValueChanged<String> onProxyPassChanged;
+  final int aetherLocalPort;
 
   const SstpUpstreamSection({
     super.key,
@@ -36,6 +37,7 @@ class SstpUpstreamSection extends StatelessWidget {
     required this.onProxyUserChanged,
     required this.sstpProxyPass,
     required this.onProxyPassChanged,
+    required this.aetherLocalPort,
   });
 
   @override
@@ -61,12 +63,14 @@ class SstpUpstreamSection extends StatelessWidget {
           items: [
             DropdownMenuItem(value: 0, child: Text(l10n.noUpstreamDirect)),
             DropdownMenuItem(value: 1, child: Text(l10n.manualProxyOption)),
+            DropdownMenuItem(value: 2, child: Text(l10n.aetherUpstream)),
             DropdownMenuItem(value: 3, child: Text(l10n.psiphonUpstream)),
             DropdownMenuItem(value: 4, child: Text(l10n.torUpstream)),
             DropdownMenuItem(value: 5, child: Text(l10n.sstpWireGuardUpstream)),
             DropdownMenuItem(value: 6, child: Text(l10n.upstreamViaFfvpn)),
             DropdownMenuItem(value: 7, child: Text(l10n.upstreamViaLantern)),
             DropdownMenuItem(value: 8, child: Text(l10n.upstreamViaGeph)),
+            DropdownMenuItem(value: 10, child: Text(l10n.sstpUpstreamNpv)),
           ],
           onChanged: (v) => onUpstreamTypeChanged(v ?? 0),
         ),
@@ -83,6 +87,16 @@ class SstpUpstreamSection extends StatelessWidget {
             onProxyUserChanged: onProxyUserChanged,
             proxyPass: sstpProxyPass,
             onProxyPassChanged: onProxyPassChanged,
+          ),
+        ],
+        if (sstpUpstreamType == 2) ...[
+          const SizedBox(height: 8),
+          SstpUpstreamInfoBox(
+            theme: theme,
+            icon: Icons.info_outline,
+            message:
+                'SSTP will route through Aether on 127.0.0.1:$aetherLocalPort. '
+                'Make sure Aether is running.',
           ),
         ],
         if (sstpUpstreamType == 3) ...[

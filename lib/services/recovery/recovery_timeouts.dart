@@ -8,6 +8,7 @@ class RecoveryTimeouts {
 
   static const Map<String, Duration> _byTunnel = {
     'Psiphon': Duration(seconds: 150),
+    'Aether': Duration(seconds: 180),
     'Tor': Duration(seconds: 240),
     'SSTP': Duration(seconds: 120),
   };

@@ -4,6 +4,7 @@ part of 'app_provider.dart';
 class _TunnelStateSnapshot {
   final bool psiphonRunning;
   final bool psiphonConnected;
+  final bool aetherRunning;
   final bool torRunning;
   final bool torConnected;
   final int torBootstrapProgress;
@@ -21,10 +22,13 @@ class _TunnelStateSnapshot {
   final bool lanternConnected;
   final bool gephRunning;
   final bool gephConnected;
+  final bool npvRunning;
+  final bool npvConnected;
 
   const _TunnelStateSnapshot({
     required this.psiphonRunning,
     required this.psiphonConnected,
+    required this.aetherRunning,
     required this.torRunning,
     required this.torConnected,
     required this.torBootstrapProgress,
@@ -39,6 +43,8 @@ class _TunnelStateSnapshot {
     required this.lanternConnected,
     required this.gephRunning,
     required this.gephConnected,
+    required this.npvRunning,
+    required this.npvConnected,
   });
 
   @override
@@ -47,6 +53,7 @@ class _TunnelStateSnapshot {
     return other is _TunnelStateSnapshot &&
         other.psiphonRunning == psiphonRunning &&
         other.psiphonConnected == psiphonConnected &&
+        other.aetherRunning == aetherRunning &&
         other.torRunning == torRunning &&
         other.torConnected == torConnected &&
         other.torBootstrapProgress == torBootstrapProgress &&
@@ -60,13 +67,16 @@ class _TunnelStateSnapshot {
         other.lanternRunning == lanternRunning &&
         other.lanternConnected == lanternConnected &&
         other.gephRunning == gephRunning &&
-        other.gephConnected == gephConnected;
+        other.gephConnected == gephConnected &&
+        other.npvRunning == npvRunning &&
+        other.npvConnected == npvConnected;
   }
 
   @override
   int get hashCode => Object.hash(
         psiphonRunning,
         psiphonConnected,
+        aetherRunning,
         torRunning,
         torConnected,
         torBootstrapProgress,
@@ -81,5 +91,7 @@ class _TunnelStateSnapshot {
         lanternConnected,
         gephRunning,
         gephConnected,
+        npvRunning,
+        npvConnected,
       );
 }

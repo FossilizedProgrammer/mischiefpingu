@@ -37,6 +37,9 @@ extension AppProviderPublicActions on AppProvider {
     _reconnectManager.cancelAll();
     _watchdogManager?.stopAll();
     _recoveryCoordinator.releaseAll();
+    try {
+      _aetherTestService.requestCancel();
+    } catch (_) {}
   }
 
   Future<void> shutdownAll() => shutdownAllInternal();

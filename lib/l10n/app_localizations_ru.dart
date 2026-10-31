@@ -454,6 +454,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get profile => 'Профиль';
 
   @override
+  String get aetherPresetControlsNote =>
+      'Протокол, режим сканирования и обфускация задаются выбранным профилем. Выберите Manual, чтобы изменить их.';
+
+  @override
   String get protocol => 'Протокол';
 
   @override
@@ -472,7 +476,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get psiphonSettings => 'Настройки Psiphon';
 
   @override
-  String get psiphonUpstream => 'Psiphon (SOCKS upstream)';
+  String get psiphonUpstream => 'Psiphon';
 
   @override
   String get save => 'Сохранить';
@@ -534,7 +538,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sstpSettings => 'Настройки SSTP';
 
   @override
-  String get sstpSocksUpstream => 'SSTP (SOCKS upstream)';
+  String get sstpSocksUpstream => 'SSTP';
 
   @override
   String get start => 'Запуск';
@@ -579,10 +583,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get torSettings => 'Настройки Tor';
 
   @override
-  String get torSocksUpstream => 'Tor (SOCKS upstream)';
+  String get torSocksUpstream => 'Tor';
 
   @override
-  String get torUpstream => 'Tor (SOCKS upstream)';
+  String get torUpstream => 'Tor';
 
   @override
   String get torViaPsiphon => 'Через Psiphon (Tor-over-Psiphon)';
@@ -598,6 +602,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get torViaGeph => 'Через Geph (Tor-over-Geph)';
+
+  @override
+  String get torUpstreamNpv => 'Через NPV (Tor-over-NPV)';
 
   @override
   String get tunnelCore => 'Ядро туннеля';
@@ -977,19 +984,25 @@ class AppLocalizationsRu extends AppLocalizations {
   String get torViaWireGuard => 'Через WireGuard (Tor-over-WireGuard)';
 
   @override
-  String get psiphonWireGuardUpstream => 'WireGuard (SOCKS upstream)';
+  String get psiphonWireGuardUpstream => 'WireGuard';
 
   @override
-  String get sstpWireGuardUpstream => 'WireGuard (SOCKS upstream)';
+  String get sstpWireGuardUpstream => 'WireGuard';
 
   @override
-  String get upstreamViaFfvpn => 'Firefox VPN (SOCKS upstream)';
+  String get upstreamViaFfvpn => 'Firefox VPN';
 
   @override
-  String get upstreamViaLantern => 'Lantern (SOCKS upstream)';
+  String get upstreamViaLantern => 'Lantern';
 
   @override
-  String get upstreamViaGeph => 'Geph (SOCKS upstream)';
+  String get upstreamViaGeph => 'Geph';
+
+  @override
+  String get psiphonUpstreamNpv => 'NPV';
+
+  @override
+  String get sstpUpstreamNpv => 'NPV';
 
   @override
   String get diagnosticsReport => 'Диагностический отчёт';
@@ -1174,6 +1187,28 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ffvpnSettings => 'Настройки Firefox VPN';
 
   @override
+  String get ffvpnLoginSection => 'Вход по email и паролю';
+
+  @override
+  String get ffvpnLoginHint =>
+      'Вход напрямую в Firefox Account; полученный токен сессии сохраняется ниже — искать signedInUser.json не нужно.';
+
+  @override
+  String get ffvpnEmailLabel => 'Email аккаунта Firefox';
+
+  @override
+  String get ffvpnPasswordLabel => 'Пароль';
+
+  @override
+  String get ffvpnSignIn => 'Войти';
+
+  @override
+  String get ffvpnSigningIn => 'Вход…';
+
+  @override
+  String get ffvpnSignedIn => 'Вход выполнен — токен сессии сохранён.';
+
+  @override
   String get ffvpnGuideTitle => 'Токен сессии аккаунта Firefox';
 
   @override
@@ -1234,22 +1269,25 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ffvpnUpstreamManual => 'Ручной SOCKS5-прокси';
 
   @override
-  String get ffvpnUpstreamPsiphon => 'Psiphon (SOCKS)';
+  String get ffvpnUpstreamPsiphon => 'Psiphon';
 
   @override
-  String get ffvpnUpstreamTor => 'Tor (SOCKS)';
+  String get ffvpnUpstreamTor => 'Tor';
 
   @override
-  String get ffvpnUpstreamSstp => 'SSTP (SOCKS)';
+  String get ffvpnUpstreamSstp => 'SSTP';
 
   @override
-  String get ffvpnUpstreamWireguard => 'WireGuard (SOCKS)';
+  String get ffvpnUpstreamWireguard => 'WireGuard';
 
   @override
-  String get ffvpnUpstreamLantern => 'Lantern (SOCKS)';
+  String get ffvpnUpstreamLantern => 'Lantern';
 
   @override
-  String get ffvpnUpstreamGeph => 'Geph (SOCKS)';
+  String get ffvpnUpstreamGeph => 'Geph';
+
+  @override
+  String get ffvpnUpstreamNpv => 'NPV';
 
   @override
   String ffvpnUpstreamVia(String name, String port) {
@@ -1355,6 +1393,18 @@ class AppLocalizationsRu extends AppLocalizations {
       'Сетевая ошибка при обращении к Mozilla — проверьте соединение (возможно, нужен другой туннель) и повторите.';
 
   @override
+  String get ffvpnErrBadCredentials =>
+      'Неверный email или пароль (либо вход заблокирован) — проверьте данные аккаунта Firefox.';
+
+  @override
+  String get ffvpnErrSignInUnsupported =>
+      'Установленное ядро ffvpn не поддерживает вход по email и паролю. Обновите ядро в разделе «Обновления ядер» или вставьте токен сессии вручную.';
+
+  @override
+  String get ffvpnErrBlocked =>
+      'Защитный край Mozilla заблокировал запрос входа из этой сети (HTTP 406). Войдите через туннель или из другой сети и повторите попытку.';
+
+  @override
   String get ffvpnErrOther => 'Ошибка ffvpn';
 
   @override
@@ -1414,6 +1464,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get lanternUpstreamGeph => 'Geph';
 
   @override
+  String get lanternUpstreamNpv => 'NPV';
+
+  @override
   String get lanternUpstreamDesc =>
       'Соединения с серверами Lantern (а если они недоступны — и ваш трафик) идут через этот прокси; используйте его, когда IP-адреса серверов Lantern заблокированы.';
 
@@ -1433,10 +1486,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get lanternToolsServers => 'Серверы';
 
   @override
-  String get lanternToolsRefreshServers => 'Обновить список';
-
-  @override
-  String get lanternToolsCheckServers => 'Проверить доступность';
+  String get lanternToolsCheckServers => 'Проверить серверы';
 
   @override
   String get lanternServerReachable => 'Доступен';
@@ -1556,6 +1606,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get gephUpstreamLantern => 'Lantern';
 
   @override
+  String get gephUpstreamNpv => 'NPV';
+
+  @override
   String get gephUpstreamDesc =>
       'Geph сначала ходит к брокеру и выходам через этот прокси — используйте его, когда прямое соединение заблокировано. Создание и проверка аккаунта тоже идут через него.';
 
@@ -1595,4 +1648,306 @@ class AppLocalizationsRu extends AppLocalizations {
   String gephAccountSavedTo(String path) {
     return 'Код входа сохранён в $path';
   }
+
+  @override
+  String get npvSettings => 'Настройки NPV Tunnel';
+
+  @override
+  String get npvEngineName => 'NPV';
+
+  @override
+  String get npvConfigSection => 'Файл конфигурации NPV';
+
+  @override
+  String get npvConfigDesc =>
+      'Файл .npvs, через который NPV подключается. Выберите его на компьютере.';
+
+  @override
+  String get npvPickConfigFile => 'Выбрать файл';
+
+  @override
+  String get npvChangeConfigFile => 'Сменить файл';
+
+  @override
+  String get npvClearConfigFile => 'Убрать';
+
+  @override
+  String get npvNoConfigFile => 'Файл ещё не выбран';
+
+  @override
+  String npvConfigLoaded(String name) {
+    return 'Выбрано: $name';
+  }
+
+  @override
+  String get npvConfigReadError => 'Не удалось прочитать выбранный файл';
+
+  @override
+  String get npvConfigLockedWhileRunning =>
+      'Остановите туннель, чтобы сменить файл.';
+
+  @override
+  String get npvConnectionSection => 'Локальный прокси и проверка';
+
+  @override
+  String get npvPortSocks => 'Порт SOCKS';
+
+  @override
+  String get npvPortHttp => 'Порт HTTP (0 = выкл)';
+
+  @override
+  String get npvProbeSection => 'Проверка конфигов';
+
+  @override
+  String get npvProbeDesc =>
+      'Каждый конфиг проверяется один раз; используется самый быстрый рабочий.';
+
+  @override
+  String get npvProbeTimeout => 'Таймаут запроса (с)';
+
+  @override
+  String get npvProbeJobs => 'Параллельных проверок';
+
+  @override
+  String get npvProbeUrl => 'URL проверки (необязательно)';
+
+  @override
+  String get autoReconnectNpv => 'Автопереподключение NPV';
+
+  @override
+  String get npvServersSection => 'Серверы этого файла';
+
+  @override
+  String get npvServersDesc =>
+      'Все конфигурации файла. «Проверить серверы» тестит каждую по очереди и показывает рабочие — сначала быстрые.';
+
+  @override
+  String get npvServersListBtn => 'Показать серверы';
+
+  @override
+  String get npvServersCheckBtn => 'Проверить серверы';
+
+  @override
+  String get npvServersCancelBtn => 'Отмена';
+
+  @override
+  String get npvServersScanning => 'Проверка конфигураций…';
+
+  @override
+  String npvServersSummary(Object answered, Object total) {
+    return 'Работают $answered из $total конфигураций';
+  }
+
+  @override
+  String npvServersCount(Object total) {
+    return 'Конфигураций в этом файле: $total';
+  }
+
+  @override
+  String get npvServersCreator => 'Заметка';
+
+  @override
+  String get npvServersNone => 'В этом файле конфигураций нет.';
+
+  @override
+  String get npvServersNoFile =>
+      'Сначала выберите файл .npvs — показывать пока нечего.';
+
+  @override
+  String get npvServersInUse => 'используется';
+
+  @override
+  String get npvServersDead => 'Недоступен';
+
+  @override
+  String get npvServersPinHint =>
+      'Нажмите на конфиг, чтобы использовать его; повторное нажатие вернёт автовыбор самого быстрого.';
+
+  @override
+  String get npvServersPinnedChip => 'выбран';
+
+  @override
+  String get npvServersUnpinHint => 'Выбран — нажмите, чтобы отменить';
+
+  @override
+  String get npvServersAutoBtn => 'Авто (быстрейший)';
+
+  @override
+  String npvServersPinnedTo(Object label) {
+    return 'Выбрано: $label';
+  }
+
+  @override
+  String npvServersStalePin(Object index) {
+    return 'Выбранный конфиг #$index нет в этом файле — выберите другой или верните авто.';
+  }
+
+  @override
+  String get npvServersPinIgnored =>
+      'Ядро NPV использовало другой конфиг — обновите ядро, чтобы выбирать вручную.';
+
+  @override
+  String get aetherConnected => 'Aether подключён';
+
+  @override
+  String get aetherManualHint =>
+      'Ручной режим: протокол, обфускация, режим сканирования и пользовательский endpoint настраиваются ниже. Режим сканирования действует, только пока endpoint не задан.';
+
+  @override
+  String get aetherSettings => 'Настройки Aether';
+
+  @override
+  String get autoReconnectAether => 'Авто-переподключение Aether';
+
+  @override
+  String get both => 'Оба';
+
+  @override
+  String get connectionMode => 'Режим подключения';
+
+  @override
+  String get customEndpoint => 'Пользовательский endpoint (опционально)';
+
+  @override
+  String get customEndpointHint => 'Оставьте пустым для авто-сканирования';
+
+  @override
+  String get endpointPinning => 'Привязка endpoint';
+
+  @override
+  String get endpointPinningAutomatic => 'Авто';
+
+  @override
+  String get endpointPinningAutomaticDesc =>
+      'Всегда автоматический поиск лучшего endpoint. Рекомендуется.';
+
+  @override
+  String get endpointPinningCustomFirst => 'Сначала свой';
+
+  @override
+  String get endpointPinningCustomFirstDesc =>
+      'Сначала попробовать ваш endpoint. При неудаче — автосканирование.';
+
+  @override
+  String get endpointPinningCustomOnly => 'Только свой';
+
+  @override
+  String get endpointPinningCustomOnlyDesc =>
+      'Использовать только ваш endpoint. Без автосканирования. Для тестирования.';
+
+  @override
+  String get endpointPinningNeedsCustom =>
+      'Укажите свой endpoint ниже, чтобы включить режимы «Сначала свой» и «Только свой».';
+
+  @override
+  String get endpointPinningSubtitle =>
+      'Управляйте тем, как Aether выбирает endpoint';
+
+  @override
+  String get ipType => 'Тип IP';
+
+  @override
+  String get ipv4 => 'IPv4';
+
+  @override
+  String get ipv6 => 'IPv6';
+
+  @override
+  String get localSocksPort => 'Локальный порт SOCKS';
+
+  @override
+  String get logSourceAether => 'Aether';
+
+  @override
+  String get obfAggressive => 'Агрессивная';
+
+  @override
+  String get obfBalanced => 'Сбалансированная';
+
+  @override
+  String get obfDefaultCore => 'По умолчанию (ядро)';
+
+  @override
+  String get obfFirewall => 'Файрвол';
+
+  @override
+  String get obfGfw => 'GFW';
+
+  @override
+  String get obfLight => 'Лёгкая';
+
+  @override
+  String get obfuscation => 'Обфускация (--noize)';
+
+  @override
+  String get profileAdaptive => 'Адаптивный';
+
+  @override
+  String get profileAdaptiveDesc =>
+      'Баланс скорости и покрытия — подходит для большинства сетей';
+
+  @override
+  String get profileManual => 'Ручной';
+
+  @override
+  String get profileManualDesc =>
+      'Все опции вручную — для продвинутых пользователей';
+
+  @override
+  String get profilePatchy => 'Нестабильный сигнал';
+
+  @override
+  String get profilePatchyDesc =>
+      'Нестабильные мобильные данные — более сложный и устойчивый поиск';
+
+  @override
+  String get profileStrict => 'Строгая сеть';
+
+  @override
+  String get profileStrictDesc =>
+      'Ограниченный Wi-Fi или жёсткая фильтрация — fragment + masque-in-masque + noize gfw';
+
+  @override
+  String get protoGool => 'Gool (WARP-in-WARP)';
+
+  @override
+  String get protoMasque => 'MASQUE (HTTP/3 или HTTP/2)';
+
+  @override
+  String get protoMim => 'MIM (masque-in-masque)';
+
+  @override
+  String get protoWireguard => 'WireGuard';
+
+  @override
+  String get scanBalanced => 'Сбалансированный';
+
+  @override
+  String get scanIronclad => 'Железный';
+
+  @override
+  String get scanStealth => 'Скрытный';
+
+  @override
+  String get scanThorough => 'Тщательный';
+
+  @override
+  String get scanTurbo => 'Турбо';
+
+  @override
+  String get scanVerified => 'Проверенный';
+
+  @override
+  String get torViaAether => 'Через Aether (Tor-over-Aether)';
+
+  @override
+  String get tryLastEndpointFirst =>
+      'Сначала попробовать последний успешный endpoint';
+
+  @override
+  String get tryLastEndpointFirstSubtitle =>
+      'Если включено, попробует последний рабочий endpoint перед сканированием';
+
+  @override
+  String get aetherUpstream => 'Aether';
 }

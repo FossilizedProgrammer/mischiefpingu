@@ -14,7 +14,7 @@ class SuggestedPresets extends StatelessWidget {
     // ⬅ سه حالت:
     //   1 = Fronting (SunAndLion + isFronted + upstreamType=0)
     //   2 = Conduit (upstreamType=3)
-    //   3 = Direct (upstreamType=4 یا هر چیز دیگر)
+    //   3 = Direct (upstreamType=0 بدون fronting)
     if (s.useSunAndLion && s.isFronted && s.upstreamType == 0) return 1;
     if (s.upstreamType == 3) return 2;
     return 3;

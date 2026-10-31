@@ -39,6 +39,8 @@ class CoreUpdateArchiveExtractor {
   String binaryNameForCore(String coreId) {
     final ext = AppDataService.exeExt;
     switch (coreId) {
+      case 'aether':
+        return 'aether$ext';
       case 'tor':
         return 'tor$ext';
       case 'psiphon':

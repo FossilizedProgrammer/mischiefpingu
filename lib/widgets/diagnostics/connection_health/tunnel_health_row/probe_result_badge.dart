@@ -3,7 +3,7 @@ library;
 import 'package:flutter/material.dart';
 
 import '../../../../l10n/app_localizations.dart';
-import '../tunnel_probe_result.dart';
+import '../../../../services/health/tunnel_probe_result.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  ProbeResultBadge — badge نمایش نتیجه آخرین probe.

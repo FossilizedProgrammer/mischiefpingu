@@ -12,7 +12,7 @@ import 'connection_health/auto_probe_scheduler.dart';
 import 'connection_health/probe_manager.dart';
 import 'connection_health/tunnel_state_resolver.dart';
 import 'connection_health/tunnel_health_row.dart';
-import 'connection_health/tunnel_probe_result.dart';
+import '../../services/health/tunnel_probe_result.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  ConnectionHealthSection — بخش جامع سلامت همه تونل‌ها.
