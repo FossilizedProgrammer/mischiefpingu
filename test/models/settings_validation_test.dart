@@ -27,7 +27,7 @@ void main() {
 
   group('_validateFfvpn', () {
     test('removed and out-of-range upstream values fall back to direct', () {
-      for (final bad in <int>[2, -1, 7, 99]) {
+      for (final bad in <int>[-1, 7, 11, 99]) {
         final s = AppSettings()..ffvpnUpstreamType = bad;
         SettingsValidation.validateAndNormalize(s);
         expect(s.ffvpnUpstreamType, 0, reason: 'input $bad');
@@ -62,10 +62,37 @@ void main() {
     });
 
     test('a pasted URL as SNI is reduced to the hostname', () {
-      final s = AppSettings()
-        ..ffvpnSni = 'https://www.example.com/path';
+      final s = AppSettings()..ffvpnSni = 'https://www.example.com/path';
       SettingsValidation.validateAndNormalize(s);
       expect(s.ffvpnSni, 'www.example.com');
+    });
+  });
+
+  group('_validateAether scan mode', () {
+    test('manual profile keeps every core-supported mode', () {
+      for (final mode in [
+        'turbo',
+        'balanced',
+        'thorough',
+        'stealth',
+        'verified',
+        'ironclad'
+      ]) {
+        final s = AppSettings()
+          ..aetherProfile = 'manual'
+          ..aetherProtocol = 'masque'
+          ..aetherScanMode = mode;
+        SettingsValidation.validateAndNormalize(s);
+        expect(s.aetherScanMode, mode);
+      }
+    });
+
+    test('unknown modes fall back to balanced', () {
+      final s = AppSettings()
+        ..aetherProfile = 'manual'
+        ..aetherScanMode = 'bogus';
+      SettingsValidation.validateAndNormalize(s);
+      expect(s.aetherScanMode, 'balanced');
     });
   });
 }

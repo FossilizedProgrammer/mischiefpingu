@@ -46,7 +46,7 @@ void main() {
     final s = AppSettings()
       ..lanternSocksPort = 0
       ..lanternHttpPort = 70000
-      ..lanternUpstreamType = 2 // Aether حذف‌شده
+      ..lanternUpstreamType = 11 // خارج از محدودهٔ مجاز
       ..lanternProxyType = 'ftp'
       ..lanternProxyIp = '  10.0.0.9  '
       ..lanternProxyPort = 99999;
@@ -73,13 +73,19 @@ void main() {
 
     // یک لیست قدیمی بدون Lantern باید معتبر بماند.
     final old = AppSettings()
-      ..enabledLogSources = ['Psiphon', 'Tor', 'SSTP', 'WireGuard', 'App', 'System'];
+      ..enabledLogSources = [
+        'Psiphon',
+        'Tor',
+        'SSTP',
+        'WireGuard',
+        'App',
+        'System'
+      ];
     SettingsValidation.validateAndNormalize(old);
     expect(old.enabledLogSources, contains('Psiphon'));
 
     // نامعتبرها حذف می‌شوند.
-    final dirty = AppSettings()
-      ..enabledLogSources = ['Lantern', 'NotASource'];
+    final dirty = AppSettings()..enabledLogSources = ['Lantern', 'NotASource'];
     SettingsValidation.validateAndNormalize(dirty);
     expect(dirty.enabledLogSources, ['Lantern']);
   });

@@ -3,6 +3,8 @@
 // تست پارسرهای خروجی ffvpn — نمونه‌ها از خروجی واقعی باینری
 // (پیشوند زمان Go log مانند "12:11:35 " دارند) برداشته شده‌اند.
 
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mischiefpingu/services/ffvpn/ffvpn_service.dart';
@@ -48,7 +50,8 @@ void main() {
 12:11:37   US   CatchAll Anycast       1 server, 1 city
 ''';
       final countries = FfvpnService.parseCountriesOutput(output);
-      expect(countries, everyElement((c) => (c as FfvpnCountry).locked == false));
+      expect(
+          countries, everyElement((c) => (c as FfvpnCountry).locked == false));
       expect(countries.length, 3);
     });
 
@@ -123,17 +126,20 @@ void main() {
     });
 
     test('not entitled (403)', () {
-      const out = 'ffvpn: activating proxy service: guardian: account has no VPN entitlement (HTTP 403)';
+      const out =
+          'ffvpn: activating proxy service: guardian: account has no VPN entitlement (HTTP 403)';
       expect(FfvpnService.classifyError(out), FfvpnErrorKind.notEntitled);
     });
 
     test('region (451)', () {
-      const out = 'ffvpn: fetching proxy pass: guardian: service not available in this region (HTTP 451)';
+      const out =
+          'ffvpn: fetching proxy pass: guardian: service not available in this region (HTTP 451)';
       expect(FfvpnService.classifyError(out), FfvpnErrorKind.region);
     });
 
     test('quota (429)', () {
-      const out = 'ffvpn: fetching proxy pass: guardian: bandwidth quota exceeded (HTTP 429)';
+      const out =
+          'ffvpn: fetching proxy pass: guardian: bandwidth quota exceeded (HTTP 429)';
       expect(FfvpnService.classifyError(out), FfvpnErrorKind.quota);
     });
 
@@ -143,6 +149,82 @@ void main() {
           'ffvpn: servers: HTTP 0 fetching server list: dial tcp: lookup failed',
         ),
         FfvpnErrorKind.network,
+      );
+    });
+
+    test('edge protection block (406) is not reported as bad credentials', () {
+      expect(
+        FfvpnService.classifyError(
+          "ffvpn: Mozilla's edge protection blocked this request (HTTP 406)",
+        ),
+        FfvpnErrorKind.blocked,
+      );
+    });
+
+    test('wrong email/password (errno 102/103)', () {
+      expect(
+        FfvpnService.classifyError(
+          'ffvpn: sign in: fxa: login failed: errno 103: Incorrect password',
+        ),
+        FfvpnErrorKind.badCredentials,
+      );
+      expect(
+        FfvpnService.classifyError(
+          'ffvpn: sign in: fxa: login failed: errno 102: Unknown account',
+        ),
+        FfvpnErrorKind.badCredentials,
+      );
+    });
+  });
+
+  group('buildSignInArgs', () {
+    test('uses session-token-file and never carries the password', () {
+      final args = FfvpnService.buildSignInArgs(
+        email: '  user@example.com ',
+        tokenFile: '/tmp/session.txt',
+      );
+      expect(args, [
+        '--session-token-file',
+        '/tmp/session.txt',
+        '--email',
+        'user@example.com',
+        '--usage',
+      ]);
+      expect(args.any((a) => a.contains('password')), isFalse);
+    });
+  });
+
+  group('readSessionToken', () {
+    late Directory tmp;
+
+    setUp(() async {
+      tmp = await Directory.systemTemp.createTemp('ffvpn_token_test');
+    });
+
+    tearDown(() async {
+      await tmp.delete(recursive: true);
+    });
+
+    test('accepts a 64-hex token with surrounding whitespace', () async {
+      final file = File('${tmp.path}/session.txt');
+      const token =
+          '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+      await file.writeAsString('  $token\n');
+      expect(await FfvpnService.readSessionToken(file.path), token);
+    });
+
+    test('rejects short, non-hex, and missing files', () async {
+      final short = File('${tmp.path}/short.txt');
+      await short.writeAsString('deadbeef');
+      expect(await FfvpnService.readSessionToken(short.path), isNull);
+
+      final nonHex = File('${tmp.path}/nonhex.txt');
+      await nonHex.writeAsString('z' * 64);
+      expect(await FfvpnService.readSessionToken(nonHex.path), isNull);
+
+      expect(
+        await FfvpnService.readSessionToken('${tmp.path}/absent.txt'),
+        isNull,
       );
     });
   });

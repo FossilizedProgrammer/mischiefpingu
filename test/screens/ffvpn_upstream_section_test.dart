@@ -85,7 +85,7 @@ void main() {
 
     await tester.tap(find.byType(DropdownButtonFormField<int>));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Tor (SOCKS)').last);
+    await tester.tap(find.text('Tor').last);
     await tester.pumpAndSettle();
 
     expect(s.ffvpnUpstreamType, 4);

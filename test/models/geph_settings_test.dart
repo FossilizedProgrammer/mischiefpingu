@@ -68,7 +68,7 @@ void main() {
       ..gephHttpPort = 70000
       ..gephCountry = ' netherlands '
       ..gephCountryFilter = 'nonsense'
-      ..gephUpstreamType = 2 // Aether حذف‌شده
+      ..gephUpstreamType = 11 // خارج از محدودهٔ مجاز
       ..gephProxyType = 'ftp'
       ..gephProxyIp = '  10.0.0.9  '
       ..gephProxyPort = 99999
@@ -111,8 +111,7 @@ void main() {
     final s = AppSettings();
     expect(s.enabledLogSources, contains('Geph'));
 
-    final dirty = AppSettings()
-      ..enabledLogSources = ['Geph', 'NotASource'];
+    final dirty = AppSettings()..enabledLogSources = ['Geph', 'NotASource'];
     SettingsValidation.validateAndNormalize(dirty);
     expect(dirty.enabledLogSources, ['Geph']);
   });

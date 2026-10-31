@@ -98,6 +98,46 @@ List<FfvpnCountry> _countries() => const [
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  testWidgets('the sign-in section renders email/password and obscures it',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final provider = await pumpTile(tester, const FirefoxVpnSettingsTile());
+    await expand(tester, 'Firefox VPN Settings');
+
+    expect(find.text('Sign in with Email & Password'), findsOneWidget);
+    expect(find.text('Firefox Account email'), findsOneWidget);
+
+    final password = tester.widget<TextField>(
+      find.ancestor(
+        of: find.text('Password'),
+        matching: find.byType(TextField),
+      ),
+    );
+    expect(password.obscureText, isTrue);
+    provider.dispose();
+  });
+
+  testWidgets('signing in with empty fields reports bad credentials',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final provider = await pumpTile(tester, const FirefoxVpnSettingsTile());
+    await expand(tester, 'Firefox VPN Settings');
+
+    final signIn = find.text('Sign in');
+    await tester.ensureVisible(signIn);
+    await tester.tap(signIn);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+
+    // پیام لوکال‌شدهٔ badCredentials — یعنی هیچ پروسی اجرا نشده و
+    // اعتبارسنجی سمت اپ زودتر جلوی درخواست را گرفته است.
+    expect(
+      find.textContaining('The email or password is incorrect'),
+      findsOneWidget,
+    );
+    provider.dispose();
+  });
+
   testWidgets('the country filter choice persists through the real provider',
       (tester) async {
     SharedPreferences.setMockInitialValues({});

@@ -81,7 +81,12 @@ void main() {
     await expand(tester, 'Lantern Settings');
 
     // dropdown آپ‌استریم را Tor (value 4) می‌کنیم.
-    final dropdown = find.byType(DropdownButtonFormField<int>);
+    // کارت لنترن دو dropdown از نوع int دارد (موتور + آپ‌استریم)،
+    // پس با برچسب «Upstream type» همان یکی را هدف می‌گیریم.
+    final dropdown = find.ancestor(
+      of: find.text('Upstream type'),
+      matching: find.byType(DropdownButtonFormField<int>),
+    );
     expect(dropdown, findsOneWidget);
     await tester.ensureVisible(dropdown);
     await tester.pump(const Duration(milliseconds: 200));

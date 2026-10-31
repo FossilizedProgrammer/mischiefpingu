@@ -9,9 +9,11 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mischiefpingu/screens/widgets/core_update/core_update_controller.dart';
+import 'package:mischiefpingu/services/core_update/core_update_aether.dart';
 import 'package:mischiefpingu/services/core_update/core_update_ffvpn.dart';
 import 'package:mischiefpingu/services/core_update/core_update_lantern.dart';
 import 'package:mischiefpingu/services/core_update/core_update_network.dart';
+import 'package:mischiefpingu/services/core_update/core_update_npv.dart';
 import 'package:mischiefpingu/services/core_update/core_update_pending.dart';
 import 'package:mischiefpingu/services/core_update/core_update_process_utils.dart';
 import 'package:mischiefpingu/services/core_update/core_update_psiphon.dart';
@@ -105,6 +107,11 @@ void main() {
       final pending = CoreUpdatePendingManager(processUtils: processUtils);
 
       final registry = CoreUpdaterRegistry(
+        aether: AetherUpdater(
+          network: network,
+          pending: pending,
+          processUtils: processUtils,
+        ),
         tor: TorUpdater(
           network: network,
           pending: pending,
@@ -145,6 +152,11 @@ void main() {
           pending: pending,
           processUtils: processUtils,
         ),
+        npv: NpvUpdater(
+          network: network,
+          pending: pending,
+          processUtils: processUtils,
+        ),
       );
 
       expect(registry.byId('ffvpn'), isNotNull);
@@ -171,7 +183,8 @@ void main() {
     });
 
     test('release assets are handled as raw binaries', () {
-      final extractor = ArchiveExtractor(processUtils: CoreUpdateProcessUtils());
+      final extractor =
+          ArchiveExtractor(processUtils: CoreUpdateProcessUtils());
       final raw = extractor.classifyArchive('ffvpn-linux-amd64', 'ffvpn');
       expect(raw.isArchive, isFalse);
       expect(raw.isRawBinary, isTrue);
