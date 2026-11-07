@@ -1,0 +1,231 @@
+part of 'app_provider.dart';
+
+/// ═══════════════════════════════════════════════════════════════
+///  AppProviderReconnect — مدیریت auto-reconnect و status.
+///
+///  ⚠️ بازآرایی:
+///  منطق مشترک schedule برای هر تونل به فایل جداگانه منتقل شد:
+///    • app_provider_reconnect_scheduler.dart
+///        → _scheduleReconnectFor (helper مشترک)
+///
+///  این فایل حالا فقط orchestrator است: برای هر تونل صدا می‌زنه
+///  و statusها رو آپدیت می‌کنه.
+///
+///  ⚠️ این متد فقط از `handleProcessServiceChange` صدا زده می‌شود،
+///  و آن هم فقط وقتی state واقعی تغییر کرده باشد.
+/// ═══════════════════════════════════════════════════════════════
+extension AppProviderReconnect on AppProvider {
+  void checkAutoReconnects() {
+    // ═══════════════════════════════════════════════════════════
+    //  Psiphon
+    // ═══════════════════════════════════════════════════════════
+    _scheduleReconnectFor(
+      tunnel: 'psiphon',
+      isRunning: processService.isPsiphonRunning,
+      isBusy: isPsiphonBusy,
+      isLoading: isLoading,
+      hasPid: processService.psiphonPid != null,
+      userStopped: userStoppedPsiphon,
+      autoReconnectEnabled: settings.autoReconnectPsiphon,
+      isAutoTesting: isAutoTesting,
+      isRestarting: restartingPsiphon,
+      shouldReconnect: () =>
+          !processService.isPsiphonRunning &&
+          !isPsiphonBusy &&
+          !isLoading &&
+          processService.psiphonPid == null &&
+          !userStoppedPsiphon &&
+          settings.autoReconnectPsiphon &&
+          !isAutoTesting &&
+          !restartingPsiphon &&
+          !isShuttingDown,
+      onReconnect: () => connectPsiphon(fromAutoReconnect: true),
+    );
+
+    // ═══════════════════════════════════════════════════════════
+    //  Aether
+    // ═══════════════════════════════════════════════════════════
+    _scheduleReconnectFor(
+      tunnel: 'aether',
+      isRunning: processService.isAetherRunning,
+      isBusy: isAutoTesting,
+      isLoading: false,
+      hasPid: processService.aetherPid != null,
+      userStopped: userStoppedAether,
+      autoReconnectEnabled: settings.autoReconnectAether,
+      isAutoTesting: isAutoTesting,
+      isRestarting: restartingAether,
+      shouldReconnect: () =>
+          !processService.isAetherRunning &&
+          !isAutoTesting &&
+          processService.aetherPid == null &&
+          !userStoppedAether &&
+          settings.autoReconnectAether &&
+          !restartingAether &&
+          !isShuttingDown,
+      onReconnect: () => connectAether(fromAutoReconnect: true),
+    );
+
+    // ═══════════════════════════════════════════════════════════
+    //  Tor
+    // ═══════════════════════════════════════════════════════════
+    _scheduleReconnectFor(
+      tunnel: 'tor',
+      isRunning: processService.isTorRunning,
+      isBusy: isTorBusy,
+      isLoading: false,
+      hasPid: processService.torPid != null,
+      userStopped: userStoppedTor,
+      autoReconnectEnabled: settings.autoReconnectTor,
+      isAutoTesting: isAutoTesting,
+      isRestarting: restartingTor,
+      shouldReconnect: () =>
+          !processService.isTorRunning &&
+          !isTorBusy &&
+          processService.torPid == null &&
+          !userStoppedTor &&
+          settings.autoReconnectTor &&
+          !isAutoTesting &&
+          !restartingTor &&
+          !isShuttingDown,
+      onReconnect: () => connectTor(fromAutoReconnect: true),
+    );
+
+    // ═══════════════════════════════════════════════════════════
+    //  SSTP
+    // ═══════════════════════════════════════════════════════════
+    _scheduleReconnectFor(
+      tunnel: 'sstp',
+      isRunning: processService.isSstpRunning,
+      isBusy: isSstpBusy,
+      isLoading: false,
+      hasPid: processService.sstpPid != null,
+      userStopped: userStoppedSstp,
+      autoReconnectEnabled: settings.autoReconnectSstp,
+      isAutoTesting: isAutoTesting,
+      isRestarting: restartingSstp,
+      shouldReconnect: () =>
+          !processService.isSstpRunning &&
+          !isSstpBusy &&
+          processService.sstpPid == null &&
+          !userStoppedSstp &&
+          settings.autoReconnectSstp &&
+          !isAutoTesting &&
+          !restartingSstp &&
+          !isShuttingDown,
+      onReconnect: () => connectSstp(fromAutoReconnect: true),
+    );
+
+    // ═══════════════════════════════════════════════════════════
+    //  WireGuard
+    // ═══════════════════════════════════════════════════════════
+    _scheduleReconnectFor(
+      tunnel: 'wireguard',
+      isRunning: processService.isWireGuardRunning,
+      isBusy: isWireGuardBusy,
+      isLoading: false,
+      hasPid: processService.wireGuardPid != null,
+      userStopped: userStoppedWireGuard,
+      autoReconnectEnabled: settings.wireguardAutoReconnect,
+      isAutoTesting: isAutoTesting,
+      isRestarting: restartingWireGuard,
+      shouldReconnect: () =>
+          !processService.isWireGuardRunning &&
+          !isWireGuardBusy &&
+          processService.wireGuardPid == null &&
+          !userStoppedWireGuard &&
+          settings.wireguardAutoReconnect &&
+          !isAutoTesting &&
+          !restartingWireGuard &&
+          !isShuttingDown,
+      onReconnect: () => connectWireGuard(fromAutoReconnect: true),
+    );
+
+    // ═══════════════════════════════════════════════════════════
+    //  NPV
+    // ═══════════════════════════════════════════════════════════
+    _scheduleReconnectFor(
+      tunnel: 'npv',
+      isRunning: processService.isNpvRunning,
+      isBusy: isNpvBusy,
+      isLoading: false,
+      hasPid: processService.npvPid != null,
+      userStopped: userStoppedNpv,
+      autoReconnectEnabled: settings.npvAutoReconnect,
+      isAutoTesting: isAutoTesting,
+      isRestarting: false,
+      shouldReconnect: () =>
+          !processService.isNpvRunning &&
+          !isNpvBusy &&
+          processService.npvPid == null &&
+          !userStoppedNpv &&
+          settings.npvAutoReconnect &&
+          !isAutoTesting &&
+          !isShuttingDown,
+      onReconnect: () => connectNpv(),
+    );
+  }
+
+  void updateTunnelStatuses() {
+    if (processService.isTorRunning) {
+      if (processService.isTorConnected) {
+        torStatus = 'Tor: Connected';
+      } else if (torStatus == 'Tor: Ready' || torStatus == 'Tor: Stopped') {
+        torStatus = 'Tor: Bootstrapping…';
+      }
+    }
+
+    if (processService.isSstpRunning) {
+      if (processService.isSstpConnected) {
+        sstpStatus = 'SSTP: Connected';
+      } else if (sstpStatus == 'SSTP: Ready' || sstpStatus == 'SSTP: Stopped') {
+        sstpStatus = 'SSTP: Connecting…';
+      }
+    }
+
+    if (processService.isFfvpnRunning) {
+      if (processService.isFfvpnConnected) {
+        ffvpnStatus = 'Firefox VPN: Connected';
+      } else if (ffvpnStatus == 'Firefox VPN: Ready' ||
+          ffvpnStatus == 'Firefox VPN: Stopped') {
+        ffvpnStatus = 'Firefox VPN: Connecting…';
+      }
+    }
+
+    if (processService.isLanternRunning) {
+      if (processService.isLanternConnected) {
+        lanternStatus = 'Lantern: Connected';
+      } else if (lanternStatus == 'Lantern: Ready' ||
+          lanternStatus == 'Lantern: Stopped') {
+        lanternStatus = 'Lantern: Connecting…';
+      }
+    }
+
+    if (processService.isNpvRunning) {
+      if (processService.isNpvConnected) {
+        final picked = processService.npvSelectedConfig;
+        npvStatus =
+            picked.isEmpty ? 'NPV: Connected' : 'NPV: Connected · $picked';
+      } else if (npvStatus == 'NPV: Ready' || npvStatus == 'NPV: Stopped') {
+        npvStatus = 'NPV: Connecting…';
+      }
+    } else if (npvStatus == 'NPV: Connecting…' ||
+        npvStatus.startsWith('NPV: Connected')) {
+      // باینری از پا درآمد (exit سریع، نبودِ کانفیگ زنده و…) تا status
+      // روی «در حال اتصال» گیر نکند.
+      npvStatus = 'NPV: Stopped';
+    }
+
+    if (processService.isGephRunning) {
+      if (processService.isGephConnected) {
+        gephStatus = 'Geph: Connected';
+      } else if (gephStatus == 'Geph: Ready' || gephStatus == 'Geph: Stopped') {
+        gephStatus = 'Geph: Connecting…';
+      }
+    } else if (gephStatus == 'Geph: Starting…') {
+      // باینری هنگام استارت از پا درآمد (کد حساب، بروکر، پورت و…) تا
+      // status روی «در حال اتصال» گیر نکند.
+      gephStatus = 'Geph: Stopped';
+    }
+  }
+}

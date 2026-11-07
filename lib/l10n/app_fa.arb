@@ -1,0 +1,848 @@
+{
+  "@@locale": "fa",
+  "appTitle": "پینگوی شیطون",
+  "appSubtitle": "کلاینت غیررسمی سایفون، تور، اس‌اس‌تی‌پی و وایرگارد،",
+  "appSubtitle2": "فایرفاکس وی‌پی‌ان، لنترن آن‌آفیشیال کلاینت، گف آن‌آفیشیال کلاینت، ان‌پی‌وی (napsternetV)",
+  "add": "افزودن",
+  "addNew": "افزودن جدید",
+  "allServers": "همه سرورها",
+  "any": "هرکدام",
+  "appearance": "ظاهر",
+  "appliedTop20Ips": "۲۰ آی‌پی برتر اعمال شد",
+  "appliedTop5Ips": "۵ آی‌پی برتر + SNI اعمال شد",
+  "applyTop20": "اعمال ۲۰ تای برتر",
+  "applyTop5": "اعمال ۵ تای برتر",
+  "authenticationOptional": "احراز هویت (اختیاری)",
+  "autoFindIpSni": "یافتن خودکار IP و SNI",
+  "autoFirstProxy": "خودکار (اولین پروکسی فعال)",
+  "autoFirstRunningProxy": "خودکار (اولین پروکسی فعال)",
+  "autoReconnectPsiphon": "اتصال مجدد خودکار سایفون",
+  "autoReconnectSstp": "اتصال مجدد خودکار اس‌اس‌تی‌پی",
+  "autoReconnectTor": "اتصال مجدد خودکار تور",
+  "autoRefresh15Min": "بازخوانی خودکار هر ۱۵ دقیقه",
+  "autoRefreshSubtitle": "سرورهای جدید را دریافت و سلامت را مجدداً بررسی می‌کند",
+  "binaryNotFound": "فایل اجرایی پیدا نشد",
+  "bridgePresets": "پیش‌تنظیم‌های بریج (اختیاری)",
+  "bridges": "بریج‌ها (هر خط یکی، پشتیبانی از webtunnel)",
+  "bridgesHint": "obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0",
+  "cancel": "لغو",
+  "cancelBtn": "لغو",
+  "cdnPreset": "پیش‌تنظیم CDN",
+  "cdnScanner": "اسکنر آی‌پی برای سایفون شیر و خورشید",
+  "cdnScanModeQuick": "سریع",
+  "cdnScanModeBalanced": "متعادل",
+  "cdnScanModeDeep": "عمیق",
+  "cdnScanModeQuickDesc": "سریع · {samples} آی‌پی در هر CIDR · حداکثر {max} آی‌پی در مجموع · حدود 1-2 دقیقه",
+  "@cdnScanModeQuickDesc": {
+    "placeholders": {
+      "samples": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnScanModeBalancedDesc": "متعادل · {samples} آی‌پی در هر CIDR · حداکثر {max} آی‌پی در مجموع · حدود 5-10 دقیقه",
+  "@cdnScanModeBalancedDesc": {
+    "placeholders": {
+      "samples": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnScanModeDeepDesc": "عمیق · گسترش کامل · حداکثر {max} آی‌پی در مجموع · حدود 30-60 دقیقه",
+  "@cdnScanModeDeepDesc": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnScoutTitle": "یافتن SNIهای کارکننده (پیشنهادی)",
+  "cdnScoutProgress": "در حال کاوش {done}/{total}…",
+  "@cdnScoutProgress": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnScoutHint": "SNIهای Discord/Reddit در ایران فیلتر هستند. قابلیت کاوش، موارد کارکننده را پیدا می‌کند.",
+  "cdnScoutButton": "کاوش",
+  "cdnScanPreview": "{lines} خط · {ips} آی‌پی اسکن خواهد شد",
+  "@cdnScanPreview": {
+    "placeholders": {
+      "lines": {
+        "type": "String"
+      },
+      "ips": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnScanWarningsMore": "…و {count} مورد دیگر",
+  "@cdnScanWarningsMore": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnApplyIpsToPsiphon": "اعمال {count} آی‌پی روی Psiphon",
+  "@cdnApplyIpsToPsiphon": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnApplyIpsSnack": "{count} آی‌پی → Psiphon\nآی‌پی فرانتینگ: {ip}\nSNI: {sni}",
+  "@cdnApplyIpsSnack": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "ip": {
+        "type": "String"
+      },
+      "sni": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnSendToPsiphon": "ارسال به Psiphon",
+  "cdnSaveEnteredIps": "ذخیره آی‌پی‌های واردشده",
+  "cdnIpsSavedSnack": "{count} آی‌پی ذخیره شد ({total} در لیست)",
+  "@cdnIpsSavedSnack": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnCustomIpsSent": "{count} آی‌پی سفارشی → Psiphon (فرانتینگ: {ip})",
+  "@cdnCustomIpsSent": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "ip": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnResultSubtitle": "امتیاز {score} · پایداری {reliability}/5 · {latency}ms · دانلود {download}ms · {sni}",
+  "@cdnResultSubtitle": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      },
+      "reliability": {
+        "type": "String"
+      },
+      "latency": {
+        "type": "String"
+      },
+      "download": {
+        "type": "String"
+      },
+      "sni": {
+        "type": "String"
+      }
+    }
+  },
+  "check": "بررسی",
+  "checkHealth": "بررسی سلامت",
+  "checking": "در حال بررسی…",
+  "clear": "پاک کردن",
+  "clearAll": "پاک کردن همه",
+  "clearLog": "پاک کردن",
+  "close": "بستن",
+  "colorTheme": "تم رنگی",
+  "colorThemeSubtitle": "یک طرح رنگ برای کل برنامه انتخاب کنید.",
+  "conduitWebrtc": "Conduit (WebRTC Inproxy)",
+  "connected": "متصل",
+  "connecting": "در حال اتصال…",
+  "copiedToClipboard": "در کلیپ‌بورد کپی شد",
+  "copyAllToClipboard": "کپی همه",
+  "importFromClipboard": "ورود از کلیپ‌بورد",
+  "importedFromClipboard": "از کلیپ‌بورد وارد شد",
+  "nothingToImport": "کلیپ‌بورد خالی است",
+  "itemsAddedCount": "آیتم‌های افزوده‌شده",
+  "copy": "کپی",
+  "copyAllCsv": "کپی همه (CSV با جزئیات)",
+  "copyAllIpPort": "کپی همه (ip:port)",
+  "copyLog": "کپی",
+  "coreUpdates": "آپدیت هسته‌ها",
+  "customIps": "آی‌پی‌های سفارشی",
+  "delete": "حذف",
+  "directNoProxy": "مستقیم (بدون پروکسی)",
+  "directNoProxyOption": "مستقیم (بدون پروکسی)",
+  "directNoUpstream": "مستقیم (بدون آپ‌استریم)",
+  "disconnected": "قطع‌شده",
+  "disconnectingTunnels": "در حال قطع تونل‌های فعال…",
+  "download": "دانلود",
+  "downloadVia": "دانلود از طریق",
+  "downloadViaSubtitle": "بررسی و دانلود از پروکسی انتخاب‌شده استفاده می‌کند وقتی دسترسی مستقیم فیلتر باشد.",
+  "egressRegion": "منطقه خروجی",
+  "enableLogging": "فعال‌سازی لاگ",
+  "enableLoggingSubtitle": "وقتی خاموش باشد، لاگ جدیدی جمع‌آوری نمی‌شود",
+  "exitCountry": "کشور خروجی",
+  "exitCountryAny": "هرکدام (تصادفی)",
+  "fetch": "دریافت",
+  "fetchVia": "دریافت از طریق",
+  "fetching": "در حال دریافت…",
+  "fingerprint": "اثر انگشت",
+  "frontingAdvanced": "فرانتینگ (پیشرفته، اختیاری)",
+  "frontingIp": "آی‌پی فرانتینگ",
+  "httpHostHeader": "هدر Host (مثلاً aparat.com, snapp.ir)",
+  "httpPort": "پورت HTTP",
+  "installed": "نصب‌شده",
+  "ipsCidrRanges": "آی‌پی‌ها / CIDR / محدوده‌ها",
+  "ipv4Only": "فقط IPv4",
+  "language": "زبان",
+  "languageEnglish": "English",
+  "languageFarsi": "فارسی",
+  "languageRussian": "Русский",
+  "languageSpanish": "Español",
+  "latest": "آخرین",
+  "lines": "خط",
+  "listIsEmpty": "لیست خالی است",
+  "localProxyPorts": "پورت‌های پروکسی محلی",
+  "log": "لاگ",
+  "logSourceFilter": "فیلتر منابع لاگ",
+  "logSourcePsiphon": "سایفون",
+  "logSourceTor": "تور",
+  "logSourceSstp": "اس‌اس‌تی‌پی",
+  "logSourceApp": "برنامه",
+  "logSourceSystem": "سیستم",
+  "manageList": "مدیریت لیست (افزودن / حذف)",
+  "manualProxy": "پروکسی دستی",
+  "manualProxyOption": "پروکسی دستی",
+  "muteSounds": "بی‌صدا کردن صداها",
+  "muteSoundsSubtitle": "همه صداهای پینگو را غیرفعال کنید. واکنش‌های بصری همچنان پخش می‌شوند.",
+  "noCustomIpsSaved": "هنوز هیچ آی‌پی سفارشی ذخیره نشده",
+  "noLogsYet": "هنوز لاگی نیست",
+  "noUpstreamDirect": "بدون آپ‌استریم (مستقیم)",
+  "notInstalled": "نصب نشده",
+  "notifications": "اعلان‌ها",
+  "obfOff": "خاموش",
+  "officialCore": "هسته رسمی سایفون",
+  "password": "رمز عبور",
+  "passwordOptional": "رمز عبور (اختیاری)",
+  "port": "پورت",
+  "portRangeError": "شماره پورتی بین {min} تا {max} وارد کنید",
+  "preset1Subtitle": "از هسته سایفون شیر و خورشید استفاده می‌کند (فورک غیررسمی).",
+  "preset1Title": "۱ · فرانتینگ (CDN). بهترین برای سانسور سنگین.",
+  "preset2Subtitle": "از پروتکل‌های INPROXY-WEBRTC سایفون استفاده می‌کند.",
+  "preset2Title": "2 · Conduit (WebRTC Inproxy). رله‌های غیرمتمرکز همتا.",
+  "preset3Subtitle": "مستقیماً از هسته رسمی سایفون استفاده می‌کند.",
+  "preset3Title": "3 · اتصال مستقیم. مناسب برای سانسور خفیف.",
+  "profile": "پروفایل",
+  "aetherPresetControlsNote": "پروتکل، حالت اسکن و مبهم‌سازی از پروفایل انتخاب‌شده پیروی می‌کنند. برای ویرایش، Manual را انتخاب کنید.",
+  "protocol": "پروتکل",
+  "proxyIp": "آی‌پی پروکسی",
+  "proxyType": "نوع پروکسی",
+  "psiphonConnectedVia": "سایفون متصل شد از طریق",
+  "psiphonConnectionMode": "حالت اتصال سایفون",
+  "psiphonSettings": "تنظیمات سایفون",
+  "psiphonUpstream": "سایفون",
+  "save": "ذخیره",
+  "saveFoundIpsSni": "ذخیره خودکار IPها و SNIهای یافت‌شده",
+  "scanMode": "حالت اسکن",
+  "select": "انتخاب…",
+  "selectAll": "انتخاب همه",
+  "server": "سرور",
+  "serverAddress": "آدرس سرور",
+  "shareOnLan": "اشتراک در شبکه محلی (bind 0.0.0.0)",
+  "shareOnLanPsiphon": "اشتراک در شبکه محلی (bind 0.0.0.0)",
+  "shareOnLanPsiphonSubtitle": "فوروارد پورت‌های SOCKS و HTTP روی همه رابط‌ها",
+  "showLess": "نمایش کمتر",
+  "showLessSubtitle": "پنهان کردن تنظیمات پیشرفته و لاگ‌ها",
+  "showMore": "نمایش بیشتر",
+  "showMoreSubtitle": "ظاهر، سایفون، تور، اس‌اس‌تی‌پی، وایرگارد، فایرفاکس وی‌پی‌ان، لنترن، گف، اسکنر، آپدیت‌ها، لاگ",
+  "sni": "SNI",
+  "sniList": "لیست SNI (هر خط یکی، ترتیب = اولویت)",
+  "socksPort": "پورت SOCKS",
+  "sstpConnected": "اس‌اس‌تی‌پی متصل شد",
+  "sstpSettings": "تنظیمات اس‌اس‌تی‌پی",
+  "sstpSocksUpstream": "SSTP",
+  "start": "اتصال",
+  "startScan": "شروع اسکن",
+  "stop": "قطع",
+  "stopHealthCheck": "توقف",
+  "stopScan": "توقف",
+  "sunandlionCore": "هسته سایفون شیر و خورشید",
+  "threads": "تعداد رشته‌ها",
+  "tlsSni": "TLS SNI (مثلاً a248.e.akamai.net)",
+  "torBridge": "بریج (obfs4 / snowflake / سفارشی)",
+  "torConnected": "تور متصل شد",
+  "torConnection": "اتصال تور",
+  "torDirect": "مستقیم (بدون بریج، بدون آپ‌استریم) — پیش‌فرض",
+  "torManual": "پراکسی دستی",
+  "torSettings": "تنظیمات تور",
+  "torSocksUpstream": "تور",
+  "torUpstream": "تور",
+  "torViaPsiphon": "از طریق سایفون (Tor-over-Psiphon)",
+  "torViaSstp": "از طریق اس‌اس‌تی‌پی (Tor-over-SSTP)",
+  "torViaFfvpn": "از طریق فایرفاکس وی‌پی‌ان (Tor-over-Firefox VPN)",
+  "torViaLantern": "از طریق لنترن (Tor-over-Lantern)",
+  "torViaGeph": "از طریق گف (Tor-over-Geph)",
+  "torUpstreamNpv": "از طریق NPV (Tor-over-NPV)",
+  "tunnelCore": "هسته تونل",
+  "update": "آپدیت",
+  "upstream": "آپ‌استریم",
+  "upstreamType": "نوع آپ‌استریم",
+  "usableIps": "آی‌پی‌های قابل استفاده (مرتب‌شده بر اساس امتیاز)",
+  "useFronting": "استفاده از فرانتینگ (CDN)",
+  "userOptional": "نام کاربری (اختیاری)",
+  "username": "نام کاربری",
+  "verboseLogging": "لاگ تفصیلی",
+  "verboseLoggingSubtitle": "فعال‌سازی خروجی دیباگ دقیق از sstp-proxy",
+  "vpngateServers": "سرورهای اس‌اس‌تی‌پی VPN Gate",
+  "working": "در حال کار",
+  "watchdog": "واچ‌داگ",
+  "watchdogEnabled": "فعال‌سازی واچ‌داگ",
+  "watchdogEnabledSubtitle": "راه‌اندازی مجدد خودکار تونل‌ها در صورت عدم پاسخ‌دهی",
+  "watchdogSettings": "تنظیمات واچ‌داگ",
+  "backToPresets": "بازگشت به پروفایل‌های آماده",
+  "appUpdate": "بروزرسانی برنامه",
+  "appUpdateChecking": "در حال بررسی برای بروزرسانی...",
+  "appUpdateFailed": "بررسی بروزرسانی ناموفق بود",
+  "appUpdateSaveDialogTitle": "محل ذخیره بروزرسانی را انتخاب کنید",
+  "appUpdateDownloading": "در حال دانلود بروزرسانی...",
+  "appUpdateDownloaded": "بروزرسانی با موفقیت دانلود شد",
+  "appUpdateOpenFolder": "باز کردن پوشه",
+  "appUpdateAvailable": "بروزرسانی موجود است",
+  "appUpdateCurrentVersion": "نسخه فعلی",
+  "appUpdateLatestVersion": "آخرین نسخه",
+  "appUpdateReleaseNotes": "یادداشت‌های انتشار",
+  "appUpdateCheck": "بررسی بروزرسانی",
+  "appUpdateDownload": "دانلود بروزرسانی",
+  "appUpdateUpToDate": "شما بروز هستید",
+  "watchdogNetworkProfile": "پروفایل شبکه",
+  "watchdogNetworkProfileSubtitle": "شدت بررسی واچ‌داگ را تنظیم می‌کند. بر اساس شرایط شبکه انتخاب کنید.",
+  "watchdogProfileStable": "پایدار",
+  "watchdogProfileStableDesc": "کیفیت اینترنت خوب — بررسی سخت‌گیرانه، تشخیص سریع‌تر قطعی.",
+  "watchdogProfileNormal": "معمولی",
+  "watchdogProfileNormalDesc": "تنظیمات متعادل برای اکثر شبکه‌ها (پیش‌فرض).",
+  "watchdogProfileHarsh": "فیلترینگ شدید",
+  "watchdogProfileHarshDesc": "فیلترینگ سنگین یا شبکه ناپایدار — بررسی آسان‌گیر، restart بی‌مورد کمتر.",
+  "internetQuality": "کیفیت اینترنت",
+  "internetQualityAvg": "میانگین",
+  "internetQualityDeep": "عمیق (۵ دقیقه)",
+  "internetQualityDegraded": "افت‌کرده",
+  "internetQualityDirectDetails": "جزئیات کیفیت مستقیم",
+  "internetQualityDns": "DNS",
+  "internetQualityDown": "قطع",
+  "internetQualityExcellent": "عالی",
+  "internetQualityGood": "خوب",
+  "internetQualityHttps": "HTTPS",
+  "internetQualityJitter": "نوسان",
+  "internetQualityLastCheck": "آخرین بررسی",
+  "internetQualityLight": "سبک (۱۵ ثانیه)",
+  "internetQualityMax": "بیشترین",
+  "internetQualityMed": "میانه",
+  "internetQualityMin": "کمترین",
+  "internetQualityMonitoring": "پایش پس‌زمینه",
+  "internetQualityNoResult": "نتیجه‌ای نیست",
+  "internetQualityNormal": "معمولی (۲ دقیقه)",
+  "internetQualityNotTested": "تست نشده",
+  "internetQualityOff": "خاموش",
+  "internetQualityP95": "P95",
+  "internetQualityQuality": "کیفیت",
+  "internetQualitySnackbar": "اینترنت:",
+  "internetQualityStatusFailing": "ناموفق",
+  "internetQualityStatusOk": "سالم",
+  "internetQualityStatusPartial": "ناقص",
+  "internetQualityStatusSlow": "کند",
+  "internetQualityStatusUnknown": "نامعلوم",
+  "internetQualityTcp": "TCP",
+  "internetQualityTest": "تست",
+  "internetQualityUnstable": "ناپایدار",
+  "tunnelHealth": "سلامت تونل",
+  "tunnelHealthProbeAll": "تست همه",
+  "tunnelHealthProbeAgain": "تست مجدد",
+  "tunnelHealthNotRunning": "{tunnel} در حال اجرا نیست",
+  "@tunnelHealthNotRunning": {
+    "placeholders": {
+      "tunnel": {
+        "type": "String"
+      }
+    }
+  },
+  "tunnelHealthNoTunnelRunning": "هیچ تونلی در حال اجرا نیست",
+  "tunnelHealthStopped": "متوقف",
+  "tunnelHealthReachable": "قابل دسترس (تست موفق)",
+  "tunnelHealthMeasuring": "در حال اندازه‌گیری…",
+  "tunnelHealthExcellent": "عالی",
+  "tunnelHealthGood": "خوب",
+  "tunnelHealthFair": "متوسط",
+  "tunnelHealthDegraded": "ضعیف",
+  "tunnelHealthFailing": "خراب",
+  "tunnelHealthLatency": "تأخیر",
+  "tunnelHealthLoss": "افت",
+  "tunnelHealthJitter": "نوسان",
+  "tunnelHealthUptime": "زمان اتصال",
+  "tunnelHealthReconnects": "اتصال مجدد",
+  "tunnelHealthTrend": "روند",
+  "tunnelHealthProtocol": "پروتکل",
+  "tunnelHealthThroughput": "توان عبور",
+  "tunnelHealthCircuits": "مدارها",
+  "tunnelHealthIp": "آی‌پی",
+  "tunnelHealthLastProbeOk": "آخرین تست: {latency}ms — موفق",
+  "tunnelHealthLastProbeFailed": "آخرین تست ناموفق: {error}",
+  "tunnelHealthNoDataWarning": "تونل فعال است ولی داده‌ای عبور نمی‌کند",
+  "tunnelHealthMeasuringHealth": "در حال اندازه‌گیری سلامت…",
+  "tunnelHealthTitle": "سلامت {tunnel}",
+  "@tunnelHealthTitle": {
+    "placeholders": {
+      "tunnel": {
+        "type": "String"
+      }
+    }
+  },
+  "wireguardSettings": "تنظیمات وایرگارد",
+  "wireguardConfig": "کانفیگ وایرگارد",
+  "wireguardConfigHint": "کانفیگ استاندارد WireGuard (فرمت INI) یا URI با پروتکل wireguard:// را بچسبانید. برنامه فرمت را به‌صورت خودکار تشخیص می‌دهد.",
+  "wireguardConfigInvalid": "کانفیگ WireGuard نامعتبر است — PrivateKey، PublicKey و Endpoint را بررسی کنید.",
+  "wireguardFormatStandard": "استاندارد",
+  "wireguardFormatUri": "URI",
+  "wireguardConvertToUri": "تبدیل به URI",
+  "wireguardConvertToStandard": "تبدیل به استاندارد",
+  "wireguardLoadConfFile": "بارگذاری فایل .conf",
+  "wireguardConfFileLoaded": "کانفیگ WireGuard از فایل بارگذاری شد",
+  "wireguardConfFileEmpty": "فایل انتخاب‌شده خالی است",
+  "wireguardConfFileReadError": "خواندن فایل انتخاب‌شده ممکن نشد",
+  "wireguardConnected": "وایرگارد متصل شد",
+  "autoReconnectWireGuard": "اتصال مجدد خودکار وایرگارد",
+  "logSourceWireGuard": "وایرگارد",
+  "torViaWireGuard": "از طریق وایرگارد (Tor-over-WireGuard)",
+  "psiphonWireGuardUpstream": "وایرگارد",
+  "sstpWireGuardUpstream": "وایرگارد",
+  "upstreamViaFfvpn": "فایرفاکس وی‌پی‌ان",
+  "upstreamViaLantern": "لنترن",
+  "upstreamViaGeph": "گف",
+  "psiphonUpstreamNpv": "NPV",
+  "sstpUpstreamNpv": "NPV",
+  "wireguardCoreTitle": "هسته وایرگارد",
+  "wireguardCoreDescription": "پیاده‌سازی WireGuard را انتخاب کنید. Amnezia برای فیلترینگ سنگین، مبهم‌سازی اضافه می‌کند.",
+  "wireguardCoreStandard": "استاندارد (wireguard-go)",
+  "wireguardCoreAmnezia": "Amnezia (wireguard-awg)",
+  "diagnosticsReport": "گزارش تشخیصی",
+  "diagnosticsReportGenerate": "تولید گزارش",
+  "diagnosticsReportCopy": "کپی گزارش",
+  "diagnosticsReportSave": "ذخیره گزارش",
+  "diagnosticsReportGenerated": "گزارش با موفقیت تولید شد",
+  "diagnosticsReportCopied": "گزارش در کلیپ‌بورد کپی شد",
+  "diagnosticsReportSaved": "گزارش ذخیره شد در: {path}",
+  "@diagnosticsReportSaved": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "diagnosticsReportRedacted": "اطلاعات حساس حذف شده‌اند",
+  "diagnosticsReportPreview": "پیش‌نمایش",
+  "diagnosticsReportClose": "بستن",
+  "diagnosticsReportGenerating": "در حال تولید گزارش…",
+  "amneziaLinkDetected": "لینک وی‌پی‌ان آمنزیا شناسایی شد",
+  "amneziaLinkName": "نام",
+  "amneziaLinkEndpoint": "اندپوینت API",
+  "amneziaLinkHint": "برای دریافت کانفیگ واقعی AmneziaWG از API، روی «دریافت کانفیگ» کلیک کنید.",
+  "amneziaFetch": "دریافت کانفیگ",
+  "amneziaFetching": "در حال دریافت…",
+  "amneziaFetchSuccess": "کانفیگ AmneziaWG با موفقیت دریافت شد",
+  "amneziaFetchFailed": "دریافت کانفیگ AmneziaWG ناموفق بود",
+  "amneziaCoreRequired": "برای لینک‌های vpn://، هسته AmneziaWG لازم است. برنامه به صورت خودکار آن را انتخاب می‌کند.",
+  "amneziaApiError": "خطای API آمنزیا",
+  "amneziaInvalidLink": "فرمت لینک vpn:// نامعتبر است",
+  "bridgeScanner": "اسکنر بریج",
+  "bridgeScannerDescription": "دریافت و تست بریج‌های تور (obfs4، webtunnel، snowflake، meek، conjure). رنگ‌بندی پینگ کمک می‌کند بریج‌هایی که واقعاً روی شبکه شما کار می‌کنند را انتخاب کنید.",
+  "bridgeLines": "خطوط بریج (هر خط یکی)",
+  "bridgeLinesHint": "obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0",
+  "bridgeThreads": "تعداد رشته",
+  "bridgeStartScan": "شروع اسکن",
+  "bridgeStopScan": "توقف",
+  "bridgeResults": "نتایج",
+  "bridgeApplyWorking": "اعمال موارد کارکننده ({count})",
+  "bridgeApplyWorkingSnackbar": "{count} بریج کارکننده به تنظیمات تور اعمال شد",
+  "bridgeApplyWorkingRestarting": "{count} بریج اعمال شد — تور در حال راه‌اندازی مجدد برای اعمال تغییرات",
+  "bridgeApplyWorkingTorNotRunning": "{count} بریج اعمال شد — تور را شروع کنید تا استفاده شوند",
+  "@bridgeApplyWorking": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@bridgeApplyWorkingSnackbar": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@bridgeApplyWorkingRestarting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@bridgeApplyWorkingTorNotRunning": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeFetch": "دریافت {transport}",
+  "@bridgeFetch": {
+    "placeholders": {
+      "transport": {
+        "type": "String"
+      }
+    }
+  },
+  "bridgeSaveWorking": "ذخیره موارد کارکننده",
+  "bridgeLoadSaved": "بارگذاری ذخیره‌شده",
+  "bridgeRescanSaved": "اسکن مجدد ذخیره‌شده",
+  "bridgeClearSaved": "پاک کردن ذخیره‌شده",
+  "bridgeSavedCount": "ذخیره‌شده: {count}",
+  "@bridgeSavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeNoSaved": "هنوز بریجی ذخیره نشده",
+  "bridgeSavedBridges": "بریج‌های ذخیره‌شده",
+  "bridgeSaveSuccess": "{count} بریج ذخیره شد",
+  "@bridgeSaveSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeLoadedSuccess": "{count} بریج ذخیره‌شده بارگذاری شد",
+  "@bridgeLoadedSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeRescanStarted": "اسکن مجدد {count} بریج ذخیره‌شده",
+  "@bridgeRescanStarted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeClearedSaved": "بریج‌های ذخیره‌شده پاک شدند",
+  "bridgeNothingToSave": "بریج کارکننده‌ای برای ذخیره نیست",
+  "bridgeLoadFromScanner": "بارگذاری از اسکنر بریج",
+  "bridgeLoadFromScannerSubtitle": "بارگذاری بریج‌های کارکنندهٔ ذخیره‌شده از بخش اسکنر بریج در پایین",
+  "bridgeNoSavedInScanner": "هنوز بریجی در اسکنر بریج ذخیره نشده",
+  "logSourceFfvpn": "وی‌پی‌ان فایرفاکس",
+  "ffvpnSettings": "تنظیمات وی‌پی‌ان فایرفاکس",
+  "ffvpnLoginSection": "ورود با ایمیل و رمز عبور",
+  "ffvpnLoginHint": "مستقیم به حساب فایرفاکس وارد می‌شود و توکن نشست به‌دست‌آمده را پایین ذخیره می‌کند — نیازی به گشتن در signedInUser.json نیست.",
+  "ffvpnEmailLabel": "ایمیل حساب فایرفاکس",
+  "ffvpnPasswordLabel": "رمز عبور",
+  "ffvpnSignIn": "ورود",
+  "ffvpnSigningIn": "در حال ورود…",
+  "ffvpnSignedIn": "وارد شدید — توکن نشست ذخیره شد.",
+  "ffvpnGuideTitle": "توکن نشست حساب فایرفاکس",
+  "ffvpnGuideIntro": "این پروکسی از وی‌پی‌ان داخلی مرورگر فایرفاکس (IP Protection، مبتنی بر Mozilla VPN) استفاده می‌کند و به توکن نشست حساب فایرفاکس شما نیاز دارد:",
+  "ffvpnGuideStep1": "۱. داخل خود مرورگر فایرفاکس یک حساب فایرفاکس بسازید یا وارد آن شوید تا نشست در مرورگر ذخیره شود.",
+  "ffvpnGuideStep2": "۲. در فایرفاکس صفحهٔ about:profiles را باز کنید تا پوشهٔ ریشهٔ پروفایل پیش‌فرض را پیدا کنید.",
+  "ffvpnGuideStep3": "۳. فایل signedInUser.json را در همان پوشه باز کنید و مقدار accountData.sessionToken (رشتهٔ ۶۴ کاراکتری هگز) را بردارید و در پایین بچسبانید.",
+  "ffvpnPathWindows": "ویندوز: %APPDATA%\\Mozilla\\Firefox\\Profiles\\<profile>\\signedInUser.json",
+  "ffvpnPathLinux": "لینوکس: ~/.mozilla/firefox/<profile>/signedInUser.json",
+  "ffvpnTokenLabel": "توکن نشست حساب فایرفاکس",
+  "ffvpnTokenHint": "۶۴ کاراکتر هگز — accountData.sessionToken از signedInUser.json",
+  "ffvpnPortSocks": "پورت SOCKS",
+  "ffvpnPortHttp": "پورت HTTP (0 = خاموش)",
+  "ffvpnSniLabel": "SNI در TLS",
+  "ffvpnSniHint": "نام میزبانی که در ClientHello به لبهٔ پروکسی فایرفاکس فرستاده می‌شود — خالی بگذارید تا نام دامنهٔ لبه استفاده شود",
+  "ffvpnUpstreamSection": "پروکسی آپ‌استریم SOCKS",
+  "ffvpnUpstreamDesc": "Firefox VPN اول به این hop از SOCKS5 وصل می‌شود و بعد به لبهٔ پروکسی فایرفاکس. وقتی لبه فیلتر شده یا مستقیم در دسترس نیست به کار می‌رود.",
+  "ffvpnUpstreamDirect": "مستقیم (بدون آپ‌استریم)",
+  "ffvpnUpstreamManual": "پروکسی SOCKS5 دستی",
+  "ffvpnUpstreamPsiphon": "سایفون",
+  "ffvpnUpstreamTor": "تور",
+  "ffvpnUpstreamSstp": "SSTP",
+  "ffvpnUpstreamWireguard": "وایرگارد",
+  "ffvpnUpstreamLantern": "لنترن",
+  "ffvpnUpstreamGeph": "گف",
+  "ffvpnUpstreamNpv": "NPV",
+  "ffvpnUpstreamVia": "{name} به‌عنوان hop آپ‌استریم استفاده می‌شود (SOCKS روی 127.0.0.1:{port}) و اگر هنوز بالا نیست به‌صورت خودکار بالا می‌آید.",
+  "@ffvpnUpstreamVia": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "port": {
+        "type": "String"
+      }
+    }
+  },
+  "ffvpnUpstreamManualNote": "نام میزبان همیشه به پروکسی فرستاده می‌شود تا DNS همان‌جا حل شود.",
+  "ffvpnCountrySection": "کشور خروجی",
+  "ffvpnCountryAuto": "خودکار (پیشنهاد سرور)",
+  "ffvpnLoadCountries": "دریافت فهرست کشورها",
+  "ffvpnCountriesLoading": "در حال دریافت فهرست کشورها…",
+  "ffvpnCountriesEmpty": "هنوز کشوری بارگذاری نشده — «دریافت فهرست کشورها» را بزنید.",
+  "ffvpnCountriesFilteredOut": "هیچ کشوری با فیلتر انتخاب‌شده مطابقت ندارد.",
+  "ffvpnCountryFilter": "نمایش",
+  "ffvpnCountryFilterAll": "همهٔ کشورها",
+  "ffvpnCountryFilterFree": "فقط رایگان",
+  "ffvpnCountryFilterPlus": "فقط پرمیوم",
+  "ffvpnCountryFilterHint": "کشورهای قفل‌شده که اشتراک Mozilla VPN می‌خواهند؛ مثل خود فایرفاکس، به‌صورت پیش‌فرض پنهان‌اند.",
+  "ffvpnPremiumTag": "پرمیوم",
+  "ffvpnQuotaSection": "سهمیهٔ ماهانهٔ پهنای باند",
+  "ffvpnCheckQuota": "بررسی سهمیه",
+  "ffvpnQuotaLoading": "در حال بررسی سهمیه…",
+  "ffvpnQuotaUsedOf": "{used} از {total} مصرف شده ({percent}٪)",
+  "ffvpnQuotaLeft": "{remaining} باقی مانده",
+  "ffvpnQuotaResets": "ریست در {date}",
+  "ffvpnQuotaUnlimited": "پهنای باند نامحدود — این حساب سهمیهٔ ماهانه ندارد.",
+  "ffvpnQuotaNoToken": "برای بررسی سهمیه، اول توکن نشست را در بالا وارد کنید.",
+  "ffvpnErrNotEntitled": "این حساب فایرفاکس اشتراک Mozilla VPN ندارد (HTTP 403) — سرویس پروکسی به اشتراک نیاز دارد.",
+  "ffvpnErrRegion": "سرویس در منطقهٔ شما ارائه نمی‌شود (HTTP 451).",
+  "ffvpnErrBadToken": "توکن نشست نامعتبر یا منقضی است. دوباره در فایرفاکس وارد شوید و توکن تازه‌ای از signedInUser.json بردارید.",
+  "ffvpnErrQuota": "سهمیهٔ ماهانهٔ پهنای باند تمام شده — صبر کنید تا تاریخ ریست برسد.",
+  "ffvpnErrBinaryMissing": "باینری ffvpn در پوشهٔ دادهٔ برنامه پیدا نشد.",
+  "ffvpnErrNetwork": "خطای شبکه در اتصال به موزیلا — اتصال را بررسی کنید (شاید لازم باشد تونل دیگری فعال باشد) و دوباره تلاش کنید.",
+  "ffvpnErrBadCredentials": "ایمیل یا رمز عبور نادرست است (یا ورود بلاک شده) — اطلاعات حساب فایرفاکس را بررسی کنید.",
+  "ffvpnErrSignInUnsupported": "هستهٔ ffvpn نصب‌شده از ورود با ایمیل/رمز پشتیبانی نمی‌کند. هسته را از «آپدیت هسته‌ها» به‌روز کنید یا توکن نشست را دستی بچسبانید.",
+  "ffvpnErrBlocked": "لبهٔ امنیتی موزیلا درخواست ورود را از این شبکه بلاک کرد (HTTP 406). از داخل یک تونل یا شبکهٔ دیگر وارد شوید و دوباره تلاش کنید.",
+  "ffvpnErrOther": "خطای ffvpn",
+  "logSourceLantern": "لنترن",
+  "lanternSettings": "تنظیمات لنترن",
+  "lanternConnectionSection": "اتصال",
+  "lanternEngine": "موتور اتصال",
+  "lanternEngineRadiance": "رادیانس (رسمی نسخهٔ ۱۰، پیشنهادی)",
+  "lanternEngineClassic": "کلاسیک (flashlight)",
+  "lanternEngineDesc": "رادیانس همان موتور رسمی کلاینت لنترن نسخهٔ ۱۰ را اجرا می‌کند و خودش از فیلترینگ عبور می‌کند. کلاسیک همان کلاینت قدیمی است.",
+  "lanternPortSocks": "پورت SOCKS",
+  "lanternPortHttp": "پورت HTTP (۰ = غیرفعال)",
+  "lanternUpstreamSection": "آپ‌استریم",
+  "lanternUpstreamDirect": "بدون آپ‌استریم (مستقیم)",
+  "lanternUpstreamManual": "پروکسی دستی",
+  "lanternUpstreamPsiphon": "سایفون",
+  "lanternUpstreamTor": "تور",
+  "lanternUpstreamSstp": "SSTP",
+  "lanternUpstreamWireguard": "وایرگارد",
+  "lanternUpstreamFfvpn": "فایرفاکس وی‌پی‌ان",
+  "lanternUpstreamGeph": "گف",
+  "lanternUpstreamNpv": "NPV",
+  "lanternUpstreamDesc": "اتصال به سرورهای لنترن (و در نبود سرور سالم، ترافیک شما هم) از این پروکسی عبور می‌کند — وقتی IP سرورهای لنترن بلاک است از آن استفاده کنید.",
+  "lanternUpstreamManualNote": "اسکیم‌های مجاز: socks5:// ،socks5h:// ،http:// و https://.",
+  "lanternUpstreamVia": "{name} هاپ آپ‌استریم است (SOCKS روی 127.0.0.1:{port}) و اگر بالا نباشد به‌طور خودکار بالا آورده می‌شود.",
+  "lanternToolsSection": "ابزارهای لنترن",
+  "lanternToolsServers": "سرورها",
+  "lanternToolsCheckServers": "بررسی سرورها",
+  "lanternServerReachable": "در دسترس",
+  "lanternServerUnreachable": "غیرقابل دسترسی",
+  "lanternServerNotChecked": "بررسی‌نشده",
+  "lanternToolsAuth": "حساب کاربری",
+  "lanternEmailLabel": "ایمیل",
+  "lanternPasswordLabel": "گذرواژه",
+  "lanternLoginBtn": "ورود",
+  "lanternSignupBtn": "ثبت‌نام",
+  "lanternLogoutBtn": "خروج",
+  "lanternRunning": "در حال اجرا",
+  "gephSettings": "تنظیمات گف",
+  "gephConnectionSection": "اتصال",
+  "gephPortSocks": "پورت SOCKS",
+  "gephPortHttp": "پورت HTTP (۰ = غیرفعال)",
+  "gephCountry": "کشور خروجی",
+  "gephCountryAuto": "خودکار (هر کشوری)",
+  "gephCountryRefresh": "بروزرسانی لیست",
+  "gephCountryFilter": "نمایش",
+  "gephCountryFilterAll": "همهٔ کشورها",
+  "gephCountryFilterFree": "فقط رایگان",
+  "gephCountryFilterPlus": "فقط پرمیوم",
+  "gephAccountSection": "حساب گف",
+  "gephAccountReady": "کد حساب ذخیره شده است.",
+  "gephAccountMissing": "هنوز حسابی ساخته نشده — «ساخت حساب» را بزنید، یا منبع کد/فایل را بالا مشخص کنید.",
+  "gephAccountPath": "فایل کد حساب: {path}",
+  "gephSignupBtn": "ساخت حساب",
+  "gephIHaveAccount": "حساب دارم",
+  "gephRunning": "در حال اجرا",
+  "logSourceGeph": "گف",
+  "gephUpstreamSection": "آپ‌استریم",
+  "gephUpstreamDirect": "بدون آپ‌استریم (مستقیم)",
+  "gephUpstreamManual": "پروکسی دستی",
+  "gephUpstreamPsiphon": "سایفون",
+  "gephUpstreamTor": "تور",
+  "gephUpstreamSstp": "SSTP",
+  "gephUpstreamWireguard": "وایرگارد",
+  "gephUpstreamFfvpn": "فایرفاکس وی‌پی‌ان",
+  "gephUpstreamLantern": "لنترن",
+  "gephUpstreamNpv": "NPV",
+  "gephUpstreamDesc": "گف اول بروکر و خروجی‌هایش را از این پروکسی می‌فرستد — وقتی اتصال مستقیم بلاک است از آن استفاده کنید. ساخت و بررسی حساب هم از همین مسیر می‌رود.",
+  "gephUpstreamManualNote": "اسکیم‌های مجاز: socks5:// ،socks5h:// ،http:// و https://.",
+  "gephUpstreamVia": "{name} هاپ آپ‌استریم است (SOCKS روی 127.0.0.1:{port}) و اگر بالا نباشد به‌طور خودکار بالا آورده می‌شود.",
+  "@gephAccountPath": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@gephUpstreamVia": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "port": {
+        "type": "String"
+      }
+    }
+  },
+  "gephAccountSource": "منبع کد حساب",
+  "gephAccountSourceFile": "فایل",
+  "gephAccountSourceCode": "کد لاگین",
+  "gephAccountFilePath": "فایل کد حساب",
+  "gephAccountFileHint": "خالی بگذارید تا از فایل کد حساب داخل پوشهٔ دادهٔ برنامه استفاده شود.",
+  "gephLoginCodeLabel": "کد لاگین",
+  "gephLoginCodeHint": "کد لاگین گف — در تنظیمات برنامه ذخیره می‌شود.",
+  "gephAccountSavedTo": "کد لاگین در {path} ذخیره شد",
+  "@gephAccountSavedTo": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "npvSettings": "تنظیمات NPV Tunnel",
+  "npvEngineName": "NPV",
+  "npvConfigSection": "فایل کانفیگ NPV",
+  "npvConfigDesc": "فایل .npvs که NPV با آن وصل می‌شود. یکی را از کامپیوتر انتخاب کنید.",
+  "npvPickConfigFile": "انتخاب فایل",
+  "npvChangeConfigFile": "عوض کردن فایل",
+  "npvClearConfigFile": "حذف",
+  "npvNoConfigFile": "هنوز فایلی انتخاب نشده",
+  "npvConfigLoaded": "انتخاب شد: {name}",
+  "npvConfigReadError": "خواندن فایل انتخاب‌شده ممکن نشد",
+  "npvConfigLockedWhileRunning": "برای عوض کردن فایل، اول اتصال را متوقف کنید.",
+  "npvConnectionSection": "پروکسی محلی و سنجش",
+  "npvPortSocks": "پورت SOCKS",
+  "npvPortHttp": "پورت HTTP (۰ = خاموش)",
+  "npvProbeSection": "سنجش کانفیگ‌ها",
+  "npvProbeDesc": "هر کانفیگ یک‌بار آزمایش می‌شود و سریع‌ترین کانفیگِ سالم استفاده می‌شود.",
+  "npvProbeTimeout": "مهلت هر درخواست (ثانیه)",
+  "npvProbeJobs": "سنجش‌های همزمان",
+  "npvProbeUrl": "آدرس تست (اختیاری)",
+  "autoReconnectNpv": "اتصال مجدد خودکار NPV",
+  "npvServersSection": "سرورهای همین فایل",
+  "npvServersDesc": "همهٔ کانفیگ‌های داخل فایل. «بررسی سرورها» تک‌تکشان را آزمایش می‌کند و نشان می‌دهد کدام‌ها کار می‌کنند؛ سریع‌ترین‌ها بالا.",
+  "npvServersListBtn": "نمایش سرورها",
+  "npvServersCheckBtn": "بررسی سرورها",
+  "npvServersCancelBtn": "لغو",
+  "npvServersScanning": "در حال سنجش کانفیگ‌ها…",
+  "npvServersSummary": "{answered} از {total} کانفیگ کار می‌کند",
+  "@npvServersSummary": {
+    "placeholders": {
+      "answered": {},
+      "total": {}
+    }
+  },
+  "npvServersCount": "{total} کانفیگ در همین فایل",
+  "@npvServersCount": {
+    "placeholders": {
+      "total": {}
+    }
+  },
+  "npvServersCreator": "یادداشت",
+  "npvServersNone": "این فایل هیچ کانفیگی ندارد.",
+  "npvServersNoFile": "اول یک فایل .npvs انتخاب کنید؛ فعلاً چیزی برای نمایش نیست.",
+  "npvServersInUse": "در حال استفاده",
+  "npvServersDead": "غیرقابل دسترس",
+  "npvServersPinHint": "روی هر کانفیگ بزنید تا همان استفاده شود؛ یک ضربهٔ دیگر برنامه را به انتخاب سریع‌ترین برمی‌گرداند.",
+  "npvServersPinnedChip": "انتخاب‌شده",
+  "npvServersUnpinHint": "انتخاب شده — برای لغو بزنید",
+  "npvServersAutoBtn": "خودکار (سریع‌ترین)",
+  "npvServersPinnedTo": "انتخاب شده: {label}",
+  "@npvServersPinnedTo": {
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "npvServersStalePin": "کانفیگ انتخاب‌شدهٔ #{index} در همین فایل نیست؛ یکی دیگر را انتخاب کنید یا به خودکار برگردید.",
+  "@npvServersStalePin": {
+    "placeholders": {
+      "index": {}
+    }
+  },
+  "npvServersPinIgnored": "هستهٔ NPV کانفیگ دیگری استفاده کرد — برای انتخاب دستی، هسته را آپدیت کنید.",
+  "aetherConnected": "اتر متصل شد",
+  "aetherManualHint": "حالت دستی: پروتکل، مبهم‌سازی، حالت اسکن و اندپوینت سفارشی در پایین در اختیار شماست. حالت اسکن فقط وقتی اثر دارد که اندپوینت سفارشی خالی باشد.",
+  "aetherSettings": "تنظیمات اتر",
+  "autoReconnectAether": "اتصال مجدد خودکار اتر",
+  "both": "هر دو",
+  "connectionMode": "حالت اتصال",
+  "customEndpoint": "اندپوینت سفارشی (اختیاری)",
+  "customEndpointHint": "برای اسکن خودکار خالی بگذارید",
+  "endpointPinning": "پین کردن اندپوینت",
+  "endpointPinningAutomatic": "خودکار",
+  "endpointPinningAutomaticDesc": "همیشه اسکن خودکار برای بهترین اندپوینت. توصیه‌شده برای اکثر کاربران.",
+  "endpointPinningCustomFirst": "اول سفارشی",
+  "endpointPinningCustomFirstDesc": "اول اندپوینت سفارشی را امتحان کن. اگر شکست خورد، به اسکن خودکار برگرد.",
+  "endpointPinningCustomOnly": "فقط سفارشی",
+  "endpointPinningCustomOnlyDesc": "فقط اندپوینت سفارشی. بدون fallback. برای تست یک سرور خاص.",
+  "endpointPinningNeedsCustom": "برای فعال‌سازی حالت‌های «اول سفارشی» و «فقط سفارشی»، یک اندپوینت سفارشی پایین تعیین کنید.",
+  "endpointPinningSubtitle": "کنترل کنید Aether چطور اندپوینت خود را انتخاب کند",
+  "ipType": "نوع IP",
+  "ipv4": "IPv4",
+  "ipv6": "IPv6",
+  "localSocksPort": "پورت SOCKS محلی",
+  "logSourceAether": "اتر",
+  "obfAggressive": "تهاجمی",
+  "obfBalanced": "متعادل",
+  "obfDefaultCore": "پیش‌فرض هسته",
+  "obfFirewall": "فایروال",
+  "obfGfw": "GFW",
+  "obfLight": "سبک",
+  "obfuscation": "مبهم‌سازی (--noize)",
+  "profileAdaptive": "تطبیقی",
+  "profileAdaptiveDesc": "تعادل سرعت و پوشش — مناسب اکثر شبکه‌ها",
+  "profileManual": "دستی",
+  "profileManualDesc": "همه گزینه‌ها دستی — برای کاربران حرفه‌ای",
+  "profilePatchy": "سیگنال ناپایدار",
+  "profilePatchyDesc": "دیتای موبایل ناپایدار — جستجوی سخت‌تر و مقاوم‌تر",
+  "profileStrict": "شبکه محدود",
+  "profileStrictDesc": "وای‌فای محدود یا فیلتر سنگین — fragment + masque-in-masque + noize gfw",
+  "protoGool": "Gool (WARP-in-WARP)",
+  "protoMasque": "MASQUE (HTTP/3 یا HTTP/2)",
+  "protoMim": "MIM (masque-in-masque)",
+  "protoWireguard": "WireGuard",
+  "scanBalanced": "متعادل",
+  "scanIronclad": "آهنین",
+  "scanStealth": "مخفیانه",
+  "scanThorough": "دقیق",
+  "scanTurbo": "توربو",
+  "scanVerified": "تأییدشده",
+  "torViaAether": "از طریق اتر (Tor-over-Aether)",
+  "tryLastEndpointFirst": "اول آخرین اندپوینت موفق را امتحان کن",
+  "tryLastEndpointFirstSubtitle": "اگر فعال باشد، قبل از اسکن آخرین اندپوینت کارکننده امتحان می‌شود",
+  "aetherUpstream": "اتر"
+}

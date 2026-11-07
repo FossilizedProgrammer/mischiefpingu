@@ -1,0 +1,417 @@
+// lib/screens/widgets/wireguard/wireguard_config_section.dart
+
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+
+import '../../../l10n/app_localizations.dart';
+import '../../../services/wireguard/wireguard_config_parser.dart';
+import '../../../services/wireguard/wireguard_uri_codec.dart';
+
+/// ═══════════════════════════════════════════════════════════════
+///  WireGuardConfigSection — بخش کانفیگ WireGuard.
+///
+///  ⚠️ نسخهٔ ساده — بدون پشتیبانی vpn:// و Amnezia API.
+///  فقط:
+///    • کانفیگ استاندارد (INI)
+///    • wireguard:// URI
+///    • بارگذاری فایل با پسوند .conf
+///    • دکمهٔ تبدیل فرمت
+/// ═══════════════════════════════════════════════════════════════
+class WireGuardConfigSection extends StatefulWidget {
+  final ThemeData theme;
+  final AppLocalizations l10n;
+  final String initialConfig;
+  final ValueChanged<String> onConfigChanged;
+
+  const WireGuardConfigSection({
+    super.key,
+    required this.theme,
+    required this.l10n,
+    required this.initialConfig,
+    required this.onConfigChanged,
+  });
+
+  @override
+  State<WireGuardConfigSection> createState() => _WireGuardConfigSectionState();
+}
+
+class _WireGuardConfigSectionState extends State<WireGuardConfigSection> {
+  late final TextEditingController _controller;
+  String? _errorText;
+  bool _isStandard = true;
+
+  Timer? _debounce;
+  WireGuardConfig? _parsed;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialConfig);
+    _detectFormat(widget.initialConfig);
+    _parsed = WireGuardConfigParser.parse(widget.initialConfig);
+  }
+
+  @override
+  void didUpdateWidget(covariant WireGuardConfigSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final parentChanged = oldWidget.initialConfig != widget.initialConfig;
+    if (!parentChanged) return;
+
+    if (_controller.text == widget.initialConfig) return;
+
+    _debounce?.cancel();
+
+    _controller.text = widget.initialConfig;
+    _detectFormat(widget.initialConfig);
+
+    final parsed = WireGuardConfigParser.parse(widget.initialConfig);
+    setState(() {
+      _parsed = parsed;
+      if (widget.initialConfig.trim().isEmpty) {
+        _errorText = null;
+      } else if (parsed == null || !parsed.isValid) {
+        _errorText = widget.l10n.wireguardConfigInvalid;
+      } else {
+        _errorText = null;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _detectFormat(String raw) {
+    final lower = raw.trim().toLowerCase();
+    _isStandard = !lower.startsWith('wireguard://');
+  }
+
+  void _onChanged(String value) {
+    _detectFormat(value);
+
+    final parsed = WireGuardConfigParser.parse(value);
+    setState(() {
+      _parsed = parsed;
+      if (value.trim().isEmpty) {
+        _errorText = null;
+      } else if (parsed == null || !parsed.isValid) {
+        _errorText = widget.l10n.wireguardConfigInvalid;
+      } else {
+        _errorText = null;
+      }
+    });
+
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        widget.onConfigChanged(value);
+      }
+    });
+  }
+
+  void _convertFormat() {
+    final raw = _controller.text.trim();
+    if (raw.isEmpty) return;
+
+    final parsed = WireGuardConfigParser.parse(raw);
+    if (parsed == null || !parsed.isValid) return;
+
+    final converted = _isStandard
+        ? WireGuardUriCodec.encode(parsed)
+        : WireGuardConfigParser.serialize(parsed);
+
+    setState(() {
+      _controller.text = converted;
+      _detectFormat(converted);
+      _errorText = null;
+      _parsed = parsed;
+    });
+
+    widget.onConfigChanged(converted);
+  }
+
+  /// ═══════════════════════════════════════════════════════════════
+  ///  بارگذاری کانفیگ از فایل با پسوند .conf
+  /// ═══════════════════════════════════════════════════════════════
+  Future<void> _loadConfFile() async {
+    final l10n = widget.l10n;
+
+    final result = await FilePicker.platform.pickFiles(
+      dialogTitle: l10n.wireguardLoadConfFile,
+      type: FileType.custom,
+      allowedExtensions: const ['conf'],
+      withData: true,
+    );
+
+    if (!mounted) return;
+    if (result == null || result.files.isEmpty) return; // کاربر انصراف داد
+
+    final messenger = ScaffoldMessenger.of(context);
+    final picked = result.files.single;
+
+    String content;
+    try {
+      if (picked.path != null) {
+        content = await File(picked.path!).readAsString();
+      } else if (picked.bytes != null) {
+        content = utf8.decode(picked.bytes!, allowMalformed: true);
+      } else {
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(l10n.wireguardConfFileReadError),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        return;
+      }
+    } catch (_) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(l10n.wireguardConfFileReadError),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+
+    if (content.trim().isEmpty) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(l10n.wireguardConfFileEmpty),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    final parsed = WireGuardConfigParser.parse(content);
+
+    _debounce?.cancel();
+    setState(() {
+      _controller.text = content;
+      _detectFormat(content);
+      _parsed = parsed;
+      _errorText =
+          (parsed == null || !parsed.isValid) ? l10n.wireguardConfigInvalid : null;
+    });
+
+    widget.onConfigChanged(content);
+
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          parsed != null && parsed.isValid
+              ? l10n.wireguardConfFileLoaded
+              : l10n.wireguardConfigInvalid,
+        ),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = widget.theme;
+    final l10n = widget.l10n;
+    final parsed = _parsed;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              l10n.wireguardConfig,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+            const Spacer(),
+            _FormatBadge(isStandard: _isStandard, l10n: l10n),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Text(
+          l10n.wireguardConfigHint,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _controller,
+          maxLines: 8,
+          style: const TextStyle(
+            fontFamily: 'monospace',
+            fontSize: 11,
+          ),
+          decoration: InputDecoration(
+            hintText: _hintText(),
+            errorText: _errorText,
+            border: InputBorder.none,
+            alignLabelWithHint: true,
+          ),
+          onChanged: _onChanged,
+        ),
+        if (parsed != null && parsed.isValid) ...[
+          const SizedBox(height: 12),
+          _ParsedConfigPreview(parsed: parsed, theme: theme),
+        ],
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: _loadConfFile,
+                icon: const Icon(Icons.file_open_outlined, size: 16),
+                label: Text(l10n.wireguardLoadConfFile),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: _controller.text.trim().isEmpty ? null : _convertFormat,
+                icon: const Icon(Icons.swap_horiz, size: 16),
+                label: Text(
+                  _isStandard
+                      ? l10n.wireguardConvertToUri
+                      : l10n.wireguardConvertToStandard,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  String _hintText() {
+    return _isStandard
+        ? '[Interface]\nPrivateKey = ...\nAddress = ...\n\n'
+            '[Peer]\nPublicKey = ...\nEndpoint = ...'
+        : 'wireguard://privatekey@endpoint:port/?'
+            'publickey=...&address=...';
+  }
+}
+
+/// بج فرمت (STANDARD / URI)
+class _FormatBadge extends StatelessWidget {
+  final bool isStandard;
+  final AppLocalizations l10n;
+
+  const _FormatBadge({required this.isStandard, required this.l10n});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final label =
+        isStandard ? l10n.wireguardFormatStandard : l10n.wireguardFormatUri;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primary.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        label,
+        style: theme.textTheme.bodySmall?.copyWith(
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          color: theme.colorScheme.primary,
+        ),
+      ),
+    );
+  }
+}
+
+/// پیش‌نمایش read-only کانفیگ پارس‌شده.
+class _ParsedConfigPreview extends StatelessWidget {
+  final WireGuardConfig parsed;
+  final ThemeData theme;
+
+  const _ParsedConfigPreview({required this.parsed, required this.theme});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: theme.colorScheme.primary.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _row('Endpoint', parsed.endpoint),
+          const SizedBox(height: 4),
+          _row('PublicKey', _shorten(parsed.publicKey)),
+          const SizedBox(height: 4),
+          _row('Address', parsed.address),
+          const SizedBox(height: 4),
+          _row('AllowedIPs', parsed.allowedIps),
+          if (parsed.dns.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            _row('DNS', parsed.dns),
+          ],
+          if (parsed.hasAmneziaParams) ...[
+            const SizedBox(height: 4),
+            _row(
+                'AmneziaWG', 'Jc=${parsed.jc} S1=${parsed.s1} H1=${parsed.h1}'),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _row(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 80,
+          child: Text(
+            '$label:',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              fontSize: 10,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontFamily: 'monospace',
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _shorten(String s) {
+    if (s.length <= 20) return s;
+    return '${s.substring(0, 10)}…${s.substring(s.length - 6)}';
+  }
+}

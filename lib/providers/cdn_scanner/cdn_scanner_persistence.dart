@@ -1,0 +1,84 @@
+part of '../cdn_scanner_provider.dart';
+
+extension CdnScannerPersistence on CdnScannerProvider {
+  Future<void> loadFromPrefs() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      customIpsInternal =
+          prefs.getStringList(CdnScannerProvider.prefsCustomIps) ?? [];
+
+      final savedMode = prefs.getString(CdnScannerProvider.prefsScanMode);
+      scanMode = savedMode != null
+          ? IpScanMode.fromId(savedMode)
+          : IpScanMode.balanced;
+
+      final savedSnis =
+          prefs.getStringList(CdnScannerProvider.prefsCustomSnis);
+      final savedPreset = prefs.getString(
+        CdnScannerProvider.prefsSelectedPreset,
+      );
+
+      if (savedPreset == 'custom' && customIps.isEmpty) {
+        // اگه custom خالیه، به cloudflare برگرد
+        selectedPresetId = 'cloudflare';
+        applyPreset('cloudflare');
+        customInput = '';
+        try {
+          await prefs.setString(
+            CdnScannerProvider.prefsSelectedPreset,
+            'cloudflare',
+          );
+        } catch (_) {}
+        return;
+      }
+
+      if (savedPreset != null) {
+        selectedPresetId = savedPreset;
+        if (savedPreset == 'custom') {
+          customInput = customIps.join('\n');
+          if (savedSnis != null && savedSnis.isNotEmpty) {
+            snis = List.from(savedSnis);
+          } else {
+            snis = List.from(CdnPresets.cloudflareSnis);
+          }
+        } else {
+          final preset = CdnPresets.byId(savedPreset);
+          if (preset != null) {
+            snis = List.from(preset.snis);
+            customInput = preset.ranges.join('\n');
+          } else {
+            applyPreset('cloudflare');
+          }
+        }
+      } else {
+        applyPreset('cloudflare');
+      }
+    } catch (_) {
+    } finally {
+      isLoaded = true;
+      touch();
+    }
+  }
+
+  Future<void> persistCustomIps() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList(CdnScannerProvider.prefsCustomIps, customIps);
+    } catch (_) {}
+  }
+
+  Future<void> persistSelectedPreset() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (selectedPresetId != null) {
+        await prefs.setString(
+          CdnScannerProvider.prefsSelectedPreset,
+          selectedPresetId!,
+        );
+      }
+      if (selectedPresetId == 'custom') {
+        await prefs.setStringList(CdnScannerProvider.prefsCustomSnis, snis);
+      }
+    } catch (_) {}
+  }
+}

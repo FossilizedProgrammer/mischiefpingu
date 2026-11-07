@@ -1,0 +1,725 @@
+// lib/services/vpngate_scraper_service.dart
+//
+// ═══════════════════════════════════════════════════════════════
+//  VpngateScraperService — دریافت لیست سرورهای SSTP از vpngate.net
+//
+//  روش دریافت (به‌روز شده برای ساختار فعلی سایت):
+//    پارس HTML صفحه اصلی و استخراج «SSTP Hostname : host[:port]»
+//    (دیگر لینک prot=sstp وجود ندارد)
+//
+//  هر دو روش با/بدون پروکسی (curl) کار می‌کنند.
+// ═══════════════════════════════════════════════════════════════
+library;
+
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
+// ═══════════════════════════════════════════════════════════════
+//  Model
+// ═══════════════════════════════════════════════════════════════
+class SstpServer {
+  final String ip;
+  final int port;
+  final String country;
+  final String countryShort;
+  final int ping;
+  final int speed;
+  final String operator;
+
+  const SstpServer({
+    required this.ip,
+    required this.port,
+    required this.country,
+    required this.countryShort,
+    required this.ping,
+    required this.speed,
+    required this.operator,
+  });
+
+  /// کلید یکتای سرور برای deduplication.
+  String get key => '$ip:$port';
+
+  Map<String, dynamic> toJson() => {
+        'ip': ip,
+        'port': port,
+        'country': country,
+        'countryShort': countryShort,
+        'ping': ping,
+        'speed': speed,
+        'operator': operator,
+      };
+
+  factory SstpServer.fromJson(Map<String, dynamic> j) => SstpServer(
+        ip: j['ip'] as String? ?? '',
+        port: j['port'] as int? ?? 443,
+        country: j['country'] as String? ?? '',
+        countryShort: j['countryShort'] as String? ?? '',
+        ping: j['ping'] as int? ?? 0,
+        speed: j['speed'] as int? ?? 0,
+        operator: j['operator'] as String? ?? '',
+      );
+
+  @override
+  String toString() => '$ip:$port ($country)';
+}
+
+class VpngateScrapeResult {
+  final List<SstpServer> servers;
+  final String rawHtmlLength;
+  final String message;
+  final bool ok;
+
+  const VpngateScrapeResult({
+    required this.servers,
+    required this.rawHtmlLength,
+    required this.message,
+    required this.ok,
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Service
+// ═══════════════════════════════════════════════════════════════
+class VpngateScraperService {
+  final void Function(String message, {String source}) log;
+
+  VpngateScraperService({required this.log});
+
+  static const String _htmlUrl = 'https://www.vpngate.net/en/';
+
+  /// اگر true باشد، HTML خام در /tmp برای دیباگ ذخیره می‌شود.
+  static const bool _debugSaveHtml = false;
+
+  // ═══════════════════════════════════════════
+  //  Public API
+  // ═══════════════════════════════════════════
+  Future<VpngateScrapeResult> fetchAndParse({String? proxy}) async {
+    log(
+      '→ Fetching vpngate.net${proxy != null ? ' via $proxy' : ' (direct)'}',
+      source: 'Vpngate',
+    );
+
+    // ─── اول از API iphone (CSV) امتحان می‌کنیم ───
+    // این API شامل لیست کامل سرورها با IP است اما پورت SSTP ندارد.
+    final csv = await _fetchCsv(proxy: proxy);
+    if (csv != null && csv.trim().isNotEmpty) {
+      final servers = _parseCsv(csv);
+      if (servers.isNotEmpty) {
+        log('→ Parsed ${servers.length} SSTP server(s) from CSV API',
+            source: 'Vpngate');
+        return VpngateScrapeResult(
+          servers: servers,
+          rawHtmlLength: csv.length.toString(),
+          message: 'Found ${servers.length} SSTP server(s) via CSV',
+          ok: true,
+        );
+      }
+      log('→ CSV returned no usable servers — trying HTML',
+          source: 'Vpngate');
+    }
+
+    // ─── fallback: پارس HTML ───
+    final html = await _fetchHtml(proxy: proxy);
+    if (html == null || html.isEmpty) {
+      return const VpngateScrapeResult(
+        servers: [],
+        rawHtmlLength: '0',
+        message: 'Failed to fetch page',
+        ok: false,
+      );
+    }
+
+    if (_debugSaveHtml) {
+      try {
+        await File('/tmp/vpngate_debug.html').writeAsString(html);
+        log('→ Debug HTML saved to /tmp/vpngate_debug.html',
+            source: 'Vpngate');
+      } catch (_) {}
+    }
+
+    final servers = _parseServersFromHtml(html);
+    log('→ Parsed ${servers.length} SSTP server(s) from HTML',
+        source: 'Vpngate');
+    return VpngateScrapeResult(
+      servers: servers,
+      rawHtmlLength: html.length.toString(),
+      message: servers.isEmpty
+          ? 'No SSTP servers found in page'
+          : 'Found ${servers.length} SSTP server(s)',
+      ok: servers.isNotEmpty,
+    );
+  }
+
+  // ═══════════════════════════════════════════
+  //  Fetch helpers
+  // ═══════════════════════════════════════════
+  Future<String?> _fetchHtml({String? proxy}) async {
+    if (proxy != null && proxy.isNotEmpty) {
+      return _fetchViaCurl(proxy, _htmlUrl);
+    }
+    return _fetchViaHttpClient(_htmlUrl, accept: 'text/html');
+  }
+
+  Future<String?> _fetchCsv({String? proxy}) async {
+    const csvUrl = 'https://www.vpngate.net/api/iphone/';
+    if (proxy != null && proxy.isNotEmpty) {
+      return _fetchViaCurl(proxy, csvUrl);
+    }
+    return _fetchViaHttpClient(csvUrl, accept: 'text/csv,text/plain,*/*');
+  }
+
+  Future<String?> _fetchViaHttpClient(
+    String url, {
+    String accept = '*/*',
+  }) async {
+    final client = HttpClient();
+    client.connectionTimeout = const Duration(seconds: 20);
+    try {
+      final req = await client.getUrl(Uri.parse(url));
+      req.headers.set(
+        'User-Agent',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+        '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      );
+      req.headers.set('Accept', accept);
+      req.headers.set('Accept-Language', 'en-US,en;q=0.9');
+      final res = await req.close().timeout(const Duration(seconds: 30));
+      if (res.statusCode != 200) {
+        log('✗ vpngate HTTP ${res.statusCode} for $url', source: 'Vpngate');
+        return null;
+      }
+      return await res.transform(utf8.decoder).join();
+    } catch (e) {
+      log('✗ vpngate fetch failed ($url): $e', source: 'Vpngate');
+      return null;
+    } finally {
+      client.close();
+    }
+  }
+
+  Future<String?> _fetchViaCurl(String proxy, String url) async {
+    try {
+      final r = await Process.run('curl', [
+        '-sSL',
+        '--fail',
+        '--max-time',
+        '60',
+        '--socks5-hostname',
+        proxy,
+        '-H',
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+            'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        '-H',
+        'Accept-Language: en-US,en;q=0.9',
+        url,
+      ]).timeout(const Duration(seconds: 70));
+      if (r.exitCode != 0) {
+        log('✗ curl failed via $proxy: ${(r.stderr as String).trim()}',
+            source: 'Vpngate');
+        return null;
+      }
+      return r.stdout as String;
+    } catch (e) {
+      log('✗ curl error: $e', source: 'Vpngate');
+      return null;
+    }
+  }
+
+  // ═══════════════════════════════════════════
+  //  CSV Parser
+  //
+  //  فرمت CSV vpngate:
+  //  #HostName,IP,Score,Ping,Speed,CountryLong,CountryShort,NumVpnSessions,
+  //   Uptime,TotalUsers,TotalTraffic,LogType,Operator,Message,OpenVPN_ConfigData_Base64
+  //
+  //  نکته: پورت SSTP در CSV ذکر نشده، پس از این روش صرف‌نظر می‌کنیم
+  //  و همیشه از HTML استفاده می‌کنیم.
+  // ═══════════════════════════════════════════
+  List<SstpServer> _parseCsv(String raw) {
+    // در CSV API پورت SSTP ذکر نشده، پس از این روش صرف‌نظر می‌کنیم
+    // و همیشه از HTML استفاده می‌کنیم.
+    return [];
+  }
+
+  // ═══════════════════════════════════════════
+  //  HTML Parser — استخراج از «SSTP Hostname : host[:port]»
+  //
+  //  ساختار فعلی سایت (۲۰۲۵/۲۰۲۶):
+  //    SSTP Hostname :
+  //    **hostname**   یا   **hostname:port**
+  //
+  //  استراتژی:
+  //    ۱. پیدا کردن همهٔ occurrenceهای «SSTP Hostname»
+  //    ۲. استخراج host و port از متن بعدی
+  //    ۳. پیدا کردن نزدیک‌ترین IP معتبر قبل از آن
+  //    ۴. استخراج کشور، پینگ و سرعت از همان محدوده
+  // ═══════════════════════════════════════════
+  List<SstpServer> _parseServersFromHtml(String html) {
+    final servers = <SstpServer>[];
+    final seen = <String>{};
+
+    // الگوی اصلی: SSTP Hostname :  **host**  یا  **host:port**
+    // ممکن است بین تگ‌های <b>، <strong> یا markdown-like ** قرار گرفته باشد.
+    final sstpRegex = RegExp(
+      r'SSTP\s+Hostname\s*:\s*(?:<[^>]*>|\*+)?\s*'
+      r'([a-zA-Z0-9][a-zA-Z0-9\.\-]*(?:\.opengw\.net)?)'
+      r'(?::(\d{1,5}))?'
+      r'\s*(?:</[^>]*>|\*+)?',
+      caseSensitive: false,
+      multiLine: true,
+    );
+
+    final matches = sstpRegex.allMatches(html).toList();
+    if (matches.isEmpty) {
+      log('→ No "SSTP Hostname" patterns found', source: 'Vpngate');
+      return servers;
+    }
+
+    log('→ Found ${matches.length} SSTP Hostname occurrence(s)',
+        source: 'Vpngate');
+
+    for (final m in matches) {
+      final hostPart = m.group(1)?.trim() ?? '';
+      if (hostPart.isEmpty) continue;
+
+      int port = 443;
+      if (m.group(2) != null) {
+        final p = int.tryParse(m.group(2)!);
+        if (p != null && p >= 1 && p <= 65535) {
+          port = p;
+        }
+      }
+
+      // محدودهٔ متن قبل از match برای پیدا کردن IP و سایر اطلاعات
+      // (معمولاً IP چند صد کاراکتر قبل‌تر در همان ردیف جدول است)
+      final start = (m.start - 2500).clamp(0, html.length);
+      final context = html.substring(start, m.end);
+
+      // ─── استخراج IP ───
+      final ip = _findNearestIp(context);
+      if (ip == null) continue;
+
+      // ─── کشور ───
+      final countryInfo = _extractCountry(context);
+
+      // ─── Ping ───
+      int ping = 0;
+      final pingMatch =
+          RegExp(r'(\d+)\s*ms', caseSensitive: false).firstMatch(context);
+      if (pingMatch != null) {
+        ping = int.tryParse(pingMatch.group(1)!) ?? 0;
+      }
+
+      // ─── Speed ───
+      int speed = 0;
+      final speedMatch =
+          RegExp(r'([\d.,]+)\s*Mbps', caseSensitive: false).firstMatch(context);
+      if (speedMatch != null) {
+        final s = speedMatch.group(1)!.replaceAll(',', '');
+        speed = (double.tryParse(s) ?? 0).toInt();
+      }
+
+      // ─── Operator (اختیاری) ───
+      String operator = '';
+      final opMatch = RegExp(
+        r'\*By\s+([^<*\n]{2,60})',
+        caseSensitive: false,
+      ).firstMatch(context);
+      if (opMatch != null) {
+        operator = opMatch.group(1)!.trim();
+      }
+
+      final key = '$ip:$port';
+      if (seen.add(key)) {
+        servers.add(SstpServer(
+          ip: ip,
+          port: port,
+          country: countryInfo.name,
+          countryShort: countryInfo.code,
+          ping: ping,
+          speed: speed,
+          operator: operator,
+        ));
+      }
+    }
+
+    // ─── fallback: جستجوی مستقیم الگوی host:port در متن SSTP ───
+    if (servers.isEmpty) {
+      log('→ Primary parse empty — trying simpler SSTP hostname regex',
+          source: 'Vpngate');
+      final simpleRegex = RegExp(
+        r'SSTP\s+Hostname\s*:\s*[^\n]*?'
+        r'([a-zA-Z0-9\.\-]+\.opengw\.net)(?::(\d{1,5}))?',
+        caseSensitive: false,
+        multiLine: true,
+      );
+
+      for (final m in simpleRegex.allMatches(html)) {
+        int port = 443;
+        if (m.group(2) != null) {
+          final p = int.tryParse(m.group(2)!);
+          if (p != null && p >= 1 && p <= 65535) port = p;
+        }
+
+        final start = (m.start - 2000).clamp(0, html.length);
+        final context = html.substring(start, m.end);
+        final ip = _findNearestIp(context);
+        if (ip == null) continue;
+
+        final key = '$ip:$port';
+        if (seen.add(key)) {
+          final countryInfo = _extractCountry(context);
+          servers.add(SstpServer(
+            ip: ip,
+            port: port,
+            country: countryInfo.name,
+            countryShort: countryInfo.code,
+            ping: 0,
+            speed: 0,
+            operator: '',
+          ));
+        }
+      }
+    }
+
+    return servers;
+  }
+
+  /// پیدا کردن نزدیک‌ترین IP معتبر در متن (از آخر به اول، چون IP معمولاً قبل از SSTP Hostname است)
+  String? _findNearestIp(String context) {
+    final ipRegex = RegExp(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})');
+    final all = ipRegex.allMatches(context).toList();
+    if (all.isEmpty) return null;
+
+    // آخرین IP معتبر را ترجیح می‌دهیم (نزدیک‌ترین به SSTP Hostname)
+    for (var i = all.length - 1; i >= 0; i--) {
+      final ip = all[i].group(1)!;
+      if (_isValidIp(ip)) return ip;
+    }
+    return null;
+  }
+
+  // ═══════════════════════════════════════════
+  //  Country extraction
+  // ═══════════════════════════════════════════
+  ({String name, String code}) _extractCountry(String row) {
+    // ─── روش ۱: تصویر پرچم با src + title (هر ترتیبی) ───
+    final flagPatterns = [
+      // src قبل از title
+      RegExp(
+        r'<img[^>]*src="[^"]*flags/([a-z]{2})\.(?:gif|png)"[^>]*title="([^"]+)"',
+        caseSensitive: false,
+      ),
+      // title قبل از src
+      RegExp(
+        r'<img[^>]*title="([^"]+)"[^>]*src="[^"]*flags/([a-z]{2})\.(?:gif|png)"',
+        caseSensitive: false,
+      ),
+    ];
+    for (final pattern in flagPatterns) {
+      final m = pattern.firstMatch(row);
+      if (m == null) continue;
+      final isSrcFirst = pattern.pattern.contains(r'src="[^"]*flags/');
+      final code = (isSrcFirst ? m.group(1) : m.group(2))?.trim().toUpperCase();
+      final name = (isSrcFirst ? m.group(2) : m.group(1))?.trim();
+      if (code != null && code.length == 2) {
+        return (
+          name: (name != null && name.isNotEmpty)
+              ? name
+              : _countryNameFromCode(code),
+          code: code,
+        );
+      }
+    }
+
+    // ─── روش ۲: فقط src بدون title → استخراج کد از مسیر ───
+    final flagCodeOnly = RegExp(
+      r'<img[^>]*src="[^"]*flags/([a-z]{2})\.(?:gif|png)"',
+      caseSensitive: false,
+    ).firstMatch(row);
+    if (flagCodeOnly != null) {
+      final code = flagCodeOnly.group(1)!.toUpperCase();
+      return (name: _countryNameFromCode(code), code: code);
+    }
+
+    // ─── روش ۳: alt attribute ───
+    final altMatch =
+        RegExp(r'<img[^>]*alt="([^"]+)"', caseSensitive: false)
+            .firstMatch(row);
+    if (altMatch != null) {
+      final altText = altMatch.group(1)!.trim();
+      if (altText.length == 2) {
+        final code = altText.toUpperCase();
+        return (name: _countryNameFromCode(code), code: code);
+      }
+      if (altText.length > 2) {
+        final code = _countryCodeFromName(altText);
+        return (name: altText, code: code);
+      }
+    }
+
+    // ─── روش ۴: الگوی "Country Name (XX)" در متن ───
+    final textMatch = RegExp(
+      r'([A-Za-z\s\.\-]{3,40})\s*\(([A-Za-z]{2})\)',
+      caseSensitive: false,
+    ).firstMatch(row);
+    if (textMatch != null) {
+      final name = textMatch.group(1)!.trim();
+      final code = textMatch.group(2)!.toUpperCase();
+      return (name: name, code: code);
+    }
+
+    // ─── روش ۵: نام کشور در ابتدای ردیف (مثل Japan، Korea Republic of و ...) ───
+    final countryNameMatch = RegExp(
+      r'(?:^|>|\n)\s*([A-Z][a-zA-Z\s]{2,30}?)\s+\*\*[a-zA-Z0-9\.\-]+\.opengw\.net',
+      multiLine: true,
+    ).firstMatch(row);
+    if (countryNameMatch != null) {
+      final name = countryNameMatch.group(1)!.trim();
+      final code = _countryCodeFromName(name);
+      if (code.isNotEmpty) {
+        return (name: name, code: code);
+      }
+      return (name: name, code: '');
+    }
+
+    return (name: '', code: '');
+  }
+
+  // ═══════════════════════════════════════════
+  //  Helpers
+  // ═══════════════════════════════════════════
+  bool _isValidIp(String s) {
+    final parts = s.split('.');
+    if (parts.length != 4) return false;
+    for (final p in parts) {
+      final n = int.tryParse(p);
+      if (n == null || n < 0 || n > 255) return false;
+    }
+    return true;
+  }
+
+  /// نقشه کد کشور → نام کشور (برای وقتی فقط کد را داریم)
+  static String _countryNameFromCode(String code) {
+    return _codeToName[code.toUpperCase()] ?? code.toUpperCase();
+  }
+
+  /// تلاش برای استخراج کد کشور از نام (reverse lookup)
+  static String _countryCodeFromName(String name) {
+    final lower = name.toLowerCase().trim();
+    for (final entry in _codeToName.entries) {
+      if (entry.value.toLowerCase() == lower) return entry.key;
+    }
+    for (final entry in _codeToName.entries) {
+      if (lower.contains(entry.value.toLowerCase())) return entry.key;
+    }
+    // موارد خاص رایج در vpngate
+    if (lower.contains('korea')) return 'KR';
+    if (lower.contains('united states') || lower == 'usa') return 'US';
+    if (lower.contains('united kingdom') || lower == 'uk') return 'GB';
+    if (lower.contains('russian')) return 'RU';
+    if (lower.contains('viet')) return 'VN';
+    return '';
+  }
+
+  /// نقشه کامل کد کشور (ISO 3166-1 alpha-2) به نام کشور
+  static const Map<String, String> _codeToName = {
+    'AD': 'Andorra',
+    'AE': 'United Arab Emirates',
+    'AF': 'Afghanistan',
+    'AG': 'Antigua and Barbuda',
+    'AL': 'Albania',
+    'AM': 'Armenia',
+    'AO': 'Angola',
+    'AR': 'Argentina',
+    'AT': 'Austria',
+    'AU': 'Australia',
+    'AZ': 'Azerbaijan',
+    'BA': 'Bosnia and Herzegovina',
+    'BB': 'Barbados',
+    'BD': 'Bangladesh',
+    'BE': 'Belgium',
+    'BF': 'Burkina Faso',
+    'BG': 'Bulgaria',
+    'BH': 'Bahrain',
+    'BI': 'Burundi',
+    'BJ': 'Benin',
+    'BN': 'Brunei',
+    'BO': 'Bolivia',
+    'BR': 'Brazil',
+    'BS': 'Bahamas',
+    'BT': 'Bhutan',
+    'BW': 'Botswana',
+    'BY': 'Belarus',
+    'BZ': 'Belize',
+    'CA': 'Canada',
+    'CD': 'DR Congo',
+    'CF': 'Central African Republic',
+    'CG': 'Congo',
+    'CH': 'Switzerland',
+    'CI': 'Ivory Coast',
+    'CL': 'Chile',
+    'CM': 'Cameroon',
+    'CN': 'China',
+    'CO': 'Colombia',
+    'CR': 'Costa Rica',
+    'CU': 'Cuba',
+    'CV': 'Cape Verde',
+    'CY': 'Cyprus',
+    'CZ': 'Czech Republic',
+    'DE': 'Germany',
+    'DJ': 'Djibouti',
+    'DK': 'Denmark',
+    'DM': 'Dominica',
+    'DO': 'Dominican Republic',
+    'DZ': 'Algeria',
+    'EC': 'Ecuador',
+    'EE': 'Estonia',
+    'EG': 'Egypt',
+    'ER': 'Eritrea',
+    'ES': 'Spain',
+    'ET': 'Ethiopia',
+    'FI': 'Finland',
+    'FJ': 'Fiji',
+    'FM': 'Micronesia',
+    'FR': 'France',
+    'GA': 'Gabon',
+    'GB': 'United Kingdom',
+    'GD': 'Grenada',
+    'GE': 'Georgia',
+    'GH': 'Ghana',
+    'GM': 'Gambia',
+    'GN': 'Guinea',
+    'GQ': 'Equatorial Guinea',
+    'GR': 'Greece',
+    'GT': 'Guatemala',
+    'GW': 'Guinea-Bissau',
+    'GY': 'Guyana',
+    'HK': 'Hong Kong',
+    'HN': 'Honduras',
+    'HR': 'Croatia',
+    'HT': 'Haiti',
+    'HU': 'Hungary',
+    'ID': 'Indonesia',
+    'IE': 'Ireland',
+    'IL': 'Israel',
+    'IN': 'India',
+    'IQ': 'Iraq',
+    'IR': 'Iran',
+    'IS': 'Iceland',
+    'IT': 'Italy',
+    'JM': 'Jamaica',
+    'JO': 'Jordan',
+    'JP': 'Japan',
+    'KE': 'Kenya',
+    'KG': 'Kyrgyzstan',
+    'KH': 'Cambodia',
+    'KI': 'Kiribati',
+    'KM': 'Comoros',
+    'KN': 'Saint Kitts and Nevis',
+    'KP': 'North Korea',
+    'KR': 'South Korea',
+    'KW': 'Kuwait',
+    'KZ': 'Kazakhstan',
+    'LA': 'Laos',
+    'LB': 'Lebanon',
+    'LC': 'Saint Lucia',
+    'LI': 'Liechtenstein',
+    'LK': 'Sri Lanka',
+    'LR': 'Liberia',
+    'LS': 'Lesotho',
+    'LT': 'Lithuania',
+    'LU': 'Luxembourg',
+    'LV': 'Latvia',
+    'LY': 'Libya',
+    'MA': 'Morocco',
+    'MC': 'Monaco',
+    'MD': 'Moldova',
+    'ME': 'Montenegro',
+    'MG': 'Madagascar',
+    'MH': 'Marshall Islands',
+    'MK': 'North Macedonia',
+    'ML': 'Mali',
+    'MM': 'Myanmar',
+    'MN': 'Mongolia',
+    'MR': 'Mauritania',
+    'MT': 'Malta',
+    'MU': 'Mauritius',
+    'MV': 'Maldives',
+    'MW': 'Malawi',
+    'MX': 'Mexico',
+    'MY': 'Malaysia',
+    'MZ': 'Mozambique',
+    'NA': 'Namibia',
+    'NE': 'Niger',
+    'NG': 'Nigeria',
+    'NI': 'Nicaragua',
+    'NL': 'Netherlands',
+    'NO': 'Norway',
+    'NP': 'Nepal',
+    'NR': 'Nauru',
+    'NZ': 'New Zealand',
+    'OM': 'Oman',
+    'PA': 'Panama',
+    'PE': 'Peru',
+    'PG': 'Papua New Guinea',
+    'PH': 'Philippines',
+    'PK': 'Pakistan',
+    'PL': 'Poland',
+    'PT': 'Portugal',
+    'PW': 'Palau',
+    'PY': 'Paraguay',
+    'QA': 'Qatar',
+    'RO': 'Romania',
+    'RS': 'Serbia',
+    'RU': 'Russia',
+    'RW': 'Rwanda',
+    'SA': 'Saudi Arabia',
+    'SB': 'Solomon Islands',
+    'SC': 'Seychelles',
+    'SD': 'Sudan',
+    'SE': 'Sweden',
+    'SG': 'Singapore',
+    'SI': 'Slovenia',
+    'SK': 'Slovakia',
+    'SL': 'Sierra Leone',
+    'SM': 'San Marino',
+    'SN': 'Senegal',
+    'SO': 'Somalia',
+    'SR': 'Suriname',
+    'SS': 'South Sudan',
+    'ST': 'Sao Tome and Principe',
+    'SV': 'El Salvador',
+    'SY': 'Syria',
+    'SZ': 'Eswatini',
+    'TD': 'Chad',
+    'TG': 'Togo',
+    'TH': 'Thailand',
+    'TJ': 'Tajikistan',
+    'TL': 'Timor-Leste',
+    'TM': 'Turkmenistan',
+    'TN': 'Tunisia',
+    'TO': 'Tonga',
+    'TR': 'Turkey',
+    'TT': 'Trinidad and Tobago',
+    'TV': 'Tuvalu',
+    'TW': 'Taiwan',
+    'TZ': 'Tanzania',
+    'UA': 'Ukraine',
+    'UG': 'Uganda',
+    'US': 'United States',
+    'UY': 'Uruguay',
+    'UZ': 'Uzbekistan',
+    'VA': 'Vatican City',
+    'VC': 'Saint Vincent and the Grenadines',
+    'VE': 'Venezuela',
+    'VN': 'Vietnam',
+    'VU': 'Vanuatu',
+    'WS': 'Samoa',
+    'YE': 'Yemen',
+    'ZA': 'South Africa',
+    'ZM': 'Zambia',
+    'ZW': 'Zimbabwe',
+  };
+}

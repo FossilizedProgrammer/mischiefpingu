@@ -1,0 +1,39 @@
+library;
+
+import '../../models/settings_model.dart';
+
+class PsiphonBaseConfigBuilder {
+  final AppSettings settings;
+
+  const PsiphonBaseConfigBuilder({required this.settings});
+
+  /// ساخت config پایه بر اساس نوع upstream.
+  Map<String, dynamic> build({required bool isConduit}) {
+    final config = <String, dynamic>{
+      "PropagationChannelId": "92AACC5BABE0944C",
+      "SponsorId": "1BC527D3D09985CF",
+      "LocalSocksProxyPort": settings.socksPort,
+      "LocalHttpProxyPort": settings.httpPort,
+      "DisableTactics": !isConduit,
+      "AggressiveEstablishment": !isConduit,
+      "UseIndistinguishableTLS": true,
+      "TunnelWholeDevice": false,
+      "EgressRegion": settings.egressRegion,
+      // ۰ یعنی بی‌نهایت: با آپ‌استریم/شبکهٔ مرده هسته تا ابد retry می‌کرد.
+      // سقف ۱۲۰ ثانیه (مثل کلاینت اندروید) باعث می‌شود شکست اعلام شود و
+      // auto-reconnect بتواند تلاش تازه‌ای بگیرد.
+      "EstablishTunnelTimeoutSeconds": 120,
+      "EmitDiagnosticNotices": true,
+      "EmitBytesTransferred": true,
+      "ClientPlatform": "Linux",
+    };
+
+    if (isConduit) {
+      config["ServerEntrySignaturePublicKey"] =
+          "sHuUVTWaRyh5pZwy4UguSgkwmBe0EHtJJkoF5WrxmvA=";
+      config["DeviceRegion"] = "IR";
+    }
+
+    return config;
+  }
+}

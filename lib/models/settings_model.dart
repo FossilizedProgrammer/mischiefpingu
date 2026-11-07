@@ -1,0 +1,369 @@
+// lib/models/settings_model.dart
+library;
+
+import 'lantern_engine.dart';
+import 'settings_serialization.dart';
+import 'wireguard_core_type.dart';
+
+part 'settings_presets.dart';
+part 'settings_profiles.dart';
+
+class AppSettings {
+  String ip;
+  String httpHost;
+  String tlsSni;
+  bool isFronted;
+  bool useSunAndLion;
+  bool onlyIpv4;
+  bool autoFindIpAndSni;
+  bool saveFoundIpsAndSni;
+
+  // ═══════════════════════════════════════════════════════════════
+  //  🆕 تنظیمات جدید برای کنترل جستجوی سرور فرانتینگ
+  // ═══════════════════════════════════════════════════════════════
+
+  bool watchdogEnabled;
+  String watchdogNetworkProfile;
+
+  // ═══════════════════════════════════════════════════════════════
+  //  WireGuard settings
+  // ═══════════════════════════════════════════════════════════════
+  String wireguardConfigRaw;
+  int wireguardSocksPort;
+  bool wireguardShareLan;
+  String wireguardCore; // "standard" یا "amnezia"
+  bool wireguardAutoReconnect;
+
+  int upstreamType;
+  int socksPort;
+  int httpPort;
+  String egressRegion;
+  String proxyType;
+  String proxyIp;
+  int proxyPort;
+  String proxyUser;
+  String proxyPass;
+  bool autoReconnectPsiphon;
+  bool autoReconnectAether;
+  bool autoReconnectTor;
+  bool autoReconnectSstp;
+  String aetherProfile;
+  String aetherProtocol;
+  String masqueOption;
+  int aetherLocalPort;
+  String aetherScanMode;
+  String ipType;
+  String obfuscation;
+  bool aetherShareLan;
+  bool aetherQuickReconnect;
+  String aetherCustomEndpoint;
+  bool aetherTryLastEndpointFirst;
+  String aetherEndpointPinning;
+  bool psiphonShareLan;
+  String psiphonBuildRev;
+  String psiphonBinarySha;
+  String conduitMode;
+  String conduitCompartmentId;
+  bool conduitRejectCensoredCountries;
+  String conduitBrokerSpecsJson;
+  String torTransport;
+  String torBridges;
+  String torExitCountry;
+  int torSocksPort;
+  int torHttpPort;
+  bool torShareLan;
+  String torProxyType;
+  String torProxyIp;
+  int torProxyPort;
+  String torProxyUser;
+  String torProxyPass;
+  String sstpServer;
+  int sstpPort;
+  String sstpUser;
+  String sstpPass;
+  int sstpSocksPort;
+  int sstpHttpPort;
+  int sstpUpstreamType;
+  String sstpProxyType;
+  String sstpProxyIp;
+  int sstpProxyPort;
+  String sstpProxyUser;
+  String sstpProxyPass;
+  String sstpSni;
+  String sstpFingerprint;
+  bool sstpShareLan;
+  bool sstpVerbose;
+  int sstpMtu;
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Firefox VPN (ffvpn) settings
+  // ═══════════════════════════════════════════════════════════════
+  String ffvpnSessionToken;
+  String ffvpnCountry;
+
+  /// فیلتر نمایش لیست کشورها: 'free' | 'plus' | 'all'.
+  ///
+  /// پیش‌فرض `free` است؛ یعنی مثل خود فایرفاکس کشورهای قفل‌شدهٔ پرمیوم
+  /// پنهان می‌مانند (جانشین بولین قدیمی `ffvpnShowPremiumCountries`).
+  String ffvpnCountryFilter;
+  int ffvpnSocksPort;
+  int ffvpnHttpPort;
+  String ffvpnSni;
+  int ffvpnUpstreamType;
+  String ffvpnProxyType;
+  String ffvpnProxyIp;
+  int ffvpnProxyPort;
+  String ffvpnProxyUser;
+  String ffvpnProxyPass;
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Lantern (headless) settings
+  // ═══════════════════════════════════════════════════════════════
+  int lanternSocksPort;
+  int lanternHttpPort;
+
+  /// موتور اتصال: `LanternEngine.radiance` (پیش‌فرض) یا
+  /// `LanternEngine.classic`.
+  int lanternEngine;
+  int lanternUpstreamType;
+  String lanternProxyType;
+  String lanternProxyIp;
+  int lanternProxyPort;
+  String lanternProxyUser;
+  String lanternProxyPass;
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Geph5 (geph5-proxy) settings
+  // ═══════════════════════════════════════════════════════════════
+  int gephSocksPort;
+  int gephHttpPort;
+  String gephCountry;
+
+  /// فیلتر نمایش لیست کشورها: 'all' | 'free' | 'plus'.
+  String gephCountryFilter;
+  bool gephShareLan;
+  int gephUpstreamType;
+  String gephProxyType;
+  String gephProxyIp;
+  int gephProxyPort;
+  String gephProxyUser;
+  String gephProxyPass;
+
+  /// منبع کد حساب گف: از فایل ([gephAccountSourceFile]) یا کد لاگین
+  /// ذخیره‌شده در تنظیمات ([gephAccountSourceCode]).
+  String gephAccountSource;
+
+  /// مسیر فایل کد حساب؛ خالی یعنی مسیر پیش‌فرض داخل پوشهٔ داده.
+  String gephAccountFile;
+
+  /// کد لاگین گف (وقتی منبع روی «کد لاگین» است).
+  String gephAccountCode;
+
+  static const String gephAccountSourceFile = 'file';
+  static const String gephAccountSourceCode = 'code';
+
+  // ═══════════════════════════════════════════════════════════════
+  //  NPV Tunnel (npv) settings
+  // ═══════════════════════════════════════════════════════════════
+  int npvSocksPort;
+  int npvHttpPort;
+
+  /// نام فایل export داخل پوشهٔ کار npv؛ خالی = کانفیگ پیش‌فرضِ assets.
+  String npvConfigName;
+
+  /// مهلت هر درخواست سنجش (ثانیه) و تعداد سنجش‌های همزمان.
+  int npvProbeTimeout;
+  int npvProbeJobs;
+
+  /// هدف درخواست سنجش؛ خالی = خود npv چند آدرس generate_204 را امتحان می‌کند.
+  String npvProbeUrl;
+  bool npvShareLan;
+  bool npvAutoReconnect;
+
+  /// شمارهٔ کانفیگی که کاربر از فهرست export دستی انتخاب کرده، همان
+  /// چیزی که `npv -s` می‌پذیرد. خالی = حالت خودکار (سریع‌ترین).
+  String npvPinnedIndex;
+
+  /// remark همان ردیف، فقط برای نمایش؛ بدون آن بعد از ری‌استارت معلوم
+  /// نیست کدام کانفیگ پین شده تا فهرست دوباره گرفته شود.
+  String npvPinnedRemark;
+
+  String themeId;
+  bool muted;
+  List<String> enabledLogSources;
+
+  AppSettings({
+    this.ip = '23.215.0.206',
+    this.httpHost = 'aparat.com',
+    this.tlsSni = 'a248.e.akamai.net',
+    this.isFronted = true,
+    this.useSunAndLion = true,
+    this.onlyIpv4 = false,
+    this.autoFindIpAndSni = true,
+    this.saveFoundIpsAndSni = true,
+    // ═══════════════════════════════════════════════════════════
+    //  🆕 پیش‌فرض: جستجوی کامل (نه فقط سرورهای پیدا شده)
+    // ═══════════════════════════════════════════════════════════
+    this.upstreamType = 0,
+    this.socksPort = 1080,
+    this.httpPort = 8080,
+    this.egressRegion = '',
+    this.proxyType = 'socks5',
+    this.proxyIp = '',
+    this.proxyPort = 1080,
+    this.proxyUser = '',
+    this.proxyPass = '',
+    this.autoReconnectPsiphon = true,
+    this.autoReconnectAether = true,
+    this.autoReconnectTor = true,
+    this.autoReconnectSstp = true,
+    this.aetherProfile = 'adaptive',
+    this.aetherProtocol = 'auto',
+    this.masqueOption = 'HTTP-2',
+    this.aetherLocalPort = 1819,
+    this.aetherScanMode = 'balanced',
+    this.ipType = 'ipv4',
+    this.obfuscation = 'off',
+    this.aetherShareLan = false,
+    this.aetherQuickReconnect = true,
+    this.aetherCustomEndpoint = '',
+    this.aetherTryLastEndpointFirst = true,
+    this.aetherEndpointPinning = 'automatic',
+    this.psiphonShareLan = false,
+    this.conduitMode = 'auto',
+    this.conduitCompartmentId = '',
+    this.conduitRejectCensoredCountries = true,
+    this.conduitBrokerSpecsJson = '',
+    this.torTransport = 'direct',
+    this.torBridges = '',
+    this.torExitCountry = '',
+    this.torSocksPort = 19050,
+    this.torHttpPort = 18081,
+    this.torShareLan = false,
+    this.torProxyType = 'socks5',
+    this.torProxyIp = '',
+    this.torProxyPort = 1080,
+    this.torProxyUser = '',
+    this.torProxyPass = '',
+    this.sstpServer = '',
+    this.sstpPort = 443,
+    this.sstpUser = '',
+    this.sstpPass = '',
+    this.sstpSocksPort = 1082,
+    this.sstpHttpPort = 8082,
+    this.sstpUpstreamType = 0,
+    this.sstpProxyType = 'socks5',
+    this.sstpProxyIp = '',
+    this.sstpProxyPort = 0,
+    this.sstpProxyUser = '',
+    this.sstpProxyPass = '',
+    this.sstpSni = '',
+    this.sstpFingerprint = 'chrome',
+    this.sstpShareLan = false,
+    this.sstpVerbose = true,
+    this.sstpMtu = 1400,
+    this.ffvpnSessionToken = '',
+    this.ffvpnCountry = '',
+    this.ffvpnCountryFilter = 'free',
+    this.ffvpnSocksPort = 1083,
+    this.ffvpnHttpPort = 8083,
+    this.ffvpnSni = '',
+    this.ffvpnUpstreamType = 0,
+    this.ffvpnProxyType = 'socks5',
+    this.ffvpnProxyIp = '',
+    this.ffvpnProxyPort = 1080,
+    this.ffvpnProxyUser = '',
+    this.ffvpnProxyPass = '',
+    this.lanternSocksPort = 18071,
+    this.lanternHttpPort = 18070,
+    this.lanternEngine = LanternEngine.defaultValue,
+    this.lanternUpstreamType = 0,
+    this.lanternProxyType = 'socks5',
+    this.lanternProxyIp = '',
+    this.lanternProxyPort = 1080,
+    this.lanternProxyUser = '',
+    this.lanternProxyPass = '',
+    this.gephSocksPort = 9909,
+    this.gephHttpPort = 9910,
+    this.gephCountry = 'auto',
+    this.gephCountryFilter = 'all',
+    this.gephShareLan = false,
+    this.gephUpstreamType = 0,
+    this.gephProxyType = 'socks5',
+    this.gephProxyIp = '',
+    this.gephProxyPort = 1080,
+    this.gephProxyUser = '',
+    this.gephProxyPass = '',
+    this.gephAccountSource = gephAccountSourceFile,
+    this.gephAccountFile = '',
+    this.gephAccountCode = '',
+    this.npvSocksPort = 1086,
+    this.npvHttpPort = 8086,
+    this.npvConfigName = '',
+    this.npvProbeTimeout = 10,
+    this.npvProbeJobs = 3,
+    this.npvProbeUrl = '',
+    this.npvShareLan = false,
+    this.npvAutoReconnect = true,
+    this.npvPinnedIndex = '',
+    this.npvPinnedRemark = '',
+    this.psiphonBuildRev = '',
+    this.psiphonBinarySha = '',
+    this.themeId = 'ocean',
+    this.muted = false,
+    this.watchdogEnabled = true,
+    this.watchdogNetworkProfile = 'harsh',
+    this.wireguardConfigRaw = '',
+    this.wireguardSocksPort = 1085,
+    this.wireguardShareLan = false,
+    this.wireguardCore = 'standard',
+    this.wireguardAutoReconnect = true,
+    List<String>? enabledLogSources,
+  }) : enabledLogSources = enabledLogSources ??
+            [
+              'Psiphon',
+              'Aether',
+              'Tor',
+              'SSTP',
+              'WireGuard',
+              'Firefox VPN',
+              'Lantern',
+              'Geph',
+              'NPV',
+              'App',
+              'System',
+            ];
+
+  factory AppSettings.fromJson(Map<String, dynamic> m) =>
+      AppSettingsSerialization.fromJson(m);
+
+  Map<String, dynamic> toJson() => AppSettingsSerialization(this).toJsonMap();
+
+  String toJsonString() => AppSettingsSerialization(this).toJsonString();
+
+  bool get isConduit => upstreamType == 3;
+
+  bool get effectiveUseSunAndLion => useSunAndLion && isFronted && !isConduit;
+
+  bool get isAetherProfileAutomatic => aetherProfile != 'manual';
+
+  bool get isAetherProtocolLockedByProfile => isAetherProfileAutomatic;
+
+  bool get isEndpointPinningAutomatic => aetherEndpointPinning == 'automatic';
+
+  bool get isEndpointPinningCustomFirst =>
+      aetherEndpointPinning == 'custom_first';
+
+  bool get isEndpointPinningCustomOnly =>
+      aetherEndpointPinning == 'custom_only';
+
+  bool get hasCustomEndpointForPinning =>
+      aetherCustomEndpoint.trim().isNotEmpty;
+
+  /// تبدیل رشتهٔ ذخیره‌شده به enum `WireGuardCoreType`.
+  WireGuardCoreType get wireGuardCoreType {
+    return wireguardCore == 'amnezia'
+        ? WireGuardCoreType.amnezia
+        : WireGuardCoreType.standard;
+  }
+}

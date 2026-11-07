@@ -1,0 +1,917 @@
+{
+  "@@locale": "es",
+  "appTitle": "Mischief Pingu",
+  "appSubtitle": "Cliente no oficial de Psiphon, clientes de Tor, SSTP y WireGuard",
+  "appSubtitle2": "Firefox VPN, cliente no oficial de Lantern, cliente no oficial de Geph, NPV (napsternetV)",
+  "add": "Añadir",
+  "addNew": "Añadir nuevo",
+  "allServers": "Todos los servidores",
+  "any": "Cualquiera",
+  "appearance": "Apariencia",
+  "appliedTop20Ips": "Se aplicaron los 20 mejores IP",
+  "appliedTop5Ips": "Se aplicaron los 5 mejores IP + SNI",
+  "applyTop20": "Aplicar Top 20",
+  "applyTop5": "Aplicar Top 5",
+  "authenticationOptional": "Autenticación (opcional)",
+  "autoFindIpSni": "Buscar IP y SNI automáticamente",
+  "autoFirstProxy": "Auto (primer proxy activo)",
+  "autoFirstRunningProxy": "Auto (primer proxy activo)",
+  "autoReconnectPsiphon": "Reconexión automática de Psiphon",
+  "autoReconnectSstp": "Reconexión automática de SSTP",
+  "autoReconnectTor": "Reconexión automática de Tor",
+  "autoRefresh15Min": "Actualizar cada 15 minutos automáticamente",
+  "autoRefreshSubtitle": "Obtiene servidores nuevos y revisa su estado de salud de forma automática",
+  "binaryNotFound": "Binario no encontrado",
+  "bridgePresets": "Presets de puentes (opcional)",
+  "bridges": "Puentes (uno por línea, se admiten personalizados — incl. webtunnel)",
+  "bridgesHint": "obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0",
+  "cancel": "Cancelar",
+  "cancelBtn": "Cancelar",
+  "cdnPreset": "Preset de CDN",
+  "cdnScanner": "Escáner de IP de CDN",
+  "cdnScanModeQuick": "Rápido",
+  "cdnScanModeBalanced": "Equilibrado",
+  "cdnScanModeDeep": "Profundo",
+  "cdnScanModeQuickDesc": "Rápido · {samples} IP por CIDR · hasta {max} en total · ~1-2 min",
+  "@cdnScanModeQuickDesc": {
+    "placeholders": {
+      "samples": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnScanModeBalancedDesc": "Equilibrado · {samples} IP por CIDR · hasta {max} en total · ~5-10 min",
+  "@cdnScanModeBalancedDesc": {
+    "placeholders": {
+      "samples": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnScanModeDeepDesc": "Profundo · expansión completa · hasta {max} en total · ~30-60 min",
+  "@cdnScanModeDeepDesc": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnScoutTitle": "Encontrar SNI que funcionan (recomendado)",
+  "cdnScoutProgress": "Explorando {done}/{total}…",
+  "@cdnScoutProgress": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnScoutHint": "Los SNI de Discord/Reddit están bloqueados en Irán. El explorador encuentra los que funcionan.",
+  "cdnScoutButton": "Explorar",
+  "cdnScanPreview": "{lines} líneas · se escanearán {ips} IP",
+  "@cdnScanPreview": {
+    "placeholders": {
+      "lines": {
+        "type": "String"
+      },
+      "ips": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnScanWarningsMore": "…y {count} más",
+  "@cdnScanWarningsMore": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnApplyIpsToPsiphon": "Aplicar {count} IP a Psiphon",
+  "@cdnApplyIpsToPsiphon": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnApplyIpsSnack": "{count} IP → Psiphon\nIP de fronting: {ip}\nSNI: {sni}",
+  "@cdnApplyIpsSnack": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "ip": {
+        "type": "String"
+      },
+      "sni": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnSendToPsiphon": "Enviar a Psiphon",
+  "cdnSaveEnteredIps": "Guardar las IP introducidas",
+  "cdnIpsSavedSnack": "{count} IP guardadas ({total} en la lista)",
+  "@cdnIpsSavedSnack": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnCustomIpsSent": "{count} IP personalizadas → Psiphon (fronting: {ip})",
+  "@cdnCustomIpsSent": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "ip": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnResultSubtitle": "Puntuación {score} · Fiab {reliability}/5 · {latency}ms · desc {download}ms · {sni}",
+  "@cdnResultSubtitle": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      },
+      "reliability": {
+        "type": "String"
+      },
+      "latency": {
+        "type": "String"
+      },
+      "download": {
+        "type": "String"
+      },
+      "sni": {
+        "type": "String"
+      }
+    }
+  },
+  "check": "Comprobar",
+  "checkHealth": "Comprobar estado",
+  "checking": "Comprobando…",
+  "clear": "Limpiar",
+  "clearAll": "Limpiar todo",
+  "clearLog": "Limpiar",
+  "close": "Cerrar",
+  "colorTheme": "Tema de color",
+  "colorThemeSubtitle": "Elige una combinación de colores para toda la aplicación.",
+  "conduitWebrtc": "Conduit (WebRTC Inproxy)",
+  "connected": "Conectado",
+  "connecting": "Conectando…",
+  "copiedToClipboard": "Copiado al portapapeles",
+  "copyAllToClipboard": "Copiar todo",
+  "importFromClipboard": "Importar del portapapeles",
+  "importedFromClipboard": "Importado del portapapeles",
+  "nothingToImport": "El portapapeles está vacío",
+  "itemsAddedCount": "Elementos añadidos",
+  "copy": "Copiar",
+  "copyAllCsv": "Copiar todo (CSV con detalles)",
+  "copyAllIpPort": "Copiar todo (ip:puerto)",
+  "copyLog": "Copiar",
+  "coreUpdates": "Actualizaciones de núcleos",
+  "customIps": "IP personalizadas",
+  "delete": "Eliminar",
+  "directNoProxy": "Directo (sin proxy)",
+  "directNoProxyOption": "Directo (sin proxy)",
+  "directNoUpstream": "Directo (sin upstream)",
+  "disconnected": "Desconectado",
+  "disconnectingTunnels": "Desconectando los túneles activos…",
+  "download": "Descarga",
+  "downloadVia": "Descargar a través de",
+  "downloadViaSubtitle": "Las comprobaciones y descargas usan el proxy seleccionado cuando el acceso directo está filtrado.",
+  "egressRegion": "Región de salida",
+  "enableLogging": "Activar el registro",
+  "enableLoggingSubtitle": "Cuando está apagado no se recogen registros nuevos",
+  "exitCountry": "País de salida",
+  "exitCountryAny": "Cualquiera (aleatorio)",
+  "fetch": "Obtener",
+  "fetchVia": "Obtener a través de",
+  "fetching": "Obteniendo…",
+  "fingerprint": "Huella digital",
+  "frontingAdvanced": "Fronting (avanzado, opcional)",
+  "frontingIp": "IP de fronting",
+  "httpHostHeader": "Encabezado HTTP Host (p. ej. aparat.com, snapp.ir)",
+  "httpPort": "Puerto HTTP",
+  "installed": "Instalado",
+  "ipsCidrRanges": "IP / CIDR / Rangos",
+  "ipv4Only": "Solo IPv4",
+  "language": "Idioma",
+  "languageEnglish": "English",
+  "languageFarsi": "فارسی",
+  "languageRussian": "Русский",
+  "languageSpanish": "Español",
+  "latest": "Última",
+  "lines": "líneas",
+  "listIsEmpty": "La lista está vacía",
+  "localProxyPorts": "Puertos de proxy locales",
+  "log": "Registro",
+  "logSourceFilter": "Filtrar fuentes de registro",
+  "logSourcePsiphon": "Psiphon",
+  "logSourceTor": "Tor",
+  "logSourceSstp": "SSTP",
+  "logSourceApp": "Aplicación",
+  "logSourceSystem": "Sistema",
+  "manageList": "Gestionar lista (añadir / eliminar)",
+  "manualProxy": "Proxy manual",
+  "manualProxyOption": "Proxy manual",
+  "muteSounds": "Silenciar sonidos",
+  "muteSoundsSubtitle": "Desactiva todos los sonidos del pingüino (ay / suspiro / feliz). Las reacciones visuales se siguen mostrando.",
+  "noCustomIpsSaved": "Aún no hay IP personalizadas guardadas",
+  "noLogsYet": "Aún no hay registros",
+  "noUpstreamDirect": "Sin upstream (directo)",
+  "notInstalled": "No instalado",
+  "notifications": "Notificaciones",
+  "obfOff": "Desactivado",
+  "officialCore": "núcleo oficial de Psiphon Tunnel",
+  "password": "Contraseña",
+  "passwordOptional": "Contraseña (opcional)",
+  "port": "Puerto",
+  "portRangeError": "Introduce un número de puerto entre {min} y {max}",
+  "@portRangeError": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "preset1Subtitle": "Usa el núcleo SunAndLion Psiphon Tunnel (bifurcación no oficial del núcleo de Psiphon).",
+  "preset1Title": "1 · Fronting (CDN). Ideal para censura intensa.",
+  "preset2Subtitle": "Usa los protocolos INPROXY-WEBRTC de Psiphon a través de estaciones de voluntarios.",
+  "preset2Title": "2 · Conduit (WebRTC Inproxy). Relés descentralizados entre pares.",
+  "preset3Subtitle": "Usa directamente el núcleo oficial de Psiphon Tunnel.",
+  "preset3Title": "3 · Conexión directa. Adecuada para censura ligera.",
+  "profile": "Perfil",
+  "aetherPresetControlsNote": "El protocolo, el modo de escaneo y la ofuscación siguen al preset seleccionado. Elige Manual para editarlos.",
+  "protocol": "Protocolo",
+  "proxyIp": "IP del proxy",
+  "proxyType": "Tipo de proxy",
+  "psiphonConnectedVia": "Psiphon conectado a través de",
+  "psiphonConnectionMode": "Modo de conexión de Psiphon",
+  "psiphonSettings": "Ajustes de Psiphon",
+  "psiphonUpstream": "Psiphon",
+  "save": "Guardar",
+  "saveFoundIpsSni": "Guardar automáticamente las IP y el SNI encontrados",
+  "scanMode": "Modo de escaneo",
+  "select": "Seleccionar...",
+  "selectAll": "Seleccionar todo",
+  "server": "Servidor",
+  "serverAddress": "Dirección del servidor",
+  "shareOnLan": "Compartir en la red local (bind 0.0.0.0)",
+  "shareOnLanPsiphon": "Compartir en la red local (bind 0.0.0.0)",
+  "shareOnLanPsiphonSubtitle": "Reenvía los puertos SOCKS y HTTP en todas las interfaces mediante Dart",
+  "showLess": "Mostrar menos",
+  "showLessSubtitle": "Ocultar ajustes avanzados y registros",
+  "showMore": "Mostrar más",
+  "showMoreSubtitle": "Apariencia, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Lantern, Geph, Escáner, Actualizaciones, Registro",
+  "sni": "SNI",
+  "sniList": "Lista de SNI (uno por línea, el orden es prioridad)",
+  "socksPort": "Puerto SOCKS",
+  "sstpConnected": "SSTP conectado",
+  "sstpSettings": "Ajustes de SSTP",
+  "sstpSocksUpstream": "SSTP",
+  "start": "Iniciar",
+  "startScan": "Iniciar escaneo",
+  "stop": "Detener",
+  "stopHealthCheck": "Detener",
+  "stopScan": "Detener",
+  "sunandlionCore": "núcleo sunandlion de Psiphon Tunnel",
+  "threads": "Subprocesos",
+  "tlsSni": "SNI de TLS (p. ej. a248.e.akamai.net)",
+  "torBridge": "Puente (obfs4 / snowflake / personalizado)",
+  "torConnected": "Tor conectado",
+  "torConnection": "Conexión de Tor",
+  "torDirect": "Directo (sin puente, sin upstream) — predeterminado",
+  "torManual": "Proxy manual",
+  "torSettings": "Ajustes de Tor",
+  "torSocksUpstream": "Tor",
+  "torUpstream": "Tor",
+  "torViaPsiphon": "A través de Psiphon (Tor-over-Psiphon)",
+  "torViaSstp": "A través de SSTP (Tor-over-SSTP)",
+  "torViaFfvpn": "A través de Firefox VPN (Tor-over-Firefox VPN)",
+  "torViaLantern": "A través de Lantern (Tor-over-Lantern)",
+  "torViaGeph": "A través de Geph (Tor-over-Geph)",
+  "torUpstreamNpv": "A través de NPV (Tor-over-NPV)",
+  "tunnelCore": "Núcleo del túnel",
+  "update": "Actualizar",
+  "upstream": "Upstream",
+  "upstreamType": "Tipo de upstream",
+  "usableIps": "IP utilizables (ordenadas por puntuación)",
+  "useFronting": "Usar fronting (CDN)",
+  "userOptional": "Usuario (opcional)",
+  "username": "Nombre de usuario",
+  "verboseLogging": "Registro detallado",
+  "verboseLoggingSubtitle": "Activa la salida de depuración detallada de sstp-proxy",
+  "vpngateServers": "Servidores SSTP de VPN Gate",
+  "working": "Funcionando",
+  "watchdog": "Watchdog",
+  "watchdogEnabled": "Activar el watchdog",
+  "watchdogEnabledSubtitle": "Reinicia automáticamente los túneles cuando dejan de responder",
+  "watchdogSettings": "Ajustes del watchdog",
+  "backToPresets": "Volver a los presets",
+  "watchdogNetworkProfile": "Perfil de red",
+  "watchdogNetworkProfileSubtitle": "Ajusta la agresividad con la que el watchdog sondea. Elígelo según las condiciones de tu red.",
+  "watchdogProfileStable": "Estable",
+  "watchdogProfileStableDesc": "Buena calidad de internet — sondeo estricto, detección más rápida de fallos.",
+  "watchdogProfileNormal": "Normal",
+  "watchdogProfileNormalDesc": "Ajuste equilibrado para la mayoría de las redes (predeterminado).",
+  "watchdogProfileHarsh": "Filtrado severo",
+  "watchdogProfileHarshDesc": "Filtrado intenso o red inestable — sondeo tolerante, menos reinicios falsos.",
+  "appUpdate": "Actualización de la aplicación",
+  "appUpdateChecking": "Buscando actualizaciones...",
+  "appUpdateFailed": "La comprobación de actualizaciones falló",
+  "appUpdateSaveDialogTitle": "Elige dónde guardar la actualización",
+  "appUpdateDownloading": "Descargando la actualización...",
+  "appUpdateDownloaded": "Actualización descargada correctamente",
+  "appUpdateOpenFolder": "Abrir carpeta",
+  "appUpdateAvailable": "Actualización disponible",
+  "appUpdateCurrentVersion": "Versión actual",
+  "appUpdateLatestVersion": "Última versión",
+  "appUpdateReleaseNotes": "Notas de la versión",
+  "appUpdateCheck": "Comprobar actualizaciones",
+  "appUpdateDownload": "Descargar actualización",
+  "appUpdateUpToDate": "Ya estás al día",
+  "internetQuality": "Calidad de internet",
+  "internetQualityAvg": "Media",
+  "internetQualityDeep": "Profunda (5 min)",
+  "internetQualityDegraded": "Degradada",
+  "internetQualityDirectDetails": "Detalles de calidad directa",
+  "internetQualityDns": "DNS",
+  "internetQualityDown": "Descarga",
+  "internetQualityExcellent": "Excelente",
+  "internetQualityGood": "Buena",
+  "internetQualityHttps": "HTTPS",
+  "internetQualityJitter": "Fluctuación",
+  "internetQualityLastCheck": "Última comprobación",
+  "internetQualityLight": "Ligera (15 s)",
+  "internetQualityMax": "Máx",
+  "internetQualityMed": "Media",
+  "internetQualityMin": "Mín",
+  "internetQualityMonitoring": "Supervisión en segundo plano",
+  "internetQualityNoResult": "Sin resultado",
+  "internetQualityNormal": "Normal (2 min)",
+  "internetQualityNotTested": "Sin probar",
+  "internetQualityOff": "Desactivado",
+  "internetQualityP95": "P95",
+  "internetQualityQuality": "Calidad",
+  "internetQualitySnackbar": "Internet:",
+  "internetQualityStatusFailing": "Fallando",
+  "internetQualityStatusOk": "Correcto",
+  "internetQualityStatusPartial": "Parcial",
+  "internetQualityStatusSlow": "Lento",
+  "internetQualityStatusUnknown": "Desconocido",
+  "internetQualityTcp": "TCP",
+  "internetQualityTest": "Probar",
+  "internetQualityUnstable": "Inestable",
+  "wireguardSettings": "Ajustes de WireGuard",
+  "wireguardCoreTitle": "Núcleo de WireGuard",
+  "wireguardCoreDescription": "Elige la implementación de WireGuard. Amnezia añade ofuscación para censura intensa.",
+  "wireguardCoreStandard": "Estándar (wireguard-go)",
+  "wireguardCoreAmnezia": "Amnezia (wireguard-awg)",
+  "tunnelHealth": "Estado del túnel",
+  "tunnelHealthProbeAll": "Probar todos",
+  "tunnelHealthProbeAgain": "Volver a probar",
+  "tunnelHealthNotRunning": "{tunnel} no está en ejecución",
+  "@tunnelHealthNotRunning": {
+    "placeholders": {
+      "tunnel": {
+        "type": "String"
+      }
+    }
+  },
+  "tunnelHealthNoTunnelRunning": "Ningún túnel está en ejecución",
+  "tunnelHealthStopped": "Detenido",
+  "tunnelHealthReachable": "Alcanzable (sondeo correcto)",
+  "tunnelHealthMeasuring": "Midiendo…",
+  "tunnelHealthExcellent": "Excelente",
+  "tunnelHealthGood": "Buena",
+  "tunnelHealthFair": "Aceptable",
+  "tunnelHealthDegraded": "Degradada",
+  "tunnelHealthFailing": "Fallando",
+  "tunnelHealthLatency": "Latencia",
+  "tunnelHealthLoss": "Pérdida",
+  "tunnelHealthJitter": "Fluctuación",
+  "tunnelHealthUptime": "Tiempo activo",
+  "tunnelHealthReconnects": "Reconexiones",
+  "tunnelHealthTrend": "Tendencia",
+  "tunnelHealthProtocol": "Protocolo",
+  "tunnelHealthThroughput": "Rendimiento",
+  "tunnelHealthCircuits": "Circuitos",
+  "tunnelHealthIp": "IP",
+  "tunnelHealthLastProbeOk": "Último sondeo: {latency}ms — correcto",
+  "@tunnelHealthLastProbeOk": {
+    "placeholders": {
+      "latency": {
+        "type": "int"
+      }
+    }
+  },
+  "tunnelHealthLastProbeFailed": "El último sondeo falló: {error}",
+  "@tunnelHealthLastProbeFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "tunnelHealthNoDataWarning": "El túnel está activo pero no circulan datos",
+  "tunnelHealthMeasuringHealth": "Midiendo el estado…",
+  "tunnelHealthTitle": "Estado de {tunnel}",
+  "@tunnelHealthTitle": {
+    "placeholders": {
+      "tunnel": {
+        "type": "String"
+      }
+    }
+  },
+  "wireguardConfig": "Configuración de WireGuard",
+  "wireguardConfigHint": "Pega una configuración estándar de WireGuard (formato INI) o una URI wireguard://. La aplicación detecta el formato automáticamente.",
+  "wireguardConfigInvalid": "Configuración de WireGuard no válida — revisa PrivateKey, PublicKey y Endpoint.",
+  "wireguardFormatStandard": "ESTÁNDAR",
+  "wireguardFormatUri": "URI",
+  "wireguardConvertToUri": "Convertir a URI",
+  "wireguardConvertToStandard": "Convertir a estándar",
+  "wireguardLoadConfFile": "Cargar archivo .conf",
+  "wireguardConfFileLoaded": "Configuración de WireGuard cargada desde el archivo",
+  "wireguardConfFileEmpty": "El archivo seleccionado está vacío",
+  "wireguardConfFileReadError": "No se pudo leer el archivo seleccionado",
+  "wireguardConnected": "WireGuard conectado",
+  "autoReconnectWireGuard": "Reconexión automática de WireGuard",
+  "logSourceWireGuard": "WireGuard",
+  "torViaWireGuard": "A través de WireGuard (Tor-over-WireGuard)",
+  "psiphonWireGuardUpstream": "WireGuard",
+  "sstpWireGuardUpstream": "WireGuard",
+  "upstreamViaFfvpn": "Firefox VPN",
+  "upstreamViaLantern": "Lantern",
+  "upstreamViaGeph": "Geph",
+  "psiphonUpstreamNpv": "NPV",
+  "sstpUpstreamNpv": "NPV",
+  "diagnosticsReport": "Informe de diagnóstico",
+  "diagnosticsReportGenerate": "Generar informe",
+  "diagnosticsReportCopy": "Copiar informe",
+  "diagnosticsReportSave": "Guardar informe",
+  "diagnosticsReportGenerated": "Informe generado correctamente",
+  "diagnosticsReportCopied": "Informe copiado al portapapeles",
+  "diagnosticsReportSaved": "Informe guardado en: {path}",
+  "@diagnosticsReportSaved": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "diagnosticsReportRedacted": "Se han ocultado los datos sensibles",
+  "diagnosticsReportPreview": "Vista previa",
+  "diagnosticsReportClose": "Cerrar",
+  "diagnosticsReportGenerating": "Generando informe…",
+  "amneziaLinkDetected": "Enlace de Amnezia VPN detectado",
+  "amneziaLinkName": "Nombre",
+  "amneziaLinkEndpoint": "Endpoint de la API",
+  "amneziaLinkHint": "Pulsa «Obtener configuración» para recuperar la configuración real de AmneziaWG desde la API.",
+  "amneziaFetch": "Obtener configuración",
+  "amneziaFetching": "Obteniendo…",
+  "amneziaFetchSuccess": "Configuración de AmneziaWG obtenida correctamente",
+  "amneziaFetchFailed": "No se pudo obtener la configuración de AmneziaWG",
+  "amneziaCoreRequired": "Los enlaces vpn:// requieren el núcleo AmneziaWG. La aplicación lo seleccionará automáticamente.",
+  "amneziaApiError": "Error de la API de Amnezia",
+  "amneziaInvalidLink": "Formato de enlace vpn:// no válido",
+  "bridgeScanner": "Escáner de puentes",
+  "bridgeScannerDescription": "Obtén y prueba puentes de Tor (obfs4, webtunnel, snowflake, meek, conjure). La latencia con códigos de color te ayuda a elegir los que realmente funcionan en tu red.",
+  "bridgeLines": "Líneas de puentes (uno por línea)",
+  "bridgeLinesHint": "obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0",
+  "bridgeThreads": "Subprocesos",
+  "bridgeStartScan": "Iniciar escaneo",
+  "bridgeStopScan": "Detener",
+  "bridgeResults": "Resultados",
+  "bridgeApplyWorking": "Aplicar los que funcionan ({count})",
+  "bridgeApplyWorkingSnackbar": "Se aplicaron {count} puentes funcionales a los ajustes de Tor",
+  "bridgeApplyWorkingRestarting": "Se aplicaron {count} puentes — reiniciando Tor para aplicarlos",
+  "bridgeApplyWorkingTorNotRunning": "Se aplicaron {count} puentes — inicia Tor para usarlos",
+  "@bridgeApplyWorking": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@bridgeApplyWorkingSnackbar": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@bridgeApplyWorkingRestarting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@bridgeApplyWorkingTorNotRunning": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeFetch": "Obtener {transport}",
+  "@bridgeFetch": {
+    "placeholders": {
+      "transport": {
+        "type": "String"
+      }
+    }
+  },
+  "bridgeSaveWorking": "Guardar los funcionales",
+  "bridgeLoadSaved": "Cargar guardados",
+  "bridgeRescanSaved": "Reescanear guardados",
+  "bridgeClearSaved": "Borrar guardados",
+  "bridgeSavedCount": "Guardados: {count}",
+  "@bridgeSavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeNoSaved": "Aún no hay puentes guardados",
+  "bridgeSavedBridges": "Puentes guardados",
+  "bridgeSaveSuccess": "{count} puentes guardados",
+  "@bridgeSaveSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeLoadedSuccess": "Se cargaron {count} puentes guardados",
+  "@bridgeLoadedSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeRescanStarted": "Reescaneando {count} puentes guardados",
+  "@bridgeRescanStarted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeClearedSaved": "Se borraron los puentes guardados",
+  "bridgeNothingToSave": "No hay puentes funcionales que guardar",
+  "bridgeLoadFromScanner": "Cargar desde el escáner de puentes",
+  "bridgeLoadFromScannerSubtitle": "Carga los puentes funcionales guardados en la sección del escáner de puentes de abajo",
+  "bridgeNoSavedInScanner": "Aún no hay puentes guardados en el escáner de puentes",
+  "logSourceFfvpn": "Firefox VPN",
+  "ffvpnSettings": "Ajustes de Firefox VPN",
+  "ffvpnLoginSection": "Iniciar sesión con correo y contraseña",
+  "ffvpnLoginHint": "Inicia sesión directamente en tu cuenta de Firefox y guarda abajo el token de sesión resultante — sin necesidad de rebuscar en signedInUser.json.",
+  "ffvpnEmailLabel": "Correo de la cuenta de Firefox",
+  "ffvpnPasswordLabel": "Contraseña",
+  "ffvpnSignIn": "Iniciar sesión",
+  "ffvpnSigningIn": "Iniciando sesión…",
+  "ffvpnSignedIn": "Sesión iniciada — token guardado.",
+  "ffvpnGuideTitle": "Token de sesión de la cuenta de Firefox",
+  "ffvpnGuideIntro": "Este proxy usa la VPN de protección de IP integrada en el navegador Firefox (impulsada por Mozilla VPN). Necesita el token de sesión de tu cuenta de Firefox:",
+  "ffvpnGuideStep1": "1. Crea una cuenta de Firefox o inicia sesión dentro del propio navegador Firefox, para que el navegador guarde tu sesión.",
+  "ffvpnGuideStep2": "2. Abre about:profiles en Firefox para encontrar la carpeta raíz de tu perfil predeterminado.",
+  "ffvpnGuideStep3": "3. Abre signedInUser.json en esa carpeta y copia el valor de accountData.sessionToken (una cadena hexadecimal de 64 caracteres), luego pégalo abajo.",
+  "ffvpnPathWindows": "Windows: %APPDATA%\\Mozilla\\Firefox\\Profiles\\<perfil>\\signedInUser.json",
+  "ffvpnPathLinux": "Linux: ~/.mozilla/firefox/<perfil>/signedInUser.json",
+  "ffvpnTokenLabel": "Token de sesión de la cuenta de Firefox",
+  "ffvpnTokenHint": "64 caracteres hexadecimales — accountData.sessionToken de signedInUser.json",
+  "ffvpnPortSocks": "Puerto SOCKS",
+  "ffvpnPortHttp": "Puerto HTTP (0 = apagado)",
+  "ffvpnSniLabel": "SNI de TLS",
+  "ffvpnSniHint": "Nombre de host enviado en el ClientHello de TLS al borde del proxy de Firefox — déjalo vacío para usar el host del borde",
+  "ffvpnUpstreamSection": "Proxy SOCKS de upstream",
+  "ffvpnUpstreamDesc": "Firefox VPN se conecta primero a este salto SOCKS5 y solo después al borde del proxy de Firefox. Úsalo cuando el borde esté bloqueado o no sea alcanzable directamente.",
+  "ffvpnUpstreamDirect": "Directo (sin upstream)",
+  "ffvpnUpstreamManual": "Proxy SOCKS5 manual",
+  "ffvpnUpstreamPsiphon": "Psiphon",
+  "ffvpnUpstreamTor": "Tor",
+  "ffvpnUpstreamSstp": "SSTP",
+  "ffvpnUpstreamWireguard": "WireGuard",
+  "ffvpnUpstreamLantern": "Lantern",
+  "ffvpnUpstreamGeph": "Geph",
+  "ffvpnUpstreamNpv": "NPV",
+  "ffvpnUpstreamVia": "{name} es el salto de upstream (SOCKS en 127.0.0.1:{port}) y se inicia automáticamente si aún no está en ejecución.",
+  "@ffvpnUpstreamVia": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "port": {
+        "type": "String"
+      }
+    }
+  },
+  "ffvpnUpstreamManualNote": "El nombre de host siempre se envía al proxy, por lo que el DNS se resuelve allí.",
+  "ffvpnCountrySection": "País de salida",
+  "ffvpnCountryAuto": "Automático (recomendado por el servidor)",
+  "ffvpnLoadCountries": "Cargar lista de países",
+  "ffvpnCountriesLoading": "Cargando lista de países…",
+  "ffvpnCountriesEmpty": "No hay países cargados todavía — pulsa \"Cargar lista de países\".",
+  "ffvpnCountriesFilteredOut": "Ningún país coincide con el filtro seleccionado.",
+  "ffvpnCountryFilter": "Mostrar",
+  "ffvpnCountryFilterAll": "Todos los países",
+  "ffvpnCountryFilterFree": "Solo gratuitos",
+  "ffvpnCountryFilterPlus": "Solo premium",
+  "ffvpnCountryFilterHint": "Los países que requieren una suscripción a Mozilla VPN se ocultan por defecto, igual que en Firefox.",
+  "ffvpnPremiumTag": "premium",
+  "ffvpnQuotaSection": "Cuota mensual de ancho de banda",
+  "ffvpnCheckQuota": "Comprobar cuota",
+  "ffvpnQuotaLoading": "Comprobando cuota…",
+  "ffvpnQuotaUsedOf": "{used} de {total} usados ({percent}%)",
+  "@ffvpnQuotaUsedOf": {
+    "placeholders": {
+      "used": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "ffvpnQuotaLeft": "Quedan {remaining}",
+  "@ffvpnQuotaLeft": {
+    "placeholders": {
+      "remaining": {
+        "type": "String"
+      }
+    }
+  },
+  "ffvpnQuotaResets": "Se reinicia el {date}",
+  "@ffvpnQuotaResets": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "ffvpnQuotaUnlimited": "Ancho de banda ilimitado — esta cuenta no tiene cuota mensual.",
+  "ffvpnQuotaNoToken": "Introduce arriba el token de sesión para comprobar la cuota.",
+  "ffvpnErrNotEntitled": "Esta cuenta de Firefox no tiene suscripción a Mozilla VPN (HTTP 403) — el servicio de proxy la requiere.",
+  "ffvpnErrRegion": "El servicio no está disponible en tu región (HTTP 451).",
+  "ffvpnErrBadToken": "El token de sesión no es válido o ha expirado. Inicia sesión de nuevo en Firefox y copia un token fresco de signedInUser.json.",
+  "ffvpnErrQuota": "La cuota mensual de ancho de banda está agotada — espera a la fecha de reinicio.",
+  "ffvpnErrBinaryMissing": "No se encontró el binario ffvpn en la carpeta de datos de la aplicación.",
+  "ffvpnErrNetwork": "Error de red al conectar con Mozilla — revisa tu conexión (puede hacer falta un túnel) e inténtalo de nuevo.",
+  "ffvpnErrBadCredentials": "El correo o la contraseña son incorrectos (o el inicio de sesión está bloqueado) — revisa las credenciales de tu cuenta de Firefox.",
+  "ffvpnErrSignInUnsupported": "El núcleo ffvpn instalado no admite inicio de sesión con correo/contraseña. Actualiza el núcleo en Actualizaciones de núcleos, o pega un token de sesión.",
+  "ffvpnErrBlocked": "El borde de Mozilla bloqueó la solicitud de inicio de sesión desde esta red (HTTP 406). Inicia sesión a través de un túnel o de otra red y vuelve a intentarlo.",
+  "ffvpnErrOther": "error de ffvpn",
+  "logSourceLantern": "Lantern",
+  "lanternSettings": "Ajustes de Lantern",
+  "lanternConnectionSection": "Conexión",
+  "lanternEngine": "Motor de conexión",
+  "lanternEngineRadiance": "Radiance (v10 oficial, recomendado)",
+  "lanternEngineClassic": "Clásico (flashlight)",
+  "lanternEngineDesc": "Radiance ejecuta el mismo motor que el cliente oficial de Lantern v10 y sortea el bloqueo por sí solo. Clásico es el cliente headless anterior.",
+  "lanternPortSocks": "Puerto SOCKS",
+  "lanternPortHttp": "Puerto HTTP (0 = apagado)",
+  "lanternUpstreamSection": "Proxy de upstream",
+  "lanternUpstreamDirect": "Ninguno (directo)",
+  "lanternUpstreamManual": "Proxy manual",
+  "lanternUpstreamPsiphon": "Psiphon",
+  "lanternUpstreamTor": "Tor",
+  "lanternUpstreamSstp": "SSTP",
+  "lanternUpstreamWireguard": "WireGuard",
+  "lanternUpstreamFfvpn": "Firefox VPN",
+  "lanternUpstreamGeph": "Geph",
+  "lanternUpstreamNpv": "NPV",
+  "lanternUpstreamDesc": "Las conexiones a los servidores de Lantern (y, si ninguno es alcanzable, también tu tráfico) pasan por este proxy — úsalo cuando las IP de los servidores de Lantern estén bloqueadas.",
+  "lanternUpstreamManualNote": "Esquemas admitidos: socks5://, socks5h://, http:// y https://.",
+  "lanternUpstreamVia": "{name} es el salto de upstream (SOCKS en 127.0.0.1:{port}) y se inicia automáticamente si aún no está en ejecución.",
+  "@lanternUpstreamVia": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "port": {
+        "type": "String"
+      }
+    }
+  },
+  "lanternToolsSection": "Herramientas de Lantern",
+  "lanternToolsServers": "Servidores",
+  "lanternToolsCheckServers": "Comprobar servidores",
+  "lanternServerReachable": "Alcanzable",
+  "lanternServerUnreachable": "No alcanzable",
+  "lanternServerNotChecked": "Sin comprobar",
+  "lanternToolsAuth": "Cuenta",
+  "lanternEmailLabel": "Correo",
+  "lanternPasswordLabel": "Contraseña",
+  "lanternLoginBtn": "Iniciar sesión",
+  "lanternSignupBtn": "Registrarse",
+  "lanternLogoutBtn": "Cerrar sesión",
+  "lanternRunning": "En ejecución",
+  "gephSettings": "Ajustes de Geph",
+  "gephConnectionSection": "Conexión",
+  "gephPortSocks": "Puerto SOCKS",
+  "gephPortHttp": "Puerto HTTP (0 = apagado)",
+  "gephCountry": "País de salida",
+  "gephCountryAuto": "Automático (cualquier país)",
+  "gephCountryRefresh": "Actualizar lista",
+  "gephCountryFilter": "Mostrar",
+  "gephCountryFilterAll": "Todos los países",
+  "gephCountryFilterFree": "Solo gratuitos",
+  "gephCountryFilterPlus": "Solo premium",
+  "gephAccountSection": "Cuenta de Geph",
+  "gephAccountReady": "Hay un código de cuenta guardado.",
+  "gephAccountMissing": "Aún no hay cuenta — pulsa \"Crear cuenta\", o introduce arriba un código de acceso o un archivo de cuenta.",
+  "gephAccountPath": "Archivo de código de cuenta: {path}",
+  "gephSignupBtn": "Crear cuenta",
+  "gephIHaveAccount": "Ya tengo cuenta",
+  "gephRunning": "En ejecución",
+  "logSourceGeph": "Geph",
+  "gephUpstreamSection": "Proxy de upstream",
+  "gephUpstreamDirect": "Ninguno (directo)",
+  "gephUpstreamManual": "Proxy manual",
+  "gephUpstreamPsiphon": "Psiphon",
+  "gephUpstreamTor": "Tor",
+  "gephUpstreamSstp": "SSTP",
+  "gephUpstreamWireguard": "WireGuard",
+  "gephUpstreamFfvpn": "Firefox VPN",
+  "gephUpstreamLantern": "Lantern",
+  "gephUpstreamNpv": "NPV",
+  "gephUpstreamDesc": "Geph llega a su broker y sale primero a través de este proxy — úsalo cuando tu conexión directa esté bloqueada. Crear o comprobar la cuenta también pasa por él.",
+  "gephUpstreamManualNote": "Esquemas admitidos: socks5://, socks5h://, http:// y https://.",
+  "gephUpstreamVia": "{name} es el salto de upstream (SOCKS en 127.0.0.1:{port}) y se inicia automáticamente si aún no está en ejecución.",
+  "@gephAccountPath": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@gephUpstreamVia": {
+    "description": "Salto de upstream para Geph",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "port": {
+        "type": "String"
+      }
+    }
+  },
+  "gephAccountSource": "Origen del código de cuenta",
+  "gephAccountSourceFile": "Archivo",
+  "gephAccountSourceCode": "Código de acceso",
+  "gephAccountFilePath": "Archivo de código de cuenta",
+  "gephAccountFileHint": "Déjalo vacío para usar el archivo de cuenta en la carpeta de datos de la aplicación.",
+  "gephLoginCodeLabel": "Código de acceso",
+  "gephLoginCodeHint": "Tu código de acceso de Geph — se guarda en los ajustes de la aplicación.",
+  "gephAccountSavedTo": "Código de acceso guardado en {path}",
+  "@gephAccountSavedTo": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "npvSettings": "Ajustes de NPV Tunnel",
+  "npvEngineName": "NPV",
+  "npvConfigSection": "Archivo de configuración de NPV",
+  "npvConfigDesc": "El archivo .npvs con el que se conecta NPV. Elige uno de tu ordenador.",
+  "npvPickConfigFile": "Elegir archivo",
+  "npvChangeConfigFile": "Cambiar archivo",
+  "npvClearConfigFile": "Quitar",
+  "npvNoConfigFile": "Aún no se ha elegido ningún archivo",
+  "npvConfigLoaded": "Seleccionado: {name}",
+  "npvConfigReadError": "No se pudo leer el archivo seleccionado",
+  "npvConfigLockedWhileRunning": "Detén el túnel para cambiar este archivo.",
+  "npvConnectionSection": "Proxy local y sondeo",
+  "npvPortSocks": "Puerto SOCKS",
+  "npvPortHttp": "Puerto HTTP (0 = apagado)",
+  "npvProbeSection": "Sondeo de configuraciones",
+  "npvProbeDesc": "Cada configuración se prueba una vez; se usa la más rápida de las que funcionan.",
+  "npvProbeTimeout": "Tiempo de espera por solicitud (s)",
+  "npvProbeJobs": "Sondeos en paralelo",
+  "npvProbeUrl": "URL de sondeo (opcional)",
+  "autoReconnectNpv": "Reconexión automática de NPV",
+  "npvServersSection": "Servidores de este archivo",
+  "npvServersDesc": "Todas las configuraciones del archivo. Comprobar las prueba una a una y muestra cuáles funcionan, de la más rápida primero.",
+  "npvServersListBtn": "Mostrar servidores",
+  "npvServersCheckBtn": "Comprobar servidores",
+  "npvServersCancelBtn": "Cancelar",
+  "npvServersScanning": "Sondeando configuraciones…",
+  "npvServersSummary": "{answered} de {total} configuraciones funcionan",
+  "@npvServersSummary": {
+    "placeholders": {
+      "answered": {},
+      "total": {}
+    }
+  },
+  "npvServersCount": "{total} configuraciones en este archivo",
+  "@npvServersCount": {
+    "placeholders": {
+      "total": {}
+    }
+  },
+  "npvServersCreator": "Nota",
+  "npvServersNone": "Este archivo no tiene configuraciones.",
+  "npvServersNoFile": "Elige primero un archivo .npvs — todavía no hay nada que listar.",
+  "npvServersInUse": "en uso",
+  "npvServersDead": "No alcanzable",
+  "npvServersPinHint": "Pulsa una configuración para usar esa; pulsa de nuevo para que la aplicación elija la más rápida.",
+  "npvServersPinnedChip": "seleccionada",
+  "npvServersUnpinHint": "Seleccionada — pulsa para deshacer",
+  "npvServersAutoBtn": "Auto (la más rápida)",
+  "npvServersPinnedTo": "Seleccionada: {label}",
+  "@npvServersPinnedTo": {
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "npvServersStalePin": "La configuración seleccionada #{index} no está en este archivo — elige otra o vuelve a Auto.",
+  "@npvServersStalePin": {
+    "placeholders": {
+      "index": {}
+    }
+  },
+  "npvServersPinIgnored": "El núcleo de NPV usó una configuración distinta — actualiza el núcleo para elegir tú una.",
+  "@npvConfigLoaded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "aetherConnected": "Aether conectado",
+  "aetherManualHint": "Modo manual: protocolo, ofuscación, modo de escaneo y endpoint personalizado quedan bajo tu control más abajo. El modo de escaneo solo se aplica mientras el endpoint personalizado esté vacío.",
+  "aetherSettings": "Ajustes de Aether",
+  "autoReconnectAether": "Reconexión automática de Aether",
+  "both": "Ambos",
+  "connectionMode": "Modo de conexión",
+  "customEndpoint": "Endpoint personalizado (opcional)",
+  "customEndpointHint": "Déjalo vacío para escaneo automático",
+  "endpointPinning": "Fijado de endpoint",
+  "endpointPinningAutomatic": "Auto",
+  "endpointPinningAutomaticDesc": "Escanea siempre automáticamente el mejor endpoint. Recomendado para la mayoría de los usuarios.",
+  "endpointPinningCustomFirst": "Personalizado primero",
+  "endpointPinningCustomFirstDesc": "Prueba primero tu endpoint personalizado. Si falla, recurre al escaneo automático.",
+  "endpointPinningCustomOnly": "Solo personalizado",
+  "endpointPinningCustomOnlyDesc": "Usa únicamente tu endpoint personalizado, sin recurso al escaneo automático. Sirve para probar un servidor concreto.",
+  "endpointPinningNeedsCustom": "Define abajo un endpoint personalizado para activar los modos «Personalizado primero» y «Solo personalizado».",
+  "endpointPinningSubtitle": "Controla cómo elige Aether su endpoint",
+  "ipType": "Tipo de IP",
+  "ipv4": "IPv4",
+  "ipv6": "IPv6",
+  "localSocksPort": "Puerto SOCKS local",
+  "logSourceAether": "Aether",
+  "obfAggressive": "Agresiva",
+  "obfBalanced": "Equilibrada",
+  "obfDefaultCore": "Predeterminada (núcleo)",
+  "obfFirewall": "Firewall",
+  "obfGfw": "GFW",
+  "obfLight": "Ligera",
+  "obfuscation": "Ofuscación (--noize)",
+  "profileAdaptive": "Adaptativo",
+  "profileAdaptiveDesc": "Equilibrio entre velocidad y cobertura — adecuado para la mayoría de las redes",
+  "profileManual": "Manual",
+  "profileManualDesc": "Todas las opciones manuales — para usuarios avanzados",
+  "profilePatchy": "Señal irregular",
+  "profilePatchyDesc": "Datos móviles inestables — búsqueda más dura y resistente",
+  "profileStrict": "Red estricta",
+  "profileStrictDesc": "Wi-Fi restringida o filtrado intenso — fragment + masque dentro de masque + noize gfw",
+  "protoGool": "Gool (WARP dentro de WARP)",
+  "protoMasque": "MASQUE (HTTP/3 o HTTP/2)",
+  "protoMim": "MIM (masque dentro de masque)",
+  "protoWireguard": "WireGuard",
+  "scanBalanced": "Equilibrado",
+  "scanIronclad": "Blindado",
+  "scanStealth": "Sigiloso",
+  "scanThorough": "Exhaustivo",
+  "scanTurbo": "Turbo",
+  "scanVerified": "Verificado",
+  "torViaAether": "A través de Aether (Tor-over-Aether)",
+  "tryLastEndpointFirst": "Probar primero el último endpoint correcto",
+  "tryLastEndpointFirstSubtitle": "Si se activa, intentará el último endpoint que funcionó antes de escanear",
+  "aetherUpstream": "Aether"
+}

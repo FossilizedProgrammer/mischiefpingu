@@ -1,0 +1,862 @@
+{
+  "@@locale": "ru",
+  "appTitle": "Озорной Пингу",
+  "add": "Добавить",
+  "addNew": "Добавить новое",
+  "allServers": "Все серверы",
+  "any": "Любой",
+  "appearance": "Внешний вид",
+  "appliedTop20Ips": "Применены Top 20 IP",
+  "appliedTop5Ips": "Применены Top 5 IP + SNI",
+  "applyTop20": "Применить Top 20",
+  "applyTop5": "Применить Top 5",
+  "authenticationOptional": "Аутентификация (опционально)",
+  "autoFindIpSni": "Авто-поиск IP и SNI",
+  "autoFirstProxy": "Авто (первый активный прокси)",
+  "autoFirstRunningProxy": "Авто (первый активный прокси)",
+  "autoReconnectPsiphon": "Авто-переподключение Psiphon",
+  "autoReconnectSstp": "Авто-переподключение SSTP",
+  "autoReconnectTor": "Авто-переподключение Tor",
+  "autoRefresh15Min": "Авто-обновление каждые 15 минут",
+  "autoRefreshSubtitle": "Получает новые серверы и проверяет здоровье автоматически",
+  "binaryNotFound": "Исполняемый файл не найден",
+  "bridgePresets": "Предустановки мостов (опционально)",
+  "bridges": "Мосты (по одному на строку, включая webtunnel)",
+  "bridgesHint": "obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0",
+  "cancel": "Отмена",
+  "cancelBtn": "Отмена",
+  "cdnPreset": "Предустановка CDN",
+  "cdnScanner": "Сканер IP CDN",
+  "cdnScanModeQuick": "Быстро",
+  "cdnScanModeBalanced": "Сбалансированно",
+  "cdnScanModeDeep": "Глубоко",
+  "cdnScanModeQuickDesc": "Быстро · {samples} IP на CIDR · до {max} всего · ~1-2 мин",
+  "@cdnScanModeQuickDesc": {
+    "placeholders": {
+      "samples": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnScanModeBalancedDesc": "Сбалансированно · {samples} IP на CIDR · до {max} всего · ~5-10 мин",
+  "@cdnScanModeBalancedDesc": {
+    "placeholders": {
+      "samples": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnScanModeDeepDesc": "Глубоко · полное расширение · до {max} всего · ~30-60 мин",
+  "@cdnScanModeDeepDesc": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnScoutTitle": "Найти рабочие SNI (рекомендуется)",
+  "cdnScoutProgress": "Разведка {done}/{total}…",
+  "@cdnScoutProgress": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnScoutHint": "SNI Discord/Reddit заблокированы в Иране. Разведка найдёт рабочие.",
+  "cdnScoutButton": "Разведка",
+  "cdnScanPreview": "Строк: {lines} · будет сканировано IP: {ips}",
+  "@cdnScanPreview": {
+    "placeholders": {
+      "lines": {
+        "type": "String"
+      },
+      "ips": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnScanWarningsMore": "…и ещё {count}",
+  "@cdnScanWarningsMore": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnApplyIpsToPsiphon": "Применить {count} IP к Psiphon",
+  "@cdnApplyIpsToPsiphon": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnApplyIpsSnack": "{count} IP → Psiphon\nFronting IP: {ip}\nSNI: {sni}",
+  "@cdnApplyIpsSnack": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "ip": {
+        "type": "String"
+      },
+      "sni": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnSendToPsiphon": "Отправить в Psiphon",
+  "cdnSaveEnteredIps": "Сохранить введённые IP",
+  "cdnIpsSavedSnack": "Сохранено IP: {count} (всего в списке: {total})",
+  "@cdnIpsSavedSnack": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnCustomIpsSent": "{count} пользовательских IP → Psiphon (Fronting: {ip})",
+  "@cdnCustomIpsSent": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "ip": {
+        "type": "String"
+      }
+    }
+  },
+  "cdnResultSubtitle": "Оценка {score} · Надёжность {reliability}/5 · {latency}ms · загр. {download}ms · {sni}",
+  "@cdnResultSubtitle": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      },
+      "reliability": {
+        "type": "String"
+      },
+      "latency": {
+        "type": "String"
+      },
+      "download": {
+        "type": "String"
+      },
+      "sni": {
+        "type": "String"
+      }
+    }
+  },
+  "check": "Проверить",
+  "checkHealth": "Проверить здоровье",
+  "checking": "Проверка…",
+  "clear": "Очистить",
+  "clearAll": "Очистить всё",
+  "clearLog": "Очистить",
+  "close": "Закрыть",
+  "colorTheme": "Цветовая тема",
+  "colorThemeSubtitle": "Выберите цветовую схему для всего приложения.",
+  "conduitWebrtc": "Conduit (WebRTC Inproxy)",
+  "connected": "Подключено",
+  "connecting": "Подключение…",
+  "copiedToClipboard": "Скопировано в буфер обмена",
+  "copyAllToClipboard": "Копировать все",
+  "importFromClipboard": "Импорт из буфера обмена",
+  "importedFromClipboard": "Импортировано из буфера обмена",
+  "nothingToImport": "Буфер обмена пуст",
+  "itemsAddedCount": "Добавлено элементов",
+  "copy": "Копировать",
+  "copyAllCsv": "Копировать все (CSV с деталями)",
+  "copyAllIpPort": "Копировать все (ip:port)",
+  "copyLog": "Копировать",
+  "coreUpdates": "Обновления ядер",
+  "customIps": "Пользовательские IP",
+  "delete": "Удалить",
+  "directNoProxy": "Прямое (без прокси)",
+  "directNoProxyOption": "Прямое (без прокси)",
+  "directNoUpstream": "Прямое (без upstream)",
+  "disconnected": "Отключено",
+  "disconnectingTunnels": "Отключение активных туннелей…",
+  "download": "Скачать",
+  "downloadVia": "Скачать через",
+  "downloadViaSubtitle": "Проверки и загрузки используют выбранный прокси, когда прямой доступ фильтруется.",
+  "egressRegion": "Регион выхода",
+  "enableLogging": "Включить логирование",
+  "enableLoggingSubtitle": "Когда выключено, новые логи не собираются",
+  "exitCountry": "Страна выхода",
+  "exitCountryAny": "Любая (случайно)",
+  "fetch": "Получить",
+  "fetchVia": "Получить через",
+  "fetching": "Получение…",
+  "fingerprint": "Отпечаток",
+  "frontingAdvanced": "Фронтинг (расширенный, опционально)",
+  "frontingIp": "IP фронтинга",
+  "httpHostHeader": "Заголовок Host (например, aparat.com, snapp.ir)",
+  "httpPort": "Порт HTTP",
+  "installed": "Установлено",
+  "ipsCidrRanges": "IP / CIDR / Диапазоны",
+  "ipv4Only": "Только IPv4",
+  "language": "Язык",
+  "languageEnglish": "English",
+  "languageFarsi": "فارسی",
+  "languageRussian": "Русский",
+  "languageSpanish": "Español",
+  "latest": "Последняя",
+  "lines": "строк",
+  "listIsEmpty": "Список пуст",
+  "localProxyPorts": "Локальные порты прокси",
+  "log": "Лог",
+  "logSourceFilter": "Фильтр источников логов",
+  "logSourcePsiphon": "Psiphon",
+  "logSourceTor": "Tor",
+  "logSourceSstp": "SSTP",
+  "logSourceApp": "Приложение",
+  "logSourceSystem": "Система",
+  "manageList": "Управление списком (Добавить / Удалить)",
+  "manualProxy": "Ручной прокси",
+  "manualProxyOption": "Ручной прокси",
+  "muteSounds": "Отключить звуки",
+  "muteSoundsSubtitle": "Отключить все звуки пингвина. Визуальные реакции остаются.",
+  "noCustomIpsSaved": "Пользовательские IP ещё не сохранены",
+  "noLogsYet": "Логов пока нет",
+  "noUpstreamDirect": "Без upstream (прямое)",
+  "notInstalled": "Не установлено",
+  "notifications": "Уведомления",
+  "obfOff": "Выкл",
+  "officialCore": "официальное ядро Psiphon",
+  "password": "Пароль",
+  "passwordOptional": "Пароль (опционально)",
+  "port": "Порт",
+  "portRangeError": "Введите номер порта от {min} до {max}",
+  "preset1Subtitle": "Использует ядро SunAndLion Psiphon (неофициальный форк).",
+  "preset1Title": "1 · Фронтинг (CDN). Лучше для жёсткой цензуры.",
+  "preset2Subtitle": "Использует протоколы INPROXY-WEBRTC Psiphon.",
+  "preset2Title": "2 · Conduit (WebRTC Inproxy). Децентрализованные ретрансляторы.",
+  "preset3Subtitle": "Использует официальное ядро Psiphon напрямую.",
+  "preset3Title": "3 · Прямое подключение. Подходит для мягкой цензуры.",
+  "profile": "Профиль",
+  "aetherPresetControlsNote": "Протокол, режим сканирования и обфускация задаются выбранным профилем. Выберите Manual, чтобы изменить их.",
+  "protocol": "Протокол",
+  "proxyIp": "IP прокси",
+  "proxyType": "Тип прокси",
+  "psiphonConnectedVia": "Psiphon подключён через",
+  "psiphonConnectionMode": "Режим подключения Psiphon",
+  "psiphonSettings": "Настройки Psiphon",
+  "psiphonUpstream": "Psiphon",
+  "save": "Сохранить",
+  "saveFoundIpsSni": "Авто-сохранение найденных IP и SNI",
+  "scanMode": "Режим сканирования",
+  "select": "Выбрать…",
+  "selectAll": "Выбрать все",
+  "server": "Сервер",
+  "serverAddress": "Адрес сервера",
+  "shareOnLan": "Общий доступ в LAN (bind 0.0.0.0)",
+  "shareOnLanPsiphon": "Общий доступ в LAN (bind 0.0.0.0)",
+  "shareOnLanPsiphonSubtitle": "Перенаправление портов SOCKS и HTTP на всех интерфейсах",
+  "showLess": "Показать меньше",
+  "showLessSubtitle": "Скрыть расширенные настройки и логи",
+  "showMore": "Показать больше",
+  "sni": "SNI",
+  "sniList": "Список SNI (по одному на строку, порядок = приоритет)",
+  "socksPort": "Порт SOCKS",
+  "sstpConnected": "SSTP подключён",
+  "sstpSettings": "Настройки SSTP",
+  "sstpSocksUpstream": "SSTP",
+  "start": "Запуск",
+  "startScan": "Начать сканирование",
+  "stop": "Стоп",
+  "stopHealthCheck": "Стоп",
+  "stopScan": "Стоп",
+  "sunandlionCore": "ядро SunAndLion Psiphon",
+  "threads": "Потоки",
+  "tlsSni": "TLS SNI (например, a248.e.akamai.net)",
+  "torBridge": "Мост (obfs4 / snowflake / свой)",
+  "torConnected": "Tor подключён",
+  "torConnection": "Подключение Tor",
+  "torDirect": "Прямое (без моста, без upstream) — по умолчанию",
+  "torManual": "Ручной прокси",
+  "torSettings": "Настройки Tor",
+  "torSocksUpstream": "Tor",
+  "torUpstream": "Tor",
+  "torViaPsiphon": "Через Psiphon (Tor-over-Psiphon)",
+  "torViaSstp": "Через SSTP (Tor-over-SSTP)",
+  "torViaFfvpn": "Через Firefox VPN (Tor-over-Firefox VPN)",
+  "torViaLantern": "Через Lantern (Tor-over-Lantern)",
+  "torViaGeph": "Через Geph (Tor-over-Geph)",
+  "torUpstreamNpv": "Через NPV (Tor-over-NPV)",
+  "tunnelCore": "Ядро туннеля",
+  "update": "Обновить",
+  "upstream": "Upstream",
+  "upstreamType": "Тип upstream",
+  "usableIps": "Рабочие IP (сортировка по оценке)",
+  "useFronting": "Использовать фронтинг (CDN)",
+  "userOptional": "Пользователь (опционально)",
+  "username": "Имя пользователя",
+  "verboseLogging": "Подробное логирование",
+  "verboseLoggingSubtitle": "Включить детальный отладочный вывод из sstp-proxy",
+  "vpngateServers": "Серверы SSTP VPN Gate",
+  "working": "Работа",
+  "watchdog": "Сторожевой таймер",
+  "watchdogEnabled": "Включить сторожевой таймер",
+  "watchdogEnabledSubtitle": "Автоматически перезапускать туннели при отсутствии ответа",
+  "watchdogSettings": "Настройки сторожевого таймера",
+  "backToPresets": "Вернуться к профилям",
+  "watchdogNetworkProfile": "Профиль сети",
+  "watchdogNetworkProfileSubtitle": "Настраивает агрессивность проверок сторожевого таймера. Выберите под вашу сеть.",
+  "watchdogProfileStable": "Стабильно",
+  "watchdogProfileStableDesc": "Хорошее качество интернета — строгие проверки, быстрое обнаружение сбоев.",
+  "watchdogProfileNormal": "Обычный",
+  "watchdogProfileNormalDesc": "Сбалансированные настройки для большинства сетей (по умолчанию).",
+  "watchdogProfileHarsh": "Жёсткая фильтрация",
+  "watchdogProfileHarshDesc": "Сильная фильтрация или нестабильная сеть — мягкие проверки, меньше ложных перезапусков.",
+  "appUpdate": "Обновление приложения",
+  "appUpdateChecking": "Проверка обновлений...",
+  "appUpdateFailed": "Ошибка проверки обновлений",
+  "appUpdateSaveDialogTitle": "Выберите папку для сохранения обновления",
+  "appUpdateDownloading": "Загрузка обновления...",
+  "appUpdateDownloaded": "Обновление успешно загружено",
+  "appUpdateOpenFolder": "Открыть папку",
+  "appUpdateAvailable": "Доступно обновление",
+  "appUpdateCurrentVersion": "Текущая версия",
+  "appUpdateLatestVersion": "Последняя версия",
+  "appUpdateReleaseNotes": "Примечания к выпуску",
+  "appUpdateCheck": "Проверить обновления",
+  "appUpdateDownload": "Скачать обновление",
+  "appUpdateUpToDate": "У вас последняя версия",
+  "internetQuality": "Качество интернета",
+  "internetQualityAvg": "Сред",
+  "internetQualityDeep": "Глубокий (5м)",
+  "internetQualityDegraded": "Ухудшено",
+  "internetQualityDirectDetails": "Детали прямого качества",
+  "internetQualityDns": "DNS",
+  "internetQualityDown": "Отключено",
+  "internetQualityExcellent": "Отлично",
+  "internetQualityGood": "Хорошо",
+  "internetQualityHttps": "HTTPS",
+  "internetQualityJitter": "Джиттер",
+  "internetQualityLastCheck": "Последняя проверка",
+  "internetQualityLight": "Лёгкий (15с)",
+  "internetQualityMax": "Макс",
+  "internetQualityMed": "Медиана",
+  "internetQualityMin": "Мин",
+  "internetQualityMonitoring": "Фоновый мониторинг",
+  "internetQualityNoResult": "Нет результата",
+  "internetQualityNormal": "Обычный (2м)",
+  "internetQualityNotTested": "Не тестировано",
+  "internetQualityOff": "Выкл",
+  "internetQualityP95": "P95",
+  "internetQualityQuality": "Качество",
+  "internetQualitySnackbar": "Интернет:",
+  "internetQualityStatusFailing": "Сбой",
+  "internetQualityStatusOk": "ОК",
+  "internetQualityStatusPartial": "Частично",
+  "internetQualityStatusSlow": "Медленно",
+  "internetQualityStatusUnknown": "Неизвестно",
+  "internetQualityTcp": "TCP",
+  "internetQualityTest": "Тест",
+  "internetQualityUnstable": "Нестабильно",
+  "tunnelHealth": "Состояние туннеля",
+  "tunnelHealthProbeAll": "Проверить все",
+  "tunnelHealthProbeAgain": "Повторить",
+  "tunnelHealthNotRunning": "{tunnel} не запущен",
+  "@tunnelHealthNotRunning": {
+    "placeholders": {
+      "tunnel": {
+        "type": "String"
+      }
+    }
+  },
+  "tunnelHealthNoTunnelRunning": "Ни один туннель не запущен",
+  "tunnelHealthStopped": "Остановлен",
+  "tunnelHealthReachable": "Доступен (проверка ОК)",
+  "tunnelHealthMeasuring": "Измерение…",
+  "tunnelHealthExcellent": "Отлично",
+  "tunnelHealthGood": "Хорошо",
+  "tunnelHealthFair": "Средне",
+  "tunnelHealthDegraded": "Ухудшено",
+  "tunnelHealthFailing": "Сбой",
+  "tunnelHealthLatency": "Задержка",
+  "tunnelHealthLoss": "Потери",
+  "tunnelHealthJitter": "Джиттер",
+  "tunnelHealthUptime": "Время работы",
+  "tunnelHealthReconnects": "Переподключения",
+  "tunnelHealthTrend": "Тренд",
+  "tunnelHealthProtocol": "Протокол",
+  "tunnelHealthThroughput": "Пропускная способность",
+  "tunnelHealthCircuits": "Цепи",
+  "tunnelHealthIp": "IP",
+  "tunnelHealthLastProbeOk": "Последняя проверка: {latency}ms — ОК",
+  "@tunnelHealthLastProbeOk": {
+    "placeholders": {
+      "latency": {
+        "type": "int"
+      }
+    }
+  },
+  "tunnelHealthLastProbeFailed": "Последняя проверка не удалась: {error}",
+  "@tunnelHealthLastProbeFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "tunnelHealthNoDataWarning": "Туннель поднят, но данные не проходят",
+  "tunnelHealthMeasuringHealth": "Измерение состояния…",
+  "tunnelHealthTitle": "Состояние {tunnel}",
+  "@tunnelHealthTitle": {
+    "placeholders": {
+      "tunnel": {
+        "type": "String"
+      }
+    }
+  },
+  "wireguardSettings": "Настройки WireGuard",
+  "wireguardConfig": "Конфигурация WireGuard",
+  "wireguardConfigHint": "Вставьте стандартный конфиг WireGuard (формат INI) или URI с протоколом wireguard://. Приложение автоматически определит формат.",
+  "wireguardConfigInvalid": "Неверный конфиг WireGuard — проверьте PrivateKey, PublicKey и Endpoint.",
+  "wireguardFormatStandard": "СТАНДАРТ",
+  "wireguardFormatUri": "URI",
+  "wireguardConvertToUri": "Преобразовать в URI",
+  "wireguardConvertToStandard": "Преобразовать в стандарт",
+  "wireguardLoadConfFile": "Загрузить файл .conf",
+  "wireguardConfFileLoaded": "Конфиг WireGuard загружен из файла",
+  "wireguardConfFileEmpty": "Выбранный файл пуст",
+  "wireguardConfFileReadError": "Не удалось прочитать выбранный файл",
+  "wireguardConnected": "WireGuard подключён",
+  "autoReconnectWireGuard": "Авто-переподключение WireGuard",
+  "logSourceWireGuard": "WireGuard",
+  "torViaWireGuard": "Через WireGuard (Tor-over-WireGuard)",
+  "psiphonWireGuardUpstream": "WireGuard",
+  "sstpWireGuardUpstream": "WireGuard",
+  "upstreamViaFfvpn": "Firefox VPN",
+  "upstreamViaLantern": "Lantern",
+  "upstreamViaGeph": "Geph",
+  "psiphonUpstreamNpv": "NPV",
+  "sstpUpstreamNpv": "NPV",
+  "wireguardCoreTitle": "Ядро WireGuard",
+  "wireguardCoreDescription": "Выберите реализацию WireGuard. Amnezia добавляет обфускацию для жёсткой цензуры.",
+  "wireguardCoreStandard": "Стандартное (wireguard-go)",
+  "wireguardCoreAmnezia": "Amnezia (wireguard-awg)",
+  "diagnosticsReport": "Диагностический отчёт",
+  "diagnosticsReportGenerate": "Создать отчёт",
+  "diagnosticsReportCopy": "Копировать",
+  "diagnosticsReportSave": "Сохранить",
+  "diagnosticsReportGenerated": "Отчёт успешно создан",
+  "diagnosticsReportCopied": "Отчёт скопирован",
+  "diagnosticsReportSaved": "Отчёт сохранён: {path}",
+  "@diagnosticsReportSaved": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "diagnosticsReportRedacted": "Конфиденциальные данные удалены",
+  "diagnosticsReportPreview": "Предпросмотр",
+  "diagnosticsReportClose": "Закрыть",
+  "diagnosticsReportGenerating": "Создание отчёта…",
+  "amneziaLinkDetected": "Обнаружена ссылка Amnezia VPN",
+  "amneziaLinkName": "Название",
+  "amneziaLinkEndpoint": "API Endpoint",
+  "amneziaLinkHint": "Нажмите «Получить конфиг», чтобы получить реальную конфигурацию AmneziaWG из API.",
+  "amneziaFetch": "Получить конфиг",
+  "amneziaFetching": "Получение…",
+  "amneziaFetchSuccess": "Конфигурация AmneziaWG успешно получена",
+  "amneziaFetchFailed": "Не удалось получить конфигурацию AmneziaWG",
+  "amneziaCoreRequired": "Для ссылок vpn:// требуется ядро AmneziaWG. Приложение выберет его автоматически.",
+  "amneziaApiError": "Ошибка API Amnezia",
+  "amneziaInvalidLink": "Неверный формат ссылки vpn://",
+  "bridgeScanner": "Сканер мостов",
+  "bridgeScannerDescription": "Получение и тестирование мостов Tor (obfs4, webtunnel, snowflake, meek, conjure). Цветовая индикация задержки помогает выбрать те, что реально работают в вашей сети.",
+  "bridgeLines": "Строки мостов (по одной на строку)",
+  "bridgeLinesHint": "obfs4 1.2.3.4:443 FINGERPRINT cert=... iat-mode=0",
+  "bridgeThreads": "Потоки",
+  "bridgeStartScan": "Начать сканирование",
+  "bridgeStopScan": "Стоп",
+  "bridgeResults": "Результаты",
+  "bridgeApplyWorking": "Применить рабочие ({count})",
+  "bridgeApplyWorkingSnackbar": "Применено {count} рабочих мостов к настройкам Tor",
+  "bridgeApplyWorkingRestarting": "Применено {count} мостов — перезапуск Tor для применения",
+  "bridgeApplyWorkingTorNotRunning": "Применено {count} мостов — запустите Tor для использования",
+  "@bridgeApplyWorking": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@bridgeApplyWorkingSnackbar": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@bridgeApplyWorkingRestarting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@bridgeApplyWorkingTorNotRunning": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeFetch": "Получить {transport}",
+  "@bridgeFetch": {
+    "placeholders": {
+      "transport": {
+        "type": "String"
+      }
+    }
+  },
+  "bridgeSaveWorking": "Сохранить рабочие",
+  "bridgeLoadSaved": "Загрузить сохранённые",
+  "bridgeRescanSaved": "Пересканировать сохранённые",
+  "bridgeClearSaved": "Очистить сохранённые",
+  "bridgeSavedCount": "Сохранено: {count}",
+  "@bridgeSavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeNoSaved": "Нет сохранённых мостов",
+  "bridgeSavedBridges": "Сохранённые мосты",
+  "bridgeSaveSuccess": "Сохранено мостов: {count}",
+  "@bridgeSaveSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeLoadedSuccess": "Загружено сохранённых мостов: {count}",
+  "@bridgeLoadedSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeRescanStarted": "Пересканирование {count} сохранённых мостов",
+  "@bridgeRescanStarted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bridgeClearedSaved": "Сохранённые мосты очищены",
+  "bridgeNothingToSave": "Нет рабочих мостов для сохранения",
+  "bridgeLoadFromScanner": "Загрузить из сканера мостов",
+  "bridgeLoadFromScannerSubtitle": "Загрузить сохранённые рабочие мосты из раздела сканера мостов ниже",
+  "bridgeNoSavedInScanner": "В сканере мостов пока нет сохранённых мостов",
+  "appSubtitle": "Неофициальный клиент Psiphon, Tor, SSTP и WireGuard,",
+  "appSubtitle2": "Firefox VPN, неофициальный клиент Lantern, неофициальный клиент Geph, NPV (napsternetV)",
+  "showMoreSubtitle": "Appearance, Psiphon, Tor, SSTP, WireGuard, Firefox VPN, Lantern, Geph, Scanner, Updates, Log",
+  "logSourceFfvpn": "Firefox VPN",
+  "ffvpnSettings": "Настройки Firefox VPN",
+  "ffvpnLoginSection": "Вход по email и паролю",
+  "ffvpnLoginHint": "Вход напрямую в Firefox Account; полученный токен сессии сохраняется ниже — искать signedInUser.json не нужно.",
+  "ffvpnEmailLabel": "Email аккаунта Firefox",
+  "ffvpnPasswordLabel": "Пароль",
+  "ffvpnSignIn": "Войти",
+  "ffvpnSigningIn": "Вход…",
+  "ffvpnSignedIn": "Вход выполнен — токен сессии сохранён.",
+  "ffvpnGuideTitle": "Токен сессии аккаунта Firefox",
+  "ffvpnGuideIntro": "Этот прокси использует встроенный VPN браузера Firefox (IP Protection на базе Mozilla VPN). Ему нужен токен сессии вашего Firefox Account:",
+  "ffvpnGuideStep1": "1. Создайте аккаунт Firefox или войдите в него в самом браузере Firefox, чтобы сессия сохранилась в браузере.",
+  "ffvpnGuideStep2": "2. Откройте about:profiles в Firefox, чтобы найти корневую папку профиля по умолчанию.",
+  "ffvpnGuideStep3": "3. Откройте signedInUser.json в этой папке, скопируйте значение accountData.sessionToken (шестнадцатеричная строка из 64 символов) и вставьте ниже.",
+  "ffvpnPathWindows": "Windows: %APPDATA%\\Mozilla\\Firefox\\Profiles\\<profile>\\signedInUser.json",
+  "ffvpnPathLinux": "Linux: ~/.mozilla/firefox/<profile>/signedInUser.json",
+  "ffvpnTokenLabel": "Токен сессии Firefox Account",
+  "ffvpnTokenHint": "64 шестнадцатеричных символа — accountData.sessionToken из signedInUser.json",
+  "ffvpnPortSocks": "Порт SOCKS",
+  "ffvpnPortHttp": "Порт HTTP (0 = выкл)",
+  "ffvpnSniLabel": "SNI в TLS",
+  "ffvpnSniHint": "Имя хоста в ClientHello к краю прокси Firefox — оставьте пустым, чтобы использовалось имя края",
+  "ffvpnUpstreamSection": "Восходящий SOCKS-прокси",
+  "ffvpnUpstreamDesc": "Firefox VPN сначала подключается к этому узлу SOCKS5 и только потом к краю прокси Firefox. Используйте, если край заблокирован или недоступен напрямую.",
+  "ffvpnUpstreamDirect": "Напрямую (без восходящего узла)",
+  "ffvpnUpstreamManual": "Ручной SOCKS5-прокси",
+  "ffvpnUpstreamPsiphon": "Psiphon",
+  "ffvpnUpstreamTor": "Tor",
+  "ffvpnUpstreamSstp": "SSTP",
+  "ffvpnUpstreamWireguard": "WireGuard",
+  "ffvpnUpstreamLantern": "Lantern",
+  "ffvpnUpstreamGeph": "Geph",
+  "ffvpnUpstreamNpv": "NPV",
+  "ffvpnUpstreamVia": "{name} используется как восходящий узел (SOCKS на 127.0.0.1:{port}) и запускается автоматически, если ещё не работает.",
+  "@ffvpnUpstreamVia": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "port": {
+        "type": "String"
+      }
+    }
+  },
+  "ffvpnUpstreamManualNote": "Имя хоста всегда отправляется прокси, чтобы DNS разрешался там.",
+  "ffvpnCountrySection": "Страна выхода",
+  "ffvpnCountryAuto": "Автоматически (рекомендация сервера)",
+  "ffvpnLoadCountries": "Загрузить список стран",
+  "ffvpnCountriesLoading": "Загрузка списка стран…",
+  "ffvpnCountriesEmpty": "Страны ещё не загружены — нажмите «Загрузить список стран».",
+  "ffvpnCountriesFilteredOut": "Ни одна страна не соответствует выбранному фильтру.",
+  "ffvpnCountryFilter": "Показывать",
+  "ffvpnCountryFilterAll": "Все страны",
+  "ffvpnCountryFilterFree": "Только бесплатные",
+  "ffvpnCountryFilterPlus": "Только премиум",
+  "ffvpnCountryFilterHint": "Страны, заблокированные без подписки Mozilla VPN; по умолчанию скрыты, как в самом Firefox.",
+  "ffvpnPremiumTag": "премиум",
+  "ffvpnQuotaSection": "Месячная квота трафика",
+  "ffvpnCheckQuota": "Проверить квоту",
+  "ffvpnQuotaLoading": "Проверка квоты…",
+  "ffvpnQuotaUsedOf": "Использовано {used} из {total} ({percent}%)",
+  "ffvpnQuotaLeft": "Осталось {remaining}",
+  "ffvpnQuotaResets": "Сброс {date}",
+  "ffvpnQuotaUnlimited": "Безлимитный трафик — месячная квота не применяется.",
+  "ffvpnQuotaNoToken": "Введите токен сессии выше, чтобы проверить квоту.",
+  "ffvpnErrNotEntitled": "У этого аккаунта Firefox нет подписки Mozilla VPN (HTTP 403) — прокси-сервис требует её.",
+  "ffvpnErrRegion": "Сервис недоступен в вашем регионе (HTTP 451).",
+  "ffvpnErrBadToken": "Токен сессии недействителен или истёк. Войдите в Firefox заново и скопируйте свежий токен из signedInUser.json.",
+  "ffvpnErrQuota": "Месячная квота трафика исчерпана — дождитесь даты сброса.",
+  "ffvpnErrBinaryMissing": "Бинарный файл ffvpn не найден в папке данных приложения.",
+  "ffvpnErrNetwork": "Сетевая ошибка при обращении к Mozilla — проверьте соединение (возможно, нужен другой туннель) и повторите.",
+  "ffvpnErrBadCredentials": "Неверный email или пароль (либо вход заблокирован) — проверьте данные аккаунта Firefox.",
+  "ffvpnErrSignInUnsupported": "Установленное ядро ffvpn не поддерживает вход по email и паролю. Обновите ядро в разделе «Обновления ядер» или вставьте токен сессии вручную.",
+  "ffvpnErrBlocked": "Защитный край Mozilla заблокировал запрос входа из этой сети (HTTP 406). Войдите через туннель или из другой сети и повторите попытку.",
+  "ffvpnErrOther": "Ошибка ffvpn",
+  "logSourceLantern": "Lantern",
+  "lanternSettings": "Настройки Lantern",
+  "lanternConnectionSection": "Подключение",
+  "lanternEngine": "Движок подключения",
+  "lanternEngineRadiance": "Radiance (официальный v10, рекомендуется)",
+  "lanternEngineClassic": "Классический (flashlight)",
+  "lanternEngineDesc": "Radiance использует тот же движок, что и официальный клиент Lantern v10, и обходит блокировки сам. Классический — прежний headless-клиент.",
+  "lanternPortSocks": "Порт SOCKS",
+  "lanternPortHttp": "Порт HTTP (0 = выкл.)",
+  "lanternUpstreamSection": "Апстрим-прокси",
+  "lanternUpstreamDirect": "Нет (напрямую)",
+  "lanternUpstreamManual": "Ручной прокси",
+  "lanternUpstreamPsiphon": "Psiphon",
+  "lanternUpstreamTor": "Tor",
+  "lanternUpstreamSstp": "SSTP",
+  "lanternUpstreamWireguard": "WireGuard",
+  "lanternUpstreamFfvpn": "Firefox VPN",
+  "lanternUpstreamGeph": "Geph",
+  "lanternUpstreamNpv": "NPV",
+  "lanternUpstreamDesc": "Соединения с серверами Lantern (а если они недоступны — и ваш трафик) идут через этот прокси; используйте его, когда IP-адреса серверов Lantern заблокированы.",
+  "lanternUpstreamManualNote": "Допустимые схемы: socks5://, socks5h://, http:// и https://.",
+  "lanternUpstreamVia": "{name} — апстрим-хоп (SOCKS на 127.0.0.1:{port}); если он не запущен, будет запущен автоматически.",
+  "lanternToolsSection": "Инструменты Lantern",
+  "lanternToolsServers": "Серверы",
+  "lanternToolsCheckServers": "Проверить серверы",
+  "lanternServerReachable": "Доступен",
+  "lanternServerUnreachable": "Недоступен",
+  "lanternServerNotChecked": "Не проверен",
+  "lanternToolsAuth": "Аккаунт",
+  "lanternEmailLabel": "Эл. почта",
+  "lanternPasswordLabel": "Пароль",
+  "lanternLoginBtn": "Вход",
+  "lanternSignupBtn": "Регистрация",
+  "lanternLogoutBtn": "Выход",
+  "lanternRunning": "Выполняется",
+  "gephSettings": "Настройки Geph",
+  "gephConnectionSection": "Подключение",
+  "gephPortSocks": "Порт SOCKS",
+  "gephPortHttp": "Порт HTTP (0 = выкл.)",
+  "gephCountry": "Страна выхода",
+  "gephCountryAuto": "Авто (любая страна)",
+  "gephCountryRefresh": "Обновить список",
+  "gephCountryFilter": "Показывать",
+  "gephCountryFilterAll": "Все страны",
+  "gephCountryFilterFree": "Только бесплатные",
+  "gephCountryFilterPlus": "Только премиум",
+  "gephAccountSection": "Аккаунт Geph",
+  "gephAccountReady": "Код аккаунта сохранён.",
+  "gephAccountMissing": "Аккаунта пока нет — нажмите «Создать аккаунт» или укажите код/файл выше.",
+  "gephAccountPath": "Файл с кодом аккаунта: {path}",
+  "gephSignupBtn": "Создать аккаунт",
+  "gephIHaveAccount": "У меня есть аккаунт",
+  "gephRunning": "Выполняется",
+  "logSourceGeph": "Geph",
+  "gephUpstreamSection": "Апстрим-прокси",
+  "gephUpstreamDirect": "Нет (напрямую)",
+  "gephUpstreamManual": "Ручной прокси",
+  "gephUpstreamPsiphon": "Psiphon",
+  "gephUpstreamTor": "Tor",
+  "gephUpstreamSstp": "SSTP",
+  "gephUpstreamWireguard": "WireGuard",
+  "gephUpstreamFfvpn": "Firefox VPN",
+  "gephUpstreamLantern": "Lantern",
+  "gephUpstreamNpv": "NPV",
+  "gephUpstreamDesc": "Geph сначала ходит к брокеру и выходам через этот прокси — используйте его, когда прямое соединение заблокировано. Создание и проверка аккаунта тоже идут через него.",
+  "gephUpstreamManualNote": "Допустимые схемы: socks5://, socks5h://, http:// и https://.",
+  "gephUpstreamVia": "{name} — апстрим-хоп (SOCKS на 127.0.0.1:{port}); если он не запущен, будет запущен автоматически.",
+  "@gephAccountPath": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@gephUpstreamVia": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "port": {
+        "type": "String"
+      }
+    }
+  },
+  "gephAccountSource": "Источник кода аккаунта",
+  "gephAccountSourceFile": "Файл",
+  "gephAccountSourceCode": "Код входа",
+  "gephAccountFilePath": "Файл кода аккаунта",
+  "gephAccountFileHint": "Оставьте пустым, чтобы использовать файл кода аккаунта в папке данных приложения.",
+  "gephLoginCodeLabel": "Код входа",
+  "gephLoginCodeHint": "Ваш код входа Geph — сохраняется в настройках приложения.",
+  "gephAccountSavedTo": "Код входа сохранён в {path}",
+  "@gephAccountSavedTo": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "npvSettings": "Настройки NPV Tunnel",
+  "npvEngineName": "NPV",
+  "npvConfigSection": "Файл конфигурации NPV",
+  "npvConfigDesc": "Файл .npvs, через который NPV подключается. Выберите его на компьютере.",
+  "npvPickConfigFile": "Выбрать файл",
+  "npvChangeConfigFile": "Сменить файл",
+  "npvClearConfigFile": "Убрать",
+  "npvNoConfigFile": "Файл ещё не выбран",
+  "npvConfigLoaded": "Выбрано: {name}",
+  "npvConfigReadError": "Не удалось прочитать выбранный файл",
+  "npvConfigLockedWhileRunning": "Остановите туннель, чтобы сменить файл.",
+  "npvConnectionSection": "Локальный прокси и проверка",
+  "npvPortSocks": "Порт SOCKS",
+  "npvPortHttp": "Порт HTTP (0 = выкл)",
+  "npvProbeSection": "Проверка конфигов",
+  "npvProbeDesc": "Каждый конфиг проверяется один раз; используется самый быстрый рабочий.",
+  "npvProbeTimeout": "Таймаут запроса (с)",
+  "npvProbeJobs": "Параллельных проверок",
+  "npvProbeUrl": "URL проверки (необязательно)",
+  "autoReconnectNpv": "Автопереподключение NPV",
+  "npvServersSection": "Серверы этого файла",
+  "npvServersDesc": "Все конфигурации файла. «Проверить серверы» тестит каждую по очереди и показывает рабочие — сначала быстрые.",
+  "npvServersListBtn": "Показать серверы",
+  "npvServersCheckBtn": "Проверить серверы",
+  "npvServersCancelBtn": "Отмена",
+  "npvServersScanning": "Проверка конфигураций…",
+  "npvServersSummary": "Работают {answered} из {total} конфигураций",
+  "@npvServersSummary": {
+    "placeholders": {
+      "answered": {},
+      "total": {}
+    }
+  },
+  "npvServersCount": "Конфигураций в этом файле: {total}",
+  "@npvServersCount": {
+    "placeholders": {
+      "total": {}
+    }
+  },
+  "npvServersCreator": "Заметка",
+  "npvServersNone": "В этом файле конфигураций нет.",
+  "npvServersNoFile": "Сначала выберите файл .npvs — показывать пока нечего.",
+  "npvServersInUse": "используется",
+  "npvServersDead": "Недоступен",
+  "npvServersPinHint": "Нажмите на конфиг, чтобы использовать его; повторное нажатие вернёт автовыбор самого быстрого.",
+  "npvServersPinnedChip": "выбран",
+  "npvServersUnpinHint": "Выбран — нажмите, чтобы отменить",
+  "npvServersAutoBtn": "Авто (быстрейший)",
+  "npvServersPinnedTo": "Выбрано: {label}",
+  "@npvServersPinnedTo": {
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "npvServersStalePin": "Выбранный конфиг #{index} нет в этом файле — выберите другой или верните авто.",
+  "@npvServersStalePin": {
+    "placeholders": {
+      "index": {}
+    }
+  },
+  "npvServersPinIgnored": "Ядро NPV использовало другой конфиг — обновите ядро, чтобы выбирать вручную.",
+  "aetherConnected": "Aether подключён",
+  "aetherManualHint": "Ручной режим: протокол, обфускация, режим сканирования и пользовательский endpoint настраиваются ниже. Режим сканирования действует, только пока endpoint не задан.",
+  "aetherSettings": "Настройки Aether",
+  "autoReconnectAether": "Авто-переподключение Aether",
+  "both": "Оба",
+  "connectionMode": "Режим подключения",
+  "customEndpoint": "Пользовательский endpoint (опционально)",
+  "customEndpointHint": "Оставьте пустым для авто-сканирования",
+  "endpointPinning": "Привязка endpoint",
+  "endpointPinningAutomatic": "Авто",
+  "endpointPinningAutomaticDesc": "Всегда автоматический поиск лучшего endpoint. Рекомендуется.",
+  "endpointPinningCustomFirst": "Сначала свой",
+  "endpointPinningCustomFirstDesc": "Сначала попробовать ваш endpoint. При неудаче — автосканирование.",
+  "endpointPinningCustomOnly": "Только свой",
+  "endpointPinningCustomOnlyDesc": "Использовать только ваш endpoint. Без автосканирования. Для тестирования.",
+  "endpointPinningNeedsCustom": "Укажите свой endpoint ниже, чтобы включить режимы «Сначала свой» и «Только свой».",
+  "endpointPinningSubtitle": "Управляйте тем, как Aether выбирает endpoint",
+  "ipType": "Тип IP",
+  "ipv4": "IPv4",
+  "ipv6": "IPv6",
+  "localSocksPort": "Локальный порт SOCKS",
+  "logSourceAether": "Aether",
+  "obfAggressive": "Агрессивная",
+  "obfBalanced": "Сбалансированная",
+  "obfDefaultCore": "По умолчанию (ядро)",
+  "obfFirewall": "Файрвол",
+  "obfGfw": "GFW",
+  "obfLight": "Лёгкая",
+  "obfuscation": "Обфускация (--noize)",
+  "profileAdaptive": "Адаптивный",
+  "profileAdaptiveDesc": "Баланс скорости и покрытия — подходит для большинства сетей",
+  "profileManual": "Ручной",
+  "profileManualDesc": "Все опции вручную — для продвинутых пользователей",
+  "profilePatchy": "Нестабильный сигнал",
+  "profilePatchyDesc": "Нестабильные мобильные данные — более сложный и устойчивый поиск",
+  "profileStrict": "Строгая сеть",
+  "profileStrictDesc": "Ограниченный Wi-Fi или жёсткая фильтрация — fragment + masque-in-masque + noize gfw",
+  "protoGool": "Gool (WARP-in-WARP)",
+  "protoMasque": "MASQUE (HTTP/3 или HTTP/2)",
+  "protoMim": "MIM (masque-in-masque)",
+  "protoWireguard": "WireGuard",
+  "scanBalanced": "Сбалансированный",
+  "scanIronclad": "Железный",
+  "scanStealth": "Скрытный",
+  "scanThorough": "Тщательный",
+  "scanTurbo": "Турбо",
+  "scanVerified": "Проверенный",
+  "torViaAether": "Через Aether (Tor-over-Aether)",
+  "tryLastEndpointFirst": "Сначала попробовать последний успешный endpoint",
+  "tryLastEndpointFirstSubtitle": "Если включено, попробует последний рабочий endpoint перед сканированием",
+  "aetherUpstream": "Aether"
+}
