@@ -45,15 +45,7 @@ class FirefoxVpnSettingsTile extends StatelessWidget {
         const Divider(height: 28),
         FfvpnGuideSection(theme: theme, l10n: l10n),
         const Divider(height: 28),
-        SettingsTextField(
-          labelText: l10n.ffvpnTokenLabel,
-          hintText: l10n.ffvpnTokenHint,
-          initialValue: s.ffvpnSessionToken,
-          onChanged: (v) {
-            s.ffvpnSessionToken = v.trim();
-            save();
-          },
-        ),
+        _FfvpnTokenField(s: s, l10n: l10n, onSave: save),
         const SizedBox(height: 12),
         Row(
           children: [
@@ -108,11 +100,47 @@ class FirefoxVpnSettingsTile extends StatelessWidget {
   }
 }
 
-/// ورود با ایمیل/رمز عبور حساب فایرفاکس؛ توکن حاصل در تنظیمات ذخیره
-/// می‌شود تا کاربر نیازی به استخراج دستی signedInUser.json نداشته باشد.
-///
-/// رمز عبور فقط در همین State و در argv/env لحظه‌ای هستهٔ ffvpn زنده است و
-/// هیچ‌جا ذخیره یا لاگ نمی‌شود.
+class _FfvpnTokenField extends StatefulWidget {
+  const _FfvpnTokenField(
+      {required this.s, required this.l10n, required this.onSave});
+
+  final AppSettings s;
+  final AppLocalizations l10n;
+  final VoidCallback onSave;
+
+  @override
+  State<_FfvpnTokenField> createState() => _FfvpnTokenFieldState();
+}
+
+class _FfvpnTokenFieldState extends State<_FfvpnTokenField> {
+  late final _token = TextEditingController(text: widget.s.ffvpnSessionToken);
+
+  @override
+  void didUpdateWidget(covariant _FfvpnTokenField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_token.text.trim() != widget.s.ffvpnSessionToken) {
+      _token.text = widget.s.ffvpnSessionToken;
+    }
+  }
+
+  @override
+  void dispose() {
+    _token.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => SettingsTextField(
+        labelText: widget.l10n.ffvpnTokenLabel,
+        hintText: widget.l10n.ffvpnTokenHint,
+        controller: _token,
+        onChanged: (value) {
+          widget.s.ffvpnSessionToken = value.trim();
+          widget.onSave();
+        },
+      );
+}
+
 class FfvpnSignInSection extends StatefulWidget {
   final AppSettings s;
   final ThemeData theme;
@@ -133,25 +161,27 @@ class FfvpnSignInSection extends StatefulWidget {
 
 class _FfvpnSignInSectionState extends State<FfvpnSignInSection> {
   final _email = TextEditingController();
-  final _password = TextEditingController();
   bool _signedIn = false;
+  FfvpnProvider? _activeSignIn;
 
   @override
   void dispose() {
+    _activeSignIn?.cancelSignIn();
     _email.dispose();
-    _password.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
     final ffvpn = context.read<FfvpnProvider>();
+    setState(() => _signedIn = false);
+    _activeSignIn = ffvpn;
     final token = await ffvpn.signIn(
       email: _email.text,
-      password: _password.text,
+      title: widget.l10n.ffvpnLoginSection,
     );
+    _activeSignIn = null;
     if (!mounted) return;
     if (token == null) return;
-    _password.clear();
     widget.s.ffvpnSessionToken = token;
     widget.onSave();
     setState(() => _signedIn = true);
@@ -186,16 +216,6 @@ class _FfvpnSignInSectionState extends State<FfvpnSignInSection> {
           },
         ),
         const SizedBox(height: 10),
-        SettingsTextField(
-          labelText: l10n.ffvpnPasswordLabel,
-          controller: _password,
-          enabled: !busy,
-          obscureText: true,
-          onChanged: (_) {
-            if (_signedIn) setState(() => _signedIn = false);
-          },
-        ),
-        const SizedBox(height: 10),
         SettingsActionRow(
           alignment: MainAxisAlignment.start,
           children: [
@@ -210,8 +230,17 @@ class _FfvpnSignInSectionState extends State<FfvpnSignInSection> {
                   : const Icon(Icons.login, size: 18),
               label: Text(busy ? l10n.ffvpnSigningIn : l10n.ffvpnSignIn),
             ),
+            if (busy)
+              TextButton(
+                onPressed: ffvpn.cancelSignIn,
+                child: Text(l10n.cancel),
+              ),
           ],
         ),
+        if (ffvpn.isConfirmingSignIn) ...[
+          const SizedBox(height: 8),
+          Text(l10n.ffvpnConfirmingSignIn, style: theme.textTheme.bodySmall),
+        ],
         if (ffvpn.signInError != null) ...[
           const SizedBox(height: 8),
           Text(

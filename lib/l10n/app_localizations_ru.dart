@@ -1187,20 +1187,21 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ffvpnSettings => 'Настройки Firefox VPN';
 
   @override
-  String get ffvpnLoginSection => 'Вход по email и паролю';
+  String get ffvpnLoginSection => 'Вход / регистрация в браузере Mozilla';
 
   @override
   String get ffvpnLoginHint =>
-      'Вход напрямую в Firefox Account; полученный токен сессии сохраняется ниже — искать signedInUser.json не нужно.';
+      'Откройте страницу Mozilla для входа или создания аккаунта. Введите пароль, код из письма и CAPTCHA там. Не закрывайте браузер до подтверждения; подтверждённый токен сессии сохранится ниже автоматически.';
 
   @override
-  String get ffvpnEmailLabel => 'Email аккаунта Firefox';
+  String get ffvpnEmailLabel => 'Email аккаунта Firefox (необязательно)';
 
   @override
-  String get ffvpnPasswordLabel => 'Пароль';
+  String get ffvpnSignIn => 'Открыть страницу входа Mozilla';
 
   @override
-  String get ffvpnSignIn => 'Войти';
+  String get ffvpnConfirmingSignIn =>
+      'Завершите подтверждение email в браузере. Ожидаем подтверждения сессии от Mozilla…';
 
   @override
   String get ffvpnSigningIn => 'Вход…';
@@ -1398,7 +1399,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get ffvpnErrSignInUnsupported =>
-      'Установленное ядро ffvpn не поддерживает вход по email и паролю. Обновите ядро в разделе «Обновления ядер» или вставьте токен сессии вручную.';
+      'Установите Firefox в Linux или Microsoft Edge WebView2 Runtime в Windows либо вставьте токен сессии вручную.';
 
   @override
   String get ffvpnErrBlocked =>

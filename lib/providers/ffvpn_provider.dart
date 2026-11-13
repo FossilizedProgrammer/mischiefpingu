@@ -4,20 +4,29 @@
 //   • لیست کشورهای خروجی (کش کش‌شده بر اساس includePremium)
 //   • مصرف سهمیهٔ ماهانهٔ پهنای باند
 
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
-import 'package:path/path.dart' as p;
 
-import '../services/app_data_service.dart';
+import '../services/ffvpn/ffvpn_browser_login.dart';
 import '../services/ffvpn/ffvpn_service.dart';
 import '../services/process_service.dart';
 
 class FfvpnProvider extends ChangeNotifier {
-  FfvpnProvider({required ProcessService processService})
-      : _processService = processService;
+  FfvpnProvider({
+    required ProcessService processService,
+    FfvpnBrowserLogin? browserLogin,
+  })  : _processService = processService,
+        _browserLogin = browserLogin ?? FfvpnBrowserLogin();
 
   final ProcessService _processService;
+  final FfvpnBrowserLogin _browserLogin;
+  bool _disposed = false;
+
+  @override
+  void dispose() {
+    _disposed = true;
+    _browserLogin.cancel();
+    super.dispose();
+  }
 
   void _log(String message) {
     _processService.addLog(message, source: LogSource.ffvpn);
@@ -71,64 +80,55 @@ class FfvpnProvider extends ChangeNotifier {
     }
   }
 
-  // ─── ورود با ایمیل/رمز عبور ───
   bool isSigningIn = false;
+  bool isConfirmingSignIn = false;
   String? signInEmail;
   FfvpnException? signInError;
 
-  /// ورود به حساب Firefox و برگرداندن sessionToken برای ذخیره در تنظیمات.
-  ///
-  /// ffvpn توکن را در یک فایل موقت 0600 می‌نویسد؛ همان لحظه خوانده و
-  /// فایل پاک می‌شود تا نسخهٔ دوم اعتبارنامه باقی نماند. رمز عبور هم
-  /// هیچ‌جا نگه داشته نمی‌شود.
+  void cancelSignIn() => _browserLogin.cancel();
+
   Future<String?> signIn({
     required String email,
-    required String password,
+    required String title,
   }) async {
-    if (isSigningIn) return null;
-
-    final account = email.trim();
-    if (account.isEmpty || password.isEmpty) {
-      signInError = const FfvpnException(
-        FfvpnErrorKind.badCredentials,
-        'email and password are required',
-      );
-      notifyListeners();
-      return null;
-    }
-
+    if (isSigningIn || _disposed) return null;
     isSigningIn = true;
+    isConfirmingSignIn = false;
     signInError = null;
     notifyListeners();
 
-    final tokenFile =
-        p.join(await AppDataService.getDataDir(), 'ffvpn-session.txt');
     try {
-      _log('→ Signing in to Firefox Account…');
-      final token = await FfvpnService.signIn(
-        email: account,
-        password: password,
-        tokenFile: tokenFile,
-        log: _log,
+      _log('Opening Mozilla browser sign-in');
+      final session = await _browserLogin.signIn(
+        email: email,
+        title: title,
+        onConfirming: () {
+          if (_disposed) return;
+          isConfirmingSignIn = true;
+          notifyListeners();
+        },
       );
-      signInEmail = account;
-      _log('★ Firefox Account signed in');
-      return token;
+      if (_disposed || session == null) return null;
+      signInEmail = session.email;
+      _log('Firefox Account session confirmed');
+      return session.token;
     } on FfvpnException catch (e) {
-      signInError = e;
-      _log('✗ Firefox Account sign-in failed: ${e.detail}');
+      if (!_disposed) signInError = e;
+      _log('Firefox Account sign-in failed: ${e.kind.name}');
       return null;
-    } catch (e) {
-      signInError = FfvpnException(FfvpnErrorKind.other, '$e');
-      _log('✗ Firefox Account sign-in failed: $e');
+    } catch (_) {
+      if (!_disposed) {
+        signInError = const FfvpnException(
+          FfvpnErrorKind.other,
+          'Could not complete Mozilla browser sign-in',
+        );
+      }
+      _log('Firefox Account browser sign-in failed');
       return null;
     } finally {
-      try {
-        final file = File(tokenFile);
-        if (await file.exists()) await file.delete();
-      } catch (_) {}
       isSigningIn = false;
-      notifyListeners();
+      isConfirmingSignIn = false;
+      if (!_disposed) notifyListeners();
     }
   }
 

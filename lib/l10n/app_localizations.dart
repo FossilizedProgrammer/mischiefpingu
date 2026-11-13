@@ -2290,32 +2290,32 @@ abstract class AppLocalizations {
   /// No description provided for @ffvpnLoginSection.
   ///
   /// In en, this message translates to:
-  /// **'Sign in with Email & Password'**
+  /// **'Mozilla browser sign-in / sign-up'**
   String get ffvpnLoginSection;
 
   /// No description provided for @ffvpnLoginHint.
   ///
   /// In en, this message translates to:
-  /// **'Signs in directly to your Firefox Account and stores the resulting session token below — no need to dig through signedInUser.json.'**
+  /// **'Open Mozilla’s page to sign in or create an account. Enter your password, email code and CAPTCHA there. Keep the browser open until confirmation; the confirmed session token is saved below automatically.'**
   String get ffvpnLoginHint;
 
   /// No description provided for @ffvpnEmailLabel.
   ///
   /// In en, this message translates to:
-  /// **'Firefox Account email'**
+  /// **'Firefox Account email (optional)'**
   String get ffvpnEmailLabel;
-
-  /// No description provided for @ffvpnPasswordLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Password'**
-  String get ffvpnPasswordLabel;
 
   /// No description provided for @ffvpnSignIn.
   ///
   /// In en, this message translates to:
-  /// **'Sign in'**
+  /// **'Open Mozilla sign-in'**
   String get ffvpnSignIn;
+
+  /// No description provided for @ffvpnConfirmingSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete the email confirmation in the browser. Waiting for Mozilla to confirm the session…'**
+  String get ffvpnConfirmingSignIn;
 
   /// No description provided for @ffvpnSigningIn.
   ///
@@ -2650,7 +2650,7 @@ abstract class AppLocalizations {
   /// No description provided for @ffvpnErrSignInUnsupported.
   ///
   /// In en, this message translates to:
-  /// **'The installed ffvpn core does not support email/password sign-in. Update the core from Core Updates, or paste a session token instead.'**
+  /// **'Install Firefox on Linux or Microsoft Edge WebView2 Runtime on Windows, or paste a session token instead.'**
   String get ffvpnErrSignInUnsupported;
 
   /// No description provided for @ffvpnErrBlocked.

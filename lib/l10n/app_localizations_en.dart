@@ -1184,20 +1184,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ffvpnSettings => 'Firefox VPN Settings';
 
   @override
-  String get ffvpnLoginSection => 'Sign in with Email & Password';
+  String get ffvpnLoginSection => 'Mozilla browser sign-in / sign-up';
 
   @override
   String get ffvpnLoginHint =>
-      'Signs in directly to your Firefox Account and stores the resulting session token below — no need to dig through signedInUser.json.';
+      'Open Mozilla’s page to sign in or create an account. Enter your password, email code and CAPTCHA there. Keep the browser open until confirmation; the confirmed session token is saved below automatically.';
 
   @override
-  String get ffvpnEmailLabel => 'Firefox Account email';
+  String get ffvpnEmailLabel => 'Firefox Account email (optional)';
 
   @override
-  String get ffvpnPasswordLabel => 'Password';
+  String get ffvpnSignIn => 'Open Mozilla sign-in';
 
   @override
-  String get ffvpnSignIn => 'Sign in';
+  String get ffvpnConfirmingSignIn =>
+      'Complete the email confirmation in the browser. Waiting for Mozilla to confirm the session…';
 
   @override
   String get ffvpnSigningIn => 'Signing in…';
@@ -1396,7 +1397,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ffvpnErrSignInUnsupported =>
-      'The installed ffvpn core does not support email/password sign-in. Update the core from Core Updates, or paste a session token instead.';
+      'Install Firefox on Linux or Microsoft Edge WebView2 Runtime on Windows, or paste a session token instead.';
 
   @override
   String get ffvpnErrBlocked =>

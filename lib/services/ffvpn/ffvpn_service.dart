@@ -26,7 +26,6 @@ enum FfvpnErrorKind {
   /// ایمیل/رمز عبور نادرست است (errno 102/103) یا ورود بلاک شده.
   badCredentials,
 
-  /// هستهٔ نصب‌شده ورود مستقیم با ایمیل/رمز را پشتیبانی نمی‌کند.
   signInUnsupported,
 
   /// WAF موزیلا درخواست ورود را از این شبکه بلاک کرده است (HTTP 406).
@@ -132,125 +131,6 @@ class FfvpnService {
       );
     }
     return usage;
-  }
-
-  // ────────────────────────────────────────────────────────────────
-  //  ورود با ایمیل/رمز عبور (Firefox Account)
-  //
-  //  ffvpn با `--email` لاگین می‌کند و با `--usage` بعد از اثبات حساب
-  //  خارج می‌شود؛ با `--session-token-file` توکن به‌دست‌آمده را در فایل
-  //  می‌نویسد تا برنامه آن را بردارد و مثل توکن دستی ذخیره کند.
-  //  رمز عبور فقط از طریق env می‌رود و در argv/لاگ نمی‌آید.
-  // ────────────────────────────────────────────────────────────────
-
-  static List<String> buildSignInArgs({
-    required String email,
-    required String tokenFile,
-  }) =>
-      [
-        '--session-token-file',
-        tokenFile,
-        '--email',
-        email.trim(),
-        '--usage',
-      ];
-
-  /// ورود و برگرداندن sessionToken؛ رمز عبور ذخیره نمی‌شود.
-  static Future<String> signIn({
-    required String email,
-    required String password,
-    required String tokenFile,
-    void Function(String message)? log,
-  }) async {
-    final binaryPath = await resolveBinary();
-    if (binaryPath == null) {
-      throw const FfvpnException(
-        FfvpnErrorKind.binaryMissing,
-        'ffvpn binary not found',
-      );
-    }
-    if (!await supportsSessionFile(binaryPath)) {
-      throw const FfvpnException(
-        FfvpnErrorKind.signInUnsupported,
-        'installed ffvpn has no --session-token-file support',
-      );
-    }
-
-    final args = buildSignInArgs(email: email, tokenFile: tokenFile);
-    log?.call('ffvpn sign-in: $binaryPath ${args.join(' ')}');
-
-    final results = await Process.run(
-      binaryPath,
-      args,
-      environment: {'FFVPN_PASSWORD': password},
-    ).timeout(
-      const Duration(seconds: 90),
-      onTimeout: () => throw const FfvpnException(
-        FfvpnErrorKind.network,
-        'ffvpn sign-in timed out after 90s',
-      ),
-    );
-
-    final combined = '${results.stdout}\n${results.stderr}';
-    for (final line in combined.split('\n')) {
-      final t = line.trim();
-      if (t.isNotEmpty) log?.call(t);
-    }
-
-    if (results.exitCode != 0) {
-      throw FfvpnException(
-        classifyError(combined),
-        _lastMeaningfulLine(combined),
-        exitCode: results.exitCode,
-      );
-    }
-
-    final token = await readSessionToken(tokenFile);
-    if (token == null) {
-      throw const FfvpnException(
-        FfvpnErrorKind.other,
-        'ffvpn finished without caching a session token',
-      );
-    }
-    return token;
-  }
-
-  /// توکن ۶۴-رقمی hex از فایل session؛ null یعنی فایل نیست یا معتبر نیست.
-  static Future<String?> readSessionToken(String path) async {
-    try {
-      final token = (await File(path).readAsString()).trim();
-      return RegExp(r'^[0-9a-fA-F]{64}$').hasMatch(token) ? token : null;
-    } on FileSystemException {
-      return null;
-    }
-  }
-
-  static final Map<String, bool> _sessionFileSupportCache = {};
-
-  /// آیا باینری نصب‌شده `--session-token-file` را می‌شناسد؟ (کلید کش شامل
-  /// اندازهٔ فایل است تا بعد از آپدیت هسته دوباره سنجیده شود.)
-  static Future<bool> supportsSessionFile(String binaryPath) async {
-    String key;
-    try {
-      key = '$binaryPath:${await File(binaryPath).length()}';
-    } on FileSystemException {
-      return false;
-    }
-    final cached = _sessionFileSupportCache[key];
-    if (cached != null) return cached;
-
-    bool ok;
-    try {
-      final r = await Process.run(
-        binaryPath,
-        ['--help'],
-      ).timeout(const Duration(seconds: 10));
-      ok = '${r.stdout}${r.stderr}'.contains('session-token-file');
-    } catch (_) {
-      ok = false;
-    }
-    _sessionFileSupportCache[key] = ok;
-    return ok;
   }
 
   // ────────────────────────────────────────────────────────────────

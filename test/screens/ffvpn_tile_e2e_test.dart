@@ -15,6 +15,37 @@ import 'package:mischiefpingu/providers/app_provider.dart';
 import 'package:mischiefpingu/providers/ffvpn_provider.dart';
 import 'package:mischiefpingu/screens/widgets/ffvpn_settings_tile.dart';
 import 'package:mischiefpingu/services/ffvpn/ffvpn_service.dart';
+import 'package:mischiefpingu/services/ffvpn/ffvpn_browser_login.dart';
+import 'dart:async';
+
+class TestBrowserLogin extends FfvpnBrowserLogin {
+  final result = Completer<FfvpnBrowserSession?>();
+  bool opened = false;
+
+  @override
+  Future<FfvpnBrowserSession?> signIn({
+    required String email,
+    required String title,
+    required void Function() onConfirming,
+  }) async {
+    opened = true;
+    onConfirming();
+    return result.future;
+  }
+
+  @override
+  void cancel() {
+    if (!result.isCompleted) result.complete(null);
+  }
+}
+
+class TestFfvpnProvider extends FfvpnProvider {
+  TestFfvpnProvider(AppProvider app, FfvpnBrowserLogin browser)
+      : super(processService: app.processService, browserLogin: browser);
+
+  @override
+  Future<void> refreshUsage({required String sessionToken}) async {}
+}
 
 Future<AppProvider> pumpTile(
   WidgetTester tester,
@@ -98,44 +129,96 @@ List<FfvpnCountry> _countries() => const [
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('the sign-in section renders email/password and obscures it',
+  testWidgets('offers browser login without an app password field',
       (tester) async {
     SharedPreferences.setMockInitialValues({});
     final provider = await pumpTile(tester, const FirefoxVpnSettingsTile());
     await expand(tester, 'Firefox VPN Settings');
 
-    expect(find.text('Sign in with Email & Password'), findsOneWidget);
-    expect(find.text('Firefox Account email'), findsOneWidget);
-
-    final password = tester.widget<TextField>(
-      find.ancestor(
-        of: find.text('Password'),
-        matching: find.byType(TextField),
-      ),
-    );
-    expect(password.obscureText, isTrue);
+    expect(find.text('Mozilla browser sign-in / sign-up'), findsOneWidget);
+    expect(find.text('Firefox Account email (optional)'), findsOneWidget);
+    expect(find.text('Password'), findsNothing);
     provider.dispose();
   });
 
-  testWidgets('signing in with empty fields reports bad credentials',
+  testWidgets('browser login accepts blank email and saves the confirmed token',
       (tester) async {
     SharedPreferences.setMockInitialValues({});
-    final provider = await pumpTile(tester, const FirefoxVpnSettingsTile());
+    final app = AppProvider();
+    final browser = TestBrowserLogin();
+    final ffvpn = TestFfvpnProvider(app, browser);
+    await pumpTile(tester, const FirefoxVpnSettingsTile(),
+        app: app, ffvpn: ffvpn);
     await expand(tester, 'Firefox VPN Settings');
-
-    final signIn = find.text('Sign in');
-    await tester.ensureVisible(signIn);
-    await tester.tap(signIn);
+    final button = find.text('Open Mozilla sign-in');
+    await tester.ensureVisible(button);
+    await tester.tap(button);
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 50));
+    expect(browser.opened, true);
+    expect(find.text('Cancel'), findsOneWidget);
+    expect(app.settings.ffvpnSessionToken, isEmpty);
 
-    // پیام لوکال‌شدهٔ badCredentials — یعنی هیچ پروسی اجرا نشده و
-    // اعتبارسنجی سمت اپ زودتر جلوی درخواست را گرفته است.
-    expect(
-      find.textContaining('The email or password is incorrect'),
-      findsOneWidget,
-    );
-    provider.dispose();
+    final token = 'a' * 64;
+    browser.result.complete(FfvpnBrowserSession(token, 'user@example.com'));
+    await tester.pumpAndSettle();
+    expect(app.settings.ffvpnSessionToken, token);
+    expect(find.text('Signed in — session token saved.'), findsOneWidget);
+    expect(find.text(token), findsOneWidget);
+    final saved = await app.persistence.loadSettings();
+    expect(saved.ffvpnSessionToken, token);
+    app.dispose();
+    ffvpn.dispose();
+  });
+
+  testWidgets('cancelling browser login preserves the existing manual token',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'settings': jsonEncode({'ffvpnSessionToken': 'b' * 64}),
+    });
+    final app = AppProvider();
+    app.settings.ffvpnSessionToken = 'b' * 64;
+    final browser = TestBrowserLogin();
+    final ffvpn = TestFfvpnProvider(app, browser);
+    await pumpTile(tester, const FirefoxVpnSettingsTile(),
+        app: app, ffvpn: ffvpn);
+    await expand(tester, 'Firefox VPN Settings');
+    final button = find.text('Open Mozilla sign-in');
+    await tester.ensureVisible(button);
+    await tester.tap(button);
+    await tester.pump();
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(app.settings.ffvpnSessionToken, 'b' * 64);
+    expect(find.text('Open Mozilla sign-in'), findsOneWidget);
+    expect(ffvpn.signInError, isNull);
+    app.dispose();
+    ffvpn.dispose();
+  });
+
+  testWidgets('collapsing settings cancels an active browser login',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'settings': jsonEncode({'ffvpnSessionToken': 'b' * 64}),
+    });
+    final app = AppProvider();
+    final browser = TestBrowserLogin();
+    final ffvpn = TestFfvpnProvider(app, browser);
+    await pumpTile(tester, const FirefoxVpnSettingsTile(),
+        app: app, ffvpn: ffvpn);
+    await expand(tester, 'Firefox VPN Settings');
+    final button = find.text('Open Mozilla sign-in');
+    await tester.ensureVisible(button);
+    await tester.tap(button);
+    await tester.pump();
+    expect(ffvpn.isSigningIn, true);
+
+    await expand(tester, 'Firefox VPN Settings');
+    await tester.pumpAndSettle();
+    expect(await browser.result.future, isNull);
+    expect(ffvpn.isSigningIn, false);
+    expect(app.settings.ffvpnSessionToken, 'b' * 64);
+    app.dispose();
+    ffvpn.dispose();
   });
 
   testWidgets('the country filter choice persists through the real provider',
