@@ -249,8 +249,31 @@ jobs:
       - name: Get Flutter dependencies
         run: flutter pub get
 
+      - name: Verify Windows core-update TLS
+        shell: pwsh
+        run: |
+          $env:HTTP_PROXY = "http://127.0.0.1:1"
+          $env:HTTPS_PROXY = "http://127.0.0.1:1"
+          $env:ALL_PROXY = "socks5://127.0.0.1:1"
+          $env:NO_PROXY = "*"
+          $env:CURL_CA_BUNDLE = "missing-test-ca.pem"
+          $env:SSL_CERT_FILE = "missing-test-ca.pem"
+          flutter test test/services/core_update_network_tls_test.dart --dart-define=CORE_UPDATE_LIVE_TLS=true
+
       - name: Build Windows release
         run: flutter build windows --release
+
+      - name: Verify TLS implementation in Windows release bundle
+        shell: pwsh
+        run: |
+          $bytes = [IO.File]::ReadAllBytes("build/windows/x64/runner/Release/data/app.so")
+          $utf8 = [Text.Encoding]::UTF8.GetString($bytes)
+          $utf16 = [Text.Encoding]::Unicode.GetString($bytes)
+          foreach ($marker in @('Schannel certificate verification', '\System32\curl.exe')) {
+            if (-not ($utf8.Contains($marker) -or $utf16.Contains($marker))) {
+              throw "Missing Windows TLS implementation marker: $marker"
+            }
+          }
 
       - name: Copy bundled binaries and data (Windows)
         shell: pwsh

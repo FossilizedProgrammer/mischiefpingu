@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'core_update_curl.dart';
+
 /// لایهٔ HTTP برای درخواست‌های سبک (getJson / getText / headRequest).
 class CoreUpdateHttp {
   final void Function(String)? log;
@@ -11,16 +13,7 @@ class CoreUpdateHttp {
 
   bool get _isWin => Platform.isWindows;
 
-  Future<void> ensureCurl() async {
-    try {
-      final cmd = _isWin ? 'where' : 'which';
-      final r = await Process.run(cmd, ['curl']);
-      if (r.exitCode == 0) return;
-    } catch (_) {}
-    throw StateError(
-      'curl not found — install curl to download via proxy (or use Direct).',
-    );
-  }
+  Future<void> ensureCurl() => CoreUpdateCurl.ensureAvailable();
 
   void logRoute(String? proxy) {
     if (proxy == null || proxy.isEmpty) {
@@ -45,21 +38,25 @@ class CoreUpdateHttp {
     String accept = '*/*',
     String userAgent = 'mischiefpingu-CoreUpdater/1.0',
   }) async {
-    if (proxy != null && proxy.isNotEmpty) {
+    if (_isWin || (proxy != null && proxy.isNotEmpty)) {
       await ensureCurl();
-      final r = await Process.run('curl', [
-        '-sSL',
-        '--fail',
-        '--max-time',
-        '90',
-        '--socks5-hostname',
-        proxy,
-        '-H',
-        'User-Agent: $userAgent',
-        '-H',
-        'Accept: $accept',
-        url,
-      ]).timeout(const Duration(seconds: 120));
+      final r = await Process.run(
+        CoreUpdateCurl.executable,
+        [
+          ...CoreUpdateCurl.arguments(proxy),
+          '--max-time',
+          '90',
+          '-H',
+          'User-Agent: $userAgent',
+          '-H',
+          'Accept: $accept',
+          '--url',
+          url,
+        ],
+        stdoutEncoding: utf8,
+        environment: CoreUpdateCurl.environment,
+        includeParentEnvironment: false,
+      ).timeout(const Duration(seconds: 120));
       if (r.exitCode != 0) {
         throw HttpException(
           'curl failed for $url (via $proxy): ${(r.stderr as String).trim()}',
@@ -88,25 +85,28 @@ class CoreUpdateHttp {
     String? proxy, {
     int timeoutSec = 15,
   }) async {
-    if (proxy != null && proxy.isNotEmpty) {
+    if (_isWin || (proxy != null && proxy.isNotEmpty)) {
       await ensureCurl();
       try {
-        final r = await Process.run('curl', [
-          '-sSL',
-          '--fail',
-          '--head',
-          '--max-time',
-          '$timeoutSec',
-          '--socks5-hostname',
-          proxy,
-          '-H',
-          'User-Agent: mischiefpingu-CoreUpdater/1.0',
-          '-o',
-          '/dev/null',
-          '-w',
-          '%{http_code} %{size_download}',
-          url,
-        ]).timeout(Duration(seconds: timeoutSec + 5));
+        final r = await Process.run(
+          CoreUpdateCurl.executable,
+          [
+            ...CoreUpdateCurl.arguments(proxy),
+            '--head',
+            '--max-time',
+            '$timeoutSec',
+            '-H',
+            'User-Agent: mischiefpingu-CoreUpdater/1.0',
+            '-o',
+            _isWin ? 'NUL' : '/dev/null',
+            '-w',
+            '%{http_code}',
+            '--url',
+            url,
+          ],
+          environment: CoreUpdateCurl.environment,
+          includeParentEnvironment: false,
+        ).timeout(Duration(seconds: timeoutSec + 5));
         if (r.exitCode != 0) return null;
         final out = (r.stdout as String).trim();
         final parts = out.split(RegExp(r'\s+'));

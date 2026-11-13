@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'core_update_curl.dart';
+
 /// دانلود فایل با پشتیبانی از proxy و progress.
 class CoreUpdateDownloader {
   final void Function(String)? log;
@@ -11,18 +13,7 @@ class CoreUpdateDownloader {
 
   bool get _isWin => Platform.isWindows;
 
-  Future<void> ensureCurl() async {
-    try {
-      final cmd = _isWin ? 'where' : 'which';
-      final r = await Process.run(cmd, ['curl']);
-      if (r.exitCode == 0) return;
-    } catch (_) {}
-    throw StateError(
-      'curl not found — install curl to download via proxy (or use Direct).',
-    );
-  }
-
-  /// دانلود فایل. اگر proxy داده شود، از curl استفاده می‌کند.
+  Future<void> ensureCurl() => CoreUpdateCurl.ensureAvailable();
   Future<void> download(
     String url,
     String dest, {
@@ -33,27 +24,40 @@ class CoreUpdateDownloader {
     int span = 70,
     int? totalHint,
   }) async {
-    if (proxy != null && proxy.isNotEmpty) {
+    if (_isWin || (proxy != null && proxy.isNotEmpty)) {
       await ensureCurl();
-      _log('→ Fetching ${url.split('/').last} via proxy $proxy …');
+      if (onCancelCheck?.call() ?? false) {
+        throw StateError('Download cancelled by user');
+      }
+      final route = proxy == null || proxy.isEmpty ? 'direct' : 'proxy $proxy';
+      _log('Fetching ${url.split('/').last} via $route');
       final errBuf = StringBuffer();
-      final proc = await Process.start('curl', [
-        '-sSL',
-        '--fail',
-        '--max-time',
-        '900',
-        '--socks5-hostname',
-        proxy,
-        '-o',
-        dest,
-        url,
-      ]);
-      proc.stderr.transform(utf8.decoder).listen(errBuf.write);
+      final proc = await Process.start(
+        CoreUpdateCurl.executable,
+        [
+          ...CoreUpdateCurl.arguments(proxy),
+          '--max-time',
+          '900',
+          '-H',
+          'User-Agent: mischiefpingu-CoreUpdater/1.0',
+          '-o',
+          dest,
+          '--url',
+          url,
+        ],
+        environment: CoreUpdateCurl.environment,
+        includeParentEnvironment: false,
+      );
+      final stderrDone =
+          proc.stderr.transform(utf8.decoder).forEach(errBuf.write);
+      final stdoutDone = proc.stdout.drain<void>();
       var exited = false;
       proc.exitCode.then((_) => exited = true);
       while (!exited) {
         if (onCancelCheck?.call() ?? false) {
-          proc.kill(ProcessSignal.sigterm);
+          proc.kill();
+          await proc.exitCode;
+          await Future.wait([stderrDone, stdoutDone]);
           throw StateError('Download cancelled by user');
         }
         await Future.delayed(const Duration(milliseconds: 500));
@@ -65,6 +69,7 @@ class CoreUpdateDownloader {
         }
       }
       final code = await proc.exitCode;
+      await Future.wait([stderrDone, stdoutDone]);
       if (code != 0) {
         throw HttpException(
           'curl download failed (code $code): ${errBuf.toString().trim()}',
