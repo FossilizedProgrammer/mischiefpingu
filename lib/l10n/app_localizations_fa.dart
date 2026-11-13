@@ -1182,29 +1182,6 @@ class AppLocalizationsFa extends AppLocalizations {
   String get ffvpnSettings => 'تنظیمات وی‌پی‌ان فایرفاکس';
 
   @override
-  String get ffvpnLoginSection => 'ورود / ثبت‌نام در مرورگر موزیلا';
-
-  @override
-  String get ffvpnLoginHint =>
-      'صفحهٔ موزیلا را برای ورود یا ساخت حساب باز کنید. رمز، کد ایمیل و کپچا را همان‌جا وارد کنید. مرورگر را تا پایان تأیید باز نگه دارید؛ توکن نشست تأییدشده خودکار در قسمت پایین ذخیره می‌شود.';
-
-  @override
-  String get ffvpnEmailLabel => 'ایمیل حساب فایرفاکس (اختیاری)';
-
-  @override
-  String get ffvpnSignIn => 'باز کردن صفحهٔ ورود موزیلا';
-
-  @override
-  String get ffvpnConfirmingSignIn =>
-      'تأیید ایمیل را در مرورگر تکمیل کنید. در انتظار تأیید نشست از طرف موزیلا…';
-
-  @override
-  String get ffvpnSigningIn => 'در حال ورود…';
-
-  @override
-  String get ffvpnSignedIn => 'وارد شدید — توکن نشست ذخیره شد.';
-
-  @override
   String get ffvpnGuideTitle => 'توکن نشست حساب فایرفاکس';
 
   @override
@@ -1391,10 +1368,6 @@ class AppLocalizationsFa extends AppLocalizations {
   @override
   String get ffvpnErrBadCredentials =>
       'ایمیل یا رمز عبور نادرست است (یا ورود بلاک شده) — اطلاعات حساب فایرفاکس را بررسی کنید.';
-
-  @override
-  String get ffvpnErrSignInUnsupported =>
-      'برای ورود مرورگری، در لینوکس Firefox و در ویندوز Microsoft Edge WebView2 Runtime را نصب کنید؛ یا توکن نشست را دستی بچسبانید.';
 
   @override
   String get ffvpnErrBlocked =>

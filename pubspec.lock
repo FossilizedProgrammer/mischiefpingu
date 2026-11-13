@@ -129,14 +129,6 @@ packages:
       url: "https://mirror-flutter.runflare.com"
     source: hosted
     version: "3.0.8"
-  desktop_webview_window:
-    dependency: "direct main"
-    description:
-      name: desktop_webview_window
-      sha256: "22f23a8b88753f39207a112791eaf42ff7cf4726432f95ceab12e222ea002d46"
-      url: "https://mirror-flutter.runflare.com"
-    source: hosted
-    version: "0.4.2"
   fake_async:
     dependency: transitive
     description:

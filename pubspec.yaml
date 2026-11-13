@@ -23,7 +23,6 @@ dependencies:
   sqflite_common_ffi: ^2.3.4
   sqlite3_flutter_libs: ^0.5.24
   meta: ^1.15.0
-  desktop_webview_window: ^0.4.0
 
 dev_dependencies:
   flutter_test:

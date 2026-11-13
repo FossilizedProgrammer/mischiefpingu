@@ -4,7 +4,6 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   audioplayers_linux
-  desktop_webview_window
   screen_retriever_linux
   sqlite3_flutter_libs
   window_manager

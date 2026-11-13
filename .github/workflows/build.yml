@@ -51,7 +51,6 @@ jobs:
             pkg-config \
             zip \
             libgtk-3-dev \
-            libwebkit2gtk-4.1-dev \
             liblzma-dev \
             libstdc++-12-dev \
             libayatana-appindicator3-dev \

@@ -6,27 +6,14 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../services/ffvpn/ffvpn_browser_login.dart';
 import '../services/ffvpn/ffvpn_service.dart';
 import '../services/process_service.dart';
 
 class FfvpnProvider extends ChangeNotifier {
-  FfvpnProvider({
-    required ProcessService processService,
-    FfvpnBrowserLogin? browserLogin,
-  })  : _processService = processService,
-        _browserLogin = browserLogin ?? FfvpnBrowserLogin();
+  FfvpnProvider({required ProcessService processService})
+      : _processService = processService;
 
   final ProcessService _processService;
-  final FfvpnBrowserLogin _browserLogin;
-  bool _disposed = false;
-
-  @override
-  void dispose() {
-    _disposed = true;
-    _browserLogin.cancel();
-    super.dispose();
-  }
 
   void _log(String message) {
     _processService.addLog(message, source: LogSource.ffvpn);
@@ -77,58 +64,6 @@ class FfvpnProvider extends ChangeNotifier {
     } finally {
       isLoadingCountries = false;
       notifyListeners();
-    }
-  }
-
-  bool isSigningIn = false;
-  bool isConfirmingSignIn = false;
-  String? signInEmail;
-  FfvpnException? signInError;
-
-  void cancelSignIn() => _browserLogin.cancel();
-
-  Future<String?> signIn({
-    required String email,
-    required String title,
-  }) async {
-    if (isSigningIn || _disposed) return null;
-    isSigningIn = true;
-    isConfirmingSignIn = false;
-    signInError = null;
-    notifyListeners();
-
-    try {
-      _log('Opening Mozilla browser sign-in');
-      final session = await _browserLogin.signIn(
-        email: email,
-        title: title,
-        onConfirming: () {
-          if (_disposed) return;
-          isConfirmingSignIn = true;
-          notifyListeners();
-        },
-      );
-      if (_disposed || session == null) return null;
-      signInEmail = session.email;
-      _log('Firefox Account session confirmed');
-      return session.token;
-    } on FfvpnException catch (e) {
-      if (!_disposed) signInError = e;
-      _log('Firefox Account sign-in failed: ${e.kind.name}');
-      return null;
-    } catch (_) {
-      if (!_disposed) {
-        signInError = const FfvpnException(
-          FfvpnErrorKind.other,
-          'Could not complete Mozilla browser sign-in',
-        );
-      }
-      _log('Firefox Account browser sign-in failed');
-      return null;
-    } finally {
-      isSigningIn = false;
-      isConfirmingSignIn = false;
-      if (!_disposed) notifyListeners();
     }
   }
 

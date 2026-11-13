@@ -1193,30 +1193,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get ffvpnSettings => 'Ajustes de Firefox VPN';
 
   @override
-  String get ffvpnLoginSection =>
-      'Inicio de sesión / registro en el navegador Mozilla';
-
-  @override
-  String get ffvpnLoginHint =>
-      'Abre la página de Mozilla para iniciar sesión o crear una cuenta. Introduce allí la contraseña, el código del correo y el CAPTCHA. Mantén el navegador abierto hasta la confirmación; el token de sesión confirmado se guarda abajo automáticamente.';
-
-  @override
-  String get ffvpnEmailLabel => 'Correo de la cuenta de Firefox (opcional)';
-
-  @override
-  String get ffvpnSignIn => 'Abrir inicio de sesión de Mozilla';
-
-  @override
-  String get ffvpnConfirmingSignIn =>
-      'Completa la confirmación del correo en el navegador. Esperando a que Mozilla confirme la sesión…';
-
-  @override
-  String get ffvpnSigningIn => 'Iniciando sesión…';
-
-  @override
-  String get ffvpnSignedIn => 'Sesión iniciada — token guardado.';
-
-  @override
   String get ffvpnGuideTitle => 'Token de sesión de la cuenta de Firefox';
 
   @override
@@ -1404,10 +1380,6 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get ffvpnErrBadCredentials =>
       'El correo o la contraseña son incorrectos (o el inicio de sesión está bloqueado) — revisa las credenciales de tu cuenta de Firefox.';
-
-  @override
-  String get ffvpnErrSignInUnsupported =>
-      'Instala Firefox en Linux o Microsoft Edge WebView2 Runtime en Windows, o pega un token de sesión.';
 
   @override
   String get ffvpnErrBlocked =>

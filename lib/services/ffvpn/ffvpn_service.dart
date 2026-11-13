@@ -26,8 +26,6 @@ enum FfvpnErrorKind {
   /// ایمیل/رمز عبور نادرست است (errno 102/103) یا ورود بلاک شده.
   badCredentials,
 
-  signInUnsupported,
-
   /// WAF موزیلا درخواست ورود را از این شبکه بلاک کرده است (HTTP 406).
   blocked,
 
