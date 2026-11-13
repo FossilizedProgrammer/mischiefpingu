@@ -47,6 +47,12 @@ class CoreUpdateCurl {
         ],
       ];
 
+  static bool usesWindowsCertificateStore(String version) {
+    // Older Windows curl versions report Schannel as WinSSL.
+    return RegExp(r'\b(?:Schannel|WinSSL)\b', caseSensitive: false)
+        .hasMatch(version.split('\n').first);
+  }
+
   static Future<void> ensureAvailable() async {
     final result = await Process.run(
       executable,
@@ -57,7 +63,8 @@ class CoreUpdateCurl {
     if (result.exitCode != 0) {
       throw StateError('curl is unavailable for core updates.');
     }
-    if (Platform.isWindows && !(result.stdout as String).contains('Schannel')) {
+    if (Platform.isWindows &&
+        !usesWindowsCertificateStore(result.stdout as String)) {
       throw StateError(
           'Windows system curl must use Schannel certificate verification.');
     }

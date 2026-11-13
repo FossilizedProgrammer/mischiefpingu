@@ -261,7 +261,7 @@ jobs:
           $bytes = [IO.File]::ReadAllBytes("build/windows/x64/runner/Release/data/app.so")
           $utf8 = [Text.Encoding]::UTF8.GetString($bytes)
           $utf16 = [Text.Encoding]::Unicode.GetString($bytes)
-          foreach ($marker in @('Schannel certificate verification', '\System32\curl.exe')) {
+          foreach ($marker in @('Schannel certificate verification', 'WinSSL', '\System32\curl.exe')) {
             if (-not ($utf8.Contains($marker) -or $utf16.Contains($marker))) {
               throw "Missing Windows TLS implementation marker: $marker"
             }

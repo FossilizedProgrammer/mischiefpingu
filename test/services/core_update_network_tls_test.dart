@@ -134,14 +134,48 @@ void main() {
     await temp.delete(recursive: true);
   });
 
-  test('Windows uses system curl with Schannel, never PATH curl', () async {
+  test('Windows uses system curl with Windows trust, never PATH curl',
+      () async {
     await network.ensureCurl();
     if (Platform.isWindows) {
       expect(CoreUpdateCurl.executable,
           '${Platform.environment['SystemRoot']}\\System32\\curl.exe');
       final version = await Process.run(
           CoreUpdateCurl.executable, ['--disable', '--version']);
-      expect(version.stdout, contains('Schannel'));
+      expect(
+          CoreUpdateCurl.usesWindowsCertificateStore(version.stdout as String),
+          isTrue);
+    }
+  });
+
+  test('Windows trust recognizes Schannel and the legacy WinSSL name', () {
+    for (final version in [
+      'curl 7.55.1 (Windows) libcurl/7.55.1 WinSSL\n'
+          'Release-Date: 2017-11-14, security patched: 2019-11-05\n'
+          'Protocols: dict file ftp ftps http https imap imaps pop3 pop3s '
+          'smtp smtps telnet tftp\n'
+          'Features: AsynchDNS IPv6 Largefile SSPI Kerberos SPNEGO NTLM SSL',
+      'curl 8.14.1 (Windows) libcurl/8.14.1 Schannel',
+      'curl 7.55.1 (Windows) libcurl/7.55.1 winssl',
+      'curl 8.14.1 (Windows) libcurl/8.14.1 schannel',
+    ]) {
+      expect(CoreUpdateCurl.usesWindowsCertificateStore(version), isTrue,
+          reason: version);
+    }
+  });
+
+  test('Windows trust rejects other backends and misleading names', () {
+    for (final version in [
+      'curl 8.14.1 (Windows) libcurl/8.14.1 OpenSSL/3.5.0',
+      'curl 8.14.1 (Windows) libcurl/8.14.1 LibreSSL/4.0.0',
+      'curl 8.14.1 (Windows) libcurl/8.14.1 WinSSLHelper',
+      'curl 8.14.1 (Windows) libcurl/8.14.1 SchannelHelper',
+      'curl 8.14.1 (Windows) libcurl/8.14.1 OpenSSL/3.5.0\n'
+          'Features: Schannel',
+      '',
+    ]) {
+      expect(CoreUpdateCurl.usesWindowsCertificateStore(version), isFalse,
+          reason: version);
     }
   });
 
