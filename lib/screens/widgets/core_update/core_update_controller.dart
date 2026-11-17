@@ -170,6 +170,9 @@ class CoreUpdateController extends ChangeNotifier {
         return 'ffvpn'; // 🆕 Firefox VPN
       case CoreKind.lantern:
         return 'lantern'; // 🆕 Lantern headless
+      case CoreKind.cumulus:
+        return 'cumulus'; // 🆕 CumulusVPN CLI
+        return 'lantern'; // 🆕 Lantern headless
       case CoreKind.npv:
         return 'npv'; // 🆕 NPV Tunnel
     }

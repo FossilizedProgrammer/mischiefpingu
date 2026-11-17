@@ -8,6 +8,7 @@ import 'core_update_psiphon.dart';
 import 'core_update_sstp.dart';
 import 'core_update_sunandlion.dart';
 import 'core_update_tor.dart';
+import 'cumulus_updater.dart';
 import 'wireguard/wireguard_updater.dart';
 import 'core_updater.dart';
 import 'core_updater_adapters.dart';
@@ -26,6 +27,7 @@ class CoreUpdaterRegistry {
     required FfvpnUpdater ffvpn,
     required LanternUpdater lantern, // 🆕
     required NpvUpdater npv, // 🆕
+    required CumulusUpdater cumulus, // 🆕 CumulusVPN CLI
   }) : _updaters = {
           'aether': aetherAdapter(aether),
           'tor': torAdapter(tor),
@@ -37,6 +39,7 @@ class CoreUpdaterRegistry {
           'ffvpn': ffvpnAdapter(ffvpn),
           'lantern': lanternAdapter(lantern), // 🆕
           'npv': npvAdapter(npv), // 🆕
+          'cumulus': cumulusAdapter(cumulus), // 🆕 CumulusVPN CLI
         };
 
   CoreUpdater? byId(String coreId) => _updaters[coreId];

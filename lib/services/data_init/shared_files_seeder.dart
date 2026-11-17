@@ -128,6 +128,7 @@ class SharedFilesSeeder {
       'lantern',
       'geph5-proxy',
       'npv',
+      'cumulusvpn',
     ];
     for (final fileName in platformBinaries) {
       final sourceName = '$fileName${PlatformInfo.exeExt}';

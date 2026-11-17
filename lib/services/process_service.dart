@@ -65,6 +65,7 @@ part 'process_service_ffvpn.dart';
 part 'process_service_lantern.dart';
 part 'process_service_geph.dart';
 part 'process_service_npv.dart';
+part 'process_service_cumulus.dart';
 
 class ProcessService extends ChangeNotifier
     with ProcessNotifications
@@ -122,6 +123,13 @@ class ProcessService extends ChangeNotifier
   bool isNpvRunning = false;
 
   bool isNpvConnected = false;
+
+  bool isCumulusRunning = false;
+
+  bool isCumulusConnected = false;
+
+  /// خلاصهٔ مسیر انتخاب‌شده که خود هسته چاپ می‌کند.
+  String cumulusSelectedRoute = '';
 
   /// remark کانفیگی که npv بعد از سنجش انتخاب کرده (برای نمایش در status).
   String npvSelectedConfig = '';
@@ -396,6 +404,7 @@ class ProcessService extends ChangeNotifier
   Process? gephProcess;
   Process? npvProcess;
   Process? npvScanProcess;
+  Process? cumulusProcess;
 
   // ═══════════════════════════════════════════════════════════════
   //  Forwarder sockets
@@ -466,6 +475,8 @@ class ProcessService extends ChangeNotifier
   int? get lanternPid => lanternProcess?.pid;
   int? get gephPid => gephProcess?.pid;
   int? get npvPid => npvProcess?.pid;
+
+  int? get cumulusPid => cumulusProcess?.pid;
 
   // ═══════════════════════════════════════════════════════════════
   //  Lifecycle

@@ -30,10 +30,11 @@ class ConnectionButtons extends StatelessWidget {
     final lanternData = resolver.resolveLantern(builder);
     final gephData = resolver.resolveGeph(builder);
     final npvData = resolver.resolveNpv(builder);
+    final cumulusData = resolver.resolveCumulus(builder);
 
     final onSurface = theme.colorScheme.onSurface;
 
-    // همهٔ دکمه‌ها در یک ردیف، هرکدام مستقل. هر اسلات به‌طور مساوی تقسیم
+    // دکمه‌ها در دو ردیف پنج‌تایی می‌نشینند. هر اسلات به‌طور مساوی تقسیم
     // می‌شود تا در پنجره‌های باریک فشرده و مرتب بمانند.
     Widget slot(ConnectionPillButton button) => Expanded(
           child: Padding(
@@ -169,6 +170,20 @@ class ConnectionButtons extends StatelessWidget {
         ),
       ),
       ConnectionPillButton(
+        title: 'Cumulus',
+        actionLabel: cumulusData.state.actionLabel,
+        icon: cumulusData.state.icon,
+        color: cumulusData.state.color,
+        busy: cumulusData.state.busy,
+        connected: cumulusData.state.connected,
+        onTap: () => provider.connectCumulus(),
+        statusText: cumulusData.state.statusText(cumulusData.progress, l10n),
+        statusColor: cumulusData.state.statusColor(
+          theme.colorScheme.primary,
+          onSurface,
+        ),
+      ),
+      ConnectionPillButton(
         title: 'NPV',
         actionLabel: npvData.state.actionLabel,
         icon: npvData.state.icon,
@@ -184,12 +199,29 @@ class ConnectionButtons extends StatelessWidget {
       ),
     ];
 
+    const perRow = 5;
+    final rows = <Widget>[];
+    for (var start = 0; start < buttons.length; start += perRow) {
+      final end =
+          start + perRow < buttons.length ? start + perRow : buttons.length;
+      final rowButtons = buttons.sublist(start, end);
+      if (rows.isNotEmpty) rows.add(const SizedBox(height: 6));
+      rows.add(
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ...rowButtons.map(slot),
+            // ردیف آخرِ ناقص هم همان عرض اسلات‌های ردیف بالا را نگه می‌دارد.
+            for (var i = rowButtons.length; i < perRow; i++)
+              const Expanded(child: SizedBox()),
+          ],
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: buttons.map(slot).toList(),
-      ),
+      child: Column(children: rows),
     );
   }
 }

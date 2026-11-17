@@ -9,6 +9,7 @@ import 'core_update_psiphon.dart';
 import 'core_update_sstp.dart';
 import 'core_update_sunandlion.dart';
 import 'core_update_tor.dart';
+import 'cumulus_updater.dart';
 import 'wireguard/wireguard_updater.dart';
 import 'core_updater.dart';
 
@@ -375,3 +376,40 @@ class _NpvAdapter implements CoreUpdater {
 }
 
 CoreUpdater npvAdapter(NpvUpdater inner) => _NpvAdapter(inner);
+
+// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+class _CumulusAdapter implements CoreUpdater {
+  final CumulusUpdater inner;
+  _CumulusAdapter(this.inner);
+
+  @override
+  String get coreId => 'cumulus';
+
+  @override
+  Future<CoreUpdateInfo> check(
+    String? proxy, {
+    required String installed,
+    String psiphonBinSha = '',
+  }) =>
+      inner.check(proxy, installed: installed);
+
+  @override
+  Future<bool> update(
+    CoreUpdateInfo info, {
+    required String installed,
+    String? proxy,
+    String? psiphonBinSha,  // Cumulus CLI doesn't use psiphon bin sha
+    void Function(int percent)? onProgress,
+    bool Function()? onCancelCheck,
+  }) =>
+      inner.update(
+        info,
+        installed: installed,
+        proxy: proxy,
+        onProgress: onProgress,
+        onCancelCheck: onCancelCheck,
+      );
+}
+
+CoreUpdater cumulusAdapter(CumulusUpdater inner) => _CumulusAdapter(inner);

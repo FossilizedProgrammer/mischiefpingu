@@ -13,6 +13,7 @@ import 'core_update/core_update_psiphon.dart';
 import 'core_update/core_update_sstp.dart';
 import 'core_update/core_update_sunandlion.dart';
 import 'core_update/core_update_tor.dart';
+import 'core_update/cumulus_updater.dart';
 import 'core_update/core_update_version_checker.dart';
 import 'core_update/core_updater_registry.dart';
 import 'core_update/wireguard/wireguard_updater.dart';
@@ -98,6 +99,12 @@ class CoreUpdateService {
     ),
     // 🆕 هستهٔ NPV (npv-go)
     npv: NpvUpdater(
+      network: _network,
+      pending: _pending,
+      processUtils: _process,
+      log: log,
+    ),
+    cumulus: CumulusUpdater(
       network: _network,
       pending: _pending,
       processUtils: _process,

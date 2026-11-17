@@ -149,6 +149,21 @@ class ConnectionStateResolver {
     );
   }
 
+  ConnectionButtonData resolveCumulus(ConnectionButtonBuilder builder) {
+    final ps = provider.processService;
+    final cumulusOn = ps.isCumulusConnected;
+    final cumulusBusy =
+        provider.isCumulusBusy || (ps.isCumulusRunning && !cumulusOn);
+    final cumulusRunningForButton =
+        ps.isCumulusRunning || (provider.isCumulusBusy && !cumulusOn);
+
+    return builder.forSstp(
+      isRunning: cumulusRunningForButton,
+      isConnected: cumulusOn,
+      isBusy: cumulusBusy,
+    );
+  }
+
   ConnectionButtonData resolveNpv(ConnectionButtonBuilder builder) {
     final ps = provider.processService;
     final npvOn = ps.isNpvConnected;
