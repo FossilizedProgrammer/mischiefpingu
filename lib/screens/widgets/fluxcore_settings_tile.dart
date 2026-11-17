@@ -1,4 +1,4 @@
-// lib/screens/widgets/cumulus_settings_tile.dart
+// lib/screens/widgets/fluxcore_settings_tile.dart
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -6,36 +6,36 @@ import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/settings_model.dart';
 import '../../providers/app_provider.dart';
-import '../../services/cumulus/cumulus_locations.dart';
-import '../../services/cumulus/cumulus_paths.dart';
+import '../../services/fluxcore/fluxcore_locations.dart';
+import '../../services/fluxcore/fluxcore_paths.dart';
 import '../../widgets/settings/port_text_field.dart';
 import '../../widgets/settings_tile_base.dart';
 
 /// ═══════════════════════════════════════════════════════════════
-///  CumulusSettingsTile — تنظیمات هستهٔ CumulusVPN.
+///  FluxcoreSettingsTile — تنظیمات هستهٔ Fluxcore.
 ///
-///  Cumulus یک پروکسی محلی بدون TUN است: پورت SOCKS5 و پورت HTTP جدا
+///  Fluxcore یک پروکسی محلی بدون TUN است: پورت SOCKS5 و پورت HTTP جدا
 ///  دارد. مسیر (کشور/شهر)، ترنسپورت و مسیر چندهاپ اختیاری همه به خود
 ///  هسته پاس داده می‌شوند.
 ///
-///  فهرست سرورها از `cumulusvpn list --locations --json` می‌آید؛ هر
+///  فهرست سرورها از `fluxcore list --locations --json` می‌آید؛ هر
 ///  ردیف یک لوکیشن (کشور:شهر) با تعداد گیت‌وی و درصد بار است. انتخاب
 ///  هر ردیف همان مقدار را در مسیر اصلی، یا در حالت چندهاپ در ورودی/
 ///  خروجی انتخاب‌شده می‌گذارد.
 /// ═══════════════════════════════════════════════════════════════
-class CumulusSettingsTile extends StatefulWidget {
-  const CumulusSettingsTile({super.key});
+class FluxcoreSettingsTile extends StatefulWidget {
+  const FluxcoreSettingsTile({super.key});
 
   @override
-  State<CumulusSettingsTile> createState() => _CumulusSettingsTileState();
+  State<FluxcoreSettingsTile> createState() => _FluxcoreSettingsTileState();
 }
 
-class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
+class _FluxcoreSettingsTileState extends State<FluxcoreSettingsTile> {
   final TextEditingController _countryController = TextEditingController();
   final TextEditingController _entryController = TextEditingController();
   final TextEditingController _exitController = TextEditingController();
   bool _controllersInitialized = false;
-  List<CumulusLocation>? _servers;
+  List<FluxcoreLocation>? _servers;
   bool _loading = false;
   String? _error;
 
@@ -47,10 +47,10 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
     super.didChangeDependencies();
     if (!_controllersInitialized) {
       final s = context.read<AppProvider>().settings;
-      _countryController.text = s.cumulusCountry;
-      _entryController.text = s.cumulusEntry;
-      _exitController.text = s.cumulusExit;
-      _target = s.cumulusMultihop ? 'exit' : 'country';
+      _countryController.text = s.fluxcoreCountry;
+      _entryController.text = s.fluxcoreEntry;
+      _exitController.text = s.fluxcoreExit;
+      _target = s.fluxcoreMultihop ? 'exit' : 'country';
       _controllersInitialized = true;
     }
   }
@@ -66,28 +66,28 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
   String _selectedSelector(AppSettings s) {
     switch (_target) {
       case 'entry':
-        return s.cumulusEntry;
+        return s.fluxcoreEntry;
       case 'exit':
-        return s.cumulusExit;
+        return s.fluxcoreExit;
       default:
-        return s.cumulusCountry;
+        return s.fluxcoreCountry;
     }
   }
 
-  void _applySelection(AppProvider provider, CumulusLocation server) {
+  void _applySelection(AppProvider provider, FluxcoreLocation server) {
     final s = provider.settings;
     switch (_target) {
       case 'entry':
         _entryController.text = server.id;
-        s.cumulusEntry = server.id;
+        s.fluxcoreEntry = server.id;
         break;
       case 'exit':
         _exitController.text = server.id;
-        s.cumulusExit = server.id;
+        s.fluxcoreExit = server.id;
         break;
       default:
         _countryController.text = server.id;
-        s.cumulusCountry = server.id;
+        s.fluxcoreCountry = server.id;
     }
     provider.saveSettings();
     provider.touch();
@@ -104,12 +104,12 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
     });
 
     try {
-      final binary = await CumulusPaths.resolveBinary();
+      final binary = await FluxcorePaths.resolveBinary();
       if (binary == null) {
-        throw CumulusLocationException(l10n.cumulusServersError);
+        throw FluxcoreLocationException(l10n.fluxcoreServersError);
       }
-      final configHome = await CumulusPaths.configHome();
-      final servers = await CumulusLocations.fetch(
+      final configHome = await FluxcorePaths.configHome();
+      final servers = await FluxcoreLocations.fetch(
         binaryPath: binary,
         configHome: configHome,
       );
@@ -121,9 +121,9 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _error = e is CumulusLocationException
+        _error = e is FluxcoreLocationException
             ? e.message
-            : l10n.cumulusServersError;
+            : l10n.fluxcoreServersError;
         _loading = false;
       });
     }
@@ -156,7 +156,7 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
 
   Widget _serverRow(
     AppProvider provider,
-    CumulusLocation server,
+    FluxcoreLocation server,
     String selectedSelector,
     AppLocalizations l10n,
   ) {
@@ -181,7 +181,7 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
         ),
       ),
       subtitle: Text(
-        l10n.cumulusServerNodes(server.nodes),
+        l10n.fluxcoreServerNodes(server.nodes),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: theme.textTheme.bodySmall?.copyWith(
@@ -193,7 +193,7 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
         children: [
           if (selected) ...[
             Tooltip(
-              message: l10n.cumulusServersSelected,
+              message: l10n.fluxcoreServersSelected,
               child: Icon(
                 Icons.check_circle,
                 size: 17,
@@ -221,30 +221,30 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
     }
 
     return SettingsTile(
-      title: l10n.cumulusSettings,
+      title: l10n.fluxcoreSettings,
       icon: Icons.cloud_queue_rounded,
       iconBackgroundColor: theme.colorScheme.secondary,
       initiallyExpanded: false,
       trailingWidget: Text(
-        provider.cumulusStatus,
+        provider.fluxcoreStatus,
         style: theme.textTheme.bodySmall?.copyWith(
           color: theme.colorScheme.onSurfaceVariant,
         ),
       ),
       children: [
         SettingsSection(
-          label: l10n.cumulusConnectionSection,
+          label: l10n.fluxcoreConnectionSection,
           children: [
             Row(
               children: [
                 Expanded(
                   child: PortTextField(
-                    labelText: l10n.cumulusSocksPort,
-                    initialValue: s.cumulusPort.toString(),
+                    labelText: l10n.fluxcoreSocksPort,
+                    initialValue: s.fluxcorePort.toString(),
                     onChanged: (v) {
                       final p = int.tryParse(v.trim());
                       if (p != null && p > 0 && p < 65536) {
-                        s.cumulusPort = p;
+                        s.fluxcorePort = p;
                         save();
                       }
                     },
@@ -253,12 +253,12 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: PortTextField(
-                    labelText: l10n.cumulusHttpPort,
-                    initialValue: s.cumulusHttpPort.toString(),
+                    labelText: l10n.fluxcoreHttpPort,
+                    initialValue: s.fluxcoreHttpPort.toString(),
                     onChanged: (v) {
                       final p = int.tryParse(v.trim());
                       if (p != null && p > 0 && p < 65536) {
-                        s.cumulusHttpPort = p;
+                        s.fluxcoreHttpPort = p;
                         save();
                       }
                     },
@@ -268,14 +268,14 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
             ),
             const SizedBox(height: 8),
             SelectableText(
-              l10n.cumulusProxySocks(s.cumulusPort),
+              l10n.fluxcoreProxySocks(s.fluxcorePort),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: 2),
             SelectableText(
-              l10n.cumulusProxyHttp(s.cumulusHttpPort),
+              l10n.fluxcoreProxyHttp(s.fluxcoreHttpPort),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -284,15 +284,15 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
         ),
         const Divider(height: 28),
         SettingsSection(
-          label: l10n.cumulusRoutingSection,
+          label: l10n.fluxcoreRoutingSection,
           children: [
-            if (!s.cumulusMultihop) ...[
+            if (!s.fluxcoreMultihop) ...[
               SettingsTextField(
-                labelText: l10n.cumulusCountry,
-                hintText: l10n.cumulusCountryHint,
+                labelText: l10n.fluxcoreCountry,
+                hintText: l10n.fluxcoreCountryHint,
                 controller: _countryController,
                 onChanged: (v) {
-                  s.cumulusCountry = v.trim();
+                  s.fluxcoreCountry = v.trim();
                   save();
                 },
               ),
@@ -305,8 +305,8 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
                   icon: const Icon(Icons.dns_outlined, size: 18),
                   label: Text(
                     _servers == null
-                        ? l10n.cumulusBrowseServers
-                        : l10n.cumulusRefreshServers,
+                        ? l10n.fluxcoreBrowseServers
+                        : l10n.fluxcoreRefreshServers,
                   ),
                   style: OutlinedButton.styleFrom(
                     visualDensity: VisualDensity.compact,
@@ -322,7 +322,7 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      l10n.cumulusServersLoading,
+                      l10n.fluxcoreServersLoading,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -333,7 +333,7 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
             ),
             const SizedBox(height: 4),
             Text(
-              l10n.cumulusServersHint,
+              l10n.fluxcoreServersHint,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -341,13 +341,13 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
             if (_error != null) ...[
               const SizedBox(height: 8),
               Text(
-                l10n.cumulusServersError,
+                l10n.fluxcoreServersError,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.error,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              if (_error!.isNotEmpty && _error != l10n.cumulusServersError)
+              if (_error!.isNotEmpty && _error != l10n.fluxcoreServersError)
                 Text(
                   _error!,
                   maxLines: 2,
@@ -362,24 +362,24 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
               Row(
                 children: [
                   Text(
-                    l10n.cumulusServersCount(_servers!.length),
+                    l10n.fluxcoreServersCount(_servers!.length),
                     style: theme.textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   const Spacer(),
                   Text(
-                    l10n.cumulusServersSorted,
+                    l10n.fluxcoreServersSorted,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
               ),
-              if (s.cumulusMultihop) ...[
+              if (s.fluxcoreMultihop) ...[
                 const SizedBox(height: 6),
                 Text(
-                  l10n.cumulusChooseTarget,
+                  l10n.fluxcoreChooseTarget,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -389,12 +389,12 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
                   segments: [
                     ButtonSegment(
                       value: 'entry',
-                      label: Text(l10n.cumulusTargetEntry),
+                      label: Text(l10n.fluxcoreTargetEntry),
                       icon: const Icon(Icons.login, size: 16),
                     ),
                     ButtonSegment(
                       value: 'exit',
-                      label: Text(l10n.cumulusTargetExit),
+                      label: Text(l10n.fluxcoreTargetExit),
                       icon: const Icon(Icons.logout, size: 16),
                     ),
                   ],
@@ -410,7 +410,7 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Text(
-                    l10n.cumulusServersEmpty,
+                    l10n.fluxcoreServersEmpty,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -451,41 +451,41 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
             ],
             const SizedBox(height: 12),
             SettingsDropdown<String>(
-              labelText: l10n.cumulusTransport,
-              value: s.cumulusTransport,
+              labelText: l10n.fluxcoreTransport,
+              value: s.fluxcoreTransport,
               items: [
                 DropdownMenuItem(
                   value: 'auto',
-                  child: Text(l10n.cumulusTransportAuto),
+                  child: Text(l10n.fluxcoreTransportAuto),
                 ),
                 DropdownMenuItem(
                   value: 'speed',
-                  child: Text(l10n.cumulusTransportSpeed),
+                  child: Text(l10n.fluxcoreTransportSpeed),
                 ),
                 DropdownMenuItem(
                   value: 'stealth',
-                  child: Text(l10n.cumulusTransportStealth),
+                  child: Text(l10n.fluxcoreTransportStealth),
                 ),
               ],
               onChanged: (v) {
-                s.cumulusTransport = v ?? 'auto';
+                s.fluxcoreTransport = v ?? 'auto';
                 save();
               },
             ),
             const SizedBox(height: 4),
             SettingsSwitch(
-              title: l10n.cumulusMultihop,
-              value: s.cumulusMultihop,
+              title: l10n.fluxcoreMultihop,
+              value: s.fluxcoreMultihop,
               onChanged: (v) {
-                s.cumulusMultihop = v;
+                s.fluxcoreMultihop = v;
                 if (v && _target == 'country') _target = 'exit';
                 if (!v) _target = 'country';
                 save();
               },
             ),
-            if (s.cumulusMultihop) ...[
+            if (s.fluxcoreMultihop) ...[
               Text(
-                l10n.cumulusMultihopHint,
+                l10n.fluxcoreMultihopHint,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontStyle: FontStyle.italic,
@@ -496,10 +496,10 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
                 children: [
                   Expanded(
                     child: SettingsTextField(
-                      labelText: l10n.cumulusEntry,
+                      labelText: l10n.fluxcoreEntry,
                       controller: _entryController,
                       onChanged: (v) {
-                        s.cumulusEntry = v.trim();
+                        s.fluxcoreEntry = v.trim();
                         save();
                       },
                     ),
@@ -507,10 +507,10 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: SettingsTextField(
-                      labelText: l10n.cumulusExit,
+                      labelText: l10n.fluxcoreExit,
                       controller: _exitController,
                       onChanged: (v) {
-                        s.cumulusExit = v.trim();
+                        s.fluxcoreExit = v.trim();
                         save();
                       },
                     ),
@@ -522,32 +522,32 @@ class _CumulusSettingsTileState extends State<CumulusSettingsTile> {
         ),
         const Divider(height: 28),
         SettingsSection(
-          label: l10n.cumulusBehaviorSection,
+          label: l10n.fluxcoreBehaviorSection,
           children: [
             SettingsSwitch(
-              title: l10n.cumulusKillSwitch,
-              subtitle: l10n.cumulusKillSwitchDesc,
-              value: s.cumulusKillSwitch,
+              title: l10n.fluxcoreKillSwitch,
+              subtitle: l10n.fluxcoreKillSwitchDesc,
+              value: s.fluxcoreKillSwitch,
               onChanged: (v) {
-                s.cumulusKillSwitch = v;
+                s.fluxcoreKillSwitch = v;
                 save();
               },
             ),
             SettingsSwitch(
-              title: l10n.cumulusAutoReconnect,
-              value: s.cumulusAutoReconnect,
+              title: l10n.fluxcoreAutoReconnect,
+              value: s.fluxcoreAutoReconnect,
               onChanged: (v) {
-                s.cumulusAutoReconnect = v;
+                s.fluxcoreAutoReconnect = v;
                 save();
               },
             ),
           ],
         ),
-        if (provider.isCumulusBusy ||
-            provider.processService.isCumulusRunning) ...[
+        if (provider.isFluxcoreBusy ||
+            provider.processService.isFluxcoreRunning) ...[
           const SizedBox(height: 10),
           Text(
-            provider.cumulusStatus,
+            provider.fluxcoreStatus,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.primary,
             ),

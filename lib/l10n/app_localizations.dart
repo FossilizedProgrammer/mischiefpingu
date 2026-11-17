@@ -3613,215 +3613,215 @@ abstract class AppLocalizations {
   /// **'Aether'**
   String get aetherUpstream;
 
-  /// No description provided for @cumulusSettings.
+  /// No description provided for @fluxcoreSettings.
   ///
   /// In en, this message translates to:
-  /// **'CumulusVPN Settings'**
-  String get cumulusSettings;
+  /// **'Fluxcore Settings'**
+  String get fluxcoreSettings;
 
-  /// No description provided for @cumulusEngineName.
+  /// No description provided for @fluxcoreEngineName.
   ///
   /// In en, this message translates to:
-  /// **'Cumulus'**
-  String get cumulusEngineName;
+  /// **'Fluxcore'**
+  String get fluxcoreEngineName;
 
-  /// No description provided for @cumulusConnectionSection.
+  /// No description provided for @fluxcoreConnectionSection.
   ///
   /// In en, this message translates to:
   /// **'Local proxy'**
-  String get cumulusConnectionSection;
+  String get fluxcoreConnectionSection;
 
-  /// No description provided for @cumulusSocksPort.
+  /// No description provided for @fluxcoreSocksPort.
   ///
   /// In en, this message translates to:
   /// **'SOCKS5 port'**
-  String get cumulusSocksPort;
+  String get fluxcoreSocksPort;
 
-  /// No description provided for @cumulusHttpPort.
+  /// No description provided for @fluxcoreHttpPort.
   ///
   /// In en, this message translates to:
   /// **'HTTP port'**
-  String get cumulusHttpPort;
+  String get fluxcoreHttpPort;
 
-  /// No description provided for @cumulusProxySocks.
+  /// No description provided for @fluxcoreProxySocks.
   ///
   /// In en, this message translates to:
   /// **'SOCKS5: socks5://127.0.0.1:{port}'**
-  String cumulusProxySocks(int port);
+  String fluxcoreProxySocks(int port);
 
-  /// No description provided for @cumulusProxyHttp.
+  /// No description provided for @fluxcoreProxyHttp.
   ///
   /// In en, this message translates to:
   /// **'HTTP: http://127.0.0.1:{port}'**
-  String cumulusProxyHttp(int port);
+  String fluxcoreProxyHttp(int port);
 
-  /// No description provided for @cumulusRoutingSection.
+  /// No description provided for @fluxcoreRoutingSection.
   ///
   /// In en, this message translates to:
   /// **'Exit route'**
-  String get cumulusRoutingSection;
+  String get fluxcoreRoutingSection;
 
-  /// No description provided for @cumulusCountry.
+  /// No description provided for @fluxcoreCountry.
   ///
   /// In en, this message translates to:
   /// **'Country or city'**
-  String get cumulusCountry;
+  String get fluxcoreCountry;
 
-  /// No description provided for @cumulusCountryHint.
+  /// No description provided for @fluxcoreCountryHint.
   ///
   /// In en, this message translates to:
   /// **'Empty = fastest (examples: DE, US:New York)'**
-  String get cumulusCountryHint;
+  String get fluxcoreCountryHint;
 
-  /// No description provided for @cumulusTransport.
+  /// No description provided for @fluxcoreTransport.
   ///
   /// In en, this message translates to:
   /// **'Transport'**
-  String get cumulusTransport;
+  String get fluxcoreTransport;
 
-  /// No description provided for @cumulusTransportAuto.
+  /// No description provided for @fluxcoreTransportAuto.
   ///
   /// In en, this message translates to:
   /// **'Auto'**
-  String get cumulusTransportAuto;
+  String get fluxcoreTransportAuto;
 
-  /// No description provided for @cumulusTransportSpeed.
+  /// No description provided for @fluxcoreTransportSpeed.
   ///
   /// In en, this message translates to:
   /// **'Speed (WireGuard)'**
-  String get cumulusTransportSpeed;
+  String get fluxcoreTransportSpeed;
 
-  /// No description provided for @cumulusTransportStealth.
+  /// No description provided for @fluxcoreTransportStealth.
   ///
   /// In en, this message translates to:
   /// **'Stealth (DPI-resistant)'**
-  String get cumulusTransportStealth;
+  String get fluxcoreTransportStealth;
 
-  /// No description provided for @cumulusMultihop.
+  /// No description provided for @fluxcoreMultihop.
   ///
   /// In en, this message translates to:
   /// **'Multi-hop route'**
-  String get cumulusMultihop;
+  String get fluxcoreMultihop;
 
-  /// No description provided for @cumulusMultihopHint.
+  /// No description provided for @fluxcoreMultihopHint.
   ///
   /// In en, this message translates to:
   /// **'The entry sees only the exit, and the exit sees only your destination.'**
-  String get cumulusMultihopHint;
+  String get fluxcoreMultihopHint;
 
-  /// No description provided for @cumulusEntry.
+  /// No description provided for @fluxcoreEntry.
   ///
   /// In en, this message translates to:
   /// **'Entry country or city'**
-  String get cumulusEntry;
+  String get fluxcoreEntry;
 
-  /// No description provided for @cumulusExit.
+  /// No description provided for @fluxcoreExit.
   ///
   /// In en, this message translates to:
   /// **'Exit country or city'**
-  String get cumulusExit;
+  String get fluxcoreExit;
 
-  /// No description provided for @cumulusBehaviorSection.
+  /// No description provided for @fluxcoreBehaviorSection.
   ///
   /// In en, this message translates to:
   /// **'Connection behavior'**
-  String get cumulusBehaviorSection;
+  String get fluxcoreBehaviorSection;
 
-  /// No description provided for @cumulusKillSwitch.
+  /// No description provided for @fluxcoreKillSwitch.
   ///
   /// In en, this message translates to:
   /// **'Kill switch'**
-  String get cumulusKillSwitch;
+  String get fluxcoreKillSwitch;
 
-  /// No description provided for @cumulusKillSwitchDesc.
+  /// No description provided for @fluxcoreKillSwitchDesc.
   ///
   /// In en, this message translates to:
   /// **'When the tunnel drops, requests fail instead of going out directly.'**
-  String get cumulusKillSwitchDesc;
+  String get fluxcoreKillSwitchDesc;
 
-  /// No description provided for @cumulusAutoReconnect.
+  /// No description provided for @fluxcoreAutoReconnect.
   ///
   /// In en, this message translates to:
-  /// **'Auto-reconnect Cumulus'**
-  String get cumulusAutoReconnect;
+  /// **'Auto-reconnect Fluxcore'**
+  String get fluxcoreAutoReconnect;
 
-  /// No description provided for @cumulusBrowseServers.
+  /// No description provided for @fluxcoreBrowseServers.
   ///
   /// In en, this message translates to:
   /// **'Browse servers'**
-  String get cumulusBrowseServers;
+  String get fluxcoreBrowseServers;
 
-  /// No description provided for @cumulusRefreshServers.
+  /// No description provided for @fluxcoreRefreshServers.
   ///
   /// In en, this message translates to:
   /// **'Refresh servers'**
-  String get cumulusRefreshServers;
+  String get fluxcoreRefreshServers;
 
-  /// No description provided for @cumulusServersHint.
+  /// No description provided for @fluxcoreServersHint.
   ///
   /// In en, this message translates to:
-  /// **'Load is reported by the Cumulus fleet; lower is better. Selection applies on the next connection.'**
-  String get cumulusServersHint;
+  /// **'Load is reported by the Fluxcore fleet; lower is better. Selection applies on the next connection.'**
+  String get fluxcoreServersHint;
 
-  /// No description provided for @cumulusServersLoading.
+  /// No description provided for @fluxcoreServersLoading.
   ///
   /// In en, this message translates to:
   /// **'Finding servers and their load…'**
-  String get cumulusServersLoading;
+  String get fluxcoreServersLoading;
 
-  /// No description provided for @cumulusServersError.
+  /// No description provided for @fluxcoreServersError.
   ///
   /// In en, this message translates to:
   /// **'The server list could not be loaded.'**
-  String get cumulusServersError;
+  String get fluxcoreServersError;
 
-  /// No description provided for @cumulusServersEmpty.
+  /// No description provided for @fluxcoreServersEmpty.
   ///
   /// In en, this message translates to:
   /// **'No servers reported by the fleet.'**
-  String get cumulusServersEmpty;
+  String get fluxcoreServersEmpty;
 
-  /// No description provided for @cumulusServersCount.
+  /// No description provided for @fluxcoreServersCount.
   ///
   /// In en, this message translates to:
   /// **'{count} locations'**
-  String cumulusServersCount(int count);
+  String fluxcoreServersCount(int count);
 
-  /// No description provided for @cumulusServerNodes.
+  /// No description provided for @fluxcoreServerNodes.
   ///
   /// In en, this message translates to:
   /// **'{count} nodes'**
-  String cumulusServerNodes(int count);
+  String fluxcoreServerNodes(int count);
 
-  /// No description provided for @cumulusServersSorted.
+  /// No description provided for @fluxcoreServersSorted.
   ///
   /// In en, this message translates to:
   /// **'Sorted by load (lowest first)'**
-  String get cumulusServersSorted;
+  String get fluxcoreServersSorted;
 
-  /// No description provided for @cumulusServersSelected.
+  /// No description provided for @fluxcoreServersSelected.
   ///
   /// In en, this message translates to:
   /// **'Selected'**
-  String get cumulusServersSelected;
+  String get fluxcoreServersSelected;
 
-  /// No description provided for @cumulusChooseTarget.
+  /// No description provided for @fluxcoreChooseTarget.
   ///
   /// In en, this message translates to:
   /// **'Apply selection to:'**
-  String get cumulusChooseTarget;
+  String get fluxcoreChooseTarget;
 
-  /// No description provided for @cumulusTargetEntry.
+  /// No description provided for @fluxcoreTargetEntry.
   ///
   /// In en, this message translates to:
   /// **'Entry'**
-  String get cumulusTargetEntry;
+  String get fluxcoreTargetEntry;
 
-  /// No description provided for @cumulusTargetExit.
+  /// No description provided for @fluxcoreTargetExit.
   ///
   /// In en, this message translates to:
   /// **'Exit'**
-  String get cumulusTargetExit;
+  String get fluxcoreTargetExit;
 }
 
 class _AppLocalizationsDelegate

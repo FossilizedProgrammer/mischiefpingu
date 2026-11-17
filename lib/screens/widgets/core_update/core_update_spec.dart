@@ -13,7 +13,7 @@ enum CoreKind {
   ffvpn, // 🆕 Firefox VPN
   lantern, // 🆕 Lantern headless
   npv, // 🆕 NPV Tunnel
-  cumulus, // 🆕 CumulusVPN
+  fluxcore, // 🆕 Fluxcore
 }
 
 class CoreUpdateSpec {
@@ -82,8 +82,8 @@ const List<CoreUpdateSpec> coreUpdateSpecs = [
         'SOCKS/HTTP proxy, from FossilizedProgrammer/npv-go.',
   ),
   CoreUpdateSpec(
-    kind: CoreKind.cumulus,
-    displayName: 'CumulusVPN',
-    note: 'Local SOCKS5/HTTP proxy from CumulusVPN fleet client (cumulusvpn).',
+    kind: CoreKind.fluxcore,
+    displayName: 'Fluxcore',
+    note: 'Local SOCKS5/HTTP proxy from Fluxcore fleet client (fluxcore).',
   ),
 ];

@@ -189,28 +189,28 @@ class AppSettings {
   String npvPinnedRemark;
 
   // ═══════════════════════════════════════════════════════════════
-  //  CumulusVPN (cumulusvpn) settings
+  //  Fluxcore (fluxcore) settings
   // ═══════════════════════════════════════════════════════════════
 
   /// پورت SOCKS5 روی loopback (پورت HTTP جداگانه است).
-  int cumulusPort;
+  int fluxcorePort;
 
   /// پورت HTTP proxy روی loopback.
-  int cumulusHttpPort;
+  int fluxcoreHttpPort;
 
   /// کد کشور (`DE`)، `CODE:CITY` یا خالی برای سریع‌ترین گیت‌وی.
-  String cumulusCountry;
+  String fluxcoreCountry;
 
   /// `auto` | `stealth` | `speed`.
-  String cumulusTransport;
+  String fluxcoreTransport;
 
-  bool cumulusMultihop;
-  String cumulusEntry;
-  String cumulusExit;
+  bool fluxcoreMultihop;
+  String fluxcoreEntry;
+  String fluxcoreExit;
 
   /// پیش‌فرض روشن: اگر تونل قطع شود، ترافیک رد می‌شود (fail-closed).
-  bool cumulusKillSwitch;
-  bool cumulusAutoReconnect;
+  bool fluxcoreKillSwitch;
+  bool fluxcoreAutoReconnect;
 
   String themeId;
   bool muted;
@@ -331,15 +331,15 @@ class AppSettings {
     this.npvAutoReconnect = true,
     this.npvPinnedIndex = '',
     this.npvPinnedRemark = '',
-    this.cumulusPort = 1087,
-    this.cumulusHttpPort = 1088,
-    this.cumulusCountry = '',
-    this.cumulusTransport = 'auto',
-    this.cumulusMultihop = false,
-    this.cumulusEntry = '',
-    this.cumulusExit = '',
-    this.cumulusKillSwitch = true,
-    this.cumulusAutoReconnect = true,
+    this.fluxcorePort = 1087,
+    this.fluxcoreHttpPort = 1088,
+    this.fluxcoreCountry = '',
+    this.fluxcoreTransport = 'auto',
+    this.fluxcoreMultihop = false,
+    this.fluxcoreEntry = '',
+    this.fluxcoreExit = '',
+    this.fluxcoreKillSwitch = true,
+    this.fluxcoreAutoReconnect = true,
     this.psiphonBuildRev = '',
     this.psiphonBinarySha = '',
     this.themeId = 'ocean',
@@ -363,7 +363,7 @@ class AppSettings {
               'Lantern',
               'Geph',
               'NPV',
-              'Cumulus',
+              'Fluxcore',
               'App',
               'System',
             ];

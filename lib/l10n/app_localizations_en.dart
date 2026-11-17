@@ -1921,119 +1921,119 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aetherUpstream => 'Aether';
 
   @override
-  String get cumulusSettings => 'CumulusVPN Settings';
+  String get fluxcoreSettings => 'Fluxcore Settings';
 
   @override
-  String get cumulusEngineName => 'Cumulus';
+  String get fluxcoreEngineName => 'Fluxcore';
 
   @override
-  String get cumulusConnectionSection => 'Local proxy';
+  String get fluxcoreConnectionSection => 'Local proxy';
 
   @override
-  String get cumulusSocksPort => 'SOCKS5 port';
+  String get fluxcoreSocksPort => 'SOCKS5 port';
 
   @override
-  String get cumulusHttpPort => 'HTTP port';
+  String get fluxcoreHttpPort => 'HTTP port';
 
   @override
-  String cumulusProxySocks(int port) {
+  String fluxcoreProxySocks(int port) {
     return 'SOCKS5: socks5://127.0.0.1:$port';
   }
 
   @override
-  String cumulusProxyHttp(int port) {
+  String fluxcoreProxyHttp(int port) {
     return 'HTTP: http://127.0.0.1:$port';
   }
 
   @override
-  String get cumulusRoutingSection => 'Exit route';
+  String get fluxcoreRoutingSection => 'Exit route';
 
   @override
-  String get cumulusCountry => 'Country or city';
+  String get fluxcoreCountry => 'Country or city';
 
   @override
-  String get cumulusCountryHint =>
+  String get fluxcoreCountryHint =>
       'Empty = fastest (examples: DE, US:New York)';
 
   @override
-  String get cumulusTransport => 'Transport';
+  String get fluxcoreTransport => 'Transport';
 
   @override
-  String get cumulusTransportAuto => 'Auto';
+  String get fluxcoreTransportAuto => 'Auto';
 
   @override
-  String get cumulusTransportSpeed => 'Speed (WireGuard)';
+  String get fluxcoreTransportSpeed => 'Speed (WireGuard)';
 
   @override
-  String get cumulusTransportStealth => 'Stealth (DPI-resistant)';
+  String get fluxcoreTransportStealth => 'Stealth (DPI-resistant)';
 
   @override
-  String get cumulusMultihop => 'Multi-hop route';
+  String get fluxcoreMultihop => 'Multi-hop route';
 
   @override
-  String get cumulusMultihopHint =>
+  String get fluxcoreMultihopHint =>
       'The entry sees only the exit, and the exit sees only your destination.';
 
   @override
-  String get cumulusEntry => 'Entry country or city';
+  String get fluxcoreEntry => 'Entry country or city';
 
   @override
-  String get cumulusExit => 'Exit country or city';
+  String get fluxcoreExit => 'Exit country or city';
 
   @override
-  String get cumulusBehaviorSection => 'Connection behavior';
+  String get fluxcoreBehaviorSection => 'Connection behavior';
 
   @override
-  String get cumulusKillSwitch => 'Kill switch';
+  String get fluxcoreKillSwitch => 'Kill switch';
 
   @override
-  String get cumulusKillSwitchDesc =>
+  String get fluxcoreKillSwitchDesc =>
       'When the tunnel drops, requests fail instead of going out directly.';
 
   @override
-  String get cumulusAutoReconnect => 'Auto-reconnect Cumulus';
+  String get fluxcoreAutoReconnect => 'Auto-reconnect Fluxcore';
 
   @override
-  String get cumulusBrowseServers => 'Browse servers';
+  String get fluxcoreBrowseServers => 'Browse servers';
 
   @override
-  String get cumulusRefreshServers => 'Refresh servers';
+  String get fluxcoreRefreshServers => 'Refresh servers';
 
   @override
-  String get cumulusServersHint =>
-      'Load is reported by the Cumulus fleet; lower is better. Selection applies on the next connection.';
+  String get fluxcoreServersHint =>
+      'Load is reported by the Fluxcore fleet; lower is better. Selection applies on the next connection.';
 
   @override
-  String get cumulusServersLoading => 'Finding servers and their load…';
+  String get fluxcoreServersLoading => 'Finding servers and their load…';
 
   @override
-  String get cumulusServersError => 'The server list could not be loaded.';
+  String get fluxcoreServersError => 'The server list could not be loaded.';
 
   @override
-  String get cumulusServersEmpty => 'No servers reported by the fleet.';
+  String get fluxcoreServersEmpty => 'No servers reported by the fleet.';
 
   @override
-  String cumulusServersCount(int count) {
+  String fluxcoreServersCount(int count) {
     return '$count locations';
   }
 
   @override
-  String cumulusServerNodes(int count) {
+  String fluxcoreServerNodes(int count) {
     return '$count nodes';
   }
 
   @override
-  String get cumulusServersSorted => 'Sorted by load (lowest first)';
+  String get fluxcoreServersSorted => 'Sorted by load (lowest first)';
 
   @override
-  String get cumulusServersSelected => 'Selected';
+  String get fluxcoreServersSelected => 'Selected';
 
   @override
-  String get cumulusChooseTarget => 'Apply selection to:';
+  String get fluxcoreChooseTarget => 'Apply selection to:';
 
   @override
-  String get cumulusTargetEntry => 'Entry';
+  String get fluxcoreTargetEntry => 'Entry';
 
   @override
-  String get cumulusTargetExit => 'Exit';
+  String get fluxcoreTargetExit => 'Exit';
 }

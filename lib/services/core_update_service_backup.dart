@@ -3,6 +3,7 @@
 library;
 
 import 'core_update/core_update_ffvpn.dart';
+import 'core_update/fluxcore_updater.dart';
 import 'core_update/core_update_lantern.dart';
 import 'core_update/core_update_aether.dart';
 import 'core_update/core_update_network.dart';
@@ -98,6 +99,12 @@ class CoreUpdateService {
     ),
     // 🆕 هستهٔ NPV (npv-go)
     npv: NpvUpdater(
+      network: _network,
+      pending: _pending,
+      processUtils: _process,
+      log: log,
+    ),
+    fluxcore: FluxcoreUpdater(
       network: _network,
       pending: _pending,
       processUtils: _process,

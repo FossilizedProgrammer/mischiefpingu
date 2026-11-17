@@ -10,4 +10,5 @@ bundled/linux/lantern filter=lfs diff=lfs merge=lfs -text
 bundled/linux/lantern-radiance filter=lfs diff=lfs merge=lfs -text
 bundled/linux/geph5-proxy filter=lfs diff=lfs merge=lfs -text
 bundled/linux/npv filter=lfs diff=lfs merge=lfs -text
+bundled/linux/fluxcore filter=lfs diff=lfs merge=lfs -text
 bundled/**/pt/** filter=lfs diff=lfs merge=lfs -text

@@ -1917,119 +1917,119 @@ class AppLocalizationsFa extends AppLocalizations {
   String get aetherUpstream => 'اتر';
 
   @override
-  String get cumulusSettings => 'تنظیمات CumulusVPN';
+  String get fluxcoreSettings => 'تنظیمات Fluxcore';
 
   @override
-  String get cumulusEngineName => 'Cumulus';
+  String get fluxcoreEngineName => 'Fluxcore';
 
   @override
-  String get cumulusConnectionSection => 'پروکسی محلی';
+  String get fluxcoreConnectionSection => 'پروکسی محلی';
 
   @override
-  String get cumulusSocksPort => 'پورت SOCKS5';
+  String get fluxcoreSocksPort => 'پورت SOCKS5';
 
   @override
-  String get cumulusHttpPort => 'پورت HTTP';
+  String get fluxcoreHttpPort => 'پورت HTTP';
 
   @override
-  String cumulusProxySocks(int port) {
+  String fluxcoreProxySocks(int port) {
     return 'SOCKS5: socks5://127.0.0.1:$port';
   }
 
   @override
-  String cumulusProxyHttp(int port) {
+  String fluxcoreProxyHttp(int port) {
     return 'HTTP: http://127.0.0.1:$port';
   }
 
   @override
-  String get cumulusRoutingSection => 'مسیر خروج';
+  String get fluxcoreRoutingSection => 'مسیر خروج';
 
   @override
-  String get cumulusCountry => 'کشور یا شهر';
+  String get fluxcoreCountry => 'کشور یا شهر';
 
   @override
-  String get cumulusCountryHint =>
+  String get fluxcoreCountryHint =>
       'خالی = سریع‌ترین (نمونه: DE یا US:New York)';
 
   @override
-  String get cumulusTransport => 'ترنسپورت';
+  String get fluxcoreTransport => 'ترنسپورت';
 
   @override
-  String get cumulusTransportAuto => 'خودکار';
+  String get fluxcoreTransportAuto => 'خودکار';
 
   @override
-  String get cumulusTransportSpeed => 'سرعت (WireGuard)';
+  String get fluxcoreTransportSpeed => 'سرعت (WireGuard)';
 
   @override
-  String get cumulusTransportStealth => 'مخفی‌کاری (مقاوم به DPI)';
+  String get fluxcoreTransportStealth => 'مخفی‌کاری (مقاوم به DPI)';
 
   @override
-  String get cumulusMultihop => 'مسیر چندهاپ';
+  String get fluxcoreMultihop => 'مسیر چندهاپ';
 
   @override
-  String get cumulusMultihopHint =>
+  String get fluxcoreMultihopHint =>
       'هاپ ورودی فقط خروجی را می‌بیند و خروجی فقط مقصد شما را.';
 
   @override
-  String get cumulusEntry => 'کشور یا شهر ورودی';
+  String get fluxcoreEntry => 'کشور یا شهر ورودی';
 
   @override
-  String get cumulusExit => 'کشور یا شهر خروجی';
+  String get fluxcoreExit => 'کشور یا شهر خروجی';
 
   @override
-  String get cumulusBehaviorSection => 'رفتار اتصال';
+  String get fluxcoreBehaviorSection => 'رفتار اتصال';
 
   @override
-  String get cumulusKillSwitch => 'کیل سوییچ';
+  String get fluxcoreKillSwitch => 'کیل سوییچ';
 
   @override
-  String get cumulusKillSwitchDesc =>
+  String get fluxcoreKillSwitchDesc =>
       'اگر تونل قطع شود، درخواست‌ها رد می‌شوند و مستقیم بیرون نمی‌روند.';
 
   @override
-  String get cumulusAutoReconnect => 'اتصال مجدد خودکار Cumulus';
+  String get fluxcoreAutoReconnect => 'اتصال مجدد خودکار Fluxcore';
 
   @override
-  String get cumulusBrowseServers => 'مرور سرورها';
+  String get fluxcoreBrowseServers => 'مرور سرورها';
 
   @override
-  String get cumulusRefreshServers => 'تازه‌سازی سرورها';
+  String get fluxcoreRefreshServers => 'تازه‌سازی سرورها';
 
   @override
-  String get cumulusServersHint =>
-      'بار از فلیت Cumulus گزارش می‌شود؛ کمتر بهتر است. انتخاب روی اتصال بعدی اعمال می‌شود.';
+  String get fluxcoreServersHint =>
+      'بار از فلیت Fluxcore گزارش می‌شود؛ کمتر بهتر است. انتخاب روی اتصال بعدی اعمال می‌شود.';
 
   @override
-  String get cumulusServersLoading => 'در حال یافتن سرورها و بار آن‌ها…';
+  String get fluxcoreServersLoading => 'در حال یافتن سرورها و بار آن‌ها…';
 
   @override
-  String get cumulusServersError => 'فهرست سرورها بارگذاری نشد.';
+  String get fluxcoreServersError => 'فهرست سرورها بارگذاری نشد.';
 
   @override
-  String get cumulusServersEmpty => 'فلیت هیچ سروری گزارش نکرد.';
+  String get fluxcoreServersEmpty => 'فلیت هیچ سروری گزارش نکرد.';
 
   @override
-  String cumulusServersCount(int count) {
+  String fluxcoreServersCount(int count) {
     return '$count لوکیشن';
   }
 
   @override
-  String cumulusServerNodes(int count) {
+  String fluxcoreServerNodes(int count) {
     return '$count سرور';
   }
 
   @override
-  String get cumulusServersSorted => 'مرتب‌شده بر اساس بار (کمترین اول)';
+  String get fluxcoreServersSorted => 'مرتب‌شده بر اساس بار (کمترین اول)';
 
   @override
-  String get cumulusServersSelected => 'انتخاب‌شده';
+  String get fluxcoreServersSelected => 'انتخاب‌شده';
 
   @override
-  String get cumulusChooseTarget => 'اعمال انتخاب روی:';
+  String get fluxcoreChooseTarget => 'اعمال انتخاب روی:';
 
   @override
-  String get cumulusTargetEntry => 'ورودی';
+  String get fluxcoreTargetEntry => 'ورودی';
 
   @override
-  String get cumulusTargetExit => 'خروجی';
+  String get fluxcoreTargetExit => 'خروجی';
 }

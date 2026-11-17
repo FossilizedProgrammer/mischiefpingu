@@ -837,59 +837,59 @@
   "tryLastEndpointFirst": "اول آخرین اندپوینت موفق را امتحان کن",
   "tryLastEndpointFirstSubtitle": "اگر فعال باشد، قبل از اسکن آخرین اندپوینت کارکننده امتحان می‌شود",
   "aetherUpstream": "اتر",
-  "cumulusSettings": "تنظیمات CumulusVPN",
-  "cumulusEngineName": "Cumulus",
-  "cumulusConnectionSection": "پروکسی محلی",
-  "cumulusSocksPort": "پورت SOCKS5",
-  "cumulusHttpPort": "پورت HTTP",
-  "cumulusProxySocks": "SOCKS5: socks5://127.0.0.1:{port}",
-  "@cumulusProxySocks": {
+  "fluxcoreSettings": "تنظیمات Fluxcore",
+  "fluxcoreEngineName": "Fluxcore",
+  "fluxcoreConnectionSection": "پروکسی محلی",
+  "fluxcoreSocksPort": "پورت SOCKS5",
+  "fluxcoreHttpPort": "پورت HTTP",
+  "fluxcoreProxySocks": "SOCKS5: socks5://127.0.0.1:{port}",
+  "@fluxcoreProxySocks": {
     "placeholders": {
       "port": {"type": "int"}
     }
   },
-  "cumulusProxyHttp": "HTTP: http://127.0.0.1:{port}",
-  "@cumulusProxyHttp": {
+  "fluxcoreProxyHttp": "HTTP: http://127.0.0.1:{port}",
+  "@fluxcoreProxyHttp": {
     "placeholders": {
       "port": {"type": "int"}
     }
   },
-  "cumulusRoutingSection": "مسیر خروج",
-  "cumulusCountry": "کشور یا شهر",
-  "cumulusCountryHint": "خالی = سریع‌ترین (نمونه: DE یا US:New York)",
-  "cumulusTransport": "ترنسپورت",
-  "cumulusTransportAuto": "خودکار",
-  "cumulusTransportSpeed": "سرعت (WireGuard)",
-  "cumulusTransportStealth": "مخفی‌کاری (مقاوم به DPI)",
-  "cumulusMultihop": "مسیر چندهاپ",
-  "cumulusMultihopHint": "هاپ ورودی فقط خروجی را می‌بیند و خروجی فقط مقصد شما را.",
-  "cumulusEntry": "کشور یا شهر ورودی",
-  "cumulusExit": "کشور یا شهر خروجی",
-  "cumulusBehaviorSection": "رفتار اتصال",
-  "cumulusKillSwitch": "کیل سوییچ",
-  "cumulusKillSwitchDesc": "اگر تونل قطع شود، درخواست‌ها رد می‌شوند و مستقیم بیرون نمی‌روند.",
-  "cumulusAutoReconnect": "اتصال مجدد خودکار Cumulus",
-  "cumulusBrowseServers": "مرور سرورها",
-  "cumulusRefreshServers": "تازه‌سازی سرورها",
-  "cumulusServersHint": "بار از فلیت Cumulus گزارش می‌شود؛ کمتر بهتر است. انتخاب روی اتصال بعدی اعمال می‌شود.",
-  "cumulusServersLoading": "در حال یافتن سرورها و بار آن‌ها…",
-  "cumulusServersError": "فهرست سرورها بارگذاری نشد.",
-  "cumulusServersEmpty": "فلیت هیچ سروری گزارش نکرد.",
-  "cumulusServersCount": "{count} لوکیشن",
-  "@cumulusServersCount": {
+  "fluxcoreRoutingSection": "مسیر خروج",
+  "fluxcoreCountry": "کشور یا شهر",
+  "fluxcoreCountryHint": "خالی = سریع‌ترین (نمونه: DE یا US:New York)",
+  "fluxcoreTransport": "ترنسپورت",
+  "fluxcoreTransportAuto": "خودکار",
+  "fluxcoreTransportSpeed": "سرعت (WireGuard)",
+  "fluxcoreTransportStealth": "مخفی‌کاری (مقاوم به DPI)",
+  "fluxcoreMultihop": "مسیر چندهاپ",
+  "fluxcoreMultihopHint": "هاپ ورودی فقط خروجی را می‌بیند و خروجی فقط مقصد شما را.",
+  "fluxcoreEntry": "کشور یا شهر ورودی",
+  "fluxcoreExit": "کشور یا شهر خروجی",
+  "fluxcoreBehaviorSection": "رفتار اتصال",
+  "fluxcoreKillSwitch": "کیل سوییچ",
+  "fluxcoreKillSwitchDesc": "اگر تونل قطع شود، درخواست‌ها رد می‌شوند و مستقیم بیرون نمی‌روند.",
+  "fluxcoreAutoReconnect": "اتصال مجدد خودکار Fluxcore",
+  "fluxcoreBrowseServers": "مرور سرورها",
+  "fluxcoreRefreshServers": "تازه‌سازی سرورها",
+  "fluxcoreServersHint": "بار از فلیت Fluxcore گزارش می‌شود؛ کمتر بهتر است. انتخاب روی اتصال بعدی اعمال می‌شود.",
+  "fluxcoreServersLoading": "در حال یافتن سرورها و بار آن‌ها…",
+  "fluxcoreServersError": "فهرست سرورها بارگذاری نشد.",
+  "fluxcoreServersEmpty": "فلیت هیچ سروری گزارش نکرد.",
+  "fluxcoreServersCount": "{count} لوکیشن",
+  "@fluxcoreServersCount": {
     "placeholders": {
       "count": {"type": "int"}
     }
   },
-  "cumulusServerNodes": "{count} سرور",
-  "@cumulusServerNodes": {
+  "fluxcoreServerNodes": "{count} سرور",
+  "@fluxcoreServerNodes": {
     "placeholders": {
       "count": {"type": "int"}
     }
   },
-  "cumulusServersSorted": "مرتب‌شده بر اساس بار (کمترین اول)",
-  "cumulusServersSelected": "انتخاب‌شده",
-  "cumulusChooseTarget": "اعمال انتخاب روی:",
-  "cumulusTargetEntry": "ورودی",
-  "cumulusTargetExit": "خروجی"
+  "fluxcoreServersSorted": "مرتب‌شده بر اساس بار (کمترین اول)",
+  "fluxcoreServersSelected": "انتخاب‌شده",
+  "fluxcoreChooseTarget": "اعمال انتخاب روی:",
+  "fluxcoreTargetEntry": "ورودی",
+  "fluxcoreTargetExit": "خروجی"
 }

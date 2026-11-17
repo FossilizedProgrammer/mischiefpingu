@@ -45,9 +45,10 @@
 | **Lantern** | Два движка: **Radiance** (`lantern-radiance`, движок официального клиента Lantern v10 — по умолчанию) и **Classic** (headless `lantern`). Оба отдают локальный SOCKS5/HTTP-прокси и оба обновляются встроенным обновлятором |
 | **Geph** | Неофициальный клиент **Geph 5** (`geph5-proxy`) — регистрация/вход в аккаунт, выбор страны выхода (Free/Premium), локальный SOCKS5/HTTP-прокси |
 | **NPV Tunnel** | Клиент `npv-go`, разработанный автором этого приложения — расшифровывает конфигурации, экспортированные из Android-приложения **NPV Tunnel V2raySSH** (файлы `.npvs`), проверяет все их и подключается к самому быстрому живому; локальный SOCKS5/HTTP-прокси. В настройках показывает все конфигурации файла в порядке измеренной задержки, а мёртвые — с причиной ошибки |
+| **Fluxcore** | Официальный клиент флота Fluxcore (`fluxcore`) — находит подписанные шлюзы, поддерживает WireGuard, AmneziaWG и WireGuard-over-TLS, необязательный multi-hop и отдельные настраиваемые локальные порты для SOCKS5 и HTTP |
 
 **Общие возможности:**  
-Локальный SOCKS-порт у всех ядер; Share-on-LAN у всех ядер, кроме Firefox VPN и Lantern; автоматическое переподключение у Psiphon, Tor, SSTP, Aether, WireGuard и NPV; вставка конфигов, URI или списков мостов там, где ядро их принимает (`.conf` / `wireguard://` / `vpn://` для WireGuard, `.npvs` для NPV, мосты для Tor, списки серверов/CDN для SSTP и Psiphon).
+Локальный SOCKS-порт у всех ядер; Share-on-LAN у всех ядер, кроме Firefox VPN и Lantern; автоматическое переподключение у Psiphon, Tor, SSTP, Aether, WireGuard, NPV и Fluxcore; вставка конфигов, URI или списков мостов там, где ядро их принимает (`.conf` / `wireguard://` / `vpn://` для WireGuard, `.npvs` для NPV, мосты для Tor, списки серверов/CDN для SSTP и Psiphon).
 
 ---
 
@@ -115,7 +116,7 @@ Aether не требует от пользователя возни со сло�
 
 ### 🛠️ Обновление ядер
 
-Встроенный обновлятор для бинарных файлов Aether, Tor, Psiphon, SunAndLion, SSTP, wireproxy (оба бинарника — Standard и AmneziaWG), Firefox VPN, Lantern и NPV Tunnel — Geph поставляется в комплекте, но обновлятором не покрывается. Обновления сохраняются и применяются при следующем запуске.
+Встроенный обновлятор для бинарных файлов Aether, Tor, Psiphon, SunAndLion, SSTP, wireproxy (оба бинарника — Standard и AmneziaWG), Firefox VPN, Lantern и NPV Tunnel — Geph и Fluxcore поставляются в комплекте, но обновлятором не покрываются. Обновления сохраняются и применяются при следующем запуске.
 
 ---
 

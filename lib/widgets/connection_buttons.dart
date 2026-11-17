@@ -30,7 +30,7 @@ class ConnectionButtons extends StatelessWidget {
     final lanternData = resolver.resolveLantern(builder);
     final gephData = resolver.resolveGeph(builder);
     final npvData = resolver.resolveNpv(builder);
-    final cumulusData = resolver.resolveCumulus(builder);
+    final fluxcoreData = resolver.resolveFluxcore(builder);
 
     final onSurface = theme.colorScheme.onSurface;
 
@@ -170,15 +170,15 @@ class ConnectionButtons extends StatelessWidget {
         ),
       ),
       ConnectionPillButton(
-        title: 'Cumulus',
-        actionLabel: cumulusData.state.actionLabel,
-        icon: cumulusData.state.icon,
-        color: cumulusData.state.color,
-        busy: cumulusData.state.busy,
-        connected: cumulusData.state.connected,
-        onTap: () => provider.connectCumulus(),
-        statusText: cumulusData.state.statusText(cumulusData.progress, l10n),
-        statusColor: cumulusData.state.statusColor(
+        title: 'Fluxcore',
+        actionLabel: fluxcoreData.state.actionLabel,
+        icon: fluxcoreData.state.icon,
+        color: fluxcoreData.state.color,
+        busy: fluxcoreData.state.busy,
+        connected: fluxcoreData.state.connected,
+        onTap: () => provider.connectFluxcore(),
+        statusText: fluxcoreData.state.statusText(fluxcoreData.progress, l10n),
+        statusColor: fluxcoreData.state.statusColor(
           theme.colorScheme.primary,
           onSurface,
         ),

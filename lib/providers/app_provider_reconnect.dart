@@ -142,27 +142,27 @@ extension AppProviderReconnect on AppProvider {
     );
 
     // ═══════════════════════════════════════════════════════════
-    //  Cumulus
+    //  Fluxcore
     // ═══════════════════════════════════════════════════════════
     _scheduleReconnectFor(
-      tunnel: 'cumulus',
-      isRunning: processService.isCumulusRunning,
-      isBusy: isCumulusBusy,
+      tunnel: 'fluxcore',
+      isRunning: processService.isFluxcoreRunning,
+      isBusy: isFluxcoreBusy,
       isLoading: false,
-      hasPid: processService.cumulusPid != null,
-      userStopped: userStoppedCumulus,
-      autoReconnectEnabled: settings.cumulusAutoReconnect,
+      hasPid: processService.fluxcorePid != null,
+      userStopped: userStoppedFluxcore,
+      autoReconnectEnabled: settings.fluxcoreAutoReconnect,
       isAutoTesting: isAutoTesting,
       isRestarting: false,
       shouldReconnect: () =>
-          !processService.isCumulusRunning &&
-          !isCumulusBusy &&
-          processService.cumulusPid == null &&
-          !userStoppedCumulus &&
-          settings.cumulusAutoReconnect &&
+          !processService.isFluxcoreRunning &&
+          !isFluxcoreBusy &&
+          processService.fluxcorePid == null &&
+          !userStoppedFluxcore &&
+          settings.fluxcoreAutoReconnect &&
           !isAutoTesting &&
           !isShuttingDown,
-      onReconnect: () => connectCumulus(),
+      onReconnect: () => connectFluxcore(),
     );
 
     // ═══════════════════════════════════════════════════════════
@@ -240,19 +240,19 @@ extension AppProviderReconnect on AppProvider {
       npvStatus = 'NPV: Stopped';
     }
 
-    if (processService.isCumulusRunning) {
-      if (processService.isCumulusConnected) {
-        final route = processService.cumulusSelectedRoute;
-        cumulusStatus = route.isEmpty
-            ? 'Cumulus: Connected'
-            : 'Cumulus: Connected · $route';
-      } else if (cumulusStatus == 'Cumulus: Ready' ||
-          cumulusStatus == 'Cumulus: Stopped') {
-        cumulusStatus = 'Cumulus: Connecting…';
+    if (processService.isFluxcoreRunning) {
+      if (processService.isFluxcoreConnected) {
+        final route = processService.fluxcoreSelectedRoute;
+        fluxcoreStatus = route.isEmpty
+            ? 'Fluxcore: Connected'
+            : 'Fluxcore: Connected · $route';
+      } else if (fluxcoreStatus == 'Fluxcore: Ready' ||
+          fluxcoreStatus == 'Fluxcore: Stopped') {
+        fluxcoreStatus = 'Fluxcore: Connecting…';
       }
-    } else if (cumulusStatus == 'Cumulus: Connecting…' ||
-        cumulusStatus.startsWith('Cumulus: Connected')) {
-      cumulusStatus = 'Cumulus: Stopped';
+    } else if (fluxcoreStatus == 'Fluxcore: Connecting…' ||
+        fluxcoreStatus.startsWith('Fluxcore: Connected')) {
+      fluxcoreStatus = 'Fluxcore: Stopped';
     }
 
     if (processService.isGephRunning) {

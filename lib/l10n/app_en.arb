@@ -906,59 +906,59 @@
   "tryLastEndpointFirst": "Try last successful endpoint first",
   "tryLastEndpointFirstSubtitle": "If enabled, will try the last working endpoint before scanning",
   "aetherUpstream": "Aether",
-  "cumulusSettings": "CumulusVPN Settings",
-  "cumulusEngineName": "Cumulus",
-  "cumulusConnectionSection": "Local proxy",
-  "cumulusSocksPort": "SOCKS5 port",
-  "cumulusHttpPort": "HTTP port",
-  "cumulusProxySocks": "SOCKS5: socks5://127.0.0.1:{port}",
-  "@cumulusProxySocks": {
+  "fluxcoreSettings": "Fluxcore Settings",
+  "fluxcoreEngineName": "Fluxcore",
+  "fluxcoreConnectionSection": "Local proxy",
+  "fluxcoreSocksPort": "SOCKS5 port",
+  "fluxcoreHttpPort": "HTTP port",
+  "fluxcoreProxySocks": "SOCKS5: socks5://127.0.0.1:{port}",
+  "@fluxcoreProxySocks": {
     "placeholders": {
       "port": {"type": "int"}
     }
   },
-  "cumulusProxyHttp": "HTTP: http://127.0.0.1:{port}",
-  "@cumulusProxyHttp": {
+  "fluxcoreProxyHttp": "HTTP: http://127.0.0.1:{port}",
+  "@fluxcoreProxyHttp": {
     "placeholders": {
       "port": {"type": "int"}
     }
   },
-  "cumulusRoutingSection": "Exit route",
-  "cumulusCountry": "Country or city",
-  "cumulusCountryHint": "Empty = fastest (examples: DE, US:New York)",
-  "cumulusTransport": "Transport",
-  "cumulusTransportAuto": "Auto",
-  "cumulusTransportSpeed": "Speed (WireGuard)",
-  "cumulusTransportStealth": "Stealth (DPI-resistant)",
-  "cumulusMultihop": "Multi-hop route",
-  "cumulusMultihopHint": "The entry sees only the exit, and the exit sees only your destination.",
-  "cumulusEntry": "Entry country or city",
-  "cumulusExit": "Exit country or city",
-  "cumulusBehaviorSection": "Connection behavior",
-  "cumulusKillSwitch": "Kill switch",
-  "cumulusKillSwitchDesc": "When the tunnel drops, requests fail instead of going out directly.",
-  "cumulusAutoReconnect": "Auto-reconnect Cumulus",
-  "cumulusBrowseServers": "Browse servers",
-  "cumulusRefreshServers": "Refresh servers",
-  "cumulusServersHint": "Load is reported by the Cumulus fleet; lower is better. Selection applies on the next connection.",
-  "cumulusServersLoading": "Finding servers and their load…",
-  "cumulusServersError": "The server list could not be loaded.",
-  "cumulusServersEmpty": "No servers reported by the fleet.",
-  "cumulusServersCount": "{count} locations",
-  "@cumulusServersCount": {
+  "fluxcoreRoutingSection": "Exit route",
+  "fluxcoreCountry": "Country or city",
+  "fluxcoreCountryHint": "Empty = fastest (examples: DE, US:New York)",
+  "fluxcoreTransport": "Transport",
+  "fluxcoreTransportAuto": "Auto",
+  "fluxcoreTransportSpeed": "Speed (WireGuard)",
+  "fluxcoreTransportStealth": "Stealth (DPI-resistant)",
+  "fluxcoreMultihop": "Multi-hop route",
+  "fluxcoreMultihopHint": "The entry sees only the exit, and the exit sees only your destination.",
+  "fluxcoreEntry": "Entry country or city",
+  "fluxcoreExit": "Exit country or city",
+  "fluxcoreBehaviorSection": "Connection behavior",
+  "fluxcoreKillSwitch": "Kill switch",
+  "fluxcoreKillSwitchDesc": "When the tunnel drops, requests fail instead of going out directly.",
+  "fluxcoreAutoReconnect": "Auto-reconnect Fluxcore",
+  "fluxcoreBrowseServers": "Browse servers",
+  "fluxcoreRefreshServers": "Refresh servers",
+  "fluxcoreServersHint": "Load is reported by the Fluxcore fleet; lower is better. Selection applies on the next connection.",
+  "fluxcoreServersLoading": "Finding servers and their load…",
+  "fluxcoreServersError": "The server list could not be loaded.",
+  "fluxcoreServersEmpty": "No servers reported by the fleet.",
+  "fluxcoreServersCount": "{count} locations",
+  "@fluxcoreServersCount": {
     "placeholders": {
       "count": {"type": "int"}
     }
   },
-  "cumulusServerNodes": "{count} nodes",
-  "@cumulusServerNodes": {
+  "fluxcoreServerNodes": "{count} nodes",
+  "@fluxcoreServerNodes": {
     "placeholders": {
       "count": {"type": "int"}
     }
   },
-  "cumulusServersSorted": "Sorted by load (lowest first)",
-  "cumulusServersSelected": "Selected",
-  "cumulusChooseTarget": "Apply selection to:",
-  "cumulusTargetEntry": "Entry",
-  "cumulusTargetExit": "Exit"
+  "fluxcoreServersSorted": "Sorted by load (lowest first)",
+  "fluxcoreServersSelected": "Selected",
+  "fluxcoreChooseTarget": "Apply selection to:",
+  "fluxcoreTargetEntry": "Entry",
+  "fluxcoreTargetExit": "Exit"
 }

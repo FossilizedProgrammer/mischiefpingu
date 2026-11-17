@@ -9,35 +9,35 @@ import 'shared/github_release_updater.dart';
 import 'shared/github_core_spec.dart';
 
 /// ═══════════════════════════════════════════════════════════════
-///  CumulusUpdater — آپdیت hist CumulusVPN CLI
+///  FluxcoreUpdater — آپdیت hist Fluxcore CLI
 /// ═══════════════════════════════════════════════════════════════
 ///
-///  مخزن: https://github.com/FossilizedProgrammer/cumulus
+///  مخزن: https://github.com/FossilizedProgrammer/fluxcore
 ///
-///  releaseها بinaire cumulusvpn-linux-amd64 و cumulusvpn-windows-amd64.exe
-///  منتشر می‌کنند. نسخه‌ی sốمتی از خروجی `cumulusvpn version` یا
+///  releaseها بinaire fluxcore-linux-amd64 و fluxcore-windows-amd64.exe
+///  منتشر می‌کنند. نسخه‌ی sốمتی از خروجی `fluxcore version` یا
 ///  sizeBasedVersion با اندازهٔ فایل محلی مقایسه می‌شود.
 /// ════════════════════════════════════════════════════════════════
-class CumulusUpdater {
-  static const String _binaryBaseName = 'cumulusvpn';
+class FluxcoreUpdater {
+  static const String _binaryBaseName = 'fluxcore';
 
   final GithubReleaseUpdater _updater;
 
-  CumulusUpdater({
+  FluxcoreUpdater({
     required CoreUpdateNetwork network,
     required CoreUpdatePendingManager pending,
     required CoreUpdateProcessUtils processUtils,
     void Function(String)? log,
   }) : _updater = GithubReleaseUpdater(
           spec: GithubCoreSpec(
-            coreId: 'cumulus',
-            displayName: 'CumulusVPN CLI',
+            coreId: 'fluxcore',
+            displayName: 'Fluxcore CLI',
             owner: 'FossilizedProgrammer',
-            repo: 'cumulus',
+            repo: 'fluxcore',
             binaryBaseName: _binaryBaseName,
-            fallbackPattern: 'cumulusvpn',
+            fallbackPattern: 'fluxcore',
             destPathResolver: () => AppDataService.getBinaryPathForWrite(_binaryBaseName),
-            tempPrefix: 'mischiefpingu_cumulus_',
+            tempPrefix: 'mischiefpingu_fluxcore_',
             defaultDownloadSize: 5000000,
             sizeBasedVersion: true,
           ),

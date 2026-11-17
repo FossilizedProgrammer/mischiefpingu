@@ -45,9 +45,10 @@ Una interfaz gráfica en Flutter para escritorio (Linux y Windows) que reúne va
 | **Lantern** | Dos motores: **Radiance** (`lantern-radiance`, el motor del cliente oficial Lantern v10 — el predeterminado) y **Clásico** (el binario headless `lantern`). Ambos exponen un proxy SOCKS5/HTTP local y ambos entran en el actualizador integrado |
 | **Geph** | Cliente **Geph 5** no oficial (`geph5-proxy`) — creación/acceso a la cuenta, elección de país de salida gratis/Premium, proxy SOCKS5/HTTP local |
 | **NPV Tunnel** | Cliente `npv-go`, desarrollado por el autor de esta aplicación — descifra las configuraciones exportadas de la aplicación Android **NPV Tunnel V2raySSH** (`.npvs`), las sondea todas y se conecta a la más rápida en activo; proxy SOCKS5/HTTP local. Los ajustes listan cada configuración del archivo, ordenadas por latencia medida, con el motivo de las que no responden |
+| **Fluxcore** | Cliente oficial de la flota Fluxcore (`fluxcore`) — descubre gateways firmados, admite WireGuard, AmneziaWG y WireGuard-over-TLS, multi-hop opcional y puertos locales independientes y configurables para SOCKS5 y HTTP |
 
 **Características comunes:**  
-Puerto SOCKS local en todos los núcleos; compartir en la red local en todos los núcleos salvo Firefox VPN y Lantern; reconexión automática en Psiphon, Tor, SSTP, Aether, WireGuard y NPV; y pegar configuraciones, URI o listas de puentes allí donde el núcleo los acepte (`.conf` / `wireguard://` / `vpn://` en WireGuard, `.npvs` en NPV, puentes en Tor, listas de servidores/CDN en SSTP y Psiphon).
+Puerto SOCKS local en todos los núcleos; compartir en la red local en todos los núcleos salvo Firefox VPN y Lantern; reconexión automática en Psiphon, Tor, SSTP, Aether, WireGuard, NPV y Fluxcore; y pegar configuraciones, URI o listas de puentes allí donde el núcleo los acepte (`.conf` / `wireguard://` / `vpn://` en WireGuard, `.npvs` en NPV, puentes en Tor, listas de servidores/CDN en SSTP y Psiphon).
 
 ---
 
@@ -115,7 +116,7 @@ Aether no exige que el usuario se pelee con ajustes complejos. Incluye varios pe
 
 ### 🔄 Actualizador de núcleos
 
-Actualizador integrado para los binarios de Aether, Tor, Psiphon, SunAndLion, SSTP, wireproxy (tanto el binario Estándar como el de AmneziaWG), Firefox VPN, Lantern y NPV Tunnel — Geph viene en el paquete pero no lo cubre el actualizador. Las actualizaciones se guardan y se aplican en el siguiente arranque.
+Actualizador integrado para los binarios de Aether, Tor, Psiphon, SunAndLion, SSTP, wireproxy (tanto el binario Estándar como el de AmneziaWG), Firefox VPN, Lantern y NPV Tunnel — Geph y Fluxcore vienen en el paquete pero no los cubre el actualizador. Las actualizaciones se guardan y se aplican en el siguiente arranque.
 
 ---
 

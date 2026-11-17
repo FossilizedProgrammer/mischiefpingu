@@ -39,8 +39,8 @@ extension AppProviderProcessListener on AppProvider {
       gephConnected: processService.isGephConnected,
       npvRunning: processService.isNpvRunning,
       npvConnected: processService.isNpvConnected,
-      cumulusRunning: processService.isCumulusRunning,
-      cumulusConnected: processService.isCumulusConnected,
+      fluxcoreRunning: processService.isFluxcoreRunning,
+      fluxcoreConnected: processService.isFluxcoreConnected,
     );
     final previousState = _lastTunnelState;
     final stateChanged = previousState != currentState;

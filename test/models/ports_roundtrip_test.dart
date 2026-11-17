@@ -8,15 +8,15 @@ void main() {
       ..sstpHttpPort = 2222
       ..ffvpnSocksPort = 3333
       ..ffvpnHttpPort = 4444
-      ..cumulusPort = 5555
-      ..cumulusHttpPort = 6666;
+      ..fluxcorePort = 5555
+      ..fluxcoreHttpPort = 6666;
     final back = AppSettings.fromJson(
         Map<String, dynamic>.from(s.toJson() as Map));
     expect(back.sstpSocksPort, 1111);
     expect(back.sstpHttpPort, 2222);
     expect(back.ffvpnSocksPort, 3333);
     expect(back.ffvpnHttpPort, 4444);
-    expect(back.cumulusPort, 5555);
-    expect(back.cumulusHttpPort, 6666);
+    expect(back.fluxcorePort, 5555);
+    expect(back.fluxcoreHttpPort, 6666);
   });
 }

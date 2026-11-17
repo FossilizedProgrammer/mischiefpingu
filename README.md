@@ -45,9 +45,10 @@ A Flutter GUI for desktop (Linux and Windows) that unifies multiple censorship-c
 | **Lantern** | Two engines: **Radiance** (`lantern-radiance`, the engine of the official Lantern v10 client — the default) and **Classic** (the headless `lantern` binary). Both expose a local SOCKS5/HTTP proxy and are covered by the built-in updater |
 | **Geph** | Unofficial **Geph 5** client (`geph5-proxy`) — account sign-up/login, free/Premium exit-country selection, local SOCKS5/HTTP proxy |
 | **NPV Tunnel** | `npv-go` client, developed by the author of this application — decrypts configs exported from the **NPV Tunnel V2raySSH** Android app (`.npvs`), probes them all and connects to the fastest live one; local SOCKS5/HTTP proxy. Settings list every config in the file, ranked by measured latency, with the reason for the dead ones |
+| **Fluxcore** | Official Fluxcore fleet client (`fluxcore`) — discovers signed gateways, supports WireGuard, AmneziaWG and WireGuard-over-TLS, optional multi-hop, and exposes independently configurable local SOCKS5 and HTTP ports |
 
 **Common features:**  
-A local SOCKS port on every core; Share-on-LAN on all cores except Firefox VPN and Lantern; automatic reconnection on Psiphon, Tor, SSTP, Aether, WireGuard and NPV; pasting configs, URIs or bridge lists wherever the core takes them (WireGuard `.conf` / `wireguard://` / `vpn://`, NPV `.npvs`, Tor bridges, SSTP and Psiphon server/CDN lists).
+A local SOCKS port on every core; Share-on-LAN on all cores except Firefox VPN and Lantern; automatic reconnection on Psiphon, Tor, SSTP, Aether, WireGuard, NPV and Fluxcore; pasting configs, URIs or bridge lists wherever the core takes them (WireGuard `.conf` / `wireguard://` / `vpn://`, NPV `.npvs`, Tor bridges, SSTP and Psiphon server/CDN lists).
 
 ---
 
@@ -117,7 +118,7 @@ Aether does not require the user to fiddle with complex settings. It comes with 
 
 ### 🔄 Core Updater
 
-Built-in updater for the Aether, Tor, Psiphon, SunAndLion, SSTP, wireproxy (both the Standard and the AmneziaWG binary), Firefox VPN, Lantern and NPV Tunnel binaries — Geph is bundled but not covered by the updater. Updates are saved and applied on the next start.
+Built-in updater for the Aether, Tor, Psiphon, SunAndLion, SSTP, wireproxy (both the Standard and the AmneziaWG binary), Firefox VPN, Lantern and NPV Tunnel binaries — Geph and Fluxcore are bundled but not covered by the updater. Updates are saved and applied on the next start.
 
 ---
 

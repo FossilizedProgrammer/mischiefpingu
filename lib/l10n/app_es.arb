@@ -906,59 +906,59 @@
   "tryLastEndpointFirst": "Probar primero el último endpoint correcto",
   "tryLastEndpointFirstSubtitle": "Si se activa, intentará el último endpoint que funcionó antes de escanear",
   "aetherUpstream": "Aether",
-  "cumulusSettings": "Ajustes de CumulusVPN",
-  "cumulusEngineName": "Cumulus",
-  "cumulusConnectionSection": "Proxy local",
-  "cumulusSocksPort": "Puerto SOCKS5",
-  "cumulusHttpPort": "Puerto HTTP",
-  "cumulusProxySocks": "SOCKS5: socks5://127.0.0.1:{port}",
-  "@cumulusProxySocks": {
+  "fluxcoreSettings": "Ajustes de Fluxcore",
+  "fluxcoreEngineName": "Fluxcore",
+  "fluxcoreConnectionSection": "Proxy local",
+  "fluxcoreSocksPort": "Puerto SOCKS5",
+  "fluxcoreHttpPort": "Puerto HTTP",
+  "fluxcoreProxySocks": "SOCKS5: socks5://127.0.0.1:{port}",
+  "@fluxcoreProxySocks": {
     "placeholders": {
       "port": {"type": "int"}
     }
   },
-  "cumulusProxyHttp": "HTTP: http://127.0.0.1:{port}",
-  "@cumulusProxyHttp": {
+  "fluxcoreProxyHttp": "HTTP: http://127.0.0.1:{port}",
+  "@fluxcoreProxyHttp": {
     "placeholders": {
       "port": {"type": "int"}
     }
   },
-  "cumulusRoutingSection": "Ruta de salida",
-  "cumulusCountry": "País o ciudad",
-  "cumulusCountryHint": "Vacío = más rápido (ejemplos: DE, US:New York)",
-  "cumulusTransport": "Transporte",
-  "cumulusTransportAuto": "Automático",
-  "cumulusTransportSpeed": "Velocidad (WireGuard)",
-  "cumulusTransportStealth": "Sigiloso (resistente a DPI)",
-  "cumulusMultihop": "Ruta de varios saltos",
-  "cumulusMultihopHint": "La entrada solo ve la salida y la salida solo ve tu destino.",
-  "cumulusEntry": "País o ciudad de entrada",
-  "cumulusExit": "País o ciudad de salida",
-  "cumulusBehaviorSection": "Comportamiento de conexión",
-  "cumulusKillSwitch": "Kill switch",
-  "cumulusKillSwitchDesc": "Si el túnel cae, las solicitudes fallan en vez de salir directamente.",
-  "cumulusAutoReconnect": "Reconectar Cumulus automáticamente",
-  "cumulusBrowseServers": "Ver servidores",
-  "cumulusRefreshServers": "Actualizar servidores",
-  "cumulusServersHint": "La carga la informa la flota Cumulus; menos es mejor. La selección se aplica en la próxima conexión.",
-  "cumulusServersLoading": "Buscando servidores y su carga…",
-  "cumulusServersError": "No se pudo cargar la lista de servidores.",
-  "cumulusServersEmpty": "La flota no informó ningún servidor.",
-  "cumulusServersCount": "{count} ubicaciones",
-  "@cumulusServersCount": {
+  "fluxcoreRoutingSection": "Ruta de salida",
+  "fluxcoreCountry": "País o ciudad",
+  "fluxcoreCountryHint": "Vacío = más rápido (ejemplos: DE, US:New York)",
+  "fluxcoreTransport": "Transporte",
+  "fluxcoreTransportAuto": "Automático",
+  "fluxcoreTransportSpeed": "Velocidad (WireGuard)",
+  "fluxcoreTransportStealth": "Sigiloso (resistente a DPI)",
+  "fluxcoreMultihop": "Ruta de varios saltos",
+  "fluxcoreMultihopHint": "La entrada solo ve la salida y la salida solo ve tu destino.",
+  "fluxcoreEntry": "País o ciudad de entrada",
+  "fluxcoreExit": "País o ciudad de salida",
+  "fluxcoreBehaviorSection": "Comportamiento de conexión",
+  "fluxcoreKillSwitch": "Kill switch",
+  "fluxcoreKillSwitchDesc": "Si el túnel cae, las solicitudes fallan en vez de salir directamente.",
+  "fluxcoreAutoReconnect": "Reconectar Fluxcore automáticamente",
+  "fluxcoreBrowseServers": "Ver servidores",
+  "fluxcoreRefreshServers": "Actualizar servidores",
+  "fluxcoreServersHint": "La carga la informa la flota Fluxcore; menos es mejor. La selección se aplica en la próxima conexión.",
+  "fluxcoreServersLoading": "Buscando servidores y su carga…",
+  "fluxcoreServersError": "No se pudo cargar la lista de servidores.",
+  "fluxcoreServersEmpty": "La flota no informó ningún servidor.",
+  "fluxcoreServersCount": "{count} ubicaciones",
+  "@fluxcoreServersCount": {
     "placeholders": {
       "count": {"type": "int"}
     }
   },
-  "cumulusServerNodes": "{count} nodos",
-  "@cumulusServerNodes": {
+  "fluxcoreServerNodes": "{count} nodos",
+  "@fluxcoreServerNodes": {
     "placeholders": {
       "count": {"type": "int"}
     }
   },
-  "cumulusServersSorted": "Ordenado por carga (menor primero)",
-  "cumulusServersSelected": "Seleccionado",
-  "cumulusChooseTarget": "Aplicar la selección a:",
-  "cumulusTargetEntry": "Entrada",
-  "cumulusTargetExit": "Salida"
+  "fluxcoreServersSorted": "Ordenado por carga (menor primero)",
+  "fluxcoreServersSelected": "Seleccionado",
+  "fluxcoreChooseTarget": "Aplicar la selección a:",
+  "fluxcoreTargetEntry": "Entrada",
+  "fluxcoreTargetExit": "Salida"
 }

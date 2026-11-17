@@ -138,19 +138,19 @@ class AutoReconnectManager {
     );
   }
 
-  void scheduleCumulusReconnect({
+  void scheduleFluxcoreReconnect({
     Duration delay = defaultDelay,
     required bool Function() shouldReconnect,
     required void Function() onReconnect,
     required ReconnectLogFn log,
   }) {
     _scheduler.schedule(
-      key: 'cumulus',
+      key: 'fluxcore',
       baseDelay: delay,
       shouldReconnect: shouldReconnect,
       onReconnect: onReconnect,
       log: log,
-      logSource: LogSource.cumulus,
+      logSource: LogSource.fluxcore,
       backoff: _backoff,
       acquireLease: acquireLease,
       releaseLease: releaseLease,
@@ -163,7 +163,7 @@ class AutoReconnectManager {
   void cancelSstpTimer() => _scheduler.cancel('sstp');
   void cancelWireGuardTimer() => _scheduler.cancel('wireguard');
   void cancelNpvTimer() => _scheduler.cancel('npv');
-  void cancelCumulusTimer() => _scheduler.cancel('cumulus');
+  void cancelFluxcoreTimer() => _scheduler.cancel('fluxcore');
 
   void cancelAll() => _scheduler.cancelAll();
 

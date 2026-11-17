@@ -5,13 +5,13 @@ import 'dart:convert';
 import 'dart:io';
 
 /// ═══════════════════════════════════════════════════════════════
-///  CumulusLocations — خروجی `cumulusvpn list --locations --json`.
+///  FluxcoreLocations — خروجی `fluxcore list --locations --json`.
 ///
 ///  هر ردیف یک شهر/لوکیشن است که ممکن است چند گیت‌وی داشته باشد.
 ///  `loadPct` بار بهترین گیت‌وی همان لوکیشن است و `id` را می‌توان
 ///  مستقیم به `--country` داد (`US:New York`).
 /// ═══════════════════════════════════════════════════════════════
-class CumulusLocation {
+class FluxcoreLocation {
   final String id;
   final String code;
   final String name;
@@ -21,7 +21,7 @@ class CumulusLocation {
   final String tone;
   final int? latencyMs;
 
-  const CumulusLocation({
+  const FluxcoreLocation({
     required this.id,
     required this.code,
     required this.name,
@@ -50,11 +50,11 @@ class CumulusLocation {
     ]);
   }
 
-  factory CumulusLocation.fromJson(Map<String, dynamic> json) {
+  factory FluxcoreLocation.fromJson(Map<String, dynamic> json) {
     final code = (json['code'] as String? ?? '').toUpperCase();
     final city = json['city'] as String? ?? '';
     final fallbackId = city.isEmpty ? code : '$code:$city';
-    return CumulusLocation(
+    return FluxcoreLocation(
       id: (json['id'] as String?)?.trim().isNotEmpty == true
           ? (json['id'] as String).trim()
           : fallbackId,
@@ -69,15 +69,15 @@ class CumulusLocation {
   }
 }
 
-class CumulusLocations {
-  CumulusLocations._();
+class FluxcoreLocations {
+  FluxcoreLocations._();
 
   /// لیست لوکیشن‌ها را با همان کانفیگ ایزولهٔ خود اپ می‌گیرد.
   ///
   /// عمداً `--no-latency` می‌زنیم: کاربر بار سرور را می‌خواهد و اندازه‌گیری
   /// ping همهٔ گیت‌وی‌ها می‌تواند خیلی طول بکشد. discovery خودش ممکن است
   /// چند ثانیه طول بکشد، پس timeout سخاوتمندانه است.
-  static Future<List<CumulusLocation>> fetch({
+  static Future<List<FluxcoreLocation>> fetch({
     required String binaryPath,
     required String configHome,
     Duration timeout = const Duration(seconds: 90),
@@ -106,7 +106,7 @@ class CumulusLocations {
       exitCode = await process.exitCode.timeout(timeout);
     } on TimeoutException {
       process.kill();
-      throw const CumulusLocationException('Server discovery timed out');
+      throw const FluxcoreLocationException('Server discovery timed out');
     }
 
     final stdoutText = await stdoutFuture;
@@ -114,19 +114,19 @@ class CumulusLocations {
 
     if (exitCode != 0) {
       final line = stderr.isEmpty ? '' : stderr.split('\n').last.trim();
-      throw CumulusLocationException(
-        line.isEmpty ? 'cumulusvpn list exited with code $exitCode' : line,
+      throw FluxcoreLocationException(
+        line.isEmpty ? 'fluxcore list exited with code $exitCode' : line,
       );
     }
 
     final raw = jsonDecode(stdoutText);
     if (raw is! List) {
-      throw const CumulusLocationException('Unexpected server list response');
+      throw const FluxcoreLocationException('Unexpected server list response');
     }
 
     final locations = raw
         .whereType<Map<String, dynamic>>()
-        .map(CumulusLocation.fromJson)
+        .map(FluxcoreLocation.fromJson)
         .toList();
 
     // کم‌بارترین‌ها اول؛ نام و شهر فقط برای ترتیب پایدار.
@@ -141,10 +141,10 @@ class CumulusLocations {
   }
 }
 
-class CumulusLocationException implements Exception {
+class FluxcoreLocationException implements Exception {
   final String message;
 
-  const CumulusLocationException(this.message);
+  const FluxcoreLocationException(this.message);
 
   @override
   String toString() => message;

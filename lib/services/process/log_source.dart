@@ -9,7 +9,7 @@ class LogSource {
   static const String lantern = 'Lantern';
   static const String geph = 'Geph';
   static const String npv = 'NPV';
-  static const String cumulus = 'Cumulus';
+  static const String fluxcore = 'Fluxcore';
   static const String app = 'App';
   static const String system = 'System';
   static const String empty = '';
@@ -26,7 +26,7 @@ class LogSource {
     lantern,
     geph,
     npv,
-    cumulus,
+    fluxcore,
     app,
     system,
   ];

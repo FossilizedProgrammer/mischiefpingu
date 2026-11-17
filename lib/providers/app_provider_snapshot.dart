@@ -24,8 +24,8 @@ class _TunnelStateSnapshot {
   final bool gephConnected;
   final bool npvRunning;
   final bool npvConnected;
-  final bool cumulusRunning;
-  final bool cumulusConnected;
+  final bool fluxcoreRunning;
+  final bool fluxcoreConnected;
 
   const _TunnelStateSnapshot({
     required this.psiphonRunning,
@@ -47,8 +47,8 @@ class _TunnelStateSnapshot {
     required this.gephConnected,
     required this.npvRunning,
     required this.npvConnected,
-    required this.cumulusRunning,
-    required this.cumulusConnected,
+    required this.fluxcoreRunning,
+    required this.fluxcoreConnected,
   });
 
   @override
@@ -74,8 +74,8 @@ class _TunnelStateSnapshot {
         other.gephConnected == gephConnected &&
         other.npvRunning == npvRunning &&
         other.npvConnected == npvConnected &&
-        other.cumulusRunning == cumulusRunning &&
-        other.cumulusConnected == cumulusConnected;
+        other.fluxcoreRunning == fluxcoreRunning &&
+        other.fluxcoreConnected == fluxcoreConnected;
   }
 
   @override
@@ -99,7 +99,7 @@ class _TunnelStateSnapshot {
         gephConnected,
         npvRunning,
         npvConnected,
-        cumulusRunning,
-        cumulusConnected,
+        fluxcoreRunning,
+        fluxcoreConnected,
       ]);
 }

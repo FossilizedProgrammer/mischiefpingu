@@ -851,59 +851,59 @@
   "tryLastEndpointFirst": "Сначала попробовать последний успешный endpoint",
   "tryLastEndpointFirstSubtitle": "Если включено, попробует последний рабочий endpoint перед сканированием",
   "aetherUpstream": "Aether",
-  "cumulusSettings": "Настройки CumulusVPN",
-  "cumulusEngineName": "Cumulus",
-  "cumulusConnectionSection": "Локальный прокси",
-  "cumulusSocksPort": "Порт SOCKS5",
-  "cumulusHttpPort": "Порт HTTP",
-  "cumulusProxySocks": "SOCKS5: socks5://127.0.0.1:{port}",
-  "@cumulusProxySocks": {
+  "fluxcoreSettings": "Настройки Fluxcore",
+  "fluxcoreEngineName": "Fluxcore",
+  "fluxcoreConnectionSection": "Локальный прокси",
+  "fluxcoreSocksPort": "Порт SOCKS5",
+  "fluxcoreHttpPort": "Порт HTTP",
+  "fluxcoreProxySocks": "SOCKS5: socks5://127.0.0.1:{port}",
+  "@fluxcoreProxySocks": {
     "placeholders": {
       "port": {"type": "int"}
     }
   },
-  "cumulusProxyHttp": "HTTP: http://127.0.0.1:{port}",
-  "@cumulusProxyHttp": {
+  "fluxcoreProxyHttp": "HTTP: http://127.0.0.1:{port}",
+  "@fluxcoreProxyHttp": {
     "placeholders": {
       "port": {"type": "int"}
     }
   },
-  "cumulusRoutingSection": "Маршрут выхода",
-  "cumulusCountry": "Страна или город",
-  "cumulusCountryHint": "Пусто = самый быстрый (примеры: DE, US:New York)",
-  "cumulusTransport": "Транспорт",
-  "cumulusTransportAuto": "Авто",
-  "cumulusTransportSpeed": "Скорость (WireGuard)",
-  "cumulusTransportStealth": "Скрытность (устойчиво к DPI)",
-  "cumulusMultihop": "Многоскачковый маршрут",
-  "cumulusMultihopHint": "Вход видит только выход, а выход — только ваш адрес назначения.",
-  "cumulusEntry": "Страна или город входа",
-  "cumulusExit": "Страна или город выхода",
-  "cumulusBehaviorSection": "Поведение подключения",
-  "cumulusKillSwitch": "Kill switch",
-  "cumulusKillSwitchDesc": "При обрыве туннеля запросы блокируются, а не идут напрямую.",
-  "cumulusAutoReconnect": "Автопереподключение Cumulus",
-  "cumulusBrowseServers": "Список серверов",
-  "cumulusRefreshServers": "Обновить серверы",
-  "cumulusServersHint": "Нагрузку сообщает сеть Cumulus; меньше — лучше. Выбор применится при следующем подключении.",
-  "cumulusServersLoading": "Поиск серверов и их нагрузки…",
-  "cumulusServersError": "Не удалось загрузить список серверов.",
-  "cumulusServersEmpty": "Сеть не сообщила ни одного сервера.",
-  "cumulusServersCount": "{count} локаций",
-  "@cumulusServersCount": {
+  "fluxcoreRoutingSection": "Маршрут выхода",
+  "fluxcoreCountry": "Страна или город",
+  "fluxcoreCountryHint": "Пусто = самый быстрый (примеры: DE, US:New York)",
+  "fluxcoreTransport": "Транспорт",
+  "fluxcoreTransportAuto": "Авто",
+  "fluxcoreTransportSpeed": "Скорость (WireGuard)",
+  "fluxcoreTransportStealth": "Скрытность (устойчиво к DPI)",
+  "fluxcoreMultihop": "Многоскачковый маршрут",
+  "fluxcoreMultihopHint": "Вход видит только выход, а выход — только ваш адрес назначения.",
+  "fluxcoreEntry": "Страна или город входа",
+  "fluxcoreExit": "Страна или город выхода",
+  "fluxcoreBehaviorSection": "Поведение подключения",
+  "fluxcoreKillSwitch": "Kill switch",
+  "fluxcoreKillSwitchDesc": "При обрыве туннеля запросы блокируются, а не идут напрямую.",
+  "fluxcoreAutoReconnect": "Автопереподключение Fluxcore",
+  "fluxcoreBrowseServers": "Список серверов",
+  "fluxcoreRefreshServers": "Обновить серверы",
+  "fluxcoreServersHint": "Нагрузку сообщает сеть Fluxcore; меньше — лучше. Выбор применится при следующем подключении.",
+  "fluxcoreServersLoading": "Поиск серверов и их нагрузки…",
+  "fluxcoreServersError": "Не удалось загрузить список серверов.",
+  "fluxcoreServersEmpty": "Сеть не сообщила ни одного сервера.",
+  "fluxcoreServersCount": "{count} локаций",
+  "@fluxcoreServersCount": {
     "placeholders": {
       "count": {"type": "int"}
     }
   },
-  "cumulusServerNodes": "{count} узлов",
-  "@cumulusServerNodes": {
+  "fluxcoreServerNodes": "{count} узлов",
+  "@fluxcoreServerNodes": {
     "placeholders": {
       "count": {"type": "int"}
     }
   },
-  "cumulusServersSorted": "Сортировка по нагрузке (сначала меньшая)",
-  "cumulusServersSelected": "Выбрано",
-  "cumulusChooseTarget": "Применить выбор к:",
-  "cumulusTargetEntry": "Вход",
-  "cumulusTargetExit": "Выход"
+  "fluxcoreServersSorted": "Сортировка по нагрузке (сначала меньшая)",
+  "fluxcoreServersSelected": "Выбрано",
+  "fluxcoreChooseTarget": "Применить выбор к:",
+  "fluxcoreTargetEntry": "Вход",
+  "fluxcoreTargetExit": "Выход"
 }

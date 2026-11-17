@@ -54,7 +54,7 @@ import '../services/wireguard/wireguard_config_parser.dart';
 import '../services/wireguard/wireguard_config_builder.dart';
 import '../services/wireguard/wireguard_paths.dart';
 import '../services/npv/npv_paths.dart';
-import '../services/cumulus/cumulus_paths.dart';
+import '../services/fluxcore/fluxcore_paths.dart';
 import '../services/wireguard/wireguard_log_watcher.dart';
 import '../services/sstp/sstp_keepalive.dart';
 
@@ -101,8 +101,8 @@ part 'lantern/lantern_preflight.dart';
 part 'app_provider_geph.dart';
 part 'app_provider_npv.dart';
 part 'npv/npv_preflight.dart';
-part 'app_provider_cumulus.dart';
-part 'cumulus/cumulus_preflight.dart';
+part 'app_provider_fluxcore.dart';
+part 'fluxcore/fluxcore_preflight.dart';
 part 'geph/geph_preflight.dart';
 part 'app_provider_constructor.dart';
 part 'app_provider_dispose.dart';
@@ -158,12 +158,12 @@ class AppProvider extends ChangeNotifier {
   int get npvGeneration => _npvGeneration;
   int nextNpvGeneration() => ++_npvGeneration;
 
-  bool isCumulusBusy = false;
-  bool userStoppedCumulus = true;
-  String cumulusStatus = 'Cumulus: Ready';
-  int _cumulusGeneration = 0;
-  int get cumulusGeneration => _cumulusGeneration;
-  int nextCumulusGeneration() => ++_cumulusGeneration;
+  bool isFluxcoreBusy = false;
+  bool userStoppedFluxcore = true;
+  String fluxcoreStatus = 'Fluxcore: Ready';
+  int _fluxcoreGeneration = 0;
+  int get fluxcoreGeneration => _fluxcoreGeneration;
+  int nextFluxcoreGeneration() => ++_fluxcoreGeneration;
 
   bool isGephBusy = false;
   bool userStoppedGeph = true;
@@ -315,8 +315,8 @@ class AppProvider extends ChangeNotifier {
         isGephBusy ||
         ps.isNpvRunning ||
         isNpvBusy ||
-        ps.isCumulusRunning ||
-        isCumulusBusy;
+        ps.isFluxcoreRunning ||
+        isFluxcoreBusy;
   }
 
   void attachQualityProvider(InternetQualityProvider provider) {

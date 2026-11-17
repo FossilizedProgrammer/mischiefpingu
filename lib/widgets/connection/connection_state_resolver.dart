@@ -149,18 +149,18 @@ class ConnectionStateResolver {
     );
   }
 
-  ConnectionButtonData resolveCumulus(ConnectionButtonBuilder builder) {
+  ConnectionButtonData resolveFluxcore(ConnectionButtonBuilder builder) {
     final ps = provider.processService;
-    final cumulusOn = ps.isCumulusConnected;
-    final cumulusBusy =
-        provider.isCumulusBusy || (ps.isCumulusRunning && !cumulusOn);
-    final cumulusRunningForButton =
-        ps.isCumulusRunning || (provider.isCumulusBusy && !cumulusOn);
+    final fluxcoreOn = ps.isFluxcoreConnected;
+    final fluxcoreBusy =
+        provider.isFluxcoreBusy || (ps.isFluxcoreRunning && !fluxcoreOn);
+    final fluxcoreRunningForButton =
+        ps.isFluxcoreRunning || (provider.isFluxcoreBusy && !fluxcoreOn);
 
     return builder.forSstp(
-      isRunning: cumulusRunningForButton,
-      isConnected: cumulusOn,
-      isBusy: cumulusBusy,
+      isRunning: fluxcoreRunningForButton,
+      isConnected: fluxcoreOn,
+      isBusy: fluxcoreBusy,
     );
   }
 

@@ -9,7 +9,7 @@ import 'core_update_psiphon.dart';
 import 'core_update_sstp.dart';
 import 'core_update_sunandlion.dart';
 import 'core_update_tor.dart';
-import 'cumulus_updater.dart';
+import 'fluxcore_updater.dart';
 import 'wireguard/wireguard_updater.dart';
 import 'core_updater.dart';
 
@@ -379,12 +379,12 @@ CoreUpdater npvAdapter(NpvUpdater inner) => _NpvAdapter(inner);
 
 // ══════════════════════════════════════════════════════════════
 // ═══════════════════════════════════════════════════════════════
-class _CumulusAdapter implements CoreUpdater {
-  final CumulusUpdater inner;
-  _CumulusAdapter(this.inner);
+class _FluxcoreAdapter implements CoreUpdater {
+  final FluxcoreUpdater inner;
+  _FluxcoreAdapter(this.inner);
 
   @override
-  String get coreId => 'cumulus';
+  String get coreId => 'fluxcore';
 
   @override
   Future<CoreUpdateInfo> check(
@@ -399,7 +399,7 @@ class _CumulusAdapter implements CoreUpdater {
     CoreUpdateInfo info, {
     required String installed,
     String? proxy,
-    String? psiphonBinSha,  // Cumulus CLI doesn't use psiphon bin sha
+    String? psiphonBinSha,  // Fluxcore CLI doesn't use psiphon bin sha
     void Function(int percent)? onProgress,
     bool Function()? onCancelCheck,
   }) =>
@@ -412,4 +412,4 @@ class _CumulusAdapter implements CoreUpdater {
       );
 }
 
-CoreUpdater cumulusAdapter(CumulusUpdater inner) => _CumulusAdapter(inner);
+CoreUpdater fluxcoreAdapter(FluxcoreUpdater inner) => _FluxcoreAdapter(inner);

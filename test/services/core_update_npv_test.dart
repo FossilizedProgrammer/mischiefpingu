@@ -12,6 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mischiefpingu/screens/widgets/core_update/core_update_controller.dart';
 import 'package:mischiefpingu/services/core_update/core_update_aether.dart';
 import 'package:mischiefpingu/services/core_update/core_update_ffvpn.dart';
+import 'package:mischiefpingu/services/core_update/fluxcore_updater.dart';
 import 'package:mischiefpingu/services/core_update/core_update_lantern.dart';
 import 'package:mischiefpingu/services/core_update/core_update_network.dart';
 import 'package:mischiefpingu/services/core_update/core_update_npv.dart';
@@ -150,6 +151,11 @@ void main() {
           processUtils: processUtils,
         ),
         ffvpn: FfvpnUpdater(
+          network: network,
+          pending: pending,
+          processUtils: processUtils,
+        ),
+        fluxcore: FluxcoreUpdater(
           network: network,
           pending: pending,
           processUtils: processUtils,

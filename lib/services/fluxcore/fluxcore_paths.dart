@@ -7,17 +7,17 @@ import 'package:path/path.dart' as p;
 import '../app_data_service.dart';
 
 /// ═══════════════════════════════════════════════════════════════
-///  CumulusPaths — مسیر باینری و کانفیگ هستهٔ CumulusVPN.
+///  FluxcorePaths — مسیر باینری و کانفیگ هستهٔ Fluxcore.
 ///
 ///  باینری مثل بقیهٔ هسته‌ها از پوشهٔ داده/platform حل می‌شود. کانفیگ و
-///  هویت Cumulus زیر `cumulus/config` می‌نشیند تا با بقیهٔ فایل‌های اپ
+///  هویت Fluxcore زیر `fluxcore/config` می‌نشیند تا با بقیهٔ فایل‌های اپ
 ///  قاطی نشود و با پاک‌کردن پوشهٔ هسته قابل بازنشانی باشد.
 /// ═══════════════════════════════════════════════════════════════
-class CumulusPaths {
-  CumulusPaths._();
+class FluxcorePaths {
+  FluxcorePaths._();
 
-  static const String binaryName = 'cumulusvpn';
-  static const String dataSubdir = 'cumulus';
+  static const String binaryName = 'fluxcore';
+  static const String dataSubdir = 'fluxcore';
 
   static Future<String> workDir() async {
     final dataDir = await AppDataService.getDataDir();

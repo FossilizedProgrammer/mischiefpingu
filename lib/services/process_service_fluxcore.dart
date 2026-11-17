@@ -1,17 +1,17 @@
 part of 'process_service.dart';
 
 /// ═══════════════════════════════════════════════════════════════
-///  ProcessServiceCumulus — start/stop باینری `cumulusvpn`.
+///  ProcessServiceFluxcore — start/stop باینری `fluxcore`.
 ///
-///  Cumulus یک پروکسی محلی (بدون TUN) است که روی یک پورت هم SOCKS5 و هم
+///  Fluxcore یک پروکسی محلی (بدون TUN) است که روی یک پورت هم SOCKS5 و هم
 ///  HTTP سرو می‌کند. هسته خودش discovery، امضای دایرکتوری، انتخاب گیت‌وی،
 ///  مولتی‌هاپ و reconnect را انجام می‌دهد؛ اینجا فقط پروسه را با تنظیمات
 ///  کاربر بالا می‌آوریم و خط «connected» را به‌عنوان آماده‌بودن تونل
 ///  می‌خوانیم. باز شدن listener به‌تنهایی یعنی پروکسی بالا آمده، نه اینکه
 ///  تونل به گیت‌وی وصل شده باشد.
 /// ═══════════════════════════════════════════════════════════════
-extension ProcessServiceCumulus on ProcessService {
-  Future<bool> startCumulus({
+extension ProcessServiceFluxcore on ProcessService {
+  Future<bool> startFluxcore({
     required String binaryPath,
     required String configHome,
     required int port,
@@ -25,10 +25,10 @@ extension ProcessServiceCumulus on ProcessService {
     required bool autoReconnect,
   }) async {
     await ensureInitialized();
-    if (isCumulusRunning) return false;
-    const src = LogSource.cumulus;
+    if (isFluxcoreRunning) return false;
+    const src = LogSource.fluxcore;
 
-    cumulusSelectedRoute = '';
+    fluxcoreSelectedRoute = '';
 
     final args = <String>[
       'run',
@@ -55,11 +55,11 @@ extension ProcessServiceCumulus on ProcessService {
       args.addAll(['--entry', entry.trim(), '--exit', exit.trim()]);
     }
     if (!killSwitch) args.add('--no-kill-switch');
-    // روشن‌بودن این گزینه یعنی خود Cumulus هم بعد از قطعی دوباره وصل شود؛
+    // روشن‌بودن این گزینه یعنی خود Fluxcore هم بعد از قطعی دوباره وصل شود؛
     // خاموش‌بودنش پروسه را در اولین قطعی/شکست خارج می‌کند.
     if (!autoReconnect) args.add('--no-reconnect');
 
-    // کانفیگ/هویت Cumulus در پوشهٔ دادهٔ خود اپ می‌ماند، نه در ~/.config
+    // کانفیگ/هویت Fluxcore در پوشهٔ دادهٔ خود اپ می‌ماند، نه در ~/.config
     // عمومی کاربر. os.UserConfigDir داخل فرزند این متغیر را می‌خواند.
     final configDir = Directory(configHome);
     try {
@@ -74,7 +74,7 @@ extension ProcessServiceCumulus on ProcessService {
     };
 
     try {
-      addLog('Starting Cumulus with: $binaryPath ${args.join(' ')}',
+      addLog('Starting Fluxcore with: $binaryPath ${args.join(' ')}',
           source: src);
 
       final process = await Process.start(
@@ -85,9 +85,9 @@ extension ProcessServiceCumulus on ProcessService {
         includeParentEnvironment: true,
         mode: ProcessStartMode.normal,
       );
-      cumulusProcess = process;
+      fluxcoreProcess = process;
 
-      _attachCumulusListeners(process);
+      _attachFluxcoreListeners(process);
 
       // پورت اشغال، باینری ناسازگار و خطای آرگومان فوراً خارج می‌شوند.
       bool exitedQuickly = false;
@@ -96,36 +96,36 @@ extension ProcessServiceCumulus on ProcessService {
           const Duration(milliseconds: 300),
         );
         exitedQuickly = true;
-        addLog('cumulusvpn exited immediately (code=$code)', source: src);
+        addLog('fluxcore exited immediately (code=$code)', source: src);
       } catch (_) {
         exitedQuickly = false;
       }
 
       if (exitedQuickly) {
-        isCumulusRunning = false;
-        isCumulusConnected = false;
-        cumulusProcess = null;
+        isFluxcoreRunning = false;
+        isFluxcoreConnected = false;
+        fluxcoreProcess = null;
         touch();
         return false;
       }
 
-      isCumulusRunning = true;
-      isCumulusConnected = false;
-      addLog('cumulusvpn is running (PID: ${process.pid})', source: src);
+      isFluxcoreRunning = true;
+      isFluxcoreConnected = false;
+      addLog('fluxcore is running (PID: ${process.pid})', source: src);
       touch();
       return true;
     } catch (e) {
-      addLog('Failed to start Cumulus: $e', source: src);
-      isCumulusRunning = false;
-      isCumulusConnected = false;
-      cumulusProcess = null;
+      addLog('Failed to start Fluxcore: $e', source: src);
+      isFluxcoreRunning = false;
+      isFluxcoreConnected = false;
+      fluxcoreProcess = null;
       touch();
       return false;
     }
   }
 
-  void _attachCumulusListeners(Process process) {
-    const src = LogSource.cumulus;
+  void _attachFluxcoreListeners(Process process) {
+    const src = LogSource.fluxcore;
 
     void handleLine(String line) {
       final trimmed = line.trim();
@@ -135,20 +135,20 @@ extension ProcessServiceCumulus on ProcessService {
       // خط «connected» بعد از handshake موفق چاپ می‌شود؛ خط proxy فقط
       // یعنی listener محلی باز شده است.
       if (trimmed == 'connected') {
-        final wasConnected = isCumulusConnected;
-        isCumulusConnected = true;
+        final wasConnected = isFluxcoreConnected;
+        isFluxcoreConnected = true;
         checkHappyTransition(
-          tunnelName: 'Cumulus',
+          tunnelName: 'Fluxcore',
           wasConnected: wasConnected,
           isConnected: true,
         );
-        addLog('★ Cumulus tunnel is connected', source: src);
+        addLog('★ Fluxcore tunnel is connected', source: src);
         touch();
         return;
       }
 
       if (trimmed.startsWith('exit ') || trimmed.startsWith('entry ')) {
-        cumulusSelectedRoute = trimmed.replaceAll(RegExp(r'\s+'), ' ');
+        fluxcoreSelectedRoute = trimmed.replaceAll(RegExp(r'\s+'), ' ');
         touch();
         return;
       }
@@ -156,11 +156,11 @@ extension ProcessServiceCumulus on ProcessService {
       if (trimmed.startsWith('tunnel lost') ||
           trimmed.startsWith('connect failed') ||
           trimmed.startsWith('tunnel lost and auto-reconnect')) {
-        if (isCumulusConnected) {
-          final wasConnected = isCumulusConnected;
-          isCumulusConnected = false;
+        if (isFluxcoreConnected) {
+          final wasConnected = isFluxcoreConnected;
+          isFluxcoreConnected = false;
           checkHappyTransition(
-            tunnelName: 'Cumulus',
+            tunnelName: 'Fluxcore',
             wasConnected: wasConnected,
             isConnected: false,
           );
@@ -171,7 +171,7 @@ extension ProcessServiceCumulus on ProcessService {
       if (trimmed.contains('no gateways') ||
           trimmed.contains('Stealth mode:') ||
           trimmed.contains('entry hop cannot use wg-tls')) {
-        addLog('⚠ Cumulus: $trimmed', source: src);
+        addLog('⚠ Fluxcore: $trimmed', source: src);
       }
     }
 
@@ -187,33 +187,33 @@ extension ProcessServiceCumulus on ProcessService {
     });
 
     process.exitCode.then((code) {
-      final wasConnected = isCumulusConnected;
-      isCumulusRunning = false;
-      isCumulusConnected = false;
-      cumulusProcess = null;
+      final wasConnected = isFluxcoreConnected;
+      isFluxcoreRunning = false;
+      isFluxcoreConnected = false;
+      fluxcoreProcess = null;
 
       checkHappyTransition(
-        tunnelName: 'Cumulus',
+        tunnelName: 'Fluxcore',
         wasConnected: wasConnected,
         isConnected: false,
       );
 
       if (wasConnected && !suppressSadNotification) {
-        addLog('⚠ cumulusvpn exited unexpectedly (code=$code)', source: src);
-        setSadNotification('Cumulus');
+        addLog('⚠ fluxcore exited unexpectedly (code=$code)', source: src);
+        setSadNotification('Fluxcore');
       }
       suppressSadNotification = false;
 
-      addLog('cumulusvpn exited with code $code', source: src);
+      addLog('fluxcore exited with code $code', source: src);
       touch();
     });
   }
 
-  Future<void> stopCumulus() async {
-    const src = LogSource.cumulus;
+  Future<void> stopFluxcore() async {
+    const src = LogSource.fluxcore;
     suppressSadNotification = true;
 
-    final proc = cumulusProcess;
+    final proc = fluxcoreProcess;
     if (proc != null) {
       try {
         proc.kill(ProcessSignal.sigterm);
@@ -231,13 +231,13 @@ extension ProcessServiceCumulus on ProcessService {
           proc.kill(ProcessSignal.sigkill);
         } catch (_) {}
       }
-      cumulusProcess = null;
+      fluxcoreProcess = null;
     }
 
-    isCumulusRunning = false;
-    isCumulusConnected = false;
-    cumulusSelectedRoute = '';
-    addLog('Cumulus stopped', source: src);
+    isFluxcoreRunning = false;
+    isFluxcoreConnected = false;
+    fluxcoreSelectedRoute = '';
+    addLog('Fluxcore stopped', source: src);
     touch();
   }
 }

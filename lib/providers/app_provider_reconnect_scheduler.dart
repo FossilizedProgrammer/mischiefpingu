@@ -112,8 +112,8 @@ extension AppProviderReconnectScheduler on AppProvider {
           log: log,
         );
         break;
-      case 'cumulus':
-        _reconnectManager.scheduleCumulusReconnect(
+      case 'fluxcore':
+        _reconnectManager.scheduleFluxcoreReconnect(
           shouldReconnect: shouldReconnect,
           onReconnect: onReconnect,
           log: log,
@@ -143,8 +143,8 @@ extension AppProviderReconnectScheduler on AppProvider {
       case 'npv':
         _reconnectManager.cancelNpvTimer();
         break;
-      case 'cumulus':
-        _reconnectManager.cancelCumulusTimer();
+      case 'fluxcore':
+        _reconnectManager.cancelFluxcoreTimer();
         break;
     }
   }

@@ -18,7 +18,7 @@ class SettingsValidation {
     'Lantern',
     'Geph',
     'NPV',
-    'Cumulus',
+    'Fluxcore',
     'App',
     'System',
   };
@@ -33,7 +33,7 @@ class SettingsValidation {
     'Lantern',
     'Geph',
     'NPV',
-    'Cumulus',
+    'Fluxcore',
     'App',
     'System',
   ];
@@ -59,7 +59,7 @@ class SettingsValidation {
     _validateLantern(s);
     _validateGeph(s);
     _validateNpv(s);
-    _validateCumulus(s);
+    _validateFluxcore(s);
   }
 
   static void _validateEndpointPinning(AppSettings s) {
@@ -283,21 +283,21 @@ class SettingsValidation {
     }
   }
 
-  static void _validateCumulus(AppSettings s) {
-    if (s.cumulusPort < 1 || s.cumulusPort > 65535) s.cumulusPort = 1087;
-    if (s.cumulusHttpPort < 1 || s.cumulusHttpPort > 65535) {
-      s.cumulusHttpPort = 1088;
+  static void _validateFluxcore(AppSettings s) {
+    if (s.fluxcorePort < 1 || s.fluxcorePort > 65535) s.fluxcorePort = 1087;
+    if (s.fluxcoreHttpPort < 1 || s.fluxcoreHttpPort > 65535) {
+      s.fluxcoreHttpPort = 1088;
     }
-    if (!['auto', 'stealth', 'speed'].contains(s.cumulusTransport)) {
-      s.cumulusTransport = 'auto';
+    if (!['auto', 'stealth', 'speed'].contains(s.fluxcoreTransport)) {
+      s.fluxcoreTransport = 'auto';
     }
-    s.cumulusCountry = s.cumulusCountry.trim();
-    s.cumulusEntry = s.cumulusEntry.trim();
-    s.cumulusExit = s.cumulusExit.trim();
+    s.fluxcoreCountry = s.fluxcoreCountry.trim();
+    s.fluxcoreEntry = s.fluxcoreEntry.trim();
+    s.fluxcoreExit = s.fluxcoreExit.trim();
     // Multi-hop بدون هر دو سر، یعنی مسیر تک‌هاپ معمولی.
-    if (s.cumulusMultihop &&
-        (s.cumulusEntry.isEmpty || s.cumulusExit.isEmpty)) {
-      s.cumulusMultihop = false;
+    if (s.fluxcoreMultihop &&
+        (s.fluxcoreEntry.isEmpty || s.fluxcoreExit.isEmpty)) {
+      s.fluxcoreMultihop = false;
     }
   }
 
