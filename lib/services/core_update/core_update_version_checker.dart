@@ -110,6 +110,24 @@ class CoreUpdateVersionChecker {
         return m?.group(1) ?? 'installed';
       }
 
+      // ═══════════════════════════════════════════════════════════
+      //  🆕 Fluxcore (fluxcore CLI)
+      //
+      //  خروجی `fluxcore --version` این شکلی است:
+      //    fluxcore 0.1.1 (linux/amd64)
+      //  بیلدهای محلی که با ldflags استمپ نشده‌اند «installed» می‌مانند و
+      //  مقایسه با اندازهٔ asset انجام می‌شود (sizeBasedVersion).
+      // ═══════════════════════════════════════════════════════════
+      if (coreId == 'fluxcore') {
+        final exe = await AppDataService.resolveBinaryPath('fluxcore') ??
+            await AppDataService.getBinaryPath('fluxcore');
+        if (!await File(exe).exists()) return 'not installed';
+        final v = await _queryExeVersion(exe, ['--version']);
+        if (v == null) return 'installed';
+        final m = RegExp(r'\b(\d+\.\d+\.\d+(?:[-\+][\w\.]+)?)\b').firstMatch(v);
+        return m?.group(1) ?? 'installed';
+      }
+
       if (coreId == 'sstp') {
         final exe = await AppDataService.getSstpBinaryPathForExecution();
         if (!await File(exe).exists()) return 'not installed';
@@ -161,7 +179,8 @@ class CoreUpdateVersionChecker {
           coreId == 'npv' ||
           coreId == 'sstp' ||
           coreId == 'wireguard' ||
-          coreId == 'wireguard-awg') {
+          coreId == 'wireguard-awg' ||
+          coreId == 'fluxcore') {
         return 'not installed';
       }
       return 'unknown';
