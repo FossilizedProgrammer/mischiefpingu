@@ -1915,4 +1915,121 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get aetherUpstream => 'اتر';
+
+  @override
+  String get cumulusSettings => 'تنظیمات CumulusVPN';
+
+  @override
+  String get cumulusEngineName => 'Cumulus';
+
+  @override
+  String get cumulusConnectionSection => 'پروکسی محلی';
+
+  @override
+  String get cumulusSocksPort => 'پورت SOCKS5';
+
+  @override
+  String get cumulusHttpPort => 'پورت HTTP';
+
+  @override
+  String cumulusProxySocks(int port) {
+    return 'SOCKS5: socks5://127.0.0.1:$port';
+  }
+
+  @override
+  String cumulusProxyHttp(int port) {
+    return 'HTTP: http://127.0.0.1:$port';
+  }
+
+  @override
+  String get cumulusRoutingSection => 'مسیر خروج';
+
+  @override
+  String get cumulusCountry => 'کشور یا شهر';
+
+  @override
+  String get cumulusCountryHint =>
+      'خالی = سریع‌ترین (نمونه: DE یا US:New York)';
+
+  @override
+  String get cumulusTransport => 'ترنسپورت';
+
+  @override
+  String get cumulusTransportAuto => 'خودکار';
+
+  @override
+  String get cumulusTransportSpeed => 'سرعت (WireGuard)';
+
+  @override
+  String get cumulusTransportStealth => 'مخفی‌کاری (مقاوم به DPI)';
+
+  @override
+  String get cumulusMultihop => 'مسیر چندهاپ';
+
+  @override
+  String get cumulusMultihopHint =>
+      'هاپ ورودی فقط خروجی را می‌بیند و خروجی فقط مقصد شما را.';
+
+  @override
+  String get cumulusEntry => 'کشور یا شهر ورودی';
+
+  @override
+  String get cumulusExit => 'کشور یا شهر خروجی';
+
+  @override
+  String get cumulusBehaviorSection => 'رفتار اتصال';
+
+  @override
+  String get cumulusKillSwitch => 'کیل سوییچ';
+
+  @override
+  String get cumulusKillSwitchDesc =>
+      'اگر تونل قطع شود، درخواست‌ها رد می‌شوند و مستقیم بیرون نمی‌روند.';
+
+  @override
+  String get cumulusAutoReconnect => 'اتصال مجدد خودکار Cumulus';
+
+  @override
+  String get cumulusBrowseServers => 'مرور سرورها';
+
+  @override
+  String get cumulusRefreshServers => 'تازه‌سازی سرورها';
+
+  @override
+  String get cumulusServersHint =>
+      'بار از فلیت Cumulus گزارش می‌شود؛ کمتر بهتر است. انتخاب روی اتصال بعدی اعمال می‌شود.';
+
+  @override
+  String get cumulusServersLoading => 'در حال یافتن سرورها و بار آن‌ها…';
+
+  @override
+  String get cumulusServersError => 'فهرست سرورها بارگذاری نشد.';
+
+  @override
+  String get cumulusServersEmpty => 'فلیت هیچ سروری گزارش نکرد.';
+
+  @override
+  String cumulusServersCount(int count) {
+    return '$count لوکیشن';
+  }
+
+  @override
+  String cumulusServerNodes(int count) {
+    return '$count سرور';
+  }
+
+  @override
+  String get cumulusServersSorted => 'مرتب‌شده بر اساس بار (کمترین اول)';
+
+  @override
+  String get cumulusServersSelected => 'انتخاب‌شده';
+
+  @override
+  String get cumulusChooseTarget => 'اعمال انتخاب روی:';
+
+  @override
+  String get cumulusTargetEntry => 'ورودی';
+
+  @override
+  String get cumulusTargetExit => 'خروجی';
 }

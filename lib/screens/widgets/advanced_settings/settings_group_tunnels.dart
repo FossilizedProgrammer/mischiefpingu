@@ -11,6 +11,7 @@ import '../wireguard_settings_tile.dart';
 import '../lantern_settings_tile.dart';
 import '../geph_settings_tile.dart';
 import '../npv_settings_tile.dart';
+import '../cumulus_settings_tile.dart';
 
 class SettingsGroupTunnels extends StatelessWidget {
   const SettingsGroupTunnels({super.key});
@@ -28,6 +29,7 @@ class SettingsGroupTunnels extends StatelessWidget {
         LanternSettingsTile(),
         GephSettingsTile(),
         NpvSettingsTile(),
+        CumulusSettingsTile(),
       ],
     );
   }

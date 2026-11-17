@@ -138,12 +138,32 @@ class AutoReconnectManager {
     );
   }
 
+  void scheduleCumulusReconnect({
+    Duration delay = defaultDelay,
+    required bool Function() shouldReconnect,
+    required void Function() onReconnect,
+    required ReconnectLogFn log,
+  }) {
+    _scheduler.schedule(
+      key: 'cumulus',
+      baseDelay: delay,
+      shouldReconnect: shouldReconnect,
+      onReconnect: onReconnect,
+      log: log,
+      logSource: LogSource.cumulus,
+      backoff: _backoff,
+      acquireLease: acquireLease,
+      releaseLease: releaseLease,
+    );
+  }
+
   void cancelPsiphonTimer() => _scheduler.cancel('psiphon');
   void cancelAetherTimer() => _scheduler.cancel('aether');
   void cancelTorTimer() => _scheduler.cancel('tor');
   void cancelSstpTimer() => _scheduler.cancel('sstp');
   void cancelWireGuardTimer() => _scheduler.cancel('wireguard');
   void cancelNpvTimer() => _scheduler.cancel('npv');
+  void cancelCumulusTimer() => _scheduler.cancel('cumulus');
 
   void cancelAll() => _scheduler.cancelAll();
 

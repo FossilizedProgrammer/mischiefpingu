@@ -188,6 +188,30 @@ class AppSettings {
   /// نیست کدام کانفیگ پین شده تا فهرست دوباره گرفته شود.
   String npvPinnedRemark;
 
+  // ═══════════════════════════════════════════════════════════════
+  //  CumulusVPN (cumulusvpn) settings
+  // ═══════════════════════════════════════════════════════════════
+
+  /// پورت SOCKS5 روی loopback (پورت HTTP جداگانه است).
+  int cumulusPort;
+
+  /// پورت HTTP proxy روی loopback.
+  int cumulusHttpPort;
+
+  /// کد کشور (`DE`)، `CODE:CITY` یا خالی برای سریع‌ترین گیت‌وی.
+  String cumulusCountry;
+
+  /// `auto` | `stealth` | `speed`.
+  String cumulusTransport;
+
+  bool cumulusMultihop;
+  String cumulusEntry;
+  String cumulusExit;
+
+  /// پیش‌فرض روشن: اگر تونل قطع شود، ترافیک رد می‌شود (fail-closed).
+  bool cumulusKillSwitch;
+  bool cumulusAutoReconnect;
+
   String themeId;
   bool muted;
   List<String> enabledLogSources;
@@ -307,6 +331,15 @@ class AppSettings {
     this.npvAutoReconnect = true,
     this.npvPinnedIndex = '',
     this.npvPinnedRemark = '',
+    this.cumulusPort = 1087,
+    this.cumulusHttpPort = 1088,
+    this.cumulusCountry = '',
+    this.cumulusTransport = 'auto',
+    this.cumulusMultihop = false,
+    this.cumulusEntry = '',
+    this.cumulusExit = '',
+    this.cumulusKillSwitch = true,
+    this.cumulusAutoReconnect = true,
     this.psiphonBuildRev = '',
     this.psiphonBinarySha = '',
     this.themeId = 'ocean',
@@ -330,6 +363,7 @@ class AppSettings {
               'Lantern',
               'Geph',
               'NPV',
+              'Cumulus',
               'App',
               'System',
             ];

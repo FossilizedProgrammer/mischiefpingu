@@ -18,6 +18,7 @@ class SettingsValidation {
     'Lantern',
     'Geph',
     'NPV',
+    'Cumulus',
     'App',
     'System',
   };
@@ -32,6 +33,7 @@ class SettingsValidation {
     'Lantern',
     'Geph',
     'NPV',
+    'Cumulus',
     'App',
     'System',
   ];
@@ -57,6 +59,7 @@ class SettingsValidation {
     _validateLantern(s);
     _validateGeph(s);
     _validateNpv(s);
+    _validateCumulus(s);
   }
 
   static void _validateEndpointPinning(AppSettings s) {
@@ -277,6 +280,24 @@ class SettingsValidation {
     } else {
       s.npvPinnedIndex = '$pinned';
       s.npvPinnedRemark = s.npvPinnedRemark.trim();
+    }
+  }
+
+  static void _validateCumulus(AppSettings s) {
+    if (s.cumulusPort < 1 || s.cumulusPort > 65535) s.cumulusPort = 1087;
+    if (s.cumulusHttpPort < 1 || s.cumulusHttpPort > 65535) {
+      s.cumulusHttpPort = 1088;
+    }
+    if (!['auto', 'stealth', 'speed'].contains(s.cumulusTransport)) {
+      s.cumulusTransport = 'auto';
+    }
+    s.cumulusCountry = s.cumulusCountry.trim();
+    s.cumulusEntry = s.cumulusEntry.trim();
+    s.cumulusExit = s.cumulusExit.trim();
+    // Multi-hop بدون هر دو سر، یعنی مسیر تک‌هاپ معمولی.
+    if (s.cumulusMultihop &&
+        (s.cumulusEntry.isEmpty || s.cumulusExit.isEmpty)) {
+      s.cumulusMultihop = false;
     }
   }
 

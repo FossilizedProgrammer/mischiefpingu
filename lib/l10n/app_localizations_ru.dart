@@ -1924,4 +1924,121 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get aetherUpstream => 'Aether';
+
+  @override
+  String get cumulusSettings => 'Настройки CumulusVPN';
+
+  @override
+  String get cumulusEngineName => 'Cumulus';
+
+  @override
+  String get cumulusConnectionSection => 'Локальный прокси';
+
+  @override
+  String get cumulusSocksPort => 'Порт SOCKS5';
+
+  @override
+  String get cumulusHttpPort => 'Порт HTTP';
+
+  @override
+  String cumulusProxySocks(int port) {
+    return 'SOCKS5: socks5://127.0.0.1:$port';
+  }
+
+  @override
+  String cumulusProxyHttp(int port) {
+    return 'HTTP: http://127.0.0.1:$port';
+  }
+
+  @override
+  String get cumulusRoutingSection => 'Маршрут выхода';
+
+  @override
+  String get cumulusCountry => 'Страна или город';
+
+  @override
+  String get cumulusCountryHint =>
+      'Пусто = самый быстрый (примеры: DE, US:New York)';
+
+  @override
+  String get cumulusTransport => 'Транспорт';
+
+  @override
+  String get cumulusTransportAuto => 'Авто';
+
+  @override
+  String get cumulusTransportSpeed => 'Скорость (WireGuard)';
+
+  @override
+  String get cumulusTransportStealth => 'Скрытность (устойчиво к DPI)';
+
+  @override
+  String get cumulusMultihop => 'Многоскачковый маршрут';
+
+  @override
+  String get cumulusMultihopHint =>
+      'Вход видит только выход, а выход — только ваш адрес назначения.';
+
+  @override
+  String get cumulusEntry => 'Страна или город входа';
+
+  @override
+  String get cumulusExit => 'Страна или город выхода';
+
+  @override
+  String get cumulusBehaviorSection => 'Поведение подключения';
+
+  @override
+  String get cumulusKillSwitch => 'Kill switch';
+
+  @override
+  String get cumulusKillSwitchDesc =>
+      'При обрыве туннеля запросы блокируются, а не идут напрямую.';
+
+  @override
+  String get cumulusAutoReconnect => 'Автопереподключение Cumulus';
+
+  @override
+  String get cumulusBrowseServers => 'Список серверов';
+
+  @override
+  String get cumulusRefreshServers => 'Обновить серверы';
+
+  @override
+  String get cumulusServersHint =>
+      'Нагрузку сообщает сеть Cumulus; меньше — лучше. Выбор применится при следующем подключении.';
+
+  @override
+  String get cumulusServersLoading => 'Поиск серверов и их нагрузки…';
+
+  @override
+  String get cumulusServersError => 'Не удалось загрузить список серверов.';
+
+  @override
+  String get cumulusServersEmpty => 'Сеть не сообщила ни одного сервера.';
+
+  @override
+  String cumulusServersCount(int count) {
+    return '$count локаций';
+  }
+
+  @override
+  String cumulusServerNodes(int count) {
+    return '$count узлов';
+  }
+
+  @override
+  String get cumulusServersSorted => 'Сортировка по нагрузке (сначала меньшая)';
+
+  @override
+  String get cumulusServersSelected => 'Выбрано';
+
+  @override
+  String get cumulusChooseTarget => 'Применить выбор к:';
+
+  @override
+  String get cumulusTargetEntry => 'Вход';
+
+  @override
+  String get cumulusTargetExit => 'Выход';
 }

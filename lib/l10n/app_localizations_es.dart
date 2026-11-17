@@ -1930,4 +1930,121 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get aetherUpstream => 'Aether';
+
+  @override
+  String get cumulusSettings => 'Ajustes de CumulusVPN';
+
+  @override
+  String get cumulusEngineName => 'Cumulus';
+
+  @override
+  String get cumulusConnectionSection => 'Proxy local';
+
+  @override
+  String get cumulusSocksPort => 'Puerto SOCKS5';
+
+  @override
+  String get cumulusHttpPort => 'Puerto HTTP';
+
+  @override
+  String cumulusProxySocks(int port) {
+    return 'SOCKS5: socks5://127.0.0.1:$port';
+  }
+
+  @override
+  String cumulusProxyHttp(int port) {
+    return 'HTTP: http://127.0.0.1:$port';
+  }
+
+  @override
+  String get cumulusRoutingSection => 'Ruta de salida';
+
+  @override
+  String get cumulusCountry => 'País o ciudad';
+
+  @override
+  String get cumulusCountryHint =>
+      'Vacío = más rápido (ejemplos: DE, US:New York)';
+
+  @override
+  String get cumulusTransport => 'Transporte';
+
+  @override
+  String get cumulusTransportAuto => 'Automático';
+
+  @override
+  String get cumulusTransportSpeed => 'Velocidad (WireGuard)';
+
+  @override
+  String get cumulusTransportStealth => 'Sigiloso (resistente a DPI)';
+
+  @override
+  String get cumulusMultihop => 'Ruta de varios saltos';
+
+  @override
+  String get cumulusMultihopHint =>
+      'La entrada solo ve la salida y la salida solo ve tu destino.';
+
+  @override
+  String get cumulusEntry => 'País o ciudad de entrada';
+
+  @override
+  String get cumulusExit => 'País o ciudad de salida';
+
+  @override
+  String get cumulusBehaviorSection => 'Comportamiento de conexión';
+
+  @override
+  String get cumulusKillSwitch => 'Kill switch';
+
+  @override
+  String get cumulusKillSwitchDesc =>
+      'Si el túnel cae, las solicitudes fallan en vez de salir directamente.';
+
+  @override
+  String get cumulusAutoReconnect => 'Reconectar Cumulus automáticamente';
+
+  @override
+  String get cumulusBrowseServers => 'Ver servidores';
+
+  @override
+  String get cumulusRefreshServers => 'Actualizar servidores';
+
+  @override
+  String get cumulusServersHint =>
+      'La carga la informa la flota Cumulus; menos es mejor. La selección se aplica en la próxima conexión.';
+
+  @override
+  String get cumulusServersLoading => 'Buscando servidores y su carga…';
+
+  @override
+  String get cumulusServersError => 'No se pudo cargar la lista de servidores.';
+
+  @override
+  String get cumulusServersEmpty => 'La flota no informó ningún servidor.';
+
+  @override
+  String cumulusServersCount(int count) {
+    return '$count ubicaciones';
+  }
+
+  @override
+  String cumulusServerNodes(int count) {
+    return '$count nodos';
+  }
+
+  @override
+  String get cumulusServersSorted => 'Ordenado por carga (menor primero)';
+
+  @override
+  String get cumulusServersSelected => 'Seleccionado';
+
+  @override
+  String get cumulusChooseTarget => 'Aplicar la selección a:';
+
+  @override
+  String get cumulusTargetEntry => 'Entrada';
+
+  @override
+  String get cumulusTargetExit => 'Salida';
 }

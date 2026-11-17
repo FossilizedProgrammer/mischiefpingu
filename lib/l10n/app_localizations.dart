@@ -3612,6 +3612,216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Aether'**
   String get aetherUpstream;
+
+  /// No description provided for @cumulusSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'CumulusVPN Settings'**
+  String get cumulusSettings;
+
+  /// No description provided for @cumulusEngineName.
+  ///
+  /// In en, this message translates to:
+  /// **'Cumulus'**
+  String get cumulusEngineName;
+
+  /// No description provided for @cumulusConnectionSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Local proxy'**
+  String get cumulusConnectionSection;
+
+  /// No description provided for @cumulusSocksPort.
+  ///
+  /// In en, this message translates to:
+  /// **'SOCKS5 port'**
+  String get cumulusSocksPort;
+
+  /// No description provided for @cumulusHttpPort.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTP port'**
+  String get cumulusHttpPort;
+
+  /// No description provided for @cumulusProxySocks.
+  ///
+  /// In en, this message translates to:
+  /// **'SOCKS5: socks5://127.0.0.1:{port}'**
+  String cumulusProxySocks(int port);
+
+  /// No description provided for @cumulusProxyHttp.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTP: http://127.0.0.1:{port}'**
+  String cumulusProxyHttp(int port);
+
+  /// No description provided for @cumulusRoutingSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit route'**
+  String get cumulusRoutingSection;
+
+  /// No description provided for @cumulusCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Country or city'**
+  String get cumulusCountry;
+
+  /// No description provided for @cumulusCountryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty = fastest (examples: DE, US:New York)'**
+  String get cumulusCountryHint;
+
+  /// No description provided for @cumulusTransport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transport'**
+  String get cumulusTransport;
+
+  /// No description provided for @cumulusTransportAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto'**
+  String get cumulusTransportAuto;
+
+  /// No description provided for @cumulusTransportSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed (WireGuard)'**
+  String get cumulusTransportSpeed;
+
+  /// No description provided for @cumulusTransportStealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Stealth (DPI-resistant)'**
+  String get cumulusTransportStealth;
+
+  /// No description provided for @cumulusMultihop.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-hop route'**
+  String get cumulusMultihop;
+
+  /// No description provided for @cumulusMultihopHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The entry sees only the exit, and the exit sees only your destination.'**
+  String get cumulusMultihopHint;
+
+  /// No description provided for @cumulusEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry country or city'**
+  String get cumulusEntry;
+
+  /// No description provided for @cumulusExit.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit country or city'**
+  String get cumulusExit;
+
+  /// No description provided for @cumulusBehaviorSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection behavior'**
+  String get cumulusBehaviorSection;
+
+  /// No description provided for @cumulusKillSwitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Kill switch'**
+  String get cumulusKillSwitch;
+
+  /// No description provided for @cumulusKillSwitchDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'When the tunnel drops, requests fail instead of going out directly.'**
+  String get cumulusKillSwitchDesc;
+
+  /// No description provided for @cumulusAutoReconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-reconnect Cumulus'**
+  String get cumulusAutoReconnect;
+
+  /// No description provided for @cumulusBrowseServers.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse servers'**
+  String get cumulusBrowseServers;
+
+  /// No description provided for @cumulusRefreshServers.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh servers'**
+  String get cumulusRefreshServers;
+
+  /// No description provided for @cumulusServersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Load is reported by the Cumulus fleet; lower is better. Selection applies on the next connection.'**
+  String get cumulusServersHint;
+
+  /// No description provided for @cumulusServersLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding servers and their load…'**
+  String get cumulusServersLoading;
+
+  /// No description provided for @cumulusServersError.
+  ///
+  /// In en, this message translates to:
+  /// **'The server list could not be loaded.'**
+  String get cumulusServersError;
+
+  /// No description provided for @cumulusServersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No servers reported by the fleet.'**
+  String get cumulusServersEmpty;
+
+  /// No description provided for @cumulusServersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} locations'**
+  String cumulusServersCount(int count);
+
+  /// No description provided for @cumulusServerNodes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} nodes'**
+  String cumulusServerNodes(int count);
+
+  /// No description provided for @cumulusServersSorted.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorted by load (lowest first)'**
+  String get cumulusServersSorted;
+
+  /// No description provided for @cumulusServersSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get cumulusServersSelected;
+
+  /// No description provided for @cumulusChooseTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply selection to:'**
+  String get cumulusChooseTarget;
+
+  /// No description provided for @cumulusTargetEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry'**
+  String get cumulusTargetEntry;
+
+  /// No description provided for @cumulusTargetExit.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get cumulusTargetExit;
 }
 
 class _AppLocalizationsDelegate

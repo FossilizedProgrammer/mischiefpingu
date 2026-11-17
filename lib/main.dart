@@ -21,11 +21,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
 
-  await windowManager.setSize(const Size(780, 380));
+  // ارتفاع اولیه شامل هر دو ردیف دکمه‌های اتصال است.
+  await windowManager.setSize(const Size(780, 460));
   await windowManager.setMinimumSize(const Size(680, 340));
 
   const windowOptions = WindowOptions(
-    size: Size(780, 380),
+    size: Size(780, 460),
     minimumSize: Size(680, 340),
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
@@ -65,7 +66,8 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) =>
               SstpFetcherProvider(processService: appProvider.processService),
-        ),        ChangeNotifierProvider(
+        ),
+        ChangeNotifierProvider(
           create: (_) =>
               FfvpnProvider(processService: appProvider.processService),
         ),

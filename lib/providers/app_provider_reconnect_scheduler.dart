@@ -112,6 +112,13 @@ extension AppProviderReconnectScheduler on AppProvider {
           log: log,
         );
         break;
+      case 'cumulus':
+        _reconnectManager.scheduleCumulusReconnect(
+          shouldReconnect: shouldReconnect,
+          onReconnect: onReconnect,
+          log: log,
+        );
+        break;
     }
   }
 
@@ -135,6 +142,9 @@ extension AppProviderReconnectScheduler on AppProvider {
         break;
       case 'npv':
         _reconnectManager.cancelNpvTimer();
+        break;
+      case 'cumulus':
+        _reconnectManager.cancelCumulusTimer();
         break;
     }
   }

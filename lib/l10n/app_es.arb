@@ -905,5 +905,60 @@
   "torViaAether": "A través de Aether (Tor-over-Aether)",
   "tryLastEndpointFirst": "Probar primero el último endpoint correcto",
   "tryLastEndpointFirstSubtitle": "Si se activa, intentará el último endpoint que funcionó antes de escanear",
-  "aetherUpstream": "Aether"
+  "aetherUpstream": "Aether",
+  "cumulusSettings": "Ajustes de CumulusVPN",
+  "cumulusEngineName": "Cumulus",
+  "cumulusConnectionSection": "Proxy local",
+  "cumulusSocksPort": "Puerto SOCKS5",
+  "cumulusHttpPort": "Puerto HTTP",
+  "cumulusProxySocks": "SOCKS5: socks5://127.0.0.1:{port}",
+  "@cumulusProxySocks": {
+    "placeholders": {
+      "port": {"type": "int"}
+    }
+  },
+  "cumulusProxyHttp": "HTTP: http://127.0.0.1:{port}",
+  "@cumulusProxyHttp": {
+    "placeholders": {
+      "port": {"type": "int"}
+    }
+  },
+  "cumulusRoutingSection": "Ruta de salida",
+  "cumulusCountry": "País o ciudad",
+  "cumulusCountryHint": "Vacío = más rápido (ejemplos: DE, US:New York)",
+  "cumulusTransport": "Transporte",
+  "cumulusTransportAuto": "Automático",
+  "cumulusTransportSpeed": "Velocidad (WireGuard)",
+  "cumulusTransportStealth": "Sigiloso (resistente a DPI)",
+  "cumulusMultihop": "Ruta de varios saltos",
+  "cumulusMultihopHint": "La entrada solo ve la salida y la salida solo ve tu destino.",
+  "cumulusEntry": "País o ciudad de entrada",
+  "cumulusExit": "País o ciudad de salida",
+  "cumulusBehaviorSection": "Comportamiento de conexión",
+  "cumulusKillSwitch": "Kill switch",
+  "cumulusKillSwitchDesc": "Si el túnel cae, las solicitudes fallan en vez de salir directamente.",
+  "cumulusAutoReconnect": "Reconectar Cumulus automáticamente",
+  "cumulusBrowseServers": "Ver servidores",
+  "cumulusRefreshServers": "Actualizar servidores",
+  "cumulusServersHint": "La carga la informa la flota Cumulus; menos es mejor. La selección se aplica en la próxima conexión.",
+  "cumulusServersLoading": "Buscando servidores y su carga…",
+  "cumulusServersError": "No se pudo cargar la lista de servidores.",
+  "cumulusServersEmpty": "La flota no informó ningún servidor.",
+  "cumulusServersCount": "{count} ubicaciones",
+  "@cumulusServersCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cumulusServerNodes": "{count} nodos",
+  "@cumulusServerNodes": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cumulusServersSorted": "Ordenado por carga (menor primero)",
+  "cumulusServersSelected": "Seleccionado",
+  "cumulusChooseTarget": "Aplicar la selección a:",
+  "cumulusTargetEntry": "Entrada",
+  "cumulusTargetExit": "Salida"
 }

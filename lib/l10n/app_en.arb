@@ -905,5 +905,60 @@
   "torViaAether": "Via Aether (Tor-over-Aether)",
   "tryLastEndpointFirst": "Try last successful endpoint first",
   "tryLastEndpointFirstSubtitle": "If enabled, will try the last working endpoint before scanning",
-  "aetherUpstream": "Aether"
+  "aetherUpstream": "Aether",
+  "cumulusSettings": "CumulusVPN Settings",
+  "cumulusEngineName": "Cumulus",
+  "cumulusConnectionSection": "Local proxy",
+  "cumulusSocksPort": "SOCKS5 port",
+  "cumulusHttpPort": "HTTP port",
+  "cumulusProxySocks": "SOCKS5: socks5://127.0.0.1:{port}",
+  "@cumulusProxySocks": {
+    "placeholders": {
+      "port": {"type": "int"}
+    }
+  },
+  "cumulusProxyHttp": "HTTP: http://127.0.0.1:{port}",
+  "@cumulusProxyHttp": {
+    "placeholders": {
+      "port": {"type": "int"}
+    }
+  },
+  "cumulusRoutingSection": "Exit route",
+  "cumulusCountry": "Country or city",
+  "cumulusCountryHint": "Empty = fastest (examples: DE, US:New York)",
+  "cumulusTransport": "Transport",
+  "cumulusTransportAuto": "Auto",
+  "cumulusTransportSpeed": "Speed (WireGuard)",
+  "cumulusTransportStealth": "Stealth (DPI-resistant)",
+  "cumulusMultihop": "Multi-hop route",
+  "cumulusMultihopHint": "The entry sees only the exit, and the exit sees only your destination.",
+  "cumulusEntry": "Entry country or city",
+  "cumulusExit": "Exit country or city",
+  "cumulusBehaviorSection": "Connection behavior",
+  "cumulusKillSwitch": "Kill switch",
+  "cumulusKillSwitchDesc": "When the tunnel drops, requests fail instead of going out directly.",
+  "cumulusAutoReconnect": "Auto-reconnect Cumulus",
+  "cumulusBrowseServers": "Browse servers",
+  "cumulusRefreshServers": "Refresh servers",
+  "cumulusServersHint": "Load is reported by the Cumulus fleet; lower is better. Selection applies on the next connection.",
+  "cumulusServersLoading": "Finding servers and their load…",
+  "cumulusServersError": "The server list could not be loaded.",
+  "cumulusServersEmpty": "No servers reported by the fleet.",
+  "cumulusServersCount": "{count} locations",
+  "@cumulusServersCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cumulusServerNodes": "{count} nodes",
+  "@cumulusServerNodes": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cumulusServersSorted": "Sorted by load (lowest first)",
+  "cumulusServersSelected": "Selected",
+  "cumulusChooseTarget": "Apply selection to:",
+  "cumulusTargetEntry": "Entry",
+  "cumulusTargetExit": "Exit"
 }

@@ -54,6 +54,7 @@ import '../services/wireguard/wireguard_config_parser.dart';
 import '../services/wireguard/wireguard_config_builder.dart';
 import '../services/wireguard/wireguard_paths.dart';
 import '../services/npv/npv_paths.dart';
+import '../services/cumulus/cumulus_paths.dart';
 import '../services/wireguard/wireguard_log_watcher.dart';
 import '../services/sstp/sstp_keepalive.dart';
 
@@ -100,6 +101,8 @@ part 'lantern/lantern_preflight.dart';
 part 'app_provider_geph.dart';
 part 'app_provider_npv.dart';
 part 'npv/npv_preflight.dart';
+part 'app_provider_cumulus.dart';
+part 'cumulus/cumulus_preflight.dart';
 part 'geph/geph_preflight.dart';
 part 'app_provider_constructor.dart';
 part 'app_provider_dispose.dart';
@@ -154,6 +157,13 @@ class AppProvider extends ChangeNotifier {
   int _npvGeneration = 0;
   int get npvGeneration => _npvGeneration;
   int nextNpvGeneration() => ++_npvGeneration;
+
+  bool isCumulusBusy = false;
+  bool userStoppedCumulus = true;
+  String cumulusStatus = 'Cumulus: Ready';
+  int _cumulusGeneration = 0;
+  int get cumulusGeneration => _cumulusGeneration;
+  int nextCumulusGeneration() => ++_cumulusGeneration;
 
   bool isGephBusy = false;
   bool userStoppedGeph = true;
@@ -304,7 +314,9 @@ class AppProvider extends ChangeNotifier {
         ps.isGephRunning ||
         isGephBusy ||
         ps.isNpvRunning ||
-        isNpvBusy;
+        isNpvBusy ||
+        ps.isCumulusRunning ||
+        isCumulusBusy;
   }
 
   void attachQualityProvider(InternetQualityProvider provider) {

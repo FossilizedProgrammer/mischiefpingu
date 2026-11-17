@@ -60,6 +60,7 @@ extension AppProviderLifecycleShutdown on AppProvider {
     userStoppedLantern = true;
     userStoppedGeph = true;
     userStoppedNpv = true;
+    userStoppedCumulus = true;
 
     final ps = processService;
 
@@ -102,6 +103,11 @@ extension AppProviderLifecycleShutdown on AppProvider {
       ),
       _stopTunnel('NPV', () => ps.isNpvRunning || isNpvBusy, ps.stopNpv),
       _stopTunnel(
+        'Cumulus',
+        () => ps.isCumulusRunning || isCumulusBusy,
+        ps.stopCumulus,
+      ),
+      _stopTunnel(
         'Aether',
         () => ps.isAetherRunning || isAutoTesting,
         ps.stopAether,
@@ -137,6 +143,7 @@ extension AppProviderLifecycleShutdown on AppProvider {
       if (ps.isSstpRunning) 'SSTP',
       if (ps.isWireGuardRunning) 'WireGuard',
       if (ps.isNpvRunning) 'NPV',
+      if (ps.isCumulusRunning) 'Cumulus',
     ];
 
     if (failedTunnels == 0 && stillRunning.isEmpty) {

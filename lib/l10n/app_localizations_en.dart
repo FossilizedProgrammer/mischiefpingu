@@ -1919,4 +1919,121 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aetherUpstream => 'Aether';
+
+  @override
+  String get cumulusSettings => 'CumulusVPN Settings';
+
+  @override
+  String get cumulusEngineName => 'Cumulus';
+
+  @override
+  String get cumulusConnectionSection => 'Local proxy';
+
+  @override
+  String get cumulusSocksPort => 'SOCKS5 port';
+
+  @override
+  String get cumulusHttpPort => 'HTTP port';
+
+  @override
+  String cumulusProxySocks(int port) {
+    return 'SOCKS5: socks5://127.0.0.1:$port';
+  }
+
+  @override
+  String cumulusProxyHttp(int port) {
+    return 'HTTP: http://127.0.0.1:$port';
+  }
+
+  @override
+  String get cumulusRoutingSection => 'Exit route';
+
+  @override
+  String get cumulusCountry => 'Country or city';
+
+  @override
+  String get cumulusCountryHint =>
+      'Empty = fastest (examples: DE, US:New York)';
+
+  @override
+  String get cumulusTransport => 'Transport';
+
+  @override
+  String get cumulusTransportAuto => 'Auto';
+
+  @override
+  String get cumulusTransportSpeed => 'Speed (WireGuard)';
+
+  @override
+  String get cumulusTransportStealth => 'Stealth (DPI-resistant)';
+
+  @override
+  String get cumulusMultihop => 'Multi-hop route';
+
+  @override
+  String get cumulusMultihopHint =>
+      'The entry sees only the exit, and the exit sees only your destination.';
+
+  @override
+  String get cumulusEntry => 'Entry country or city';
+
+  @override
+  String get cumulusExit => 'Exit country or city';
+
+  @override
+  String get cumulusBehaviorSection => 'Connection behavior';
+
+  @override
+  String get cumulusKillSwitch => 'Kill switch';
+
+  @override
+  String get cumulusKillSwitchDesc =>
+      'When the tunnel drops, requests fail instead of going out directly.';
+
+  @override
+  String get cumulusAutoReconnect => 'Auto-reconnect Cumulus';
+
+  @override
+  String get cumulusBrowseServers => 'Browse servers';
+
+  @override
+  String get cumulusRefreshServers => 'Refresh servers';
+
+  @override
+  String get cumulusServersHint =>
+      'Load is reported by the Cumulus fleet; lower is better. Selection applies on the next connection.';
+
+  @override
+  String get cumulusServersLoading => 'Finding servers and their load…';
+
+  @override
+  String get cumulusServersError => 'The server list could not be loaded.';
+
+  @override
+  String get cumulusServersEmpty => 'No servers reported by the fleet.';
+
+  @override
+  String cumulusServersCount(int count) {
+    return '$count locations';
+  }
+
+  @override
+  String cumulusServerNodes(int count) {
+    return '$count nodes';
+  }
+
+  @override
+  String get cumulusServersSorted => 'Sorted by load (lowest first)';
+
+  @override
+  String get cumulusServersSelected => 'Selected';
+
+  @override
+  String get cumulusChooseTarget => 'Apply selection to:';
+
+  @override
+  String get cumulusTargetEntry => 'Entry';
+
+  @override
+  String get cumulusTargetExit => 'Exit';
 }

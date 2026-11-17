@@ -850,5 +850,60 @@
   "torViaAether": "Через Aether (Tor-over-Aether)",
   "tryLastEndpointFirst": "Сначала попробовать последний успешный endpoint",
   "tryLastEndpointFirstSubtitle": "Если включено, попробует последний рабочий endpoint перед сканированием",
-  "aetherUpstream": "Aether"
+  "aetherUpstream": "Aether",
+  "cumulusSettings": "Настройки CumulusVPN",
+  "cumulusEngineName": "Cumulus",
+  "cumulusConnectionSection": "Локальный прокси",
+  "cumulusSocksPort": "Порт SOCKS5",
+  "cumulusHttpPort": "Порт HTTP",
+  "cumulusProxySocks": "SOCKS5: socks5://127.0.0.1:{port}",
+  "@cumulusProxySocks": {
+    "placeholders": {
+      "port": {"type": "int"}
+    }
+  },
+  "cumulusProxyHttp": "HTTP: http://127.0.0.1:{port}",
+  "@cumulusProxyHttp": {
+    "placeholders": {
+      "port": {"type": "int"}
+    }
+  },
+  "cumulusRoutingSection": "Маршрут выхода",
+  "cumulusCountry": "Страна или город",
+  "cumulusCountryHint": "Пусто = самый быстрый (примеры: DE, US:New York)",
+  "cumulusTransport": "Транспорт",
+  "cumulusTransportAuto": "Авто",
+  "cumulusTransportSpeed": "Скорость (WireGuard)",
+  "cumulusTransportStealth": "Скрытность (устойчиво к DPI)",
+  "cumulusMultihop": "Многоскачковый маршрут",
+  "cumulusMultihopHint": "Вход видит только выход, а выход — только ваш адрес назначения.",
+  "cumulusEntry": "Страна или город входа",
+  "cumulusExit": "Страна или город выхода",
+  "cumulusBehaviorSection": "Поведение подключения",
+  "cumulusKillSwitch": "Kill switch",
+  "cumulusKillSwitchDesc": "При обрыве туннеля запросы блокируются, а не идут напрямую.",
+  "cumulusAutoReconnect": "Автопереподключение Cumulus",
+  "cumulusBrowseServers": "Список серверов",
+  "cumulusRefreshServers": "Обновить серверы",
+  "cumulusServersHint": "Нагрузку сообщает сеть Cumulus; меньше — лучше. Выбор применится при следующем подключении.",
+  "cumulusServersLoading": "Поиск серверов и их нагрузки…",
+  "cumulusServersError": "Не удалось загрузить список серверов.",
+  "cumulusServersEmpty": "Сеть не сообщила ни одного сервера.",
+  "cumulusServersCount": "{count} локаций",
+  "@cumulusServersCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cumulusServerNodes": "{count} узлов",
+  "@cumulusServerNodes": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cumulusServersSorted": "Сортировка по нагрузке (сначала меньшая)",
+  "cumulusServersSelected": "Выбрано",
+  "cumulusChooseTarget": "Применить выбор к:",
+  "cumulusTargetEntry": "Вход",
+  "cumulusTargetExit": "Выход"
 }

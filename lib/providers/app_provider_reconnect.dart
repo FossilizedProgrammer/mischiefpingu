@@ -142,6 +142,30 @@ extension AppProviderReconnect on AppProvider {
     );
 
     // ═══════════════════════════════════════════════════════════
+    //  Cumulus
+    // ═══════════════════════════════════════════════════════════
+    _scheduleReconnectFor(
+      tunnel: 'cumulus',
+      isRunning: processService.isCumulusRunning,
+      isBusy: isCumulusBusy,
+      isLoading: false,
+      hasPid: processService.cumulusPid != null,
+      userStopped: userStoppedCumulus,
+      autoReconnectEnabled: settings.cumulusAutoReconnect,
+      isAutoTesting: isAutoTesting,
+      isRestarting: false,
+      shouldReconnect: () =>
+          !processService.isCumulusRunning &&
+          !isCumulusBusy &&
+          processService.cumulusPid == null &&
+          !userStoppedCumulus &&
+          settings.cumulusAutoReconnect &&
+          !isAutoTesting &&
+          !isShuttingDown,
+      onReconnect: () => connectCumulus(),
+    );
+
+    // ═══════════════════════════════════════════════════════════
     //  NPV
     // ═══════════════════════════════════════════════════════════
     _scheduleReconnectFor(
@@ -214,6 +238,21 @@ extension AppProviderReconnect on AppProvider {
       // باینری از پا درآمد (exit سریع، نبودِ کانفیگ زنده و…) تا status
       // روی «در حال اتصال» گیر نکند.
       npvStatus = 'NPV: Stopped';
+    }
+
+    if (processService.isCumulusRunning) {
+      if (processService.isCumulusConnected) {
+        final route = processService.cumulusSelectedRoute;
+        cumulusStatus = route.isEmpty
+            ? 'Cumulus: Connected'
+            : 'Cumulus: Connected · $route';
+      } else if (cumulusStatus == 'Cumulus: Ready' ||
+          cumulusStatus == 'Cumulus: Stopped') {
+        cumulusStatus = 'Cumulus: Connecting…';
+      }
+    } else if (cumulusStatus == 'Cumulus: Connecting…' ||
+        cumulusStatus.startsWith('Cumulus: Connected')) {
+      cumulusStatus = 'Cumulus: Stopped';
     }
 
     if (processService.isGephRunning) {

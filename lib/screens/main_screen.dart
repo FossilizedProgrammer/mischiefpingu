@@ -62,7 +62,7 @@ class _MainScreenState extends State<MainScreen>
     } else {
       _animController.reverse();
       await windowManager.setMinimumSize(const Size(680, 340));
-      await windowManager.setSize(const Size(780, 380));
+      await windowManager.setSize(const Size(780, 460));
     }
   }
 
